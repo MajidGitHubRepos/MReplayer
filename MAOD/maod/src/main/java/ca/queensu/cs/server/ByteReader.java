@@ -23,6 +23,71 @@ import java.util.Queue;
 import ca.queensu.cs.server.ByteReader.Command;
 
 
+/*
+===========================================================================
+Sample events received from client:
+
+[getEventId]1536849276545817000846930886;
+[getEventSourceKind]3;
+[getEventType]14;
+[getCapsuleName]Ponger;
+[getCapsuleInstance]ponger;
+[getCapsuleIndex]0;
+[getSourceName]PingPong::Ponger::PongerStateMachine::Region::onPing;
+[getCpuTik]0;
+[getTimePointSecond]0;
+[getTimePointNano]0;
+[getVariableData]j,Integer,0;
+Signal:ping,Source:Debug__Path__onPing,Status:0,Target:PLAYING
+
+-----------------------------------------------------------------------------
+
+[getEventId]1536849276545817000846930886;
+[getEventSourceKind]4;
+[getEventType]16;
+[getCapsuleName]Ponger;
+[getCapsuleInstance]ponger;
+[getCapsuleIndex]0;
+[getSourceName]PingPong::Ponger::PongerStateMachine::Region::PLAYING;
+[getCpuTik]0;
+[getTimePointSecond]0;
+[getTimePointNano]0;
+[getVariableData]j,Integer,0;
+Status:0
+
+-----------------------------------------------------------------------------
+
+[getEventId]15368492765457950001804289383;
+[getEventSourceKind]4;
+[getEventType]18;
+[getCapsuleName]Pinger;
+[getCapsuleInstance]pinger;
+[getCapsuleIndex]0;
+[getSourceName]PingPong::Pinger::PingerStateMachine::Region::PLAYING;
+[getCpuTik]0;
+[getTimePointSecond]0;
+[getTimePointNano]0;
+[getVariableData]pingCount,Integer,390
+varString,String,"testStringVariable"
+varBool,Boolean,false;
+Status:0
+
+-----------------------------------------------------------------------------
+
+[getEventId]15368492765457950001804289383;[getEventSourceKind]3;[getEventType]14;[getCapsuleName]Pinger;[getCapsuleInstance]pinger;[getCapsuleIndex]0;[getSourceName]PingPong::Pinger::PingerStateMachine::Region::Debug__onPong;[getCpuTik]0;[getTimePointSecond]0;[getTimePointNano]0;[getVariableData]pingCount,Integer,390
+varString,String,"testStringVariable"
+varBool,Boolean,false
+;Signal:pong,Source:PLAYING,Status:0,Target:Debug__Path__onPong[getEventId]15368492765457950001804289383;[getEventSourceKind]3;[getEventType]14;[getCapsuleName]Pinger;[getCapsuleInstance]pinger;[getCapsuleIndex]0;[getSourceName]PingPong::Pinger::PingerStateMachine::Region::onPong;[getCpuTik]0;[getTimePointSecond]0;[getTimePointNano]0;[getVariableData]pingCount,Integer,391
+varString,String,"testStringVariable"
+varBool,Boolean,false
+;Signal:pong,Source:Debug__Path__onPong,Status:0,Target:PLAYING[getEventId]15368492765457950001804289383;[getEventSourceKind]4;[getEventType]16;[getCapsuleName]Pinger;[getCapsuleInstance]pinger;[getCapsuleIndex]0;[getSourceName]PingPong::Pinger::PingerStateMachine::Region::PLAYING;[getCpuTik]0;[getTimePointSecond]0;[getTimePointNano]0;[getVariableData]pingCount,Integer,391
+varString,String,"testStringVariable"
+varBool,Boolean,false
+;Status:0[getEventId]1536849276545817000846930886;[getEventSourceKind]4;[getEventType]18;[getCapsuleName]Ponger;[getCapsuleInstance]ponger;[getCapsuleIndex]0;[getSourceName]PingPong::Ponger::PongerStateMachine::Region::PLAYING;[getCpuTik]0;[getTimePointSecond]0;[getTimePointNano]0;[getVariableData]j,Integer,0
+;Status:0
+===========================================================================
+ */
+
 public final class ByteReader implements Runnable {
 
 	public static enum Command {
@@ -54,7 +119,7 @@ public final class ByteReader implements Runnable {
 		try {
 			io.input = new DataInputStream(io.socket.getInputStream());
 
-			readFromSocketWithSize();
+			//readFromSocketWithSize();
 
 			while (!Thread.currentThread().isInterrupted()) {
 				if (!io.isConnected()) {
