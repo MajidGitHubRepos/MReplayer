@@ -14,37 +14,40 @@ public class TransitionData {
 	private final State target;
 	private final String sourceName;
 	private final String targetName;
-	private final String signal;
-	private final List<String> guard;
+	private final List<String> triggers;
+	private final List<String> guards;
 	private final List<String> actions;
 	private  TransitionKind kind;
 	private final Long period;
 	private final Integer count;
-	private final String event;
 	//private List<Vector<String, String>> triggers = new ArrayList<HashMap<String, String>>();
 	//private final SecurityRule securityRule;
 
 	//public TransitionData() {}
-	public TransitionData(String sourceName, String targetName, String signal, List<String> actions, List<String> guard, TransitionKind kind) {
-		this(null,sourceName, null, targetName, signal, actions, guard, kind, null, null, null);
+	public TransitionData(String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
+		this(null,sourceName, null, targetName, triggers, actions, guards, kind, period, count);
+	}
+	
+	public TransitionData(String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
+		this(null,sourceName, null, targetName, triggers, actions, guard, kind, null, null);
 	}
 	
 	public TransitionData(String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count) {
-		this(null,sourceName, null, targetName, null, actions, guard, kind, period, count, null);
+		this(null,sourceName, null, targetName, null, actions, guard, kind, period, count);
 	}
 	
-	public TransitionData(State source, String sourceName, State target, String targetName, String signal, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count, String event) {
+	public TransitionData(State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
 		this.source = source;
 		this.sourceName = sourceName;
 		this.target = target;
 		this.targetName = targetName;
-		this.signal = signal;
-		this.guard = guard;
+		this.triggers = triggers;
+		this.guards = guards;
 		this.actions = actions;
 		this.kind = kind;
 		this.period = period;
 		this.count = count;
-		this.event = event;
+		//this.event = event;
 	}
 
 	//------------[GETERS]
@@ -59,10 +62,6 @@ public class TransitionData {
 		return target;
 	}
 
-	public String getEvent() {
-		return event;
-	}
-
 	public Integer getCount() {
 		return count;
 	}
@@ -72,7 +71,7 @@ public class TransitionData {
 	}
 
 	public List<String> getGuard() {
-		return guard;
+		return guards;
 	}
 
 	//public List<HashMap<String, String>> getTriggers() {
@@ -123,7 +122,7 @@ public class TransitionData {
 	*/
 	
 	public String allDataToString() {
-		return "TransitionData [source=" + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", signal=" + signal + ", actions=" + actions + ", guard=" + guard
+		return "TransitionData [source=" + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
 				+ ", period=" + period + ", count=" + count + ", kind=" + kind +"]";
 	}
 

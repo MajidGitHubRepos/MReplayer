@@ -37,6 +37,7 @@ import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.RTSta
 import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.RTStateMachine;
 import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.UMLRTStateMachinesPackage;*/
 import org.eclipse.uml2.uml.BehavioredClassifier;
+import org.eclipse.uml2.uml.CallEvent;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Collaboration;
 import org.eclipse.uml2.uml.ConnectionPointReference;
@@ -309,8 +310,11 @@ public class ParserEngine implements Runnable {
 			// anyway, we need to add entrys and exits to a model
 
 			//System.out.println("==>>> transiton: " + transition);
-			boolean targetPseudostate = false;
-			boolean sourcePseudostate = false;
+			
+			List<String> guards = new ArrayList<String>();
+			List<String> triggers = new ArrayList<String>();
+			Long period = null;
+			Integer count = null;
 
 			if (transition.getSource() instanceof ConnectionPointReference) {
 				// support ref points if only one is defined as for some
@@ -338,13 +342,13 @@ public class ParserEngine implements Runnable {
 						list = new LinkedList<ChoiceData>();
 						choices.put(transition.getSource().getName(), list);
 					}
-					List<String> guard = resolveGuard(transition);
+					guards = resolveGuard(transition);
 					List<String> actions = UmlrtUtils.resolveTransitionActions(transition);
 					// we want null guards to be at the end
-					if (guard == null) {
-						list.addLast(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+					if (guards == null) {
+						list.addLast(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guards, actions));
 					} else {
-						list.addFirst(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+						list.addFirst(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guards, actions));
 					}
 				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.JUNCTION_LITERAL) {
 					LinkedList<JunctionData> list = junctions.get(transition.getSource().getName());
@@ -352,13 +356,13 @@ public class ParserEngine implements Runnable {
 						list = new LinkedList<JunctionData>();
 						junctions.put(transition.getSource().getName(), list);
 					}
-					List<String> guard = resolveGuard(transition);
+					guards = resolveGuard(transition);
 					List<String> actions = UmlrtUtils.resolveTransitionActions(transition);
 					// we want null guards to be at the end
-					if (guard == null) {
-						list.addLast(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+					if (guards == null) {
+						list.addLast(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guards, actions));
 					} else {
-						list.addFirst(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+						list.addFirst(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guards, actions));
 					}
 				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.FORK_LITERAL) {
 					List<String> list = forks.get(transition.getSource().getName());
@@ -371,9 +375,7 @@ public class ParserEngine implements Runnable {
 					historys.add(new HistoryData(transition.getSource().getName(), transition.getTarget().getName()));
 				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.DEEP_HISTORY_LITERAL) {
 					historys.add(new HistoryData(transition.getSource().getName(), transition.getTarget().getName()));
-				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
-					sourcePseudostate = true;
-				}
+				} 
 			}
 			if (transition.getTarget() instanceof Pseudostate) {
 				if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {
@@ -383,19 +385,25 @@ public class ParserEngine implements Runnable {
 						joins.put(transition.getTarget().getName(), list);
 					}
 					list.add(transition.getSource().getName());
-				}if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
-					targetPseudostate = true;
 				}
 			}
-			List<String> guard = null;
-			Long period = null;
-			Integer count = null;
+			
 			// go through all triggers and create transition
 			// from signals, or transitions from timers
+			
+			
+		
+			
 			for (Trigger trigger : transition.getTriggers()) {
-				guard = resolveGuard(transition);
+				guards = resolveGuard(transition);
 				Event event = trigger.getEvent();
+				 if (event instanceof CallEvent) {
+					 System.out.println("--- in Trigger CallEvent");
+					 triggers = UmlrtUtils.getTriggers(transition);
+				 }
+				/* 
 				if (event instanceof SignalEvent) {
+					System.out.println("--- in Trigger resolve");
 					Signal signal = ((SignalEvent)event).getSignal();
 					if (signal != null) {
 						// special case for ref point
@@ -403,40 +411,38 @@ public class ParserEngine implements Runnable {
 							EList<Pseudostate> cprentries = ((ConnectionPointReference)transition.getTarget()).getEntries();
 							if (cprentries != null && cprentries.size() == 1) {
 								listTransitionData.add(new TransitionData(transition.getSource().getName(),
-										cprentries.get(0).getName(), signal.getName(), UmlrtUtils.resolveTransitionActions(transition),
-										guard, UmlrtUtils.mapUmlTransitionType(transition)));
+										cprentries.get(0).getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
+										guards, UmlrtUtils.mapUmlTransitionType(transition)));
 							}
 						} else {
 							listTransitionData.add(new TransitionData(transition.getSource().getName(),
-									transition.getTarget().getName(), signal.getName(), UmlrtUtils.resolveTransitionActions(transition),
-									guard, UmlrtUtils.mapUmlTransitionType(transition)));
+									transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
+									guards, UmlrtUtils.mapUmlTransitionType(transition)));
+							
 						}
 					}
-				}else if (event instanceof TimeEvent) {
+				}*/else if (event instanceof TimeEvent) {
 					TimeEvent timeEvent = (TimeEvent)event;
 					period = getTimePeriod(timeEvent);
 					if (period != null) {
 						count = null;
 						if (timeEvent.isRelative()) {
 							count = 1;
-						}
-						listTransitionData.add(new TransitionData(transition.getSource().getName(),
-								transition.getTarget().getName(), UmlrtUtils.resolveTransitionActions(transition),
-								guard, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+						}	
 					}
 				}
+				 listTransitionData.add(new TransitionData(transition.getSource().getName(),
+							transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
+							guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+				 	break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
-			if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State) || (sourcePseudostate) || (targetPseudostate)) {
-				listTransitionData.add(new TransitionData(transition.getSource().getName(),
-						transition.getTarget().getName(), UmlrtUtils.resolveTransitionActions(transition),
-						guard, UmlrtUtils.mapUmlTransitionType(transition), period, count));
 
-			}
 			// create anonymous transition if needed
 			if (shouldCreateAnonymousTransition(transition)) {
-				listTransitionData.add(new TransitionData(transition.getSource().getName(), transition.getTarget().getName(),
-						null, UmlrtUtils.resolveTransitionActions(transition), resolveGuard(transition),
-						UmlrtUtils.mapUmlTransitionType(transition)));
+				System.out.println("--[2]");
+				listTransitionData.add(new TransitionData(transition.getSource().getName(),
+						transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
+						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
 			}
 
 		}
@@ -466,6 +472,20 @@ public class ParserEngine implements Runnable {
 	}
 
 	private boolean shouldCreateAnonymousTransition(Transition transition) {
+		if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State)) {
+			return true;
+		}
+		if (transition.getSource() instanceof Pseudostate) {
+			if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
+				return true;
+			}
+		}
+		if (transition.getTarget() instanceof Pseudostate) {
+			if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
+				return true;
+			}
+		}
+
 		if (transition.getSource() == null || transition.getTarget() == null) {
 			// nothing to do as would cause NPE later
 			return false;
@@ -483,15 +503,17 @@ public class ParserEngine implements Runnable {
 			if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.FORK_LITERAL) {
 				return false;
 			}
+
+
 		}
 		if (transition.getTarget() instanceof Pseudostate) {
 			if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {
 				return false;
 			}
+
 		}
+
 		return true;
 	}
-
-
 
 }

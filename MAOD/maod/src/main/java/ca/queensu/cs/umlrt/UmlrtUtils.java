@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.uml2.uml.BodyOwner;
+import org.eclipse.uml2.uml.CallEvent;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.FinalState;
@@ -197,6 +198,23 @@ public class UmlrtUtils {
 		} else {
 			return TransitionKind.EXTERNAL;
 		}
+	}
+	
+	//==================================================================	
+	//==============================================[getTriggers]
+	//==================================================================		
+	public static List<String> getTriggers(Transition t) {
+		List<String> triggers = new ArrayList<String>();
+		for (Trigger trig : t.getTriggers()) {
+			if (trig.getPorts() != null && trig.getPorts().size() > 0) {
+				String port = trig.getPorts().get(0).getName();
+				String msg = ((CallEvent) trig.getEvent()).getOperation().getName();
+				// Object e3 = triggers.get(0).getEvent();
+				// List<Element> elems = triggers.get(0).getEvent().eGet(Operation.class);
+				triggers.add(String.format("%s.%s", port, msg));
+			}
+		}
+		return triggers;
 	}
 	
 
