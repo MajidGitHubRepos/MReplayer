@@ -178,10 +178,13 @@ public class UmlrtUtils {
 	//==============================================[resolveTransitionActions]
 	//==================================================================	
 	public static List<String> resolveTransitionActions(Transition transition) {
-		ArrayList<String> actions = new ArrayList<String>();
+		List<String> actions = new ArrayList<String>();
+		List<String> tmpActions = new ArrayList<String>();
 		String action = resolveTransitionAction(transition);
 		if (action != null) {
-			actions.add(action);
+			tmpActions = actionCodeProcessing(action);
+			for (int i = 0; i< tmpActions.size(); i++)
+				actions.add(tmpActions.get(i));
 		}
 		return actions;
 	}

@@ -84,12 +84,14 @@ public class ParserEngine implements Runnable {
 	private final Map<String, List<String>> forks = new HashMap<String, List<String>>();
 	private final Map<String, List<String>> joins = new HashMap<String, List<String>>();
 	private final List<HistoryData> historys = new ArrayList<HistoryData>();
+	public String elementName;
 
 	public ParserEngine(EList<PackageableElement> me) {
 		this.modelElements = me;
-		HashMap<String, StateMachine> stateMachineMap = new HashMap<String, StateMachine>();
+		//HashMap<String, StateMachine> stateMachineMap = new HashMap<String, StateMachine>();
 		this.listStateData = new ArrayList<StateData>();
-		this.listTransitionData = new ArrayList<TransitionData>(); 
+		this.listTransitionData = new ArrayList<TransitionData>();
+		this.elementName = "";
 
 	}
 
@@ -97,14 +99,15 @@ public class ParserEngine implements Runnable {
 	//==============================================[showStateMachines]
 	//==================================================================
 	public void showStateMachines() {
-		Iterator i = stateMachineMap.entrySet().iterator();
+		System.out.println("=======================[showStateMachines]==========================");
+
+		Iterator iterator = stateMachineMap.entrySet().iterator();
 		int counter = 0;
-		while(i.hasNext())
+		while(iterator.hasNext())
 		{
 			counter++;
-			String key = i.next().toString();  
-			StateMachine value = stateMachineMap.get(key);
-			System.out.println("["+ counter+"]> (KEY): "+key + ", (VALUE): " + value);
+			Map.Entry mentry = (Map.Entry) iterator.next();  
+			System.out.println("["+ counter+"]> (KEY): "+ mentry.getKey() + ", (VALUE): " + mentry.getValue());
 		}
 
 	}
@@ -149,9 +152,14 @@ public class ParserEngine implements Runnable {
 			//System.out.println("--------------> modelElement: "+ element );
 
 			if(element instanceof Class) {
+				//System.out.println("--------------> elementName: "+ element.getName() );
 				if ( (((Class) element).getOwnedBehaviors() != null && ((Class) element).getOwnedBehaviors().size() > 0))
-					if (((Class) element).getOwnedBehaviors().get(0) instanceof StateMachine)
-						stateMachines.add((StateMachine) ((Class) element).getOwnedBehaviors().get(0));	
+					if (((Class) element).getOwnedBehaviors().get(0) instanceof StateMachine) {
+						//stateMachines.add((StateMachine) ((Class) element).getOwnedBehaviors().get(0));
+						smMap.put(element.getName(), (StateMachine) ((Class) element).getOwnedBehaviors().get(0) );
+						this.elementName = element.getName();
+						handleStateMachine((StateMachine) ((Class) element).getOwnedBehaviors().get(0));
+					}
 			}
 
 			i++;
@@ -159,16 +167,16 @@ public class ParserEngine implements Runnable {
 
 		// expect root machine to be a one having no machines in a submachineState field.
 		//====================================================== [Extract State Machines]			
-		for (StateMachine stateMachine : stateMachines) {
-			smMap.put(stateMachine.getName(), stateMachine);
-			handleStateMachine(stateMachine);
-		}
+		//for (StateMachine stateMachine : stateMachines) {
+			//smMap.put(stateMachine.getName(), stateMachine);
+			//handleStateMachine(stateMachine);
+		//}
 		this.stateMachineMap = smMap;
 		// all machines are iterated so we only do sanity check here for a root machine
 		if (this.stateMachineMap == null) {
 			throw new IllegalArgumentException("Can't find root statemachine from model");
 		}
-		//showStateMachines();
+		showStateMachines();
 	}
 
 
@@ -229,25 +237,24 @@ public class ParserEngine implements Runnable {
 				boolean isInitialState = UmlrtUtils.isInitialState(state);
 				deferredList = UmlrtUtils.resolveDeferredEvents(state);
 				boolean isFinalState = UmlrtUtils.isFinalState(state);
-				StateData stateDate = new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState); //My Solution
+				StateData stateDate = new StateData(this.elementName, state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState); //My Solution
 				/*StateData stateData = handleActions(
 						new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState), state);*/
-
+				
 				listStateData.add(stateDate);
-				//System.out.println(stateDate.allDataToString());
 
 				// add states via entry/exit reference points
 				for (ConnectionPointReference cpr : state.getConnections()) {
 					if (cpr.getEntries() != null) {
 						for (Pseudostate cp : cpr.getEntries()) {
-							StateData cpStateData = new StateData(cp.getName(), parentName, regionName);
+							StateData cpStateData = new StateData(this.elementName, cp.getName(), parentName, regionName);
 							cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.ENTRY);
 							listStateData.add(cpStateData);
 						}
 					}
 					if (cpr.getExits() != null) {
 						for (Pseudostate cp : cpr.getExits()) {
-							StateData cpStateData = new StateData(cp.getName(), parentName, regionName);
+							StateData cpStateData = new StateData(this.elementName, cp.getName(), parentName, regionName);
 							cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.EXIT);
 							listStateData.add(cpStateData);
 						}
@@ -273,27 +280,27 @@ public class ParserEngine implements Runnable {
 				}
 
 				if (state.getKind() == PseudostateKind.CHOICE_LITERAL) {
-					StateData cpStateData = new StateData(state.getName(), parentName, regionName);
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.CHOICE);
 					listStateData.add(cpStateData);
 				} else if (state.getKind() == PseudostateKind.JUNCTION_LITERAL) {
-					StateData cpStateData = new StateData(state.getName(), parentName, regionName);
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.JUNCTION);
 					listStateData.add(cpStateData);
 				} else if (state.getKind() == PseudostateKind.FORK_LITERAL) {
-					StateData cpStateData = new StateData(state.getName(), parentName, regionName);
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.FORK);
 					listStateData.add(cpStateData);
 				} else if (state.getKind() == PseudostateKind.JOIN_LITERAL) {
-					StateData cpStateData = new StateData(state.getName(), parentName, regionName);
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.JOIN);
 					listStateData.add(cpStateData);
 				} else if (state.getKind() == PseudostateKind.SHALLOW_HISTORY_LITERAL) {
-					StateData cpStateData = new StateData(state.getName(), parentName, regionName);
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.HISTORY_SHALLOW);
 					listStateData.add(cpStateData);
 				} else if (state.getKind() == PseudostateKind.DEEP_HISTORY_LITERAL) {
-					StateData cpStateData = new StateData(state.getName(), parentName, regionName);
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.HISTORY_DEEP);
 					listStateData.add(cpStateData);
 				}
@@ -391,14 +398,11 @@ public class ParserEngine implements Runnable {
 			// go through all triggers and create transition
 			// from signals, or transitions from timers
 			
-			
-		
-			
 			for (Trigger trigger : transition.getTriggers()) {
 				guards = resolveGuard(transition);
 				Event event = trigger.getEvent();
 				 if (event instanceof CallEvent) {
-					 System.out.println("--- in Trigger CallEvent");
+					 //System.out.println("--- in Trigger CallEvent");
 					 triggers = UmlrtUtils.getTriggers(transition);
 				 }
 				/* 
@@ -431,7 +435,7 @@ public class ParserEngine implements Runnable {
 						}	
 					}
 				}
-				 listTransitionData.add(new TransitionData(transition.getSource().getName(),
+				 listTransitionData.add(new TransitionData(this.elementName,transition.getSource().getName(),
 							transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
 							guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
 				 	break; // all triggers will be got from getTriggers function in umlrtUtils
@@ -439,8 +443,7 @@ public class ParserEngine implements Runnable {
 
 			// create anonymous transition if needed
 			if (shouldCreateAnonymousTransition(transition)) {
-				System.out.println("--[2]");
-				listTransitionData.add(new TransitionData(transition.getSource().getName(),
+				listTransitionData.add(new TransitionData(this.elementName,transition.getSource().getName(),
 						transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
 			}
@@ -472,9 +475,9 @@ public class ParserEngine implements Runnable {
 	}
 
 	private boolean shouldCreateAnonymousTransition(Transition transition) {
-		if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State)) {
-			return true;
-		}
+		//if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State)) {
+			//return true;
+		//}
 		if (transition.getSource() instanceof Pseudostate) {
 			if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
 				return true;
@@ -485,7 +488,6 @@ public class ParserEngine implements Runnable {
 				return true;
 			}
 		}
-
 		if (transition.getSource() == null || transition.getTarget() == null) {
 			// nothing to do as would cause NPE later
 			return false;
@@ -503,8 +505,6 @@ public class ParserEngine implements Runnable {
 			if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.FORK_LITERAL) {
 				return false;
 			}
-
-
 		}
 		if (transition.getTarget() instanceof Pseudostate) {
 			if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {

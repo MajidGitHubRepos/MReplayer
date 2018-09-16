@@ -9,7 +9,8 @@ import org.eclipse.uml2.uml.State;
 import ca.queensu.cs.umlrt.UmlrtUtils.PseudoStateKind;
 
 public class StateData {
-
+	
+	private String capsuleName;
 	private String parentName;
 	private String regionName;
 	private String stateName;
@@ -28,7 +29,8 @@ public class StateData {
 	
 	//public StateData() {}
 	
-	public StateData(State s, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
+	public StateData(String capsuleName, State s, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
+		this.capsuleName = capsuleName;
 		this.state = s;
 		this.stateName = sName;
 		this.deferred = defList;
@@ -40,12 +42,16 @@ public class StateData {
 		this.end = isFinalState;
 	}
 	
-	public StateData(String sName, String pName, String rName) {
-		this(null,sName, null, null, null, pName,rName, false, false);
+	public StateData(String capsuleName, String sName, String pName, String rName) {
+		this(capsuleName, null,sName, null, null, null, pName,rName, false, false);
 	}
 	
 	
 	//------------[GETERS]
+	public String getCapsuleName() {
+		return capsuleName;
+	}
+	
 	public State getState() {
 		return state;
 	}
@@ -87,11 +93,6 @@ public class StateData {
 		this.deferred = deferred;
 	}
 	
-	
-	public void setEntyActions(List<String> entyActions) {
-		this.entryActions = entyActions;
-	}
-	
 	public void setParent(String parent) {
 		this.parentName = parent;
 	}
@@ -124,7 +125,7 @@ public class StateData {
 	//----------
 	
 	public String allDataToString() {
-		return "StateData [parent=" + parentName + ", region=" + regionName + ", state=" + state + ", deferred=" + deferred
+		return "StateData [CapsuleName="+capsuleName+", StateName=" + stateName + ", region=" + regionName + ", state=" + state + ", deferred=" + deferred
 				+ ", entryActions=" + entryActions + ", exitActions=" + exitActions + ", initial=" + initial
 				+  ", end=" + end + ", pseudoStateKind=" + pseudoStateKind + "]";
 	}

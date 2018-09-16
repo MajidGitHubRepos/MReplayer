@@ -10,6 +10,7 @@ import org.springframework.statemachine.transition.TransitionKind;
 
 public class TransitionData {
 	//private  String name;
+	public String capsuleName;
 	private final State source;
 	private final State target;
 	private final String sourceName;
@@ -24,19 +25,20 @@ public class TransitionData {
 	//private final SecurityRule securityRule;
 
 	//public TransitionData() {}
-	public TransitionData(String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
-		this(null,sourceName, null, targetName, triggers, actions, guards, kind, period, count);
+	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
+		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count);
 	}
 	
-	public TransitionData(String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
-		this(null,sourceName, null, targetName, triggers, actions, guard, kind, null, null);
+	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
+		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null);
 	}
 	
-	public TransitionData(String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count) {
-		this(null,sourceName, null, targetName, null, actions, guard, kind, period, count);
+	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count) {
+		this(capsuleName,null,sourceName, null, targetName, null, actions, guard, kind, period, count);
 	}
 	
-	public TransitionData(State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
+	public TransitionData(String capsuleName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
+		this.capsuleName = capsuleName;
 		this.source = source;
 		this.sourceName = sourceName;
 		this.target = target;
@@ -54,6 +56,10 @@ public class TransitionData {
 	//public String getName() {
 	//	return name;
 	//}
+	public String getCapsuleName() {
+		return capsuleName;
+	}
+	
 	public State getSource() {
 		return source;
 	}
@@ -122,7 +128,7 @@ public class TransitionData {
 	*/
 	
 	public String allDataToString() {
-		return "TransitionData [source=" + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
+		return "TransitionData [CapsuleName= "+capsuleName+", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
 				+ ", period=" + period + ", count=" + count + ", kind=" + kind +"]";
 	}
 
