@@ -53,6 +53,7 @@ import org.eclipse.uml2.uml.Transition;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
+
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Vertex;
@@ -61,112 +62,51 @@ import org.eclipse.uml2.uml.OpaqueBehavior;
 
 public class UmlrtParser {
 	
+	//private  Thread parserEngineT;
+	private ParserEngine parserEngine;
 	
+	public UmlrtParser() {
+		
+	}
 	   
-	   public static void main(String args[]) {
-		   
-		   UmlrtElements umlrtElements = new UmlrtElements();
-		   
-		   
-		/*	
-			//---------------------------------------------------------------------------
-			
-			
-			File inputModelFile = new File("/home/babaei/Downloads/MDebugger/lastUpdate/MDebugger-master/Samples/PingPong/PingPong.uml");
+	public static void main(String[] args) throws IOException 
+    { 
+        Thread t1 = new Thread(new UmlrtParser().new RunnableImpl()); 
+        t1.start(); 
+    } 
+  
+    private class RunnableImpl implements Runnable { 
 
-			// Read modeul file
-			ResourceSet resourceSet = new ResourceSetImpl();
-			UMLResourcesUtil.init(resourceSet);
-			XMIResource mainResource = (XMIResource) resourceSet.getResource(URI.createURI(inputModelFile.getAbsolutePath()), true);		
-			EcoreUtil.resolveAll(mainResource);
-
-			// Get and iterate over content
-			TreeIterator<EObject> objects = EcoreUtil.getAllContents(mainResource, true);
-			while(objects.hasNext())
-			{
-			    EObject object = objects.next();
-			    String id = mainResource.getID(object);
-			    System.out.println("******* id is: " +id);
-			    System.out.println("******* object is: " +object);
-		//==================================================== [Extract State Machines]
-			    if(object instanceof StateMachine)
-			    {
-			        //System.out.println("Object "+((StateMachine) object).getName()+" is a state machine!");
-		//==================================================== [Extract Members (states, transitions) in State Machine]
-			        List<NamedElement> members = ((StateMachine) object).getRegions().get(0).getOwnedMembers();
-			        //System.out.println("******* list is: " +members);
-			        for(NamedElement member:members)
-					{
-			        	//System.out.println("******* member is: " +member);
-		//==================================================== [Extract States in State Machine]
-						if (member instanceof State) {
-							//System.out.println("******* StateName is: " +member.getName());
-							//System.out.println("******* State getOwnedElements is: " +member.getOwnedElements());
-							
-						
-		//==================================================== [Extract stateInfo in State]
-							List<Element> stateInfo =   member.getOwnedElements();
-							for(Element info:stateInfo)
-							{
-		//==================================================== [Extract OpaqueBehavior in StateInfo]
-								if (info instanceof OpaqueBehavior) {
-									//System.out.println("******* info [OpaqueBehavior] is: " +info);
-									 if (((OpaqueBehavior) info).isSetLanguages()) {
-						                    int bodyIndex = 0;
-						                    for (String targetLanguage : ((OpaqueBehavior) info).getLanguages()) {
-						                        if ("C++".equals(targetLanguage)) {
-						                        	System.out.println("******* Body : "+((OpaqueBehavior) info).getBodies().get(bodyIndex));
-						                        }
-						                    }
-									 }
-								}
-								
-							}
-							
-						}
-					}
-
-			   		//for(Class capsule: capsules)
-			   		//{
-			   		//	System.out.println("******* Capsule name is: " +capsule.getName());
-			   		//}
-			        
-			        
-			        List<Transition> transitions = ((StateMachine) object).getRegions().get(0).getTransitions();
-			        for (Transition tr: transitions){
-		 				System.out.println("------------------- transition name is: " +tr.getName());
-		 			}
-			        
-			        
-			        
-			        
-			    }
-			}
+    public void run() {
 		   
-		   */
-		   
-		   	File inputModelFile = new File("/home/majid/workspace/PingPong.bk/PingPong.uml");
-		   	File mainDir = new File(inputModelFile.getParent());
-		   	
-			// Read modeul file
-			ResourceSet resourceSet = new ResourceSetImpl();
-			UMLResourcesUtil.init(resourceSet);
-			XMIResource mainResource = (XMIResource) resourceSet.getResource(URI.createURI(inputModelFile.getAbsolutePath()), true);		
-		    EcoreUtil.resolveAll(mainResource);
-
+		 	//String modelPath = "/home/majid/workspace/PingPong.bk/PingPong.uml";
+		 	String modelPath = "/home/majid/workspace-papyrusrt/PingPong.bk/PingPong.uml";
+		 	
+		 	XMIResource mainResource = UmlrtUtils.getResource(modelPath);
 		    Model inputModel = (Model) EcoreUtil.getObjectByType(mainResource.getContents(), UMLPackage.Literals.MODEL);
 
 		    List<XMIResource> allResources = new LinkedList<XMIResource>();
 		    allResources.add(mainResource);
 
 		    EList<PackageableElement> modelElements = inputModel.getPackagedElements();	
-		    //List<PackageableElement> movedElements = new ArrayList<PackageableElement>();
 		    
-		    System.out.println("--------------> modelElements.size(): "+ modelElements.size() );
-		    umlrtElements.elementsExtraction(modelElements);
+		    //System.out.println("--------------> modelElements.size(): "+ modelElements.size() );
+		    
+		    parserEngine = new ParserEngine(modelElements);
+		    Thread parserEngineT = new Thread(parserEngine);
+		    
+		    parserEngineT.start();
+		    parserEngineT.interrupt();
+	    	try {
+				parserEngineT.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		    
 	   }
 	  
 	   
 
 	}
+}
