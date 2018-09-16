@@ -113,7 +113,7 @@ public class ParserEngine implements Runnable {
 	//==================================================================	
 	public final void run() {
 		elementsExtractor();
-		
+
 		System.out.println("=======================[StateData]==========================");
 		for (int i = 0; i<listStateData.size(); i++) {
 			System.out.println("["+i+"]:" +listStateData.get(i).allDataToString());
@@ -123,8 +123,16 @@ public class ParserEngine implements Runnable {
 		for (int i = 0; i<listTransitionData.size(); i++) {
 			System.out.println("["+i+"]:" +listTransitionData.get(i).allDataToString());
 		}
+		//-------
+		System.out.println("=======================[choices]==========================");
+		for (Map.Entry<String, LinkedList<ChoiceData>> entry  : choices.entrySet()) {
+			System.out.println("---> entry.getKey(): "+entry.getKey());
+			System.out.println("---> entry.getValue().get(1): "+entry.getValue().get(1));
+			for (int i = 0; i < entry.getValue().size(); i++) {
+				System.out.println("---> Guard["+i+"]: entry.getValue().get("+i+"): "+entry.getValue().get(i).allDataToString());
 
-
+			}
+		}
 	}
 
 	//==================================================================	
@@ -179,7 +187,7 @@ public class ParserEngine implements Runnable {
 		for (Vertex vertex : region.getSubvertices()) {
 			//[Start]----------------------------------------------------------[State]
 			if (vertex instanceof State) {
-				
+
 				State state = (State)vertex;
 				List<String> entryList = new ArrayList();
 				List<String> exitList = new ArrayList();
@@ -187,7 +195,7 @@ public class ParserEngine implements Runnable {
 				String parentName = "";
 				String regionName = "";
 				String sName = state.getName();
-				
+
 				//System.out.println("state: " + state);
 
 				if (state.getContainer().getOwner() instanceof State) {
@@ -290,164 +298,165 @@ public class ParserEngine implements Runnable {
 				}
 			}
 		} //[End] Vertex
-			//[End]----------------------------------------------------------[Pseudostate]
-			//[Start]----------------------------------------------------------[Transitions]
-			for (Transition transition : region.getTransitions()) {
-				// for entry/exit points we need to create these outside
-				// of triggers as link from point to a state is most likely
-				// just a link and don't have any triggers.
-				// little unclear for now if link from points to a state should
-				// have trigger?
-				// anyway, we need to add entrys and exits to a model
-				
-				//System.out.println("==>>> transiton: " + transition);
-				boolean targetPseudostate = false;
-				boolean sourcePseudostate = false;
-				
-				if (transition.getSource() instanceof ConnectionPointReference) {
-					// support ref points if only one is defined as for some
-					// reason uml can define multiple ones which is not
-					// realistic with state machines
-					EList<Pseudostate> cprentries = ((ConnectionPointReference)transition.getSource()).getEntries();
-					if (cprentries != null && cprentries.size() == 1 && cprentries.get(0).getKind() == PseudostateKind.ENTRY_POINT_LITERAL) {
-						entrys.add(new EntryData(cprentries.get(0).getName(), transition.getTarget().getName()));
-					}
-					EList<Pseudostate> cprexits = ((ConnectionPointReference)transition.getSource()).getExits();
-					if (cprexits != null && cprexits.size() == 1 && cprexits.get(0).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
-						exits.add(new ExitData(cprexits.get(0).getName(), transition.getTarget().getName()));
-					}
+		//[End]----------------------------------------------------------[Pseudostate]
+		//[Start]----------------------------------------------------------[Transitions]
+		for (Transition transition : region.getTransitions()) {
+			// for entry/exit points we need to create these outside
+			// of triggers as link from point to a state is most likely
+			// just a link and don't have any triggers.
+			// little unclear for now if link from points to a state should
+			// have trigger?
+			// anyway, we need to add entrys and exits to a model
+
+			//System.out.println("==>>> transiton: " + transition);
+			boolean targetPseudostate = false;
+			boolean sourcePseudostate = false;
+
+			if (transition.getSource() instanceof ConnectionPointReference) {
+				// support ref points if only one is defined as for some
+				// reason uml can define multiple ones which is not
+				// realistic with state machines
+				EList<Pseudostate> cprentries = ((ConnectionPointReference)transition.getSource()).getEntries();
+				if (cprentries != null && cprentries.size() == 1 && cprentries.get(0).getKind() == PseudostateKind.ENTRY_POINT_LITERAL) {
+					entrys.add(new EntryData(cprentries.get(0).getName(), transition.getTarget().getName()));
 				}
-				
-				//State s = (State)transition.getSource();
-				if (transition.getSource() instanceof Pseudostate) {
-					if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.ENTRY_POINT_LITERAL) {
-						entrys.add(new EntryData(transition.getSource().getName(), transition.getTarget().getName()));
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
-						exits.add(new ExitData(transition.getSource().getName(), transition.getTarget().getName()));
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.CHOICE_LITERAL) {
-						LinkedList<ChoiceData> list = choices.get(transition.getSource().getName());
-						if (list == null) {
-							list = new LinkedList<ChoiceData>();
-							choices.put(transition.getSource().getName(), list);
-						}
-						List<String> guard = resolveGuard(transition);
-						List<String> actions = UmlrtUtils.resolveTransitionActions(transition);
-						// we want null guards to be at the end
-						if (guard == null) {
-							list.addLast(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
-						} else {
-							list.addFirst(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
-						}
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.JUNCTION_LITERAL) {
-						LinkedList<JunctionData> list = junctions.get(transition.getSource().getName());
-						if (list == null) {
-							list = new LinkedList<JunctionData>();
-							junctions.put(transition.getSource().getName(), list);
-						}
-						List<String> guard = resolveGuard(transition);
-						List<String> actions = UmlrtUtils.resolveTransitionActions(transition);
-						// we want null guards to be at the end
-						if (guard == null) {
-							list.addLast(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
-						} else {
-							list.addFirst(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
-						}
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.FORK_LITERAL) {
-						List<String> list = forks.get(transition.getSource().getName());
-						if (list == null) {
-							list = new ArrayList<String>();
-							forks.put(transition.getSource().getName(), list);
-						}
-						list.add(transition.getTarget().getName());
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.SHALLOW_HISTORY_LITERAL) {
-						historys.add(new HistoryData(transition.getSource().getName(), transition.getTarget().getName()));
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.DEEP_HISTORY_LITERAL) {
-						historys.add(new HistoryData(transition.getSource().getName(), transition.getTarget().getName()));
-					} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
-						sourcePseudostate = true;
-					}
+				EList<Pseudostate> cprexits = ((ConnectionPointReference)transition.getSource()).getExits();
+				if (cprexits != null && cprexits.size() == 1 && cprexits.get(0).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
+					exits.add(new ExitData(cprexits.get(0).getName(), transition.getTarget().getName()));
 				}
-				if (transition.getTarget() instanceof Pseudostate) {
-					if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {
-						List<String> list = joins.get(transition.getTarget().getName());
-						if (list == null) {
-							list = new ArrayList<String>();
-							joins.put(transition.getTarget().getName(), list);
-						}
-						list.add(transition.getSource().getName());
-					}else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
-						targetPseudostate = true;
+			}
+
+			//State s = (State)transition.getSource();
+			if (transition.getSource() instanceof Pseudostate) {
+				if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.ENTRY_POINT_LITERAL) {
+					entrys.add(new EntryData(transition.getSource().getName(), transition.getTarget().getName()));
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
+					exits.add(new ExitData(transition.getSource().getName(), transition.getTarget().getName()));
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.CHOICE_LITERAL) {
+					LinkedList<ChoiceData> list = choices.get(transition.getSource().getName());
+					if (list == null) {
+						list = new LinkedList<ChoiceData>();
+						choices.put(transition.getSource().getName(), list);
 					}
+					List<String> guard = resolveGuard(transition);
+					List<String> actions = UmlrtUtils.resolveTransitionActions(transition);
+					// we want null guards to be at the end
+					if (guard == null) {
+						list.addLast(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+					} else {
+						list.addFirst(new ChoiceData(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+					}
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.JUNCTION_LITERAL) {
+					LinkedList<JunctionData> list = junctions.get(transition.getSource().getName());
+					if (list == null) {
+						list = new LinkedList<JunctionData>();
+						junctions.put(transition.getSource().getName(), list);
+					}
+					List<String> guard = resolveGuard(transition);
+					List<String> actions = UmlrtUtils.resolveTransitionActions(transition);
+					// we want null guards to be at the end
+					if (guard == null) {
+						list.addLast(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+					} else {
+						list.addFirst(new JunctionData<String, String>(transition.getSource().getName(), transition.getTarget().getName(), guard, actions));
+					}
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.FORK_LITERAL) {
+					List<String> list = forks.get(transition.getSource().getName());
+					if (list == null) {
+						list = new ArrayList<String>();
+						forks.put(transition.getSource().getName(), list);
+					}
+					list.add(transition.getTarget().getName());
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.SHALLOW_HISTORY_LITERAL) {
+					historys.add(new HistoryData(transition.getSource().getName(), transition.getTarget().getName()));
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.DEEP_HISTORY_LITERAL) {
+					historys.add(new HistoryData(transition.getSource().getName(), transition.getTarget().getName()));
+				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
+					sourcePseudostate = true;
 				}
-				List<String> guard = null;
-				Long period = null;
-				Integer count = null;
-				// go through all triggers and create transition
-				// from signals, or transitions from timers
-				for (Trigger trigger : transition.getTriggers()) {
-					guard = resolveGuard(transition);
-					Event event = trigger.getEvent();
-					if (event instanceof SignalEvent) {
-						Signal signal = ((SignalEvent)event).getSignal();
-						if (signal != null) {
-							// special case for ref point
-							if (transition.getTarget() instanceof ConnectionPointReference) {
-								EList<Pseudostate> cprentries = ((ConnectionPointReference)transition.getTarget()).getEntries();
-								if (cprentries != null && cprentries.size() == 1) {
-									listTransitionData.add(new TransitionData(transition.getSource().getName(),
-											cprentries.get(0).getName(), signal.getName(), UmlrtUtils.resolveTransitionActions(transition),
-											guard, UmlrtUtils.mapUmlTransitionType(transition)));
-								}
-							} else {
+			}
+			if (transition.getTarget() instanceof Pseudostate) {
+				if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {
+					List<String> list = joins.get(transition.getTarget().getName());
+					if (list == null) {
+						list = new ArrayList<String>();
+						joins.put(transition.getTarget().getName(), list);
+					}
+					list.add(transition.getSource().getName());
+				}if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
+					targetPseudostate = true;
+				}
+			}
+			List<String> guard = null;
+			Long period = null;
+			Integer count = null;
+			// go through all triggers and create transition
+			// from signals, or transitions from timers
+			for (Trigger trigger : transition.getTriggers()) {
+				guard = resolveGuard(transition);
+				Event event = trigger.getEvent();
+				if (event instanceof SignalEvent) {
+					Signal signal = ((SignalEvent)event).getSignal();
+					if (signal != null) {
+						// special case for ref point
+						if (transition.getTarget() instanceof ConnectionPointReference) {
+							EList<Pseudostate> cprentries = ((ConnectionPointReference)transition.getTarget()).getEntries();
+							if (cprentries != null && cprentries.size() == 1) {
 								listTransitionData.add(new TransitionData(transition.getSource().getName(),
-										transition.getTarget().getName(), signal.getName(), UmlrtUtils.resolveTransitionActions(transition),
+										cprentries.get(0).getName(), signal.getName(), UmlrtUtils.resolveTransitionActions(transition),
 										guard, UmlrtUtils.mapUmlTransitionType(transition)));
 							}
-						}
-					}else if (event instanceof TimeEvent) {
-						TimeEvent timeEvent = (TimeEvent)event;
-						period = getTimePeriod(timeEvent);
-						if (period != null) {
-							count = null;
-							if (timeEvent.isRelative()) {
-								count = 1;
-							}
+						} else {
 							listTransitionData.add(new TransitionData(transition.getSource().getName(),
-									transition.getTarget().getName(), UmlrtUtils.resolveTransitionActions(transition),
-									guard, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+									transition.getTarget().getName(), signal.getName(), UmlrtUtils.resolveTransitionActions(transition),
+									guard, UmlrtUtils.mapUmlTransitionType(transition)));
 						}
 					}
-				}//for
-				if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State) || (sourcePseudostate) || (targetPseudostate)) {
-					listTransitionData.add(new TransitionData(transition.getSource().getName(),
-							transition.getTarget().getName(), UmlrtUtils.resolveTransitionActions(transition),
-							guard, UmlrtUtils.mapUmlTransitionType(transition), period, count));
-					
+				}else if (event instanceof TimeEvent) {
+					TimeEvent timeEvent = (TimeEvent)event;
+					period = getTimePeriod(timeEvent);
+					if (period != null) {
+						count = null;
+						if (timeEvent.isRelative()) {
+							count = 1;
+						}
+						listTransitionData.add(new TransitionData(transition.getSource().getName(),
+								transition.getTarget().getName(), UmlrtUtils.resolveTransitionActions(transition),
+								guard, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+					}
 				}
-				// create anonymous transition if needed
-				if (shouldCreateAnonymousTransition(transition)) {
-					listTransitionData.add(new TransitionData(transition.getSource().getName(), transition.getTarget().getName(),
-							null, UmlrtUtils.resolveTransitionActions(transition), resolveGuard(transition),
-							UmlrtUtils.mapUmlTransitionType(transition)));
-				}
-			
+			}//for
+			if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State) || (sourcePseudostate) || (targetPseudostate)) {
+				listTransitionData.add(new TransitionData(transition.getSource().getName(),
+						transition.getTarget().getName(), UmlrtUtils.resolveTransitionActions(transition),
+						guard, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+
 			}
-			//[End]----------------------------------------------------------[Transitions]
-		
+			// create anonymous transition if needed
+			if (shouldCreateAnonymousTransition(transition)) {
+				listTransitionData.add(new TransitionData(transition.getSource().getName(), transition.getTarget().getName(),
+						null, UmlrtUtils.resolveTransitionActions(transition), resolveGuard(transition),
+						UmlrtUtils.mapUmlTransitionType(transition)));
+			}
+
+		}
+		//[End]----------------------------------------------------------[Transitions]
+
 	}//[End] Region
-	
+
 	//---------------[Functions]
 	private List<String> resolveGuard(Transition transition) {
-		List<String> guard = null;
+		List<String> guard = new ArrayList<String>();
 		for (Constraint c : transition.getOwnedRules()) {
 			if (c.getSpecification() instanceof OpaqueExpression) {
 				String guardStr = UmlrtUtils.resolveBodyByLanguage("C++", (OpaqueExpression)c.getSpecification());
+				//System.out.println("guardStr: "+guardStr);
 				guard.add(guardStr);
 			}
 		}
 		return guard;
 	}
-	
+
 	private Long getTimePeriod(TimeEvent event) {
 		try {
 			return Long.valueOf(event.getWhen().getExpr().integerValue());
@@ -455,7 +464,7 @@ public class ParserEngine implements Runnable {
 			return null;
 		}
 	}
-	
+
 	private boolean shouldCreateAnonymousTransition(Transition transition) {
 		if (transition.getSource() == null || transition.getTarget() == null) {
 			// nothing to do as would cause NPE later
@@ -482,7 +491,7 @@ public class ParserEngine implements Runnable {
 		}
 		return true;
 	}
-	
+
 
 
 }

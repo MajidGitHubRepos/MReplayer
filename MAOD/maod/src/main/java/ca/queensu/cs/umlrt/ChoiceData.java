@@ -50,4 +50,9 @@ public class ChoiceData {
 	public List<String> getActions() {
 		return actions;
 	}
+	
+	public String allDataToString() {
+		return "ChoicesData [source=" + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName  + ", actions=" + actions + ", guard=" + guard
+				+ "]";
+	}
 }
