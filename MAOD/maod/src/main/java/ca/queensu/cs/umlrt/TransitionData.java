@@ -67,7 +67,15 @@ public class TransitionData {
 	public State getTarget() {
 		return target;
 	}
+	
+	public String getSourceName() {
+		return sourceName;
+	}
 
+	public String getTargetName() {
+		return targetName;
+	}
+	
 	public Integer getCount() {
 		return count;
 	}

@@ -84,7 +84,10 @@ public class ParserEngine implements Runnable {
 	private final Map<String, List<String>> forks = new HashMap<String, List<String>>();
 	private final Map<String, List<String>> joins = new HashMap<String, List<String>>();
 	private final List<HistoryData> historys = new ArrayList<HistoryData>();
+	private final Map<String, List<TableDataMember>> listTableData = new HashMap<String, List<TableDataMember>>();
+
 	public String elementName;
+	public String capDone = "";
 
 	public ParserEngine(EList<PackageableElement> me) {
 		this.modelElements = me;
@@ -117,6 +120,7 @@ public class ParserEngine implements Runnable {
 	//==================================================================	
 	public final void run() {
 		elementsExtractor();
+		//tableMaker();
 
 		System.out.println("=======================[StateData]==========================");
 		for (int i = 0; i<listStateData.size(); i++) {
@@ -131,13 +135,29 @@ public class ParserEngine implements Runnable {
 		System.out.println("=======================[choices]==========================");
 		for (Map.Entry<String, LinkedList<ChoiceData>> entry  : choices.entrySet()) {
 			System.out.println("---> entry.getKey(): "+entry.getKey());
-			System.out.println("---> entry.getValue().get(1): "+entry.getValue().get(1));
+			//System.out.println("---> entry.getValue().get(1): "+entry.getValue().get(1));
 			for (int i = 0; i < entry.getValue().size(); i++) {
 				System.out.println("---> Guard["+i+"]: entry.getValue().get("+i+"): "+entry.getValue().get(i).allDataToString());
 
 			}
 		}
+		//-------
+		System.out.println("=======================[TableData]==========================");
+		for (Map.Entry<String, List<TableDataMember>> entry  : listTableData.entrySet()) {
+			System.out.println("---> entry.getKey(): "+entry.getKey());
+			//System.out.println("---> entry.getValue().get(1): "+entry.getValue().get(1));
+			for (int i = 0; i < entry.getValue().size(); i++) {
+				System.out.println("---> TableData["+i+"]: entry.getValue().get("+i+"): "+entry.getValue().get(i).allDataToString());
+
+			}
+		}
 	}
+	//==================================================================	
+	//==============================================[elementsExtractor]
+	//==================================================================	
+	//public void tableMaker() {
+
+	//}
 
 	//==================================================================	
 	//==============================================[elementsExtractor]
@@ -168,15 +188,15 @@ public class ParserEngine implements Runnable {
 		// expect root machine to be a one having no machines in a submachineState field.
 		//====================================================== [Extract State Machines]			
 		//for (StateMachine stateMachine : stateMachines) {
-			//smMap.put(stateMachine.getName(), stateMachine);
-			//handleStateMachine(stateMachine);
+		//smMap.put(stateMachine.getName(), stateMachine);
+		//handleStateMachine(stateMachine);
 		//}
 		this.stateMachineMap = smMap;
 		// all machines are iterated so we only do sanity check here for a root machine
 		if (this.stateMachineMap == null) {
 			throw new IllegalArgumentException("Can't find root statemachine from model");
 		}
-		showStateMachines();
+		//showStateMachines();
 	}
 
 
@@ -193,6 +213,9 @@ public class ParserEngine implements Runnable {
 	//==============================================[handleRegion]
 	//==================================================================
 	private void handleRegion(Region region) {
+		List<TableDataMember> tableDataMember = new ArrayList<TableDataMember>();
+		
+
 		for (Vertex vertex : region.getSubvertices()) {
 			//[Start]----------------------------------------------------------[State]
 			if (vertex instanceof State) {
@@ -240,7 +263,7 @@ public class ParserEngine implements Runnable {
 				StateData stateDate = new StateData(this.elementName, state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState); //My Solution
 				/*StateData stateData = handleActions(
 						new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState), state);*/
-				
+
 				listStateData.add(stateDate);
 
 				// add states via entry/exit reference points
@@ -317,7 +340,7 @@ public class ParserEngine implements Runnable {
 			// anyway, we need to add entrys and exits to a model
 
 			//System.out.println("==>>> transiton: " + transition);
-			
+
 			List<String> guards = new ArrayList<String>();
 			List<String> triggers = new ArrayList<String>();
 			Long period = null;
@@ -394,17 +417,17 @@ public class ParserEngine implements Runnable {
 					list.add(transition.getSource().getName());
 				}
 			}
-			
+
 			// go through all triggers and create transition
 			// from signals, or transitions from timers
-			
+
 			for (Trigger trigger : transition.getTriggers()) {
 				guards = resolveGuard(transition);
 				Event event = trigger.getEvent();
-				 if (event instanceof CallEvent) {
-					 //System.out.println("--- in Trigger CallEvent");
-					 triggers = UmlrtUtils.getTriggers(transition);
-				 }
+				if (event instanceof CallEvent) {
+					//System.out.println("--- in Trigger CallEvent");
+					triggers = UmlrtUtils.getTriggers(transition);
+				}
 				/* 
 				if (event instanceof SignalEvent) {
 					System.out.println("--- in Trigger resolve");
@@ -422,7 +445,7 @@ public class ParserEngine implements Runnable {
 							listTransitionData.add(new TransitionData(transition.getSource().getName(),
 									transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
 									guards, UmlrtUtils.mapUmlTransitionType(transition)));
-							
+
 						}
 					}
 				}*/else if (event instanceof TimeEvent) {
@@ -435,10 +458,10 @@ public class ParserEngine implements Runnable {
 						}	
 					}
 				}
-				 listTransitionData.add(new TransitionData(this.elementName,transition.getSource().getName(),
-							transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
-							guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
-				 	break; // all triggers will be got from getTriggers function in umlrtUtils
+				listTransitionData.add(new TransitionData(this.elementName,transition.getSource().getName(),
+						transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
+						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+				break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
 
 			// create anonymous transition if needed
@@ -450,10 +473,50 @@ public class ParserEngine implements Runnable {
 
 		}
 		//[End]----------------------------------------------------------[Transitions]
-
+		List<TableDataMember> listTableDataMember = tableMaker();
+		listTableData.put(this.elementName, listTableDataMember); // Table is made for the given state machine !
 	}//[End] Region
 
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[Functions]
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	//---------------[Functions]
+
+	//==================================================================	
+	//==============================================[tableMaker]
+	//==================================================================	
+	
+	private List<TableDataMember> tableMaker() {
+		List<TableDataMember> listTableDataMember = new ArrayList<TableDataMember>();
+		String trCapName = "";
+		for (int i = 0; i<listTransitionData.size(); i++) {
+			TableDataMember tableDataMember = new TableDataMember();
+			trCapName = listTransitionData.get(i).getCapsuleName();
+
+			for (int j = 0; j<listStateData.size(); j++) {
+				tableDataMember.setTransition(listTransitionData.get(i));
+				if ((listTransitionData.get(i).getSourceName() != null ) && (listStateData.get(j).getCapsuleName() == trCapName) && (!capDone.contains(trCapName))) {
+					//System.out.println("listTransitionData.get("+i+").getSourceName(): " + listTransitionData.get(i).getSourceName());
+					
+					if (listTransitionData.get(i).getSourceName() == listStateData.get(j).getStateName()){tableDataMember.setSource(listStateData.get(j));
+					//System.out.println("[SRC] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
+					}
+					if (listTransitionData.get(i).getTargetName() == listStateData.get(j).getStateName()){tableDataMember.setTarget(listStateData.get(j));
+					//System.out.println("[TRG] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
+					}
+					
+				}
+			}
+			if ((tableDataMember.getTarget() != null) && (tableDataMember.getSource() != null))
+				listTableDataMember.add(tableDataMember);
+		}
+		capDone= capDone + ", " + trCapName;
+		return listTableDataMember;
+	}
+	
+	//==================================================================	
+	//==============================================[resolveGuard]
+	//==================================================================
 	private List<String> resolveGuard(Transition transition) {
 		List<String> guard = new ArrayList<String>();
 		for (Constraint c : transition.getOwnedRules()) {
@@ -465,7 +528,10 @@ public class ParserEngine implements Runnable {
 		}
 		return guard;
 	}
-
+	
+	//==================================================================	
+	//==============================================[getTimePeriod]
+	//==================================================================
 	private Long getTimePeriod(TimeEvent event) {
 		try {
 			return Long.valueOf(event.getWhen().getExpr().integerValue());
@@ -473,10 +539,14 @@ public class ParserEngine implements Runnable {
 			return null;
 		}
 	}
-
+	
+	//==================================================================	
+	//==============================================[shouldCreateAnonymousTransition]
+	//==================================================================
+	
 	private boolean shouldCreateAnonymousTransition(Transition transition) {
 		//if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State)) {
-			//return true;
+		//return true;
 		//}
 		if (transition.getSource() instanceof Pseudostate) {
 			if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
@@ -510,7 +580,6 @@ public class ParserEngine implements Runnable {
 			if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {
 				return false;
 			}
-
 		}
 
 		return true;

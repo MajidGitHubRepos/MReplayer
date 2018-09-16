@@ -55,7 +55,9 @@ public class StateData {
 	public State getState() {
 		return state;
 	}
-	
+	public String getStateName() {
+		return stateName;
+	}
 	public List<String> getDeferred() {
 		return deferred;
 	}
