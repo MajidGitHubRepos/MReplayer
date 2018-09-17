@@ -15,7 +15,7 @@ import java.net.ServerSocket;
 
 
 
-public class ServerConnection  {
+public class Server  {
 
     private  String ip;
     private  int port;
@@ -27,7 +27,7 @@ public class ServerConnection  {
     private ByteReader reader;
     private ByteWriter writer;
     
-    public ServerConnection(final String ipAddress, final int portNumber) throws IOException {
+    public Server(final String ipAddress, final int portNumber) throws IOException {
         ip = ipAddress;
         port = portNumber;
         io = new SocketIO();
@@ -45,11 +45,11 @@ public class ServerConnection  {
     }
     public static void main(String[] args) throws IOException 
     { 
-        Thread t1 = new Thread(new ServerConnection("127.0.0.1",8001).new RunnableImpl()); 
+        Thread t1 = new Thread(new Server("127.0.0.1",8001).new RunnableImpl()); 
         t1.start(); 
     } 
   
-    private class RunnableImpl implements Runnable { 
+    public class RunnableImpl implements Runnable { 
 
     public void run() {
         

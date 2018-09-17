@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -64,18 +66,30 @@ public class UmlrtParser {
 	
 	//private  Thread parserEngineT;
 	private ParserEngine parserEngine;
+	private boolean umlrtParsingDone;
+	private  Map<String, List<TableDataMember>> listTableData;
 	
 	public UmlrtParser() {
+		listTableData = new HashMap<String, List<TableDataMember>>();
+		umlrtParsingDone = false;
 		
+	}
+	
+	public Map<String, List<TableDataMember>> getlistTableData() {
+		return this.listTableData;
+	}
+	public boolean getUmlrtParsingDone() {
+		return this.umlrtParsingDone;
 	}
 	   
 	public static void main(String[] args) throws IOException 
     { 
-        Thread t1 = new Thread(new UmlrtParser().new RunnableImpl()); 
+		UmlrtParser umlrtParser = new UmlrtParser();
+        Thread t1 = new Thread(umlrtParser.new RunnableImpl()); 
         t1.start(); 
     } 
   
-    private class RunnableImpl implements Runnable { 
+    public class RunnableImpl implements Runnable { 
 
     public void run() {
 		   
@@ -103,6 +117,13 @@ public class UmlrtParser {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	    	while(true) {
+	    		if (parserEngine.getUmlrtParsingDone()) {
+	    			listTableData = parserEngine.getListTableData();
+	    			umlrtParsingDone = true;
+	    			break;
+	    		}
+	    	}
 		    
 	   }
 	  

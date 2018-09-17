@@ -88,6 +88,8 @@ public class ParserEngine implements Runnable {
 
 	public String elementName;
 	public String capDone = "";
+	boolean isInitTr;
+	boolean umlrtParsingDone;
 
 	public ParserEngine(EList<PackageableElement> me) {
 		this.modelElements = me;
@@ -95,7 +97,16 @@ public class ParserEngine implements Runnable {
 		this.listStateData = new ArrayList<StateData>();
 		this.listTransitionData = new ArrayList<TransitionData>();
 		this.elementName = "";
+		this.isInitTr = false;
+		this.umlrtParsingDone = false;
 
+	}
+	
+	public boolean getUmlrtParsingDone() {
+		return this.umlrtParsingDone;
+	}
+	public Map<String, List<TableDataMember>> getListTableData() {
+		return listTableData;
 	}
 
 	//==================================================================	
@@ -120,8 +131,15 @@ public class ParserEngine implements Runnable {
 	//==================================================================	
 	public final void run() {
 		elementsExtractor();
-		//tableMaker();
+		showElements();
+		this.umlrtParsingDone = true;
+		
+	}
 
+	//==================================================================	
+	//==============================================[showElements]
+	//==================================================================	
+	public void showElements() {
 		System.out.println("=======================[StateData]==========================");
 		for (int i = 0; i<listStateData.size(); i++) {
 			System.out.println("["+i+"]:" +listStateData.get(i).allDataToString());
@@ -138,7 +156,6 @@ public class ParserEngine implements Runnable {
 			//System.out.println("---> entry.getValue().get(1): "+entry.getValue().get(1));
 			for (int i = 0; i < entry.getValue().size(); i++) {
 				System.out.println("---> Guard["+i+"]: entry.getValue().get("+i+"): "+entry.getValue().get(i).allDataToString());
-
 			}
 		}
 		//-------
@@ -152,13 +169,7 @@ public class ParserEngine implements Runnable {
 			}
 		}
 	}
-	//==================================================================	
-	//==============================================[elementsExtractor]
-	//==================================================================	
-	//public void tableMaker() {
-
-	//}
-
+	
 	//==================================================================	
 	//==============================================[elementsExtractor]
 	//==================================================================	
@@ -214,8 +225,7 @@ public class ParserEngine implements Runnable {
 	//==================================================================
 	private void handleRegion(Region region) {
 		List<TableDataMember> tableDataMember = new ArrayList<TableDataMember>();
-		
-
+		isInitTr = false;
 		for (Vertex vertex : region.getSubvertices()) {
 			//[Start]----------------------------------------------------------[State]
 			if (vertex instanceof State) {
@@ -345,6 +355,7 @@ public class ParserEngine implements Runnable {
 			List<String> triggers = new ArrayList<String>();
 			Long period = null;
 			Integer count = null;
+			isInitTr = false;
 
 			if (transition.getSource() instanceof ConnectionPointReference) {
 				// support ref points if only one is defined as for some
@@ -460,7 +471,7 @@ public class ParserEngine implements Runnable {
 				}
 				listTransitionData.add(new TransitionData(this.elementName,transition.getSource().getName(),
 						transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
-						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
 				break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
 
@@ -468,7 +479,7 @@ public class ParserEngine implements Runnable {
 			if (shouldCreateAnonymousTransition(transition)) {
 				listTransitionData.add(new TransitionData(this.elementName,transition.getSource().getName(),
 						transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
-						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count));
+						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
 			}
 
 		}
@@ -550,6 +561,7 @@ public class ParserEngine implements Runnable {
 		//}
 		if (transition.getSource() instanceof Pseudostate) {
 			if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.INITIAL_LITERAL) {
+				isInitTr = true;
 				return true;
 			}
 		}

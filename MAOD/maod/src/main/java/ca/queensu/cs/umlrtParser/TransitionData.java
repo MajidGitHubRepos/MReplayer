@@ -21,23 +21,24 @@ public class TransitionData {
 	private  TransitionKind kind;
 	private final Long period;
 	private final Integer count;
+	private boolean isInit;
 	//private List<Vector<String, String>> triggers = new ArrayList<HashMap<String, String>>();
 	//private final SecurityRule securityRule;
 
 	//public TransitionData() {}
-	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
-		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count);
+	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit ) {
+		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count, isInit);
 	}
 	
 	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
-		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null);
+		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null, false);
 	}
 	
-	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count) {
-		this(capsuleName,null,sourceName, null, targetName, null, actions, guard, kind, period, count);
+	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit ) {
+		this(capsuleName,null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit);
 	}
 	
-	public TransitionData(String capsuleName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count) {
+	public TransitionData(String capsuleName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
 		this.capsuleName = capsuleName;
 		this.source = source;
 		this.sourceName = sourceName;
@@ -49,6 +50,7 @@ public class TransitionData {
 		this.kind = kind;
 		this.period = period;
 		this.count = count;
+		this.isInit = isInit;
 		//this.event = event;
 	}
 
@@ -95,6 +97,10 @@ public class TransitionData {
 	public TransitionKind getKind() {
 		return kind;
 	}
+	
+	public void setIsInit() {
+		this.isInit = true;;
+	}
 
 
 	//------------[SETTERS]
@@ -137,7 +143,7 @@ public class TransitionData {
 	
 	public String allDataToString() {
 		return "TransitionData [CapsuleName= "+capsuleName+", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
-				+ ", period=" + period + ", count=" + count + ", kind=" + kind +"]";
+				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + "]";
 	}
 
 }
