@@ -1,8 +1,8 @@
-package ca.queensu.cs.umlrt;
+package ca.queensu.cs.umlrtParser;
 
 import org.eclipse.uml2.uml.State;
 
-public class EntryData {
+public class HistoryData {
 	private final State source;
 	private final String sourceName;
 	private final State target;
@@ -10,14 +10,14 @@ public class EntryData {
 	
 
 	
-	public EntryData(State source, String sourceName , State target, String targetName) {
+	public HistoryData(State source, String sourceName , State target, String targetName) {
 		this.source = source;
 		this.sourceName = source.getName();
 		this.target = target;
 		this.targetName = target.getName();
 	}
 	
-	public EntryData(String sourceName , String targetName) {
+	public HistoryData(String sourceName , String targetName) {
 		this(null,sourceName, null, targetName);
 	}
 
@@ -30,5 +30,4 @@ public class EntryData {
 	public String getTargetName() {
 		return targetName;
 	}
-
 }

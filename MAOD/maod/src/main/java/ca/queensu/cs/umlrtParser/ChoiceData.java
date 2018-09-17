@@ -1,11 +1,10 @@
-package ca.queensu.cs.umlrt;
+package ca.queensu.cs.umlrtParser;
 
 import java.util.List;
 
 import org.eclipse.uml2.uml.State;
 
-public class JunctionData<S, E> {
-
+public class ChoiceData {
 	private final State source;
 	private final State target;
 	private final String sourceName;
@@ -15,16 +14,16 @@ public class JunctionData<S, E> {
 
 	
 	
-	public JunctionData(String sourceName, String targetName, List<String> guard, List<String> actions) {
+	public ChoiceData(String sourceName, String targetName, List<String> guard, List<String> actions) {
 		this(null, sourceName, null, targetName, guard, actions);
 	}
 	
-	public JunctionData(State source, String sourceName, State target, String targetName, List<String> guard) {
+	public ChoiceData(State source, String sourceName, State target, String targetName, List<String> guard) {
 		this(source, sourceName, target, targetName, guard, null);
 	}
 
 	
-	public JunctionData(State source, String sourceName, State target, String targetName, List<String> guard, List<String> actions) {
+	public ChoiceData(State source, String sourceName, State target, String targetName, List<String> guard, List<String> actions) {
 		this.source = source;
 		this.sourceName = sourceName;
 		this.target = target;
@@ -50,5 +49,10 @@ public class JunctionData<S, E> {
 
 	public List<String> getActions() {
 		return actions;
+	}
+	
+	public String allDataToString() {
+		return "ChoicesData [source=" + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName  + ", actions=" + actions + ", guard=" + guard
+				+ "]";
 	}
 }

@@ -1,4 +1,4 @@
-package ca.queensu.cs.umlrt;
+package ca.queensu.cs.umlrtParser;
 
 import org.eclipse.uml2.uml.State;
 

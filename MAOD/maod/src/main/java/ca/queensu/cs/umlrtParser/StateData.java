@@ -1,4 +1,4 @@
-package ca.queensu.cs.umlrt;
+package ca.queensu.cs.umlrtParser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.State;
 
-import ca.queensu.cs.umlrt.UmlrtUtils.PseudoStateKind;
+import ca.queensu.cs.umlrtParser.UmlrtUtils.PseudoStateKind;
 
 public class StateData {
 	

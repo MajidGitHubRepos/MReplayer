@@ -1,4 +1,4 @@
-package ca.queensu.cs.umlrt;
+package ca.queensu.cs.umlrtParser;
 
 public class Guard {
 	
