@@ -1,5 +1,12 @@
 package ca.queensu.cs.umlrtParser;
 
+/*
+
+Developers:
+Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
+
+ */
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,20 +22,13 @@ public class StateData {
 	private String regionName;
 	private String stateName;
 	private State state;
-	//private Collection<StateData<S, E>> submachineStateData;
-	//private StateMachine<S, E> submachine;
-	//private StateMachineFactory<S, E> submachineFactory;
 	private List<String> deferred;
 	private List<String> entryActions;
 	private List<String> exitActions;
-	//private Collection<? extends Action<S, E>> stateActions;
 	private boolean initial = false;
-	//private Action<S, E> initialAction;
 	private boolean end = false;
 	private PseudoStateKind pseudoStateKind;
-	
-	//public StateData() {}
-	
+		
 	public StateData(String capsuleName, State s, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
 		this.capsuleName = capsuleName;
 		this.state = s;

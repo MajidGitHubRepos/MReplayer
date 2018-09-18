@@ -5,7 +5,7 @@ package ca.queensu.cs.server;
 Developers:
 Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
 
-*/
+ */
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -15,12 +15,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-
-//import org.eclipse.debug.core.DebugException;
-
+import java.util.concurrent.*; 
 import ca.queensu.cs.server.ByteReader.Command;
+import ca.queensu.cs.server.SocketIO;
 
 
 /*
@@ -102,121 +104,156 @@ public final class ByteReader implements Runnable {
 		RESUME
 	};
 
-	//private final Queue<byte[]> queue;
-	private final SocketIO io;
 	private Map<Integer, Command> commandStack;
 	private static int commandId = 0;
 	private String[] capsuleNames;
-	public String info;
+	private Semaphore sem; 
 
-	public ByteReader(final SocketIO serverIo, String[] caps ) {
-		info = "This is a reader!";
-		io = serverIo;
+
+	public ByteReader(String[] caps, Semaphore sem ) {
 		capsuleNames = caps;
+		this.sem = sem; 
 	}
 
 	public final void run() {
 		try {
-			io.input = new DataInputStream(io.socket.getInputStream());
+			Server.io.input = new DataInputStream(Server.io.socket.getInputStream());
 
-			//readFromSocketWithSize();
 
 			while (!Thread.currentThread().isInterrupted()) {
-				if (!io.isConnected()) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					io.close();
-					//return;
-					continue;
-				}
-
-				byte[] messageBuffer = new byte[4096];
-				String message;
-				io.read(messageBuffer);
-				message = new String(messageBuffer, StandardCharsets.UTF_8);
-				System.out.println(">>>>>>>>>>>>>>>>>>>> message: "+message);
-				int id = 0;
-
-				if (message.indexOf('|') >= 0) {
-
-					String[] table = message.split("[|]", 2);
-					String messageId = table[0];
-					message = table[1];
-
-					id = Integer.parseInt(messageId);
-
-
-					if ((id == 0)) {
-						this.retrieveCapsuleList(message);
-					}
-					else {
-						this.retrieveLastEvent(message);
-					}
-				}
-
+				this.sem.acquire(); 
+				readFromSocketWithSize();
+				this.sem.release(); 
 			}
-
 			System.out.println("Deleting client");
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private void retrieveEventList(String message) {
-		System.out.println("========================[In retrieveEventList]========================");	
+	//==================================================================	
+	//==============================================[eventMaker]
+	//==================================================================
+	public Event eventMaker(String message) {
+		String eventId = ""; 
+		String eventSourceKind = ""; 
+		String eventType = ""; 
+		String eventCapsuleName = ""; 
+		String eventCapsuleInstance = ""; 
+		String eventCapsuleIndex = ""; 
+		String eventSourceName ="";
+		String eventCpuTik = ""; 
+		String eventTimePointSecond = ""; 
+		String eventTimePointNano = ""; 
+		String eventVariableData = "";
+		String eventSignal = "";
+		String eventSource = "";
+		String eventStatus = "";
+		String eventTarget = "";
 
-		String[] traces = message.split("[|]");
-
-		if (traces.length <= 1)
-			return;
-
-		String capsule = traces[0];
-		String currentState = traces[1];
-		//IThread thread = ((MDebuggerDebugTarget)this.target).getThread(capsule);
-
-		//IStackFrame[] stackFrames;
-		//IVariable[] variables;
-
-		String[] events = new String[traces.length -2];
-		for (int i = 0; i < events.length; i++) {
-			events[i] = traces[i+2];
-			System.out.println("event: " +  events[i]);
-			System.out.println("-------------------------------------");
+		int index = 0;
+		if (message.contains("[getEventId]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventId = message.substring(message.indexOf("]") + 1, message.indexOf(";"));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getEventSourceKind]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventSourceKind = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getEventType]") && message.contains(";") && (message.indexOf("], index+1") < message.indexOf(";", index+1))) {
+			eventType = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getCapsuleName]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventCapsuleName = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getCapsuleInstance]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventCapsuleInstance = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getCapsuleIndex]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventCapsuleIndex = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getSourceName]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventSourceName = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getCpuTik]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventCpuTik = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getTimePointSecond]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventTimePointSecond = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getTimePointNano]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventTimePointNano = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("[getVariableData]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
+			eventVariableData = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			index = message.indexOf(";", index+1);
+		}
+		if (message.contains("Signal:")){
+			if (message.contains("Signal:") && message.contains(",") && (message.indexOf("]", index+1) < message.indexOf(",", index+1))) {
+				eventSignal = message.substring(message.indexOf(":", index+1) + 1, message.indexOf(",", index+1));
+				index = message.indexOf(",", index+1);
+			}
+			if (message.contains("Source:") && message.contains(",") && (message.indexOf("]", index+1) < message.indexOf(",", index+1))) {
+				eventSource = message.substring(message.indexOf(":", index+1) + 1, message.indexOf(",", index+1));
+				index = message.indexOf(",", index+1);
+			}
+			if (message.contains("Status:") && message.contains(",") && (message.indexOf("]", index+1) < message.indexOf(",", index+1))) {
+				eventStatus = message.substring(message.indexOf(":", index+1) + 1, message.indexOf(",", index+1));
+				index = message.indexOf(",", index+1);
+			}
+			if (message.contains("Target:") && message.contains(",")) {
+				eventTarget = message.substring(message.indexOf(":", index+1) + 1, message.length());
+			}
+		} else if (message.contains("Status:")) {
+			eventStatus = message.substring(message.indexOf(":", index+1) + 1, message.length());
 		}
 
-		//((CapsuleThread)thread).setEvents(events);
+		Event event = new Event( eventId,  eventSourceKind, eventType, eventCapsuleName, eventCapsuleInstance, eventCapsuleIndex, 
+				eventSourceName, eventCpuTik, eventTimePointSecond, eventTimePointNano, eventVariableData, eventSignal, eventSource, eventStatus, eventTarget);
+
+		return event;
 
 	}
 
+	//==================================================================	
+	//==============================================[retrieveLastEvent]
+	//==================================================================
 	private void retrieveLastEvent(String message) {
 		System.out.println("========================[In retrieveLastEvent]========================");	
 		String[] traces = message.split("[|]");
 		String capsule = traces[0];
 		String currentState = traces[1];
-		//String event = traces[2];
 
-		//IThread thread = ((MDebuggerDebugTarget)this.target).getThread(capsule);
-
-		//		String[] events = new String[traces.length -2];
 		for (int i = 0; i < traces.length -2; i++) {
 			String event = traces[i+2];
 			System.out.println("event: " +  event);
 			System.out.println("-------------------------------------");
-			//((CapsuleThread)thread).pushEvent(event);
 		}	
 
 	}
 
-
+	//==================================================================	
+	//==============================================[getCommandStack]
+	//==================================================================
 	public  Map<Integer, Command> getCommandStack() {
 		return this.commandStack;
 	}
 
+	//==================================================================	
+	//==============================================[retrieveCapsuleList]
+	//==================================================================
 	public void retrieveCapsuleList(String message) {
 		System.out.println("========================[In retrieveCapsuleList]========================");	
 		String[] capsuleTraces;
@@ -232,22 +269,20 @@ public final class ByteReader implements Runnable {
 			capsules[i] = traces[0];
 			currentStates[i] = traces[1];
 			System.out.println("capsule: " +  capsules[i]);
+
 			System.out.println("capsule: " +  currentStates[i]);
 			System.out.println("-------------------------------------");
 
 		}
-
-		//((MDebuggerDebugTarget)target).setCapsule(capsules, currentStates);
-
-		//if (target.canSuspend())
-		//	target.suspend();
-
 	}
+
+	//==================================================================	
+	//==============================================[readFromSocketWithSize]
+	//==================================================================	
 	public void readFromSocketWithSize() {
 		try {
-			if (!io.isConnected()) {
-				//Thread.sleep(100);
-				io.close();
+			if (!Server.io.isConnected()) {
+				Server.io.close();
 				return;
 			}
 			char[] sizeBuffer = new char[4];
@@ -258,28 +293,31 @@ public final class ByteReader implements Runnable {
 			//----------[Reading size and message from client]
 
 			byte[] byteBuffer1 = new byte[sizeBuffer.length];
-			int result = io.read(byteBuffer1, 0, 4);
+			int result = Server.io.read(byteBuffer1, 0, 4);
 			for (int i = 0; i < byteBuffer1.length; i++) {
 				sizeBuffer[i] = (char) byteBuffer1[i];
 			}
 			if (result == -1) {
-				io.close();
+				Server.io.close();
 				return;
 			}
 
 			size = Integer.parseInt(new String(sizeBuffer));
 			//System.out.println(">>>>>>>>>>>>>>>>>>>> sizeBuffer: "+size);
-			//size = 500;
 			messageBuffer = new char[size];
 
-
 			byte[] byteBuffer2 = new byte[messageBuffer.length];
-		
+
 			message = new String(messageBuffer);
-			io.read(byteBuffer2, 0, size);
+			Server.io.read(byteBuffer2, 0, size);
 
 			message = new String(byteBuffer2, StandardCharsets.UTF_8);
-			System.out.println(">>>>>>>>>>>>>>>>>>>> message: "+message);
+			//System.out.println("*****************> message: "+message);
+			Event event = eventMaker(message);
+			//System.out.println(">>>>>>>>>>>>>>>>>>>> event: "+event.allDataToString() + "\n\n");
+
+			Server.eventQueue.add(event);
+
 			int id = 0;
 
 			if (message.indexOf('|') >= 0) {
@@ -298,46 +336,7 @@ public final class ByteReader implements Runnable {
 					this.retrieveCapsuleList(message);
 				}
 				else {
-					this.retrieveLastEvent(message);
-
-					/*
-				Command command = this.commandStack.get(id);
-
-				if (command == null) {
-					System.out.println("command is null!");
-					return;
-				}
-
-				this.retrieveLastEvent(message);
-
-				switch (command) {
-				case WAITING_FOR_BREAKPOINT_REACHED:
-					this.retrieveCapsuleList(message);
-					break;
-				case WAITING_FOR_EVENT_LIST:
-					this.retrieveEventList(message);
-					break;
-				case STEPPING:
-					//	this.refreshAfterACK(message);
-					break;
-				case WAITING_FOR_LAST_EVENT:
-					//System.err.println("never called");
-					this.retrieveLastEvent(message);
-					break;
-				case WAITING_FOR_VALUE_CHANGE_ACK:
-					//this.refreshAfterACK(message);
-					break;
-				case WAITING_FOR_RUN_ACK:
-					//this.sendCmdHandler.requestLastEvent();
-					break;
-				case WAITING_FOR_ACK:
-					break;
-				}
-
-
-				if (id != 0)
-					commandStack.remove(id);
-					 */
+					this.retrieveLastEvent(message);			
 				}
 			}
 
@@ -347,7 +346,8 @@ public final class ByteReader implements Runnable {
 			e.printStackTrace();
 		}
 
+
 	}
 
-	
+
 }

@@ -1,6 +1,11 @@
 package ca.queensu.cs.umlrtParser;
 
+/*
 
+Developers:
+Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
+
+ */
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

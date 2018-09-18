@@ -1,4 +1,11 @@
-package ca.queensu.cs.ordering;
+package ca.queensu.cs.capsuleTracker;
+
+/*
+
+Developers:
+Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
+
+ */
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +22,10 @@ public class OrderingEngine implements Runnable {
 
 	public final void run() {
 
-		showElements();
+		//showElements();
+		//TableDataMember initTableDataMember = findingInitTransitions();
+		 
+		//while(true) {if (requirementMet(event)) break; else System.out.print(""); }
 
 	}
 
@@ -34,5 +44,23 @@ public class OrderingEngine implements Runnable {
 			}
 		}
 	}
+	
+	//==================================================================	
+	//==============================================[findingInitTransitions]
+	//==================================================================	
+	/*
+	public TableDataMember findingInitTransitions(){
+		//listTableData
+	}
+	*/
+	
+	//==================================================================	
+	//==============================================[findingInitTransitions]
+	//==================================================================	
+	/*
+	public boolean requirementMet(event){
+			//listTableData		
+	}
+	*/
 
 }
