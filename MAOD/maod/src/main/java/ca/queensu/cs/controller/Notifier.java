@@ -1,4 +1,4 @@
-package ca.queensu.cs.capsuleTracker;
+package ca.queensu.cs.controller;
 
 /*
 

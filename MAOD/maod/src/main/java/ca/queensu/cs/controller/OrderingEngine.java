@@ -1,4 +1,4 @@
-package ca.queensu.cs.capsuleTracker;
+package ca.queensu.cs.controller;
 
 /*
 
@@ -9,7 +9,6 @@ Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
 
 import java.util.List;
 import java.util.Map;
-
 import ca.queensu.cs.umlrtParser.TableDataMember;
 
 public class OrderingEngine implements Runnable {

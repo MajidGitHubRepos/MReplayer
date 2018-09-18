@@ -346,8 +346,5 @@ public final class ByteReader implements Runnable {
 			e.printStackTrace();
 		}
 
-
 	}
-
-
 }

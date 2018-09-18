@@ -41,6 +41,52 @@ public class Event {
 		this(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 	}
 	
+	//--GETTERS
+	public String getCapsuleInstance() {
+		return this.eventCapsuleInstance;
+	}
+	public String getSourceKind() {
+		return this.eventSourceKind;
+	}
+	public String getType() {
+		return this.eventType;
+	}
+	public String getCapsuleName() {
+		return this.eventCapsuleName;
+	}
+	public String getCapsuleIndex() {
+		return this.eventCapsuleIndex;
+	}
+	public String getSourceName() {
+		return this.eventSourceName;
+	}
+	public String getCpuTik() {
+		return this.eventCpuTik;
+	}
+	public String getTimePointSecond() {
+		return this.eventTimePointSecond;
+	}
+	public String getTimePointNano() {
+		return this.eventTimePointNano;
+	}
+	public String getVariableData() {
+		return this.eventVariableData;
+	}
+	public String getSignal() {
+		return this.eventSignal;
+	}
+	public String getSource() {
+		return this.eventSource;
+	}
+	public String getStatus() {
+		return this.eventStatus;
+	}
+	public String getTarget() {
+		return this.eventTarget;
+	}
+	
+	
+	
 	public String allDataToString() {
 		return "Event [eventId="+eventId+", eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleName=" + eventCapsuleName + ", eventCapsuleInstance=" + eventCapsuleInstance
 				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + ", eventCpuTik=" + eventCpuTik
