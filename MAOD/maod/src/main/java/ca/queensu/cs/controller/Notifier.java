@@ -45,8 +45,9 @@ public class Notifier implements Runnable {
 	}
 	public Event getQueueEvent() throws InterruptedException {
 		sem.acquire();
+		String name = Thread.currentThread().getName();
 		Event event = Server.eventQueue.remove();
-		//System.out.println("[getQueueEvent]: " + event.allDataToString());
+		//System.out.println(name + " [getQueueEvent]: " + event.allDataToString());
 		// Release the permit. 
 		//System.out.println(threadName + " releases the permit."); 
 		sem.release(); 

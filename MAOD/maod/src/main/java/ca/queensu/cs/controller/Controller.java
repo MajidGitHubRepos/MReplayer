@@ -21,9 +21,14 @@ public class Controller {
 	public static UmlrtParser umlrtParser;
 	public static Server server;
 	public static Event event;
+	public static CapsuleTracker[] trackers;
+	public static int trackerCount;
+	
 
 	public Controller() {
 		Semaphore sem = new Semaphore(1); 
+		this.trackers = new CapsuleTracker[10];
+		this.trackerCount = 0;
 		Event event = new Event();
 		umlrtParser = new UmlrtParser();
 		try {
@@ -32,6 +37,7 @@ public class Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//for(int i = 0; i<Controller.trackers.length;i++) {if (Controller.trackers[i].getCapsuleInstance() != null) this.trackerCount++;}
 		Message msg = new Message("process it", event);
 		Waiter waiter = new Waiter(msg, umlrtParser.getlistTableData());
 		new Thread(waiter,"waiter").start();
@@ -39,7 +45,7 @@ public class Controller {
 		new Thread(notifier, "notifier").start();
 	}
 
-
+	
 	public static void main(String[] args) throws IOException 
 	{
 		Thread controllerT = new Thread(new Controller().new RunnableImpl()); 

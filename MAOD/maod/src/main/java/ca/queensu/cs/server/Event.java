@@ -42,6 +42,9 @@ public class Event {
 	}
 	
 	//--GETTERS
+	public String getEventId() {
+		return this.eventId;
+	}
 	public String getCapsuleInstance() {
 		return this.eventCapsuleInstance;
 	}
