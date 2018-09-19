@@ -23,13 +23,12 @@ public class Waiter implements Runnable{
 	//private Event event;
 	private Message msg;
 	public String capsuleInstances;
-	public Map<String, List<TableDataMember>> listTableData;
+	//public Map<String, List<TableDataMember>> listTableData;
 	public int trackerCount;
 
-	public Waiter(Message msg, Map<String, List<TableDataMember>> listTableData){
+	public Waiter(Message msg){
 		this.msg=msg;
 		this.capsuleInstances = "";
-		this.listTableData = listTableData;
 	}
 
 	public void run() {
@@ -67,7 +66,8 @@ public class Waiter implements Runnable{
 						capsuleInstances = capsuleInstances + ", " + msg.getEvent().getCapsuleInstance();
 						Queue eventQueue = new LinkedList<Event>();
 						List<TableDataMember> listTableDataMember =  new ArrayList<TableDataMember>();
-						for (Map.Entry<String, List<TableDataMember>> entry  : listTableData.entrySet()) {
+						//System.out.println("---> listTableData.size(): "+Controller.listTableData.);
+						for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
 							//System.out.println("---> entry.getKey(): "+entry.getKey());
 							if (entry.getKey() == capsuleInstances) {
 								listTableDataMember = entry.getValue();
@@ -110,9 +110,10 @@ public class Waiter implements Runnable{
 			capsuleInstances = capsuleInstances + ", " + msg.getEvent().getCapsuleInstance();
 			Queue eventQueue = new LinkedList<Event>();
 			List<TableDataMember> listTableDataMember =  new ArrayList<TableDataMember>();
-			for (Map.Entry<String, List<TableDataMember>> entry  : listTableData.entrySet()) {
-				//System.out.println("---> entry.getKey(): "+entry.getKey());
-				if (entry.getKey() == capsuleInstances) {
+			//System.out.println("---> listTableData.size(): "+Controller.listTableData.size());
+			for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
+				
+				if (entry.getKey().contains(msg.getEvent().getCapsuleInstance())) {
 					listTableDataMember = entry.getValue();
 				}
 			}
@@ -120,7 +121,7 @@ public class Waiter implements Runnable{
 			CapsuleTracker tracker = new CapsuleTracker(msg.getEvent().getCapsuleInstance(), eventQueue, listTableDataMember); //TODO: why listTableDataMember is null!
 			tracker.addToQueue(msg.getEvent());
 			Controller.trackers[Controller.trackerCount++] =  tracker;
-			System.out.println("- Tracker is created and first event added into the Queue successfully!");
+			System.out.println("- Tracker is created and first event added into the Queue successfully!" );
 
 		}else {
 			//if (Controller.trackers[0] != null)
@@ -138,7 +139,8 @@ public class Waiter implements Runnable{
 					//System.out.println("trackers[i].getCapsuleInstance(): " + Controller.trackers[i].getCapsuleInstance());
 					//System.out.println("msg.getEvent().getCapsuleInstance(): " + msg.getEvent().getCapsuleInstance());
 					Controller.trackers[i].addToQueue(msg.getEvent());
-					System.out.println("- For capsule ["+msg.getEvent().getCapsuleInstance()+"] Event added into the Queue successfully!. Queue.size(): " + Controller.trackers[i].getEventQueue().size());
+					//System.out.println("- For capsule ["+msg.getEvent().getCapsuleInstance()+"] Event added into the Queue successfully!. Queue.size(): " + Controller.trackers[i].getEventQueue().size());
+					//System.out.println("----> [Event]: " + msg.getEvent().allDataToString());
 					break;
 				}
 			}

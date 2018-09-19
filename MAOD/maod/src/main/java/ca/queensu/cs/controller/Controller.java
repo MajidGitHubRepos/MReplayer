@@ -8,11 +8,14 @@ Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
  */
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.server.Server.RunnableImpl;
+import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.UmlrtParser;
 
 public class Controller {
@@ -23,14 +26,16 @@ public class Controller {
 	public static Event event;
 	public static CapsuleTracker[] trackers;
 	public static int trackerCount;
-	
+	public static Semaphore sem;
+	public static Map<String, List<TableDataMember>> listTableData;
 
 	public Controller() {
-		Semaphore sem = new Semaphore(1); 
+		this.sem = new Semaphore(1); 
 		this.trackers = new CapsuleTracker[10];
 		this.trackerCount = 0;
 		Event event = new Event();
 		umlrtParser = new UmlrtParser();
+		this.listTableData = null;
 		try {
 			server = new Server("127.0.0.1",8001, sem);
 		} catch (IOException e) {
@@ -38,11 +43,7 @@ public class Controller {
 			e.printStackTrace();
 		}
 		//for(int i = 0; i<Controller.trackers.length;i++) {if (Controller.trackers[i].getCapsuleInstance() != null) this.trackerCount++;}
-		Message msg = new Message("process it", event);
-		Waiter waiter = new Waiter(msg, umlrtParser.getlistTableData());
-		new Thread(waiter,"waiter").start();
-		Notifier notifier = new Notifier(msg, sem);
-		new Thread(notifier, "notifier").start();
+		
 	}
 
 	
@@ -66,7 +67,14 @@ public class Controller {
 			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[Starting CapsuleTracker Process]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 			System.out.println("Waiting for the UmlrtParsing thread complete the process ....");
 			while (true) {if (umlrtParser.getUmlrtParsingDone()) break; else System.out.print(""); }
-			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n");
+			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n --> umlrtParser.getlistTableData():" +  umlrtParser.getlistTableData());
+			
+			Controller.listTableData = umlrtParser.getlistTableData();
+			Message msg = new Message("process it", event);
+			Waiter waiter = new Waiter(msg);
+			new Thread(waiter,"waiter").start();
+			Notifier notifier = new Notifier(msg, Controller.sem);
+			new Thread(notifier, "notifier").start();
 
 			orderingEngine = new OrderingEngine(umlrtParser.getlistTableData());
 			Thread orderingEngineT = new Thread(orderingEngine);
