@@ -1,5 +1,12 @@
 package ca.queensu.cs.controller;
 
+/*
+
+Developers:
+Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
+
+ */
+
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
@@ -26,7 +33,7 @@ public class Controller {
 			e.printStackTrace();
 		}
 		Message msg = new Message("process it", event);
-		Waiter waiter = new Waiter(msg);
+		Waiter waiter = new Waiter(msg, umlrtParser.getlistTableData());
 		new Thread(waiter,"waiter").start();
 		Notifier notifier = new Notifier(msg, sem);
 		new Thread(notifier, "notifier").start();

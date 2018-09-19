@@ -1,5 +1,10 @@
 package ca.queensu.cs.controller;
 
+import java.util.List;
+import java.util.Queue;
+
+import ca.queensu.cs.umlrtParser.TableDataMember;
+
 /*
 
 Developers:
@@ -7,12 +12,25 @@ Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
 
  */
 
-import java.io.IOException;
-import java.util.concurrent.Semaphore;
-import ca.queensu.cs.server.Event;
-import ca.queensu.cs.server.Server;
-import ca.queensu.cs.umlrtParser.UmlrtParser;
+
 
 public class CapsuleTracker {
+	
+	private String capsuleInstance;
+	private Queue eventQueue;
+	private String currentStatus;
+	private List<TableDataMember> tableData;
+	//--
+	public CapsuleTracker(String capsuleInstance, Queue eventQueue, List<TableDataMember> tableData) {
+		this.capsuleInstance = capsuleInstance;
+		this.eventQueue = eventQueue;
+		this.tableData = tableData;
+		this.currentStatus = "Init";
+	}
+	//--
+	public CapsuleTracker() {
+		this(null, null, null);
+	}
+	
 
 }
