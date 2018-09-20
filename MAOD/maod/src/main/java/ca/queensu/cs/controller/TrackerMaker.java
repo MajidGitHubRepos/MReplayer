@@ -15,6 +15,8 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+
+import ca.queensu.cs.controller.Controller.RunnableImpl;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.umlrtParser.TableDataMember;
@@ -23,25 +25,37 @@ public class TrackerMaker implements Runnable{
 
 	//private Event event;
 	public String capsuleInstances;
-	private Semaphore sem;
-	//public Map<String, List<TableDataMember>> listTableData;
-	public int trackerCount;
+	private Semaphore semServer;
+	private Semaphore semCapsuleTraker;
 
-	public TrackerMaker(Semaphore sem){
-		this.sem = sem;
+	public static Data[] dataArray;
+	public static CapsuleTracker capsuleTrackers[];
+
+	public static int trackerCount;
+	public static int eventCount;
+
+	public TrackerMaker(Semaphore semServer){
+		this.semServer = semServer;
+		this.semCapsuleTraker = new Semaphore(1); 
+		this.capsuleTrackers = new CapsuleTracker[10];
+		this.dataArray = new Data[10];
+		this.trackerCount = 0;
+		this.eventCount = 0;
 		this.capsuleInstances = "";
 	}
 
 	public void run() {
 		String name = Thread.currentThread().getName();
+		
 			while(true) {
 				System.out.print("");
 				if (!Server.eventQueue.isEmpty()) {
 					//System.out.println("--->");
 					Event eventTmp;
 					try {
-						eventTmp = getQueueEvent();
+						eventTmp = getEventFromServerQueue();
 						enqueue(eventTmp);
+						
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -49,12 +63,13 @@ public class TrackerMaker implements Runnable{
 				
 				
 				}
+				if (eventCount > 100) { for (int i = 0; i<trackerCount;i++) {capsuleTrackers[i].shutdown();} break;} // only first 100 events are considered! [for testing propose] 
 				
 				//--
 				//Showing received events from the notifier
 				//Runnable task0 = () -> {
 				//	System.out.println("Executing Task1 inside : " + Thread.currentThread().getName());
-					//System.out.println(name+" ---->processed: "+msg.allDataToString());
+					//System.out.println(name+" ---->processed: "+event.allDataToString());
 				//};
 
 
@@ -63,45 +78,67 @@ public class TrackerMaker implements Runnable{
 				//executorService.submit(task1);
 
 			}//while(true)
-		//}//synchronized
+			//showdatas();
+			
 	}//run()
 	
-	public Event getQueueEvent() throws InterruptedException {
-		sem.acquire();
+	public Event getEventFromServerQueue() throws InterruptedException {
+		semServer.acquire();
 		Event event = Server.eventQueue.remove();
-		sem.release(); 
+		semServer.release(); 
 		return event;
 	}
 
-	public void enqueue(Event msg) {
+	public void enqueue(Event event) {
 		
-		if (!capsuleInstances.contains(msg.getCapsuleInstance())) {
-			capsuleInstances = capsuleInstances + ", " + msg.getCapsuleInstance();
-			Queue eventQueue = new LinkedList<Event>();
+		if (!capsuleInstances.contains(event.getCapsuleInstance())) {
+			capsuleInstances = capsuleInstances + ", " + event.getCapsuleInstance();
+			Queue<Event> eventQueue = new LinkedList<Event>();
+
 			List<TableDataMember> listTableDataMember =  new ArrayList<TableDataMember>();
 			//System.out.println("---> listTableData.size(): "+Controller.listTableData.size());
 			for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
 				
-				if (entry.getKey().contains(msg.getCapsuleInstance())) {
+				if (entry.getKey().contains(event.getCapsuleInstance())) {
 					listTableDataMember = entry.getValue();
 				}
 			}
-			//System.out.println("Controller.trackers.length: " +msg.getEvent().getCapsuleInstance());
-			CapsuleTracker tracker = new CapsuleTracker(msg.getCapsuleInstance(), eventQueue, listTableDataMember);
-			tracker.addToQueue(msg);
-			Controller.trackers[Controller.trackerCount++] =  tracker;
-			System.out.println("- Tracker is created and first event added into the Queue successfully!" );
-			System.out.println("[First]-->["+ msg.getCapsuleInstance()+ "]: " + msg.allDataToString());
+			//System.out.println("Controller.datas.length: " +event.getEvent().getCapsuleInstance());
+			Data data = new Data(event.getCapsuleInstance(), eventQueue, listTableDataMember);
+			//try {
+			//	this.semCapsuleTraker.acquire();
+			//} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+		//		e.printStackTrace();
+			//}
+			data.addToQueue(event);
+			eventCount++;
+		//	this.semCapsuleTraker.release(); 
+			dataArray[trackerCount] =  data;
+			System.out.println("- data is created and first event added into the Queue successfully!" );
+			System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
+			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTraker, event.getCapsuleInstance());
+			Thread capsuleTrackerT = new Thread(); 
+			capsuleTrackerT.start(); 
+			capsuleTrackers[trackerCount++] = capsuleTracker;
 
 		}else {
-			for (int i = 0; i<Controller.trackerCount;i++) {
-				if ((Controller.trackers[i].getCapsuleInstance().contains(msg.getCapsuleInstance()))) {
-					Controller.trackers[i].addToQueue(msg);
-					System.out.println("-->["+ msg.getCapsuleInstance()+ "]: " + msg.allDataToString());
+			for (int i = 0; i<trackerCount;i++) {
+				if ((dataArray[i].getCapsuleInstance().contains(event.getCapsuleInstance()))) {
+					dataArray[i].addToQueue(event);
+					eventCount++;
+					System.out.println("-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
 					break;
 				}
 			}
 		}
+	}//enqueue
+	
+	public void showdatas() {
+		for (int i = 0; i< trackerCount; i++) {
+			System.out.println("--> dataArray["+i+"]: " + dataArray[i].allDataToString());
+		}
 	}
+	
 
 }

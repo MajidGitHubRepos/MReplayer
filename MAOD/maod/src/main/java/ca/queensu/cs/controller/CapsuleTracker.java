@@ -1,71 +1,61 @@
 package ca.queensu.cs.controller;
 
-import java.util.List;
-import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 import ca.queensu.cs.server.Event;
-import ca.queensu.cs.umlrtParser.TableDataMember;
-
-/*
-
-Developers:
-Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
-
- */
 
 
+public class CapsuleTracker implements Runnable{
 
-public class CapsuleTracker {
-	
+	private Semaphore semCapsuleTracker;
 	private String capsuleInstance;
-	private Queue eventQueue;
-	private String currentStatus;
-	private List<TableDataMember> tableData;
-	//--
-	public CapsuleTracker(String capsuleInstance, Queue eventQueue, List<TableDataMember> tableData) {
-		this.capsuleInstance = capsuleInstance;
-		this.eventQueue = eventQueue;
-		this.tableData = tableData;
-		this.currentStatus = "Init";
-	}
-	//--
-	public CapsuleTracker() {
-		this(null, null, null);
-	}
-	
-	//--GETTERS
-	public String getCapsuleInstance() {
-		return this.capsuleInstance;
-	}
-	public Queue getEventQueue() {
-		return this.eventQueue;
-	}
-	public String getCurrentStatus() {
-		return this.currentStatus;
-	}
-	public List<TableDataMember> getTableData() {
-		return this.tableData;
-	}
-	//--SETTERS
-	public void setCapsuleInstance(String capsuleInstance ) {
+	private Event currentEvent;
+
+
+	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance) {
+		this.semCapsuleTracker = semCapsuleTracker;
 		this.capsuleInstance = capsuleInstance;
 	}
-	public void setEventQueue(Queue eventQueue) {
-		this.eventQueue = eventQueue;
+
+
+
+	public void run() {
+		System.out.println("\n\n--> Running thread: " +  capsuleInstance +"\n\n");
+		while(true) {
+
+			for (int i = 0; i< TrackerMaker.trackerCount; i ++) {
+				if (TrackerMaker.dataArray[i].getCapsuleInstance().contains(capsuleInstance)) {
+					if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty()) {
+						try {
+							currentEvent =  getEventFromCapsuleTrackerQueue(i);
+							System.out.println("\n[in CapsuleTracker]-->["+ capsuleInstance+ "]: " + currentEvent.allDataToString());
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					break;
+				}
+			}
+		}
 	}
-	public void getCurrentStatus(String currentStatus ) {
-		this.currentStatus = currentStatus;
+
+
+	public Event getEventFromCapsuleTrackerQueue(int dataArrayNumber) throws InterruptedException {
+		
+		Event event = new Event();
+		
+		//semCapsuleTracker.acquire();
+		//if (!TrackerMaker.dataArray[dataArrayNumber].getEventQueue().isEmpty())
+			event = TrackerMaker.dataArray[dataArrayNumber].getFromQueue();
+		//semCapsuleTracker.release(); 
+		return event;
 	}
-	public void getTableData(List<TableDataMember> tableData) {
-		this.tableData = tableData;
+
+	@SuppressWarnings("deprecation")
+	public void shutdown() {
+		Thread.currentThread().stop();
 	}
-	
-	public void addToQueue(Event event) {
-		this.eventQueue.add(event);
-	}
-	
-	public String allDataToString() {
-		return "TableDataMember [capsuleInstance=" + capsuleInstance + ", eventQueue=" + eventQueue + ", currentStatus= "+ currentStatus + ", tableData=" + tableData +"]";
-	}
+
 
 }

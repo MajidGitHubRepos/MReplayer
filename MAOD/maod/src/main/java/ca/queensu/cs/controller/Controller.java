@@ -24,20 +24,17 @@ public class Controller {
 	public static UmlrtParser umlrtParser;
 	public static Server server;
 	public static Event event;
-	public static CapsuleTracker[] trackers;
-	public static int trackerCount;
-	public static Semaphore sem;
+	public static Semaphore semServer;
 	public static Map<String, List<TableDataMember>> listTableData;
+	
 
 	public Controller() {
-		this.sem = new Semaphore(1); 
-		this.trackers = new CapsuleTracker[10];
-		this.trackerCount = 0;
+		this.semServer = new Semaphore(1); 
 		Event event = new Event();
 		umlrtParser = new UmlrtParser();
 		this.listTableData = null;
 		try {
-			server = new Server("127.0.0.1",8001, sem);
+			server = new Server("127.0.0.1",8001, semServer);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,15 +60,15 @@ public class Controller {
 	public class RunnableImpl implements Runnable { 
 
 		public void run() {
-			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[Starting CapsuleTracker Process]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[Starting Data Process]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 			System.out.println("Waiting for the UmlrtParsing thread complete the process ....");
 			while (true) {if (umlrtParser.getUmlrtParsingDone()) break; else System.out.print(""); }
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n --> umlrtParser.getlistTableData():" +  umlrtParser.getlistTableData());
 			
 			Controller.listTableData = umlrtParser.getlistTableData();
 			//Message msg = new Message("process it", event);
-			TrackerMaker waiter = new TrackerMaker(sem);
-			new Thread(waiter,"waiter").start();
+			TrackerMaker trackerMaker = new TrackerMaker(semServer);
+			new Thread(trackerMaker,"waiter").start();
 			//Notifier notifier = new Notifier(msg, Controller.sem);
 			//new Thread(notifier, "notifier").start();
 
