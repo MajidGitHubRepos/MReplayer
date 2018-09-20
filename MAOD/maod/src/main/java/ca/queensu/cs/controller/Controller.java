@@ -43,7 +43,6 @@ public class Controller {
 			e.printStackTrace();
 		}
 		//for(int i = 0; i<Controller.trackers.length;i++) {if (Controller.trackers[i].getCapsuleInstance() != null) this.trackerCount++;}
-		
 	}
 
 	
@@ -70,11 +69,11 @@ public class Controller {
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n --> umlrtParser.getlistTableData():" +  umlrtParser.getlistTableData());
 			
 			Controller.listTableData = umlrtParser.getlistTableData();
-			Message msg = new Message("process it", event);
-			Waiter waiter = new Waiter(msg);
+			//Message msg = new Message("process it", event);
+			TrackerMaker waiter = new TrackerMaker(sem);
 			new Thread(waiter,"waiter").start();
-			Notifier notifier = new Notifier(msg, Controller.sem);
-			new Thread(notifier, "notifier").start();
+			//Notifier notifier = new Notifier(msg, Controller.sem);
+			//new Thread(notifier, "notifier").start();
 
 			orderingEngine = new OrderingEngine(umlrtParser.getlistTableData());
 			Thread orderingEngineT = new Thread(orderingEngine);

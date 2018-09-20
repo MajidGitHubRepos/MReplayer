@@ -18,6 +18,30 @@ public class Event {
 	private String eventTarget;
 	
 	
+	/*
+	 * 	part of the event kind and type  are defined based on paper
+	 *  Graf, Susanne, Ileana Ober, and Iulian Ober. "A real-time profile for UML."
+	 *  International Journal on Software Tools for Technology Transfer 8.2 (2006): 113-127.
+	 */
+	
+	// main category for the event sources, refer to appendix of paper for detail
+	enum EVENTSOURCEKIND{SIGNALLING,METHOD,ACTIONECODE,TRANISTION,STATE,CAPSULE,ATTRIBUTE,TIMER,RESOURCE,CONNECTION,DEBUG,RESERVE1,RESERVE2,UNKOWNSOURCEKIND};
+	// types of signal events
+	enum EVENTTYPE{
+	        SENDSIGNAL,RECIEVESIGNAL,DEFERSIGNAL,RECALLSIGNAL,CANCELLSIGNAL, // signal event //4
+	        METHODCALL,METHODCALLRECIEVE,METHODSTARTEXECUTE,METHODRETURN,METHODFAILED,METHODRETURNRECIEVED, // method event //10
+	        ACTIONSTART,ACTIONEND, // action code events //12
+	        TRANISTIONSTART,TRANISTIONEND ,// TRANSITION //14
+	        STATEENTRYSTART,STATEENTRYEND,STATEEXITSTART,STATEEXITEND,STATEIDLESTART,STATEIDLEEND, // state events //20
+	        CAPSULEINSTNSIATE,CAPSULEFREE, // capsule event //22
+	        ATTRIBUTEINSTNSIATE,ATTRIBUTEFREE,ATTRIBUTECHANGE, // attribute event //25
+	        TIMERSTART,TIMERRESET,TIMERCANCELL,TIMERTIMEDOUT, // Timer events //29
+	        RESOURCEASSIGNED,RESOURCERELEASED,RESOURCEPREEMPTED,RESOURCERESUMED,   // resource event //33
+	        CONNECTIONESTABLISHED,CONNECTIONFAILED, // connection event //35
+	        REGISTER,VARIABLEDATA,BREAKPOINTDATA,RESERVE5,RESERVE6, //Debug Event //40
+	        UNKOWNTYPE //41
+	};
+	
 	public Event(String eventId, String eventSourceKind,String eventType,String eventCapsuleName,String eventCapsuleInstance,
 			String eventCapsuleIndex,String eventSourceName,String eventCpuTik,String eventTimePointSecond,String eventTimePointNano,String eventVariableData,
 			String eventSignal,String eventSource,String eventStatus,String eventTarget) {
