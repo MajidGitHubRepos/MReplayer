@@ -279,7 +279,7 @@ public final class ByteReader implements Runnable {
 	//==================================================================	
 	//==============================================[readFromSocketWithSize]
 	//==================================================================	
-	public void readFromSocketWithSize() {
+	public void readFromSocketWithSize() throws InterruptedException {
 		try {
 			if (!Server.io.isConnected()) {
 				Server.io.close();
@@ -316,7 +316,7 @@ public final class ByteReader implements Runnable {
 			Event event = eventMaker(message);
 			//System.out.println(">>>>>>>>>>>>>>>>>>>> event: "+event.allDataToString() + "\n\n");
 
-			Server.eventQueue.add(event);
+			Server.eventQueue.put(event);
 
 			int id = 0;
 
