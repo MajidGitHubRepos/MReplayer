@@ -45,6 +45,10 @@ public class StateData {
 	public StateData(String capsuleName, String sName, String pName, String rName) {
 		this(capsuleName, null,sName, null, null, null, pName,rName, false, false);
 	}
+	public StateData(String capsuleName, String sName, String pName, String rName , boolean initial, boolean end) {
+		this(capsuleName, null,sName, null, null, null, pName,rName, initial, end);
+	}
+	
 	
 	
 	//------------[GETERS]

@@ -89,6 +89,9 @@ public class TransitionData {
 	public List<String> getGuard() {
 		return guards;
 	}
+	public boolean getIsInit() {
+		return isInit;
+	}
 
 	//public List<HashMap<String, String>> getTriggers() {
 	//	return triggers;

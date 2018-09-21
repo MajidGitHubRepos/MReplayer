@@ -106,7 +106,7 @@ public class ParserEngine implements Runnable {
 		this.umlrtParsingDone = false;
 
 	}
-	
+
 	public boolean getUmlrtParsingDone() {
 		return this.umlrtParsingDone;
 	}
@@ -138,7 +138,7 @@ public class ParserEngine implements Runnable {
 		elementsExtractor();
 		showElements();
 		this.umlrtParsingDone = true;
-		
+
 	}
 
 	//==================================================================	
@@ -174,7 +174,7 @@ public class ParserEngine implements Runnable {
 			}
 		}
 	}
-	
+
 	//==================================================================	
 	//==============================================[elementsExtractor]
 	//==================================================================	
@@ -341,7 +341,16 @@ public class ParserEngine implements Runnable {
 					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.HISTORY_DEEP);
 					listStateData.add(cpStateData);
+				} else if (state.getKind() == PseudostateKind.INITIAL_LITERAL) {
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName, true, false);
+					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.INITIAL);
+					listStateData.add(cpStateData);
+				} else if (state.getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
+					StateData cpStateData = new StateData(this.elementName, state.getName(), parentName, regionName, false, true);
+					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.EXIT);
+					listStateData.add(cpStateData);
 				}
+
 			}
 		} //[End] Vertex
 		//[End]----------------------------------------------------------[Pseudostate]
@@ -501,35 +510,46 @@ public class ParserEngine implements Runnable {
 	//==================================================================	
 	//==============================================[tableMaker]
 	//==================================================================	
-	
+
 	private List<TableDataMember> tableMaker() {
 		List<TableDataMember> listTableDataMember = new ArrayList<TableDataMember>();
 		String trCapName = "";
 		for (int i = 0; i<listTransitionData.size(); i++) {
 			TableDataMember tableDataMember = new TableDataMember();
 			trCapName = listTransitionData.get(i).getCapsuleName();
-
-			for (int j = 0; j<listStateData.size(); j++) {
-				tableDataMember.setTransition(listTransitionData.get(i));
-				if ((listTransitionData.get(i).getSourceName() != null ) && (listStateData.get(j).getCapsuleName() == trCapName) && (!capDone.contains(trCapName))) {
-					//System.out.println("listTransitionData.get("+i+").getSourceName(): " + listTransitionData.get(i).getSourceName());
-					
-					if (listTransitionData.get(i).getSourceName() == listStateData.get(j).getStateName()){tableDataMember.setSource(listStateData.get(j));
+			if (((listTransitionData.get(i).getSourceName() != null ) || (listTransitionData.get(i).getIsInit()))  
+					&& (!capDone.contains(trCapName))) {
+				
+				for (int j = 0; j<listStateData.size(); j++) {
+					if ((listTransitionData.get(i).getSourceName() == listStateData.get(j).getStateName()) || 
+							(listTransitionData.get(i).getIsInit()) && (listStateData.get(j).getCapsuleName() == trCapName)){tableDataMember.setSource(listStateData.get(j));
 					//System.out.println("[SRC] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
+					//System.out.println("listTransitionData.get(i).getTargetName(): " + listTransitionData.get(i).getTargetName());
+					break;
 					}
-					if (listTransitionData.get(i).getTargetName() == listStateData.get(j).getStateName()){tableDataMember.setTarget(listStateData.get(j));
-					//System.out.println("[TRG] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
-					}
-					
+
 				}
+				for (int j = 0; j<listStateData.size(); j++) {
+					if ((listTransitionData.get(i).getTargetName() == listStateData.get(j).getStateName() || (listStateData.get(j).isEnd())) 
+							&& (listStateData.get(j).getCapsuleName() == trCapName)){tableDataMember.setTarget(listStateData.get(j) );
+					//System.out.println("[TRG] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
+					break;
+					}
+
+				}
+				
 			}
-			if ((tableDataMember.getTarget() != null) && (tableDataMember.getSource() != null))
+
+			if (((tableDataMember.getTarget() != null) && (tableDataMember.getSource() != null))) {
+				tableDataMember.setTransition(listTransitionData.get(i));
+				//System.out.println(">> listTransitionData.get("+i+").getSourceName(): " + listTransitionData.get(i).getSourceName());
 				listTableDataMember.add(tableDataMember);
+			}
 		}
 		capDone= capDone + ", " + trCapName;
 		return listTableDataMember;
 	}
-	
+
 	//==================================================================	
 	//==============================================[resolveGuard]
 	//==================================================================
@@ -544,7 +564,7 @@ public class ParserEngine implements Runnable {
 		}
 		return guard;
 	}
-	
+
 	//==================================================================	
 	//==============================================[getTimePeriod]
 	//==================================================================
@@ -555,11 +575,11 @@ public class ParserEngine implements Runnable {
 			return null;
 		}
 	}
-	
+
 	//==================================================================	
 	//==============================================[shouldCreateAnonymousTransition]
 	//==================================================================
-	
+
 	private boolean shouldCreateAnonymousTransition(Transition transition) {
 		//if ((transition.getSource() instanceof State) && (transition.getTarget() instanceof State)) {
 		//return true;

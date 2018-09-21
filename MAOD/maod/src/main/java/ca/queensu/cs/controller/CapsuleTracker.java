@@ -21,10 +21,11 @@ public class CapsuleTracker implements Runnable{
 
 
 	public void run() {
+		
+		//Go to the initial state and wait for the right event
+		init();
 
 		while(true) {
-
-
 			try {
 				semCapsuleTracker.acquire();
 
@@ -36,10 +37,11 @@ public class CapsuleTracker implements Runnable{
 
 								//Thread.currentThread().sleep(1);
 
-								currentEvent =  TrackerMaker.dataArray[i].getFromQueue();
+								currentEvent =  TrackerMaker.dataArray[i].getFromQueue(); //push it back to the queue if it dose not consume !
+								
 								//System.out.println("\n[in CapsuleTracker]-->["+ capsuleInstance+ "]: " + currentEvent.allDataToString());
 							} catch (NoSuchElementException e) {
-								System.err.println("=============================[!]===================================");
+								System.err.println("=============================[NoSuchElementException]===================================");
 								break;
 							}
 						}
@@ -52,6 +54,9 @@ public class CapsuleTracker implements Runnable{
 				e1.printStackTrace();
 			}
 		}
+	}
+	public void init() {
+		
 	}
 
 	@SuppressWarnings("deprecation")
