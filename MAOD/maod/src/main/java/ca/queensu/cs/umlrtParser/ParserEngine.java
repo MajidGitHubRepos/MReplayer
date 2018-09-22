@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
 
 /*import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
@@ -47,6 +48,7 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Collaboration;
 import org.eclipse.uml2.uml.ConnectionPointReference;
 import org.eclipse.uml2.uml.Connector;
+import org.eclipse.uml2.uml.ConnectorEnd;
 import org.eclipse.uml2.uml.Constraint;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
@@ -82,6 +84,7 @@ public class ParserEngine implements Runnable {
 	public HashMap<String, StateMachine> stateMachineMap;
 	public List<StateData> listStateData;
 	public List<TransitionData> listTransitionData;
+	public List<CapsuleConn> listCapsuleConn;
 	private final List<EntryData> entrys = new ArrayList<EntryData>();
 	private final List<ExitData> exits = new ArrayList<ExitData>();
 	private final Map<String, LinkedList<ChoiceData>> choices = new HashMap<String, LinkedList<ChoiceData>>();
@@ -104,6 +107,7 @@ public class ParserEngine implements Runnable {
 		this.elementName = "";
 		this.isInitTr = false;
 		this.umlrtParsingDone = false;
+		this.listCapsuleConn = new ArrayList<CapsuleConn>();
 
 	}
 
@@ -173,6 +177,11 @@ public class ParserEngine implements Runnable {
 
 			}
 		}
+		//-------
+		System.out.println("=======================[CapsuleConn]==========================");
+		for (int i = 0; i<listCapsuleConn.size(); i++) {
+			System.out.println("["+i+"]:" +listCapsuleConn.get(i).allDataToString());
+		}
 	}
 
 	//==================================================================	
@@ -188,16 +197,68 @@ public class ParserEngine implements Runnable {
 			//System.out.println("--------------> modelElement: "+ element );
 
 			if(element instanceof Class) {
-				//System.out.println("--------------> elementName: "+ element.getName() );
+				//Get capsule connector
+				String capsuleName = "";
+				String connectorName = "";
+				String portName = "";
+				String protocolName = "";
+				CapsuleConn capsuleConn = new CapsuleConn();
+				capsuleName = element.getName();
+				capsuleConn.setCapsuleName(capsuleName);
+				listCapsuleConn.add(capsuleConn);
+
+				for (Port port : UmlrtUtils.getPorts((Class)element)) {
+					portName = port.getName();
+					if (port.getType() != null){
+						protocolName = port.getType().getName();
+					}
+					if (protocolName != null) {
+						for(int t=0; t<listCapsuleConn.size();t++) {
+							if (listCapsuleConn.get(t).getCapsuleName().contentEquals(element.getName())) {
+								listCapsuleConn.get(t).addPortName_connectorName_protocolName(portName.concat("::").concat(protocolName));
+								break;
+							}
+						}
+					}
+				}
+
+				for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {
+					connectorName = connector.getName();
+					ConnectorEnd connEnd1 = connector.getEnds().get(0);
+					ConnectorEnd connEnd2 = connector.getEnds().get(1);
+
+					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
+						String connEnd1PortName = connEnd1.getRole().getName();
+						for(int t=0; t<listCapsuleConn.size();t++) {
+							for (int k = 0; k < listCapsuleConn.get(t).getListPortName_connectorName_protocolName().size(); k++) {
+								if(listCapsuleConn.get(t).getPortName_connectorName_protocolName(k).contains(connEnd1PortName)) {
+									String tmp = listCapsuleConn.get(t).getPortName_connectorName_protocolName(k);
+									listCapsuleConn.get(t).setPortName_connectorName_protocolName(k,tmp.concat("::").concat(connectorName));
+								}
+							}
+						}
+					}
+					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
+						String connEnd2PortName = connEnd2.getRole().getName();
+						for(int t=0; t<listCapsuleConn.size();t++) {
+							for (int k = 0; k < listCapsuleConn.get(t).getListPortName_connectorName_protocolName().size(); k++) {
+								if(listCapsuleConn.get(t).getPortName_connectorName_protocolName(k).contains(connEnd2PortName)) {
+									String tmp = listCapsuleConn.get(t).getPortName_connectorName_protocolName(k);
+									listCapsuleConn.get(t).setPortName_connectorName_protocolName(k,tmp.concat("::").concat(connectorName));
+								}
+							}
+						}
+					}
+						
+				}
+
 				if ( (((Class) element).getOwnedBehaviors() != null && ((Class) element).getOwnedBehaviors().size() > 0))
 					if (((Class) element).getOwnedBehaviors().get(0) instanceof StateMachine) {
-						//stateMachines.add((StateMachine) ((Class) element).getOwnedBehaviors().get(0));
 						smMap.put(element.getName(), (StateMachine) ((Class) element).getOwnedBehaviors().get(0) );
 						this.elementName = element.getName();
 						handleStateMachine((StateMachine) ((Class) element).getOwnedBehaviors().get(0));
 					}
 			}
-
 			i++;
 		}
 
@@ -517,27 +578,31 @@ public class ParserEngine implements Runnable {
 		for (int i = 0; i<listTransitionData.size(); i++) {
 			TableDataMember tableDataMember = new TableDataMember();
 			trCapName = listTransitionData.get(i).getCapsuleName();
+
+			//System.out.println("listTransitionData.get ["+i+"]: " + trCapName);
+
 			if (((listTransitionData.get(i).getSourceName() != null ) || (listTransitionData.get(i).getIsInit()))  
 					&& (!capDone.contains(trCapName))) {
-				
-				for (int j = 0; j<listStateData.size(); j++) {
-					if ((listTransitionData.get(i).getSourceName() == listStateData.get(j).getStateName()) || 
-							(listTransitionData.get(i).getIsInit()) && (listStateData.get(j).getCapsuleName() == trCapName)){tableDataMember.setSource(listStateData.get(j));
-					//System.out.println("[SRC] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
-					//System.out.println("listTransitionData.get(i).getTargetName(): " + listTransitionData.get(i).getTargetName());
-					break;
-					}
 
+				for (int j = 0; j<listStateData.size(); j++) {
+					if (((listTransitionData.get(i).getSourceName() == listStateData.get(j).getStateName()) || 
+							((listTransitionData.get(i).getIsInit()) && listStateData.get(j).getCapsuleName().contains(trCapName))) 
+							&& (listStateData.get(j).getCapsuleName() == trCapName)){tableDataMember.setSource(listStateData.get(j));
+							//System.out.println("[SRC] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
+							//System.out.println("listTransitionData.get(i).getTargetName(): " + listTransitionData.get(i).getTargetName());
+							break;
+					}
 				}
 				for (int j = 0; j<listStateData.size(); j++) {
-					if ((listTransitionData.get(i).getTargetName() == listStateData.get(j).getStateName() || (listStateData.get(j).isEnd())) 
+					if (((listTransitionData.get(i).getTargetName() == listStateData.get(j).getStateName()) || 
+							(listStateData.get(j).isEnd() && listStateData.get(j).getCapsuleName().contains(trCapName))) 
 							&& (listStateData.get(j).getCapsuleName() == trCapName)){tableDataMember.setTarget(listStateData.get(j) );
-					//System.out.println("[TRG] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
-					break;
+							//System.out.println("[TRG] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
+							break;
 					}
 
 				}
-				
+
 			}
 
 			if (((tableDataMember.getTarget() != null) && (tableDataMember.getSource() != null))) {

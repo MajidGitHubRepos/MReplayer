@@ -123,7 +123,7 @@ public class TrackerMaker implements Runnable{
 			//System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
 			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, event.getCapsuleInstance());
 			Thread capsuleTrackerT = new Thread(capsuleTracker); 
-			capsuleTrackerT.start(); 
+			//capsuleTrackerT.start(); 
 			capsuleTrackers[trackerCount++] = capsuleTracker;
 			this.semCapsuleTracker.release(); 
 

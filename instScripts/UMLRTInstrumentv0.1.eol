@@ -2,7 +2,7 @@
     
     Developers:
     Mojtaba Bagherzadeh(mojtaba@cs.queensu.ca): Initial development
-
+    Majid Babaei: changing refineForSRO in order to remove addTrace for debugging
 */
 
 import "UMLRTQuery.eol";
@@ -75,7 +75,7 @@ allStateMachines.getAllRegions().getAllStates().size().println("number of states
 		var allStates=SM.getAllRegions().getAllStates().select(s|s.stateType()=="Composite" or s.stateType()=="State");
 		refineForSRO(SM);
 		for (s in allStates){
-			s.guardCodes(); // First guard then add trace, to make sure that the related event will be generated
+			//s.guardCodes(); // First guard then add trace, to make sure that the related event will be generated
 			s.addTrace(traceType);
 			
 			}
@@ -168,11 +168,33 @@ operation  refineForSRO(SM:UMLRTModel!StateMachine)  {
 	activePorts=allTransions.getActivePorts();
 	//activePorts.println();
 	//SM.println();
+	var initTrans=SM.getIntialTransition();
+	initTrans.println();
+	 if (not initTrans.name.isDefined())
+			initTrans.assignName();
+		if ((not (initTrans.source.name.isDefined())) or (initTrans.source.name.trim()=""))
+		initTrans.source.assignName();
+	if ((not (initTrans.target.name.isDefined())) or (initTrans.target.name.trim()=""))
+		initTrans.target.assignName();
+	
+		//initTrans.addDebugInitCode(transitionsData);
+		
+		//generateDebugIntializationCode();
+	
+	
 	for (t in allTransions){
+	    if (not t.name.isDefined())
+			t.assignName();
+		if ((not (t.source.name.isDefined())) or (t.source.name.trim()=""))
+		t.source.assignName();
+	if ((not (t.target.name.isDefined())) or (t.target.name.trim()=""))
+		t.target.assignName();
+			
+		t.addTrace(traceType);
 		//t.println("before getting trans data");
-		transitionsData.add(t.transData());
+		//transitionsData.add(t.transData());
 		//t.println("Transition Name: ");
-		if ((Set{"StoS","StoC","CtoC","Ctos"}).includes(t.transType()))
+		/*if ((Set{"StoS","StoC","CtoC","Ctos"}).includes(t.transType()))
 			//t.events().println("Rule1");
 			t.applyRule1(ownerCapsule);
 		else if ((Set{"StoP","CtoP"}).includes(t.transType()))
@@ -183,7 +205,7 @@ operation  refineForSRO(SM:UMLRTModel!StateMachine)  {
 			t.applyRule3(ownerCapsule);
 		else if ((Set{"PtoP"}).includes(t.transType()))
 			//t.events().println("Rule4");
-			t.applyRule4(ownerCapsule);
+			t.applyRule4(ownerCapsule);*/
 		}
 	/*if (c.getStateMachine().isDefined()){
 		c.println();
@@ -192,10 +214,7 @@ operation  refineForSRO(SM:UMLRTModel!StateMachine)  {
 		c.addSendEventMethod();
 		}*/
 		//transitionsData.println();
-		var initTrans=SM.getIntialTransition();
-		//initTrans.addDebugInitCode(transitionsData);
 		initTrans.addDebugConnectionState(SM);
-		//generateDebugIntializationCode();
 }
 
 
@@ -451,4 +470,5 @@ operation UMLRTModel!Region insTransForDbg()  {
 
 
 ///  instrument states for interactive debugging
+
 

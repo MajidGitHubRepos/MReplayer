@@ -32,7 +32,7 @@ public class Data {
 		this.capsuleInstance = capsuleInstance;
 		this.eventQueue = eventQueue;
 		this.tableData = tableData;
-		this.currentStatus = "Init";
+		this.currentStatus = null;
 	}
 	//--
 	public Data() {

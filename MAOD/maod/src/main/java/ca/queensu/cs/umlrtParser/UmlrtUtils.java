@@ -16,11 +16,15 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.uml2.uml.BodyOwner;
 import org.eclipse.uml2.uml.CallEvent;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Connector;
+import org.eclipse.uml2.uml.ConnectorEnd;
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.FinalState;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.PackageableElement;
+import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
 import org.eclipse.uml2.uml.Signal;
@@ -219,6 +223,36 @@ public class UmlrtUtils {
 		}
 		return triggers;
 	}
+	
+	//==================================================================	
+	//==============================================[getPorts]
+	//==================================================================	
+	public static EList<Port> getPorts(Class capsule) {
+		return capsule.getOwnedPorts();
+	}
+	
+	//==================================================================	
+	//==============================================[getConnectors]
+	//==================================================================	
+	public static EList<Connector> getConnectors(Class capsule) {
+		return capsule.getOwnedConnectors();
+	}
+	
+	//==================================================================	
+	//==============================================[getConnectorEnds]
+	//==================================================================	
+	public static List<ConnectorEnd> getConnectorEnds(Class containerCapsule) {
+
+		List<ConnectorEnd> connectorEnds = new ArrayList<ConnectorEnd>();
+		for (Connector con : containerCapsule.getOwnedConnectors()) {
+			ConnectorEnd end1 = con.getEnds().get(0);
+			ConnectorEnd end2 = con.getEnds().get(1);
+			connectorEnds.add(end1);
+			connectorEnds.add(end2);
+		}
+		return connectorEnds;
+	}
+	
 	
 
 }

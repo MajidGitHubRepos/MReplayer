@@ -2,6 +2,7 @@
     
     Developers:
     Mojtaba Bagherzadeh(mojtaba@cs.queensu.ca): Initial development
+    Majid Babaei: changing addDebugConnectionState to support new version of refineForSRO in UMLRTInstrumnetv0.1.eol
 
 */
 
@@ -353,12 +354,13 @@ operation UMLRTModel!Transition addDebugConnectionState(SM:UMLRTModel!StateMachi
     //anyEvent.println();
     var dbgPort=self.owner.owner.owner.ownedAttributes.selectOne(p|p.name=debugPortName);
     self.createTrigger("ConnectionEstablished",dbgPort,rtBound);
-    self.effect.body.clear();
-    var body:String="";
-    body=body.concat("if (this->").concat(instrumentPrefix).concat("SRO.getExecMode()==Stepping){").concat(endLine);
+    //self.effect.body.clear();
+    var body:String=self.effect.body.first();
+    //body=body.concat("if (this->").concat(instrumentPrefix).concat("SRO.getExecMode()==Stepping){").concat(endLine);
 	//body=body.concat("if (").concat(instrumentPrefix).concat("flag").concat("){").concat(endLine);
-	body=body.concat(generateDebugIntializationCode(transitionsData));
-	body=body.concat(generateConnDebugger()).concat("}").concat(endLine);
+	body=body.concat(generateConnDebugger());
+	self.effect.body.clear();
+	//body=body.concat(generateConnDebugger()).concat("}").concat(endLine);
     self.effect.body.add(body);
     //if (self) -- add  body to init
     ///
