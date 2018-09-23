@@ -60,6 +60,9 @@ public class Data {
 	public void setCapsuleInstance(String capsuleInstance ) {
 		this.capsuleInstance = capsuleInstance;
 	}
+	public void setEventToEventQueue(Event event) throws InterruptedException {
+		this.eventQueue.put(event);
+	}
 	public void setEventQueue(BlockingQueue <Event> eventQueue) {
 		this.eventQueue = eventQueue;
 	}

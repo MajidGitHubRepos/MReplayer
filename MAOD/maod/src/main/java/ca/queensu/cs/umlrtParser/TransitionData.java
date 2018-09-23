@@ -11,6 +11,7 @@ import org.springframework.statemachine.transition.TransitionKind;
 public class TransitionData {
 	//private  String name;
 	public String capsuleName;
+	private final String transitonName;
 	private final State source;
 	private final State target;
 	private final String sourceName;
@@ -26,19 +27,22 @@ public class TransitionData {
 	//private final SecurityRule securityRule;
 
 	//public TransitionData() {}
-	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit ) {
-		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count, isInit);
+	public TransitionData(String capsuleName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit ) {
+		this(capsuleName,transitonName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count, isInit);
 	}
 	
-	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
-		this(capsuleName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null, false);
+	public TransitionData(String capsuleName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
+		this(capsuleName,transitonName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null, false);
 	}
 	
-	public TransitionData(String capsuleName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit ) {
-		this(capsuleName,null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit);
+	public TransitionData(String capsuleName, String transitonName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit ) {
+		this(capsuleName,transitonName, null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit);
+	}
+	public TransitionData() {
+		this(null,null,null,null,null,null,null,null,null,false);
 	}
 	
-	public TransitionData(String capsuleName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
+	public TransitionData(String capsuleName, String transitonName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
 		this.capsuleName = capsuleName;
 		this.source = source;
 		this.sourceName = sourceName;
@@ -51,6 +55,7 @@ public class TransitionData {
 		this.period = period;
 		this.count = count;
 		this.isInit = isInit;
+		this.transitonName = transitonName;
 		//this.event = event;
 	}
 
@@ -60,6 +65,10 @@ public class TransitionData {
 	//}
 	public String getCapsuleName() {
 		return capsuleName;
+	}
+	
+	public String getTransitonName() {
+		return transitonName;
 	}
 	
 	public State getSource() {
@@ -89,6 +98,11 @@ public class TransitionData {
 	public List<String> getGuard() {
 		return guards;
 	}
+	
+	public List<String> getTriggers() {
+		return triggers;
+	}
+	
 	public boolean getIsInit() {
 		return isInit;
 	}
@@ -145,7 +159,7 @@ public class TransitionData {
 	*/
 	
 	public String allDataToString() {
-		return "TransitionData [CapsuleName= "+capsuleName+", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
+		return "TransitionData [CapsuleName= "+capsuleName+", transitonName= " + transitonName +", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
 				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + "]";
 	}
 

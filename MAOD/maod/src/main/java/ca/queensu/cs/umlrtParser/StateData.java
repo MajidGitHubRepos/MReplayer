@@ -48,6 +48,9 @@ public class StateData {
 	public StateData(String capsuleName, String sName, String pName, String rName , boolean initial, boolean end) {
 		this(capsuleName, null,sName, null, null, null, pName,rName, initial, end);
 	}
+	public StateData() {
+		this(null, null,null, null, null, null, null,null, false,false);
+	}
 	
 	
 	
