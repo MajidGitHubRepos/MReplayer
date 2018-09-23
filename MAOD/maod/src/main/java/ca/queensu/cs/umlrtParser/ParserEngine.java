@@ -114,6 +114,9 @@ public class ParserEngine implements Runnable {
 	public boolean getUmlrtParsingDone() {
 		return this.umlrtParsingDone;
 	}
+	public List<CapsuleConn> getListCapsuleConn(){
+		return this.listCapsuleConn;
+	}
 	public Map<String, List<TableDataMember>> getListTableData() {
 		return listTableData;
 	}
@@ -248,8 +251,7 @@ public class ParserEngine implements Runnable {
 								}
 							}
 						}
-					}
-						
+					}						
 				}
 
 				if ( (((Class) element).getOwnedBehaviors() != null && ((Class) element).getOwnedBehaviors().size() > 0))
@@ -333,10 +335,10 @@ public class ParserEngine implements Runnable {
 					//System.out.println("--------------> Body[getExit]: "+ stateBody);
 					exitList = UmlrtUtils.actionCodeProcessing(stateBody);
 				}
-				boolean isInitialState = UmlrtUtils.isInitialState(state);
+				//boolean isInitialState = UmlrtUtils.isInitialState(state);  // checked in psudoStates 
 				deferredList = UmlrtUtils.resolveDeferredEvents(state);
-				boolean isFinalState = UmlrtUtils.isFinalState(state);
-				StateData stateDate = new StateData(this.elementName, state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState); //My Solution
+				//boolean isFinalState = UmlrtUtils.isFinalState(state); // checked in psudoStates 
+				StateData stateDate = new StateData(this.elementName, state,sName, entryList, exitList, deferredList, parentName, regionName, false, false); //My Solution
 				/*StateData stateData = handleActions(
 						new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState), state);*/
 

@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.umlrtParser.TableDataMember;
+import ca.queensu.cs.umlrtParser.UmlrtParser;
 
 
 public class CapsuleTracker implements Runnable{
@@ -17,7 +18,7 @@ public class CapsuleTracker implements Runnable{
 	private String capsuleInstance;
 	private Event currentEvent;
 	private BlockingQueue <Event> eventQueueTmp;
-	private BlockingQueue <Message> messageQueue;
+	public BlockingQueue <Message> messageQueue;
 	private String currentState;
 
 
@@ -30,9 +31,7 @@ public class CapsuleTracker implements Runnable{
 	}
 
 
-
 	public void run() {
-
 		//Go to the initial state and wait for the right event
 
 		while(true) {
@@ -44,8 +43,6 @@ public class CapsuleTracker implements Runnable{
 						if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty()) {
 							//System.out.println("\n\n--> [" + TrackerMaker.dataArray[i].getCapsuleInstance() +"] Running thread: " +  capsuleInstance + ", Size: "+ TrackerMaker.dataArray[i].getEventQueue().size() +"\n\n");
 							try {
-
-								//Thread.currentThread().sleep(1);
 
 								if (!eventQueueTmp.isEmpty()) {
 									//First: checking eventQueueTmp
@@ -82,20 +79,61 @@ public class CapsuleTracker implements Runnable{
 		}
 	}
 
+	//==================================================================	
+	//==============================================[isConsumable]
+	//==================================================================
 	public boolean isConsumable(Event event) throws InterruptedException {
 
 		switch (currentState) {
-		case "REGISTER":  if (registerChecking(event)) {currentState = "Initial"; return true;};
-		break;
-		case "Initial":   if (initChecking(event))     {return true;};
-		break;
+			case "REGISTER":  if (registerChecking(event)) {currentState = "Initial"; return true;};
+				break;
+			case "Initial":   if (initChecking(event))     {return true;};
+				break;
 		}
+		
+		
 
 
 
 		return false;
 	}
 
+	//==================================================================	
+	//==============================================[sendToMessageQueue]
+	//==================================================================
+	public boolean sendToMessageQueue(String targetCapsuleName, String port, String msg) throws InterruptedException {
+		boolean sentSuccessfully = false;
+		Message sentMsg = new Message(port,msg);
+		for (int i=0; i< TrackerMaker.trackerCount; i++) {
+			if(TrackerMaker.capsuleTrackers[i].capsuleInstance.contentEquals(targetCapsuleName)){
+				TrackerMaker.capsuleTrackers[i].messageQueue.put(sentMsg);
+				sentSuccessfully = true;
+				return sentSuccessfully;
+			}
+		}
+		return sentSuccessfully;	
+	}
+	
+	//==================================================================	
+	//==============================================[lookingForTargetCapsuleName]
+	//==================================================================
+	public String lookingForTargetCapsuleName(String port) {
+		String targetCapsuleName = "";
+		boolean portFound = false;
+		
+		for (int i = 0; i< Controller.umlrtParser.getlistCapsuleConn().size(); i++) {
+			List<String> listCapsulePortConn = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName_connectorName_protocolName();
+			for (int j = 0; j < listCapsulePortConn.size() ; j++) {
+				if (listCapsulePortConn.contains(port)) {
+					portFound = true; 
+					targetCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(i).getCapsuleName();
+					return targetCapsuleName;
+				}
+			}
+		}
+		return targetCapsuleName;		
+	}
+	
 	//==================================================================	
 	//==============================================[registerChecking]
 	//==================================================================
@@ -124,8 +162,12 @@ public class CapsuleTracker implements Runnable{
 							//All action codes
 							for (int j = 0; j < entry.getValue().get(i).getTransition().getActions().size(); j++) {
 								String[] actionParts = entry.getValue().get(i).getTransition().getActions().get(j).split(".");
-								Message message = new Message(actionParts[0], actionParts[1]); //port,msg
-								messageQueue.put(message);
+								String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
+								do {
+									// Sleep current thread, if capsuleTracker for the target capsule has not been created!
+									System.out.println("[!] Trying to send the message to the target capsule messageQueue!");
+									Thread.currentThread().sleep(1);
+								}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
 							}
 							if (entry.getValue().get(i).getTarget().getStateName() != null) {
 								currentState = entry.getValue().get(i).getTarget().getStateName();

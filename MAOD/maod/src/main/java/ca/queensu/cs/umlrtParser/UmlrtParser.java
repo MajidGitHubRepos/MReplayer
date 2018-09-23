@@ -68,15 +68,20 @@ public class UmlrtParser {
 	private ParserEngine parserEngine;
 	private boolean umlrtParsingDone;
 	private  Map<String, List<TableDataMember>> listTableData;
+	private List<CapsuleConn> listCapsuleConn;
 	
 	public UmlrtParser() {
-		listTableData = new HashMap<String, List<TableDataMember>>();
-		umlrtParsingDone = false;
+		this.listTableData = new HashMap<String, List<TableDataMember>>();
+		this.listCapsuleConn = new ArrayList<CapsuleConn>();
+		this.umlrtParsingDone = false;
 		
 	}
 	
 	public Map<String, List<TableDataMember>> getlistTableData() {
 		return this.listTableData;
+	}
+	public List<CapsuleConn> getlistCapsuleConn() {
+		return this.listCapsuleConn;
 	}
 	public boolean getUmlrtParsingDone() {
 		return this.umlrtParsingDone;
@@ -120,6 +125,7 @@ public class UmlrtParser {
 	    	while(true) {
 	    		if (parserEngine.getUmlrtParsingDone()) {
 	    			listTableData = parserEngine.getListTableData();
+	    			listCapsuleConn = parserEngine.getListCapsuleConn();
 	    			umlrtParsingDone = true;
 	    			break;
 	    		}
