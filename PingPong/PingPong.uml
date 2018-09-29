@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:RTCppProperties="http://www.eclipse.org/papyrus/umlrt/cppproperties" xmlns:UMLRTStateMachines="http://www.eclipse.org/papyrus/umlrt/statemachine" xmlns:UMLRealTime="http://www.eclipse.org/papyrus/umlrt" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:UMLRTStateMachines="http://www.eclipse.org/papyrus/umlrt/statemachine" xmlns:UMLRealTime="http://www.eclipse.org/papyrus/umlrt" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
   <uml:Model xmi:id="_MImLUExOEeeAapBXl-GW2w" name="PingPong">
-    <eAnnotations xmi:id="_SI_ngExOEeeAapBXl-GW2w" source="http://www.eclipse.org/papyrus-rt/language/1.0.0">
-      <details xmi:id="_SJAOkExOEeeAapBXl-GW2w" key="language" value="umlrt-cpp"/>
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_SI_ngExOEeeAapBXl-GW2w" source="http://www.eclipse.org/papyrus-rt/language/1.0.0">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_SJAOkExOEeeAapBXl-GW2w" key="language" value="umlrt-cpp"/>
     </eAnnotations>
-    <eAnnotations xmi:id="_o9ItsExOEeeAapBXl-GW2w" source="UMLRT_Default_top">
-      <details xmi:id="_o9ItsUxOEeeAapBXl-GW2w" key="top_name" value="Debug__Top"/>
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_o9ItsExOEeeAapBXl-GW2w" source="UMLRT_Default_top">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_o9ItsUxOEeeAapBXl-GW2w" key="top_name" value="Top"/>
     </eAnnotations>
-    <packageImport xmi:id="_qtsDELF1Eei1JPmRVNcCBg">
-      <importedPackage xmi:type="uml:Model" href="../CommGateWay/model.uml#_MZw7AAdxEeadtKuU2t6fMg"/>
-    </packageImport>
     <packagedElement xmi:type="uml:Package" xmi:id="_YKTpsExOEeeAapBXl-GW2w" name="PingPong">
       <packagedElement xmi:type="uml:Collaboration" xmi:id="_YKDyEExOEeeAapBXl-GW2w" name="PingPong">
-        <interfaceRealization xmi:id="_YLTIMExOEeeAapBXl-GW2w" client="_YKDyEExOEeeAapBXl-GW2w" supplier="_YLFFwExOEeeAapBXl-GW2w" contract="_YLFFwExOEeeAapBXl-GW2w"/>
-        <interfaceRealization xmi:id="_YLvNEExOEeeAapBXl-GW2w" client="_YKDyEExOEeeAapBXl-GW2w" supplier="_YLnRQExOEeeAapBXl-GW2w" contract="_YLnRQExOEeeAapBXl-GW2w"/>
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_YLTIMExOEeeAapBXl-GW2w" client="_YKDyEExOEeeAapBXl-GW2w" supplier="_YLFFwExOEeeAapBXl-GW2w" contract="_YLFFwExOEeeAapBXl-GW2w"/>
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_YLvNEExOEeeAapBXl-GW2w" client="_YKDyEExOEeeAapBXl-GW2w" supplier="_YLnRQExOEeeAapBXl-GW2w" contract="_YLnRQExOEeeAapBXl-GW2w"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Interface" xmi:id="_YLFFwExOEeeAapBXl-GW2w" name="PingPong">
-        <ownedOperation xmi:id="_bVz8YExOEeeAapBXl-GW2w" name="pong"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_bVz8YExOEeeAapBXl-GW2w" name="pong"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Interface" xmi:id="_YLbrEExOEeeAapBXl-GW2w" name="PingPong~">
-        <ownedOperation xmi:id="_akmh4ExOEeeAapBXl-GW2w" name="ping"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_akmh4ExOEeeAapBXl-GW2w" name="ping"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Usage" xmi:id="_YLmDIExOEeeAapBXl-GW2w" client="_YKDyEExOEeeAapBXl-GW2w" supplier="_YLbrEExOEeeAapBXl-GW2w"/>
       <packagedElement xmi:type="uml:AnyReceiveEvent" xmi:id="_YLmqMExOEeeAapBXl-GW2w" name="*"/>
@@ -33,1324 +30,107 @@
         <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_gCK90ExOEeeAapBXl-GW2w" name="pinger" type="_YKDyEExOEeeAapBXl-GW2w" isOrdered="true" aggregation="composite" isBehavior="true"/>
-      <ownedAttribute xmi:id="_ww8oQExOEeeAapBXl-GW2w" name="pingCount" visibility="public">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_ww8oQExOEeeAapBXl-GW2w" name="pingCount" visibility="public">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_-bo3cMihEeecpIDEOn0ZdA" name="varString">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_-bo3cMihEeecpIDEOn0ZdA" name="varString">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <defaultValue xmi:type="uml:LiteralString" xmi:id="_Ez1IkMiiEeecpIDEOn0ZdA" value="testStringVariable"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_Inau8MiiEeecpIDEOn0ZdA" name="varBool">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Port" xmi:id="_quIH8bF1Eei1JPmRVNcCBg" name="extComm" visibility="protected" isBehavior="true" isConjugated="true" isService="false">
-        <type xmi:type="uml:Collaboration" href="../CommGateWay/model.uml#_KS0icDCLEeaxYMPe_sHEiw"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_quO1oLF1Eei1JPmRVNcCBg" value="1"/>
-        <upperValue xmi:type="uml:LiteralInteger" xmi:id="_quPcsLF1Eei1JPmRVNcCBg" value="1"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qukz4LF1Eei1JPmRVNcCBg" name="Debug__flag">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qukz4bF1Eei1JPmRVNcCBg" name="Debug__variablesData">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qukz4rF1Eei1JPmRVNcCBg" name="Debug__event">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qvBf0LF1Eei1JPmRVNcCBg" name="Debug__SRO">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_Inau8MiiEeecpIDEOn0ZdA" name="varBool">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_7eBO8ExOEeeAapBXl-GW2w" name="PingerStateMachine" isReentrant="false">
-        <region xmi:id="_7eS7wExOEeeAapBXl-GW2w" name="Region">
-          <transition xmi:id="_7emdwExOEeeAapBXl-GW2w" name="Initial" source="_q1n3ELF1Eei1JPmRVNcCBg" target="_7ehlQExOEeeAapBXl-GW2w">
+        <region xmi:type="uml:Region" xmi:id="_7eS7wExOEeeAapBXl-GW2w" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_7emdwExOEeeAapBXl-GW2w" name="Initial" source="_7eXNMExOEeeAapBXl-GW2w" target="_7ehlQExOEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_-mSyAExPEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.show(&quot;leaving initial pseudo state of pinger\n&quot;);
 pinger.ping().send();
-pingCount=1;
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Initial&quot;,(char *)&quot;Debug__Path__Initial&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
+pingCount=1;</body>
             </effect>
           </transition>
-          <transition xmi:id="_B4BBcExQEeeAapBXl-GW2w" name="onPong" source="_q0cLULF1Eei1JPmRVNcCBg" target="_7ehlQExOEeeAapBXl-GW2w">
+          <transition xmi:type="uml:Transition" xmi:id="_B4BBcExQEeeAapBXl-GW2w" name="onPong" kind="external" source="_7ehlQExOEeeAapBXl-GW2w" target="_7ehlQExOEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ImedgExQEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.show(&quot;pong message received.\n&quot;);
 pinger.ping().send();
-pingCount=pingCount+1;
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::onPong&quot;,(char *)&quot;Debug__Path__onPong&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
+pingCount=pingCount+1;</body>
             </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_DrVZMExQEeeAapBXl-GW2w" event="_bV-UcExOEeeAapBXl-GW2w" port="_gCK90ExOEeeAapBXl-GW2w"/>
           </transition>
-          <transition xmi:id="_q0ufMLF1Eei1JPmRVNcCBg" name="Debug__onPong" source="_7ehlQExOEeeAapBXl-GW2w" target="_q0cLULF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0ufMbF1Eei1JPmRVNcCBg" name="Debug__onPong__51">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__onPong&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;Debug__Path__onPong&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-            <trigger xmi:id="_DrVZMExQEeeAapBXl-GW2w" event="_bV-UcExOEeeAapBXl-GW2w" port="_gCK90ExOEeeAapBXl-GW2w"/>
-          </transition>
-          <transition xmi:id="_q0vGQLF1Eei1JPmRVNcCBg" name="Debug__onPong__S" guard="_q0vtUbF1Eei1JPmRVNcCBg" source="_q0cLULF1Eei1JPmRVNcCBg" target="_q0lVQbF1Eei1JPmRVNcCBg">
-            <ownedRule xmi:id="_q0vtUbF1Eei1JPmRVNcCBg" name="Debug__GuardonPong">
-              <specification xmi:type="uml:OpaqueExpression" xmi:id="_q0vtULF1Eei1JPmRVNcCBg" name="Debug__GuardonPong">
-                <language>C++</language>
-                <body>return Debug__SRO.checkDebug(&quot;PLAYING&quot;,msg->destPort->role()->protocol,msg->getSignalName(),1,TransitionEffectBreakPoint,0);
-</body>
-              </specification>
-            </ownedRule>
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0wUYLF1Eei1JPmRVNcCBg" name="Debug__onPong__S__53">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__onPong__S&quot;,(char *)&quot;Debug__Path__onPong&quot;,(char *)&quot;en&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_q0w7cLF1Eei1JPmRVNcCBg" name="Debug__onPong__E" source="_q0pmsbF1Eei1JPmRVNcCBg" target="_7ehlQExOEeeAapBXl-GW2w">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0w7cbF1Eei1JPmRVNcCBg" name="Debug__onPong__E__54">
-              <language>C++</language>
-              <body>this->Debug__recallAllMsg();
-
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__onPong__E&quot;,(char *)&quot;ex&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_q0xigLF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__varChange" source="_q0gcwbF1Eei1JPmRVNcCBg" target="_q0gcwbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0yJkbF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__varChange__56">
-              <language>C++</language>
-              <body>char varName1[256];
-char varValue1[1024];
-sprintf(varName1,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-sprintf(varValue1,&quot;%s&quot;,(*(const char * *)msg->getParam( 1 )));
-this->Debug__variablesChange(varName1,varValue1);
-</body>
-            </effect>
-            <trigger xmi:id="_q0yJkLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_PsaK0LjWEeaJ1dlMn1j7GQ"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q0yJkrF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__setBreakPoint" source="_q0gcwbF1Eei1JPmRVNcCBg" target="_q0gcwbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0yJlLF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__setBreakPoint__57">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.addBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q0yJk7F1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HctYoECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q0ywoLF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__remBreakPoint" source="_q0gcwbF1Eei1JPmRVNcCBg" target="_q0gcwbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0yworF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__remBreakPoint__58">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.remBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q0ywobF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HvALgEAyEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q0ywo7F1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__viewBreakPoints" source="_q0gcwbF1Eei1JPmRVNcCBg" target="_q0gcwbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0zXsLF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__viewBreakPoints__59">
-              <language>C++</language>
-              <body>std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q0ywpLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_t2NqIECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q0zXsbF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__dbgSetExecMode" source="_q0gcwbF1Eei1JPmRVNcCBg" target="_q0gcwbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0zXs7F1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__dbgSetExecMode__60">
-              <language>C++</language>
-              <body>this->Debug__SRO.setExecMode((ExecMode)( *(int *)msg->getParam( 0 ) ));
-</body>
-            </effect>
-            <trigger xmi:id="_q0zXsrF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_2Nc34EEDEee0eeIrP9Q9KA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q0zXtLF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__dbgDeferMsg" source="_q0gcwbF1Eei1JPmRVNcCBg" target="_q0gcwbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0z-wLF1Eei1JPmRVNcCBg" name="Debug__onPong__dbg__dbgDeferMsg__61">
-              <language>C++</language>
-              <body>msg->defer();
-std::cout&lt;&lt;&quot;A message defered&quot;&lt;&lt;&quot;\n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q0zXtbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_gCK90ExOEeeAapBXl-GW2w">
-              <event xmi:type="uml:AnyReceiveEvent" href="../CommGateWay/model.uml#_KTIEcDCLEeaxYMPe_sHEiw"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q15j4bF1Eei1JPmRVNcCBg" name="Debug__Initial" source="_q2YsELF1Eei1JPmRVNcCBg" target="_q1n3ELF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q16K8LF1Eei1JPmRVNcCBg" name="Debug__Initial__75">
-              <language>C++</language>
-              <body>if (this->Debug__SRO.getExecMode()==Stepping){
-Debug__SRO.addTransitionsFromState(&quot;&quot;,&quot;Initial&quot;,&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;);
-Debug__SRO.addTransitionsFromState(&quot;PLAYING&quot;,&quot;onPong&quot;,&quot;PLAYING&quot;,&quot;pong&quot;,&quot;PingPong&quot;);
-Debug__SRO.addTransitionsFromState(&quot;PLAYING&quot;,&quot;onPing&quot;,&quot;PLAYING&quot;,&quot;ping&quot;,&quot;PingPong&quot;);
-std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Connection with debugger is in progress\n&quot;;
-char  tempS[256];
-sprintf(tempS,&quot;%s%d&quot;,this->getName(),(int)this->getIndex());
-extComm.registerToControl(tempS).send();
-Debug__sendEvent(debugEvents::DEBUG,debugEvents::REGISTER,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *) &quot;&quot;,(char *) &quot;&quot;,(char *)&quot;&quot;,(char *) &quot;&quot;);
-}
-</body>
-            </effect>
-            <trigger xmi:id="_q2dkkLF1Eei1JPmRVNcCBg" name="ConnectionEstablished" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_PQtAwOzeEeSRtqCWFwOf8g"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q16yALF1Eei1JPmRVNcCBg" name="Debug__Initial__S" guard="_q16yArF1Eei1JPmRVNcCBg" source="_q1n3ELF1Eei1JPmRVNcCBg" target="_q1xBAbF1Eei1JPmRVNcCBg">
-            <ownedRule xmi:id="_q16yArF1Eei1JPmRVNcCBg" name="Debug__GuardInitial">
-              <specification xmi:type="uml:OpaqueExpression" xmi:id="_q16yAbF1Eei1JPmRVNcCBg" name="Debug__GuardInitial">
-                <language>C++</language>
-                <body>return Debug__SRO.checkDebug(&quot;Pseudo2&quot;,&quot;&quot;,&quot;&quot;,1,TransitionEffectBreakPoint,0);
-</body>
-              </specification>
-            </ownedRule>
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q16yA7F1Eei1JPmRVNcCBg" name="Debug__Initial__S__77">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__Initial__S&quot;,(char *)&quot;Debug__Path__Initial&quot;,(char *)&quot;en&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_q17ZELF1Eei1JPmRVNcCBg" name="Debug__Initial__E" source="_q11ScbF1Eei1JPmRVNcCBg" target="_7ehlQExOEeeAapBXl-GW2w">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q17ZEbF1Eei1JPmRVNcCBg" name="Debug__Initial__E__78">
-              <language>C++</language>
-              <body>this->Debug__recallAllMsg();
-
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__Initial__E&quot;,(char *)&quot;ex&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_q18AILF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__varChange" source="_q1svkbF1Eei1JPmRVNcCBg" target="_q1svkbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q18nMbF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__varChange__80">
-              <language>C++</language>
-              <body>char varName1[256];
-char varValue1[1024];
-sprintf(varName1,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-sprintf(varValue1,&quot;%s&quot;,(*(const char * *)msg->getParam( 1 )));
-this->Debug__variablesChange(varName1,varValue1);
-</body>
-            </effect>
-            <trigger xmi:id="_q18nMLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_PsaK0LjWEeaJ1dlMn1j7GQ"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q18nMrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__setBreakPoint" source="_q1svkbF1Eei1JPmRVNcCBg" target="_q1svkbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q18nNLF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__setBreakPoint__81">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.addBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q18nM7F1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HctYoECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q19OQLF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__remBreakPoint" source="_q1svkbF1Eei1JPmRVNcCBg" target="_q1svkbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q19OQrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__remBreakPoint__82">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.remBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q19OQbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HvALgEAyEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q19OQ7F1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__viewBreakPoints" source="_q1svkbF1Eei1JPmRVNcCBg" target="_q1svkbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q191ULF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__viewBreakPoints__83">
-              <language>C++</language>
-              <body>std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q19ORLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_t2NqIECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q191UbF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgSetExecMode" source="_q1svkbF1Eei1JPmRVNcCBg" target="_q1svkbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q191U7F1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgSetExecMode__84">
-              <language>C++</language>
-              <body>this->Debug__SRO.setExecMode((ExecMode)( *(int *)msg->getParam( 0 ) ));
-</body>
-            </effect>
-            <trigger xmi:id="_q191UrF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_quIH8bF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_2Nc34EEDEee0eeIrP9Q9KA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q191VLF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgDeferMsg" source="_q1svkbF1Eei1JPmRVNcCBg" target="_q1svkbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q191VrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgDeferMsg__85">
-              <language>C++</language>
-              <body>msg->defer();
-std::cout&lt;&lt;&quot;A message defered&quot;&lt;&lt;&quot;\n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_q191VbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_gCK90ExOEeeAapBXl-GW2w">
-              <event xmi:type="uml:AnyReceiveEvent" href="../CommGateWay/model.uml#_KTIEcDCLEeaxYMPe_sHEiw"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q2c9gbF1Eei1JPmRVNcCBg" name="Debug__InitDebug" source="_7eXNMExOEeeAapBXl-GW2w" target="_q2YsELF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q2c9grF1Eei1JPmRVNcCBg" name="DebugCheck">
-              <language>C++</language>
-              <body>std::cout&lt;&lt;this->getName()&lt;&lt;&quot; : is Starting\n&quot;;
-    this->Debug__SRO.setExecMode(Stepping);
-</body>
-            </effect>
-          </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_7eXNMExOEeeAapBXl-GW2w" name="Pseudo2"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_7eXNMExOEeeAapBXl-GW2w" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_7ehlQExOEeeAapBXl-GW2w" name="PLAYING">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_e3YJMExPEeeAapBXl-GW2w" name="Entry" isReentrant="false">
               <language>C++</language>
-              <body>if( not Debug__SRO.checkDebug(&quot;PLAYING&quot;,msg->destPort->role()->protocol,msg->getSignalName(),5,StateEntryBreakPoint,0)) {
-log.show(&quot;Entering playing state of pinger\n&quot;);
-}
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
+              <body>log.show(&quot;Entering playing state of pinger\n&quot;);</body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_gBgaAExPEeeAapBXl-GW2w" name="Exit" isReentrant="false">
               <language>C++</language>
-              <body>if( not Debug__SRO.checkDebug(&quot;PLAYING&quot;,msg->destPort->role()->protocol,msg->getSignalName(),0,StateExitBreakPoint,0)) {
-log.show(&quot;Leaving playing state of pinger\n&quot;);
-}
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
+              <body>log.show(&quot;Leaving playing state of pinger\n&quot;);</body>
             </exit>
           </subvertex>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_q0cLULF1Eei1JPmRVNcCBg" name="Debug__Path__onPong" kind="choice"/>
-          <subvertex xmi:type="uml:State" xmi:id="_q0gcwbF1Eei1JPmRVNcCBg" name="Debug__C__onPong">
-            <connectionPoint xmi:id="_q0lVQbF1Eei1JPmRVNcCBg" name="en" kind="entryPoint"/>
-            <connectionPoint xmi:id="_q0pmsbF1Eei1JPmRVNcCBg" name="ex" kind="exitPoint"/>
-            <region xmi:id="_q0gcwrF1Eei1JPmRVNcCBg" name="Region1">
-              <transition xmi:id="_q07TgLF1Eei1JPmRVNcCBg" name="Debug__init__trans__onPong" source="_q0lVQbF1Eei1JPmRVNcCBg" target="_q043QLF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q1i-kLF1Eei1JPmRVNcCBg" name="Debug__init__trans__onPong__67">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__init__trans__onPong&quot;,(char *)&quot;en&quot;,(char *)&quot;Debug__B__Ex__PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-              </transition>
-              <transition xmi:id="_q07TgbF1Eei1JPmRVNcCBg" name="Debug__Ex__PLAYING" source="_q043QLF1Eei1JPmRVNcCBg" target="_q05eULF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q07Tg7F1Eei1JPmRVNcCBg" name="Exit" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;Leaving playing state of pinger\n&quot;);
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__Ex__PLAYING&quot;,(char *)&quot;Debug__B__Ex__PLAYING&quot;,(char *)&quot;Debug__B__Ac__onPong&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q07TgrF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_q076kLF1Eei1JPmRVNcCBg" name="Debug__AC__onPong" source="_q05eULF1Eei1JPmRVNcCBg" target="_q06FYLF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q076krF1Eei1JPmRVNcCBg" name="Effect" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;pong message received.\n&quot;);
-pinger.ping().send();
-pingCount=pingCount+1;
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__AC__onPong&quot;,(char *)&quot;Debug__B__Ac__onPong&quot;,(char *)&quot;Debug__A__Ac__onPong&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q076kbF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_q076k7F1Eei1JPmRVNcCBg" name="Debug__En__PLAYING" source="_q06FYLF1Eei1JPmRVNcCBg" target="_q06scLF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q08hoLF1Eei1JPmRVNcCBg" name="Entry" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;Entering playing state of pinger\n&quot;);
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__En__PLAYING&quot;,(char *)&quot;Debug__A__Ac__onPong&quot;,(char *)&quot;Debug__A__En__PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q076lLF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_q08hobF1Eei1JPmRVNcCBg" name="Debug__end__trans__onPong" source="_q06scLF1Eei1JPmRVNcCBg" target="_q0pmsbF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q1la0LF1Eei1JPmRVNcCBg" name="Debug__end__trans__onPong__72">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__end__trans__onPong&quot;,(char *)&quot;Debug__A__En__PLAYING&quot;,(char *)&quot;ex&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q08horF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <subvertex xmi:type="uml:State" xmi:id="_q043QLF1Eei1JPmRVNcCBg" name="Debug__B__Ex__PLAYING">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q043QbF1Eei1JPmRVNcCBg" name="Debug__B__Ex__PLAYING">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,2,StateExitBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__B__Ex__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q1AzELF1Eei1JPmRVNcCBg" name="Debug__B__Ex__PLAYING__62">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__B__Ex__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_q05eULF1Eei1JPmRVNcCBg" name="Debug__B__Ac__onPong">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q05eUbF1Eei1JPmRVNcCBg" name="Debug__B__Ac__onPong">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,2,StateExitBreakPoint,1) or Debug__SRO.checkDebug(&quot;onPong&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__B__Ac__onPong&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q1XYYLF1Eei1JPmRVNcCBg" name="Debug__B__Ac__onPong__63">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__B__Ac__onPong&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_q06FYLF1Eei1JPmRVNcCBg" name="Debug__A__Ac__onPong">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q06FYbF1Eei1JPmRVNcCBg" name="Debug__A__Ac__onPong">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;onPong&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,1) or Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__A__Ac__onPong&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q1cQ4bF1Eei1JPmRVNcCBg" name="Debug__A__Ac__onPong__64">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__A__Ac__onPong&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_q06scLF1Eei1JPmRVNcCBg" name="Debug__A__En__PLAYING">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q06scbF1Eei1JPmRVNcCBg" name="Debug__A__En__PLAYING">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,1))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__A__En__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q1dfALF1Eei1JPmRVNcCBg" name="Debug__A__En__PLAYING__65">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__onPong::Region1::Debug__A__En__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-            </region>
-          </subvertex>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_q1n3ELF1Eei1JPmRVNcCBg" name="Debug__Path__Initial" kind="choice"/>
-          <subvertex xmi:type="uml:State" xmi:id="_q1svkbF1Eei1JPmRVNcCBg" name="Debug__C__Initial">
-            <connectionPoint xmi:id="_q1xBAbF1Eei1JPmRVNcCBg" name="en" kind="entryPoint"/>
-            <connectionPoint xmi:id="_q11ScbF1Eei1JPmRVNcCBg" name="ex" kind="exitPoint"/>
-            <region xmi:id="_q1svkrF1Eei1JPmRVNcCBg" name="Region1">
-              <transition xmi:id="_q2EjALF1Eei1JPmRVNcCBg" name="Debug__init__trans__Initial" source="_q1xBAbF1Eei1JPmRVNcCBg" target="_q2DU4bF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q2UaoLF1Eei1JPmRVNcCBg" name="Debug__init__trans__Initial__90">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__init__trans__Initial&quot;,(char *)&quot;en&quot;,(char *)&quot;Debug__B__Ac__Initial&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-              </transition>
-              <transition xmi:id="_q2EjAbF1Eei1JPmRVNcCBg" name="Debug__Ac__Initial" source="_q2DU4bF1Eei1JPmRVNcCBg" target="_q2D78LF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q2EjA7F1Eei1JPmRVNcCBg" name="Effect" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;leaving initial pseudo state of pinger\n&quot;);
-pinger.ping().send();
-pingCount=1;
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__Ac__Initial&quot;,(char *)&quot;Debug__B__Ac__Initial&quot;,(char *)&quot;Debug__A__Ac__Initial&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q2EjArF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_q2EjBLF1Eei1JPmRVNcCBg" name="Debug__En__PLAYING" source="_q2D78LF1Eei1JPmRVNcCBg" target="_q2D78rF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q2FKEbF1Eei1JPmRVNcCBg" name="Entry" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;Entering playing state of pinger\n&quot;);
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__En__PLAYING&quot;,(char *)&quot;Debug__A__Ac__Initial&quot;,(char *)&quot;Debug__A__En__Initial&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q2FKELF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_q2FKErF1Eei1JPmRVNcCBg" name="Debug__end__trans__Initial" source="_q2D78rF1Eei1JPmRVNcCBg" target="_q11ScbF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q2W24LF1Eei1JPmRVNcCBg" name="Debug__end__trans__Initial__94">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__end__trans__Initial&quot;,(char *)&quot;Debug__A__En__Initial&quot;,(char *)&quot;ex&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_q2FKE7F1Eei1JPmRVNcCBg" name="Debug__Exec" port="_quIH8bF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <subvertex xmi:type="uml:State" xmi:id="_q2DU4bF1Eei1JPmRVNcCBg" name="Debug__B__Ac__Initial">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q2DU4rF1Eei1JPmRVNcCBg" name="Debug__B__Ac__Initial">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;Initial&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__B__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q2JbgbF1Eei1JPmRVNcCBg" name="Debug__B__Ac__Initial__86">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__B__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_q2D78LF1Eei1JPmRVNcCBg" name="Debug__A__Ac__Initial">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q2D78bF1Eei1JPmRVNcCBg" name="Debug__A__Ac__Initial">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;Initial&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,1) or Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q2O7ELF1Eei1JPmRVNcCBg" name="Debug__A__Ac__Initial__87">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_q2D78rF1Eei1JPmRVNcCBg" name="Debug__A__En__Initial">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_q2D787F1Eei1JPmRVNcCBg" name="Debug__A__En__Initial">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,1))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__En__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q2TzkLF1Eei1JPmRVNcCBg" name="Debug__A__En__Initial__88">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Pinger::PingerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__En__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-            </region>
-          </subvertex>
-          <subvertex xmi:type="uml:State" xmi:id="_q2YsELF1Eei1JPmRVNcCBg" name="Debug__InitState"/>
         </region>
       </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_quIH8LF1Eei1JPmRVNcCBg" name="Debug__recallAllMsg" specification="_quHg4LF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>pinger.recallAll();
-</body>
-      </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_quf7YbF1Eei1JPmRVNcCBg" name="Debug__variablesViewMethod" specification="_quf7YLF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>std::string tempS=&quot;&quot;;
-tempS.append(&quot;pingCount,&quot;);
-tempS.append(&quot;Integer,&quot;);
-if(pingCount!=0){
-    char tempR[10];
-    sprintf(tempR,&quot;%d&quot;,pingCount);
-    tempS.append(tempR);
-    tempS.append(&quot;\n&quot;);
-}else {
-    tempS.append(&quot;0&quot;);
-    tempS.append(&quot;\n&quot;);
-};
-tempS.append(&quot;varString,&quot;);
-tempS.append(&quot;String,&quot;);
-if(varString==NULL){
-    tempS.append(&quot;\&quot;\&quot;&quot;);
-    tempS.append(&quot;\n&quot;);
-}else{
-    tempS.append(&quot;\&quot;&quot;);
-    tempS.append(varString);
-    tempS.append(&quot;\&quot;&quot;);
-    tempS.append(&quot;\n&quot;);
-};
-tempS.append(&quot;varBool,&quot;);
-tempS.append(&quot;Boolean,&quot;);
-if(varBool==true){
-    tempS.append(&quot;true&quot;);
-    tempS.append(&quot;\n&quot;);
-}else {
-    tempS.append(&quot;false&quot;);
-    tempS.append(&quot;\n&quot;);
-};
-if (Debug__variablesData==NULL)
-    Debug__variablesData=(char *)malloc(strlen(tempS.c_str())+1);
-else if (strlen(Debug__variablesData)&lt;strlen(tempS.c_str()))
-    Debug__variablesData=(char *) realloc(Debug__variablesData,strlen(tempS.c_str())+1);
-strcpy(Debug__variablesData,tempS.c_str());
-</body>
-      </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_qujlw7F1Eei1JPmRVNcCBg" name="Debug__variablesChange" specification="_qui-sLF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>std::string tempVarName=&quot;&quot;;
-tempVarName.append(varName);
-if (&quot;varString&quot;==tempVarName){
-    if (varString==NULL)
-        varString=(char*) malloc(strlen(varValue)+1);
-    else if(strlen(varString)&lt;strlen(varValue))
-        varString=(char *) realloc(varString,strlen(varValue)+1);
-    strcpy(varString,varValue);
-    return true;
-}else if (&quot;varBool&quot;==tempVarName){
-    if(strcmp(varValue,&quot;true&quot;)==0)
-        varBool=true;
-    else 
-        varBool=false;
-    return true;
-}else if (&quot;pingCount&quot;==tempVarName){
-    pingCount=atoi(varValue);
-    return true;
-}else 
-    return false;
-</body>
-      </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_qwQ18rF1Eei1JPmRVNcCBg" name="Debug__sendEvent" specification="_qvgoALF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>this->Debug__variablesView();
-this->Debug__event.clearEventPayload();
-this->Debug__event.generateEventID();
-this->Debug__event.setCpuTik();
-this->Debug__event.setTimePointToNow();
-this->Debug__event.setEventSourceKind(eventSourceKind);
-this->Debug__event.setEventType(eventType);
-this->Debug__event.setCapsuleName(capsuleName);
-this->Debug__event.setCapsuleInstance(instanceName);
-this->Debug__event.setCapsuleIndex(capsuleIndex);
-this->Debug__event.setSourceName(sourceName);
-this->Debug__event.setVariableData(this->Debug__variablesData);
-this->Debug__event.setPayloadField(&quot;Status&quot;,this->Debug__SRO.getStatusStr());
-if (eventSourceKind==debugEvents::TRANISTION){
-this->Debug__event.setPayloadField(&quot;Source&quot;,reserve1);
-this->Debug__event.setPayloadField(&quot;Target&quot;,reserve2);
-this->Debug__event.setPayloadField(&quot;Signal&quot;,signalName);
-}
-std::string tempS=this->Debug__event.serialize();
-char eventStr[tempS.length()+1];
-strcpy(eventStr,tempS.c_str());
-extComm.event(eventStr).send();
-</body>
-      </ownedBehavior>
-      <ownedOperation xmi:id="_quHg4LF1Eei1JPmRVNcCBg" name="Debug__recallAllMsg" visibility="private" method="_quIH8LF1Eei1JPmRVNcCBg"/>
-      <ownedOperation xmi:id="_quf7YLF1Eei1JPmRVNcCBg" name="Debug__variablesView" visibility="private" method="_quf7YbF1Eei1JPmRVNcCBg"/>
-      <ownedOperation xmi:id="_qui-sLF1Eei1JPmRVNcCBg" name="Debug__variablesChange" visibility="private" method="_qujlw7F1Eei1JPmRVNcCBg">
-        <ownedParameter xmi:id="_qujlwLF1Eei1JPmRVNcCBg" name="methodReturn" direction="return">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qujlwbF1Eei1JPmRVNcCBg" name="varName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qujlwrF1Eei1JPmRVNcCBg" name="varValue">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-      </ownedOperation>
-      <ownedOperation xmi:id="_qvgoALF1Eei1JPmRVNcCBg" name="Debug__sendEvent" visibility="private" method="_qwQ18rF1Eei1JPmRVNcCBg">
-        <ownedParameter xmi:id="_qvgoAbF1Eei1JPmRVNcCBg" name="eventSourceKind">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qvqZALF1Eei1JPmRVNcCBg" name="eventType">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qv0xELF1Eei1JPmRVNcCBg" name="instanceName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qv97ALF1Eei1JPmRVNcCBg" name="capsuleIndex">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qv-iELF1Eei1JPmRVNcCBg" name="signalName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwHE8LF1Eei1JPmRVNcCBg" name="capsuleName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwQO4LF1Eei1JPmRVNcCBg" name="sourceName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwQO4bF1Eei1JPmRVNcCBg" name="reserve1">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwQ18LF1Eei1JPmRVNcCBg" name="reserve2">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwQ18bF1Eei1JPmRVNcCBg" name="reserve3">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-      </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_irESsExOEeeAapBXl-GW2w" name="Ponger" classifierBehavior="_P8x8sExQEeeAapBXl-GW2w" isActive="true">
       <ownedAttribute xmi:type="uml:Port" xmi:id="_j9fj4ExOEeeAapBXl-GW2w" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
         <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_kypqQExOEeeAapBXl-GW2w" name="ponger" type="_YKDyEExOEeeAapBXl-GW2w" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true"/>
-      <ownedAttribute xmi:id="_4p-aAExOEeeAapBXl-GW2w" name="j" visibility="public">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_4p-aAExOEeeAapBXl-GW2w" name="j" visibility="public">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
       </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Port" xmi:id="_qwTSMLF1Eei1JPmRVNcCBg" name="extComm" visibility="protected" isBehavior="true" isConjugated="true" isService="false">
-        <type xmi:type="uml:Collaboration" href="../CommGateWay/model.uml#_KS0icDCLEeaxYMPe_sHEiw"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qwXjobF1Eei1JPmRVNcCBg" value="1"/>
-        <upperValue xmi:type="uml:LiteralInteger" xmi:id="_qwXjorF1Eei1JPmRVNcCBg" value="1"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qwjw47F1Eei1JPmRVNcCBg" name="Debug__flag">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qwkX8LF1Eei1JPmRVNcCBg" name="Debug__variablesData">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qwkX8bF1Eei1JPmRVNcCBg" name="Debug__event">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qwsTwLF1Eei1JPmRVNcCBg" name="Debug__SRO">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_P8x8sExQEeeAapBXl-GW2w" name="PongerStateMachine" isReentrant="false">
-        <region xmi:id="_P9XykExQEeeAapBXl-GW2w" name="Region">
-          <transition xmi:id="_P9qGcExQEeeAapBXl-GW2w" name="Initial" source="_qzeiALF1Eei1JPmRVNcCBg" target="_P9jYwExQEeeAapBXl-GW2w">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0QlILF1Eei1JPmRVNcCBg" name="Initial__49">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Initial&quot;,(char *)&quot;Debug__Path__Initial&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_ZUZMUExQEeeAapBXl-GW2w" name="onPing" source="_qx0VILF1Eei1JPmRVNcCBg" target="_P9jYwExQEeeAapBXl-GW2w">
+        <region xmi:type="uml:Region" xmi:id="_P9XykExQEeeAapBXl-GW2w" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_P9qGcExQEeeAapBXl-GW2w" name="Initial" source="_P9fHUExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w"/>
+          <transition xmi:type="uml:Transition" xmi:id="_ZUZMUExQEeeAapBXl-GW2w" name="onPing" kind="external" source="_P9jYwExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q3J4cExQEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.show(&quot;ping message received.\n&quot;);
-ponger.pong().send();
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::onPing&quot;,(char *)&quot;Debug__Path__onPing&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
+ponger.pong().send();</body>
             </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_b3gpUExQEeeAapBXl-GW2w" event="_akzWMExOEeeAapBXl-GW2w" port="_kypqQExOEeeAapBXl-GW2w"/>
           </transition>
-          <transition xmi:id="_qyayELF1Eei1JPmRVNcCBg" name="Debug__onPing" source="_P9jYwExQEeeAapBXl-GW2w" target="_qx0VILF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qybZILF1Eei1JPmRVNcCBg" name="Debug__onPing__3">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__onPing&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;Debug__Path__onPing&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-            <trigger xmi:id="_b3gpUExQEeeAapBXl-GW2w" event="_akzWMExOEeeAapBXl-GW2w" port="_kypqQExOEeeAapBXl-GW2w"/>
-          </transition>
-          <transition xmi:id="_qyeccLF1Eei1JPmRVNcCBg" name="Debug__onPing__S" guard="_qyfqkbF1Eei1JPmRVNcCBg" source="_qx0VILF1Eei1JPmRVNcCBg" target="_qx9fELF1Eei1JPmRVNcCBg">
-            <ownedRule xmi:id="_qyfqkbF1Eei1JPmRVNcCBg" name="Debug__GuardonPing">
-              <specification xmi:type="uml:OpaqueExpression" xmi:id="_qyfqkLF1Eei1JPmRVNcCBg" name="Debug__GuardonPing">
-                <language>C++</language>
-                <body>return Debug__SRO.checkDebug(&quot;PLAYING&quot;,msg->destPort->role()->protocol,msg->getSignalName(),1,TransitionEffectBreakPoint,0);
-</body>
-              </specification>
-            </ownedRule>
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qyg4sLF1Eei1JPmRVNcCBg" name="Debug__onPing__S__5">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__onPing__S&quot;,(char *)&quot;Debug__Path__onPing&quot;,(char *)&quot;en&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_qyit4LF1Eei1JPmRVNcCBg" name="Debug__onPing__E" source="_qyBJcbF1Eei1JPmRVNcCBg" target="_P9jYwExQEeeAapBXl-GW2w">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qyjU8LF1Eei1JPmRVNcCBg" name="Debug__onPing__E__6">
-              <language>C++</language>
-              <body>this->Debug__recallAllMsg();
-
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__onPing__E&quot;,(char *)&quot;ex&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_qylxMLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__varChange" source="_qx5NobF1Eei1JPmRVNcCBg" target="_qx5NobF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qymYQLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__varChange__8">
-              <language>C++</language>
-              <body>char varName1[256];
-char varValue1[1024];
-sprintf(varName1,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-sprintf(varValue1,&quot;%s&quot;,(*(const char * *)msg->getParam( 1 )));
-this->Debug__variablesChange(varName1,varValue1);
-</body>
-            </effect>
-            <trigger xmi:id="_qylxMbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_PsaK0LjWEeaJ1dlMn1j7GQ"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qynmYLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__setBreakPoint" source="_qx5NobF1Eei1JPmRVNcCBg" target="_qx5NobF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qyoNcLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__setBreakPoint__9">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.addBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qynmYbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HctYoECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qyo0gLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__remBreakPoint" source="_qx5NobF1Eei1JPmRVNcCBg" target="_qx5NobF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qypbkLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__remBreakPoint__10">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.remBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qyo0gbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HvALgEAyEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qyqCoLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__viewBreakPoints" source="_qx5NobF1Eei1JPmRVNcCBg" target="_qx5NobF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qyqCorF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__viewBreakPoints__11">
-              <language>C++</language>
-              <body>std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qyqCobF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_t2NqIECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qyqpsLF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__dbgSetExecMode" source="_qx5NobF1Eei1JPmRVNcCBg" target="_qx5NobF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qyrQwbF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__dbgSetExecMode__12">
-              <language>C++</language>
-              <body>this->Debug__SRO.setExecMode((ExecMode)( *(int *)msg->getParam( 0 ) ));
-</body>
-            </effect>
-            <trigger xmi:id="_qyrQwLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_2Nc34EEDEee0eeIrP9Q9KA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qyr30LF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__dbgDeferMsg" source="_qx5NobF1Eei1JPmRVNcCBg" target="_qx5NobF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qyr30rF1Eei1JPmRVNcCBg" name="Debug__onPing__dbg__dbgDeferMsg__13">
-              <language>C++</language>
-              <body>msg->defer();
-std::cout&lt;&lt;&quot;A message defered&quot;&lt;&lt;&quot;\n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qyr30bF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_kypqQExOEeeAapBXl-GW2w">
-              <event xmi:type="uml:AnyReceiveEvent" href="../CommGateWay/model.uml#_KTIEcDCLEeaxYMPe_sHEiw"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qzxc8LF1Eei1JPmRVNcCBg" name="Debug__Initial" source="_q0SaULF1Eei1JPmRVNcCBg" target="_qzeiALF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qzxc8bF1Eei1JPmRVNcCBg" name="Debug__Initial__27">
-              <language>C++</language>
-              <body>if (this->Debug__SRO.getExecMode()==Stepping){
-Debug__SRO.addTransitionsFromState(&quot;&quot;,&quot;Initial&quot;,&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;);
-Debug__SRO.addTransitionsFromState(&quot;PLAYING&quot;,&quot;onPing&quot;,&quot;PLAYING&quot;,&quot;ping&quot;,&quot;PingPong&quot;);
-std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Connection with debugger is in progress\n&quot;;
-char  tempS[256];
-sprintf(tempS,&quot;%s%d&quot;,this->getName(),(int)this->getIndex());
-extComm.registerToControl(tempS).send();
-Debug__sendEvent(debugEvents::DEBUG,debugEvents::REGISTER,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *) &quot;&quot;,(char *) &quot;&quot;,(char *)&quot;&quot;,(char *) &quot;&quot;);
-}
-</body>
-            </effect>
-            <trigger xmi:id="_q0XS0LF1Eei1JPmRVNcCBg" name="ConnectionEstablished" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_PQtAwOzeEeSRtqCWFwOf8g"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qzyEALF1Eei1JPmRVNcCBg" name="Debug__Initial__S" guard="_qzyEArF1Eei1JPmRVNcCBg" source="_qzeiALF1Eei1JPmRVNcCBg" target="_qznr8bF1Eei1JPmRVNcCBg">
-            <ownedRule xmi:id="_qzyEArF1Eei1JPmRVNcCBg" name="Debug__GuardInitial">
-              <specification xmi:type="uml:OpaqueExpression" xmi:id="_qzyEAbF1Eei1JPmRVNcCBg" name="Debug__GuardInitial">
-                <language>C++</language>
-                <body>return Debug__SRO.checkDebug(&quot;Pseudo1&quot;,&quot;&quot;,&quot;&quot;,1,TransitionEffectBreakPoint,0);
-</body>
-              </specification>
-            </ownedRule>
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qzyrELF1Eei1JPmRVNcCBg" name="Debug__Initial__S__29">
-              <language>C++</language>
-              <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__Initial__S&quot;,(char *)&quot;Debug__Path__Initial&quot;,(char *)&quot;en&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_qzzSILF1Eei1JPmRVNcCBg" name="Debug__Initial__E" source="_qzr9YbF1Eei1JPmRVNcCBg" target="_P9jYwExQEeeAapBXl-GW2w">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qzzSIbF1Eei1JPmRVNcCBg" name="Debug__Initial__E__30">
-              <language>C++</language>
-              <body>this->Debug__recallAllMsg();
-
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__Initial__E&quot;,(char *)&quot;ex&quot;,(char *)&quot;PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-            </effect>
-          </transition>
-          <transition xmi:id="_qzz5MLF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__varChange" source="_qzizcbF1Eei1JPmRVNcCBg" target="_qzizcbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qzz5MrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__varChange__32">
-              <language>C++</language>
-              <body>char varName1[256];
-char varValue1[1024];
-sprintf(varName1,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-sprintf(varValue1,&quot;%s&quot;,(*(const char * *)msg->getParam( 1 )));
-this->Debug__variablesChange(varName1,varValue1);
-</body>
-            </effect>
-            <trigger xmi:id="_qzz5MbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_PsaK0LjWEeaJ1dlMn1j7GQ"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qz0gQLF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__setBreakPoint" source="_qzizcbF1Eei1JPmRVNcCBg" target="_qzizcbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qz0gQrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__setBreakPoint__33">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.addBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qz0gQbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HctYoECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qz1HULF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__remBreakPoint" source="_qzizcbF1Eei1JPmRVNcCBg" target="_qzizcbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qz1HUrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__remBreakPoint__34">
-              <language>C++</language>
-              <body>char loc[1024];
-sprintf(loc,&quot;%s&quot;,(*(const char * *)msg->getParam( 0 )));
-this->Debug__SRO.remBreakPoint(loc,(BreakPointType)( *(int *)msg->getParam( 1 ) ),( *(int *)msg->getParam( 2 ) ));
-std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qz1HUbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_HvALgEAyEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qz1HU7F1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__viewBreakPoints" source="_qzizcbF1Eei1JPmRVNcCBg" target="_qzizcbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qz1HVbF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__viewBreakPoints__35">
-              <language>C++</language>
-              <body>std::cout&lt;&lt;this->Debug__SRO.serializeBreakPoint()&lt;&lt;&quot;n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qz1HVLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_t2NqIECVEeev_-3F68RaHA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qz1uYLF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgSetExecMode" source="_qzizcbF1Eei1JPmRVNcCBg" target="_qzizcbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qz1uYrF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgSetExecMode__36">
-              <language>C++</language>
-              <body>this->Debug__SRO.setExecMode((ExecMode)( *(int *)msg->getParam( 0 ) ));
-</body>
-            </effect>
-            <trigger xmi:id="_qz1uYbF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_qwTSMLF1Eei1JPmRVNcCBg">
-              <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_2Nc34EEDEee0eeIrP9Q9KA"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_qz1uY7F1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgDeferMsg" source="_qzizcbF1Eei1JPmRVNcCBg" target="_qzizcbF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qz1uZbF1Eei1JPmRVNcCBg" name="Debug__Initial__dbg__dbgDeferMsg__37">
-              <language>C++</language>
-              <body>msg->defer();
-std::cout&lt;&lt;&quot;A message defered&quot;&lt;&lt;&quot;\n&quot;;
-</body>
-            </effect>
-            <trigger xmi:id="_qz1uZLF1Eei1JPmRVNcCBg" name="Debug__MSG" port="_kypqQExOEeeAapBXl-GW2w">
-              <event xmi:type="uml:AnyReceiveEvent" href="../CommGateWay/model.uml#_KTIEcDCLEeaxYMPe_sHEiw"/>
-            </trigger>
-          </transition>
-          <transition xmi:id="_q0WrwbF1Eei1JPmRVNcCBg" name="Debug__InitDebug" source="_P9fHUExQEeeAapBXl-GW2w" target="_q0SaULF1Eei1JPmRVNcCBg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0WrwrF1Eei1JPmRVNcCBg" name="DebugCheck">
-              <language>C++</language>
-              <body>std::cout&lt;&lt;this->getName()&lt;&lt;&quot; : is Starting\n&quot;;
-    this->Debug__SRO.setExecMode(Stepping);
-</body>
-            </effect>
-          </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_P9fHUExQEeeAapBXl-GW2w" name="Pseudo1"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_P9fHUExQEeeAapBXl-GW2w" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_P9jYwExQEeeAapBXl-GW2w" name="PLAYING">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_fs-fAExQEeeAapBXl-GW2w" name="Entry" isReentrant="false">
               <language>C++</language>
-              <body>if( not Debug__SRO.checkDebug(&quot;PLAYING&quot;,msg->destPort->role()->protocol,msg->getSignalName(),5,StateEntryBreakPoint,0)) {
-log.show(&quot;Entering playing state of ponger\n&quot;);
-}
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
+              <body>log.show(&quot;Entering playing state of ponger\n&quot;);</body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_j-wdQExQEeeAapBXl-GW2w" name="Exit" isReentrant="false">
               <language>C++</language>
-              <body>if( not Debug__SRO.checkDebug(&quot;PLAYING&quot;,msg->destPort->role()->protocol,msg->getSignalName(),0,StateExitBreakPoint,0)) {
-log.show(&quot;Leaving playing state of ponger\n&quot;);
-}
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
+              <body>log.show(&quot;Leaving playing state of ponger\n&quot;);</body>
             </exit>
           </subvertex>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_qx0VILF1Eei1JPmRVNcCBg" name="Debug__Path__onPing" kind="choice"/>
-          <subvertex xmi:type="uml:State" xmi:id="_qx5NobF1Eei1JPmRVNcCBg" name="Debug__C__onPing">
-            <connectionPoint xmi:id="_qx9fELF1Eei1JPmRVNcCBg" name="en" kind="entryPoint"/>
-            <connectionPoint xmi:id="_qyBJcbF1Eei1JPmRVNcCBg" name="ex" kind="exitPoint"/>
-            <region xmi:id="_qx5NorF1Eei1JPmRVNcCBg" name="Region1">
-              <transition xmi:id="_qy8WgLF1Eei1JPmRVNcCBg" name="Debug__init__trans__onPing" source="_qx9fELF1Eei1JPmRVNcCBg" target="_qyzMkLF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qzXNQLF1Eei1JPmRVNcCBg" name="Debug__init__trans__onPing__19">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__init__trans__onPing&quot;,(char *)&quot;en&quot;,(char *)&quot;Debug__B__Ex__PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-              </transition>
-              <transition xmi:id="_qy8WgbF1Eei1JPmRVNcCBg" name="Debug__Ex__PLAYING" source="_qyzMkLF1Eei1JPmRVNcCBg" target="_qy0asLF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qy89kbF1Eei1JPmRVNcCBg" name="Exit" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;Leaving playing state of ponger\n&quot;);
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__Ex__PLAYING&quot;,(char *)&quot;Debug__B__Ex__PLAYING&quot;,(char *)&quot;Debug__B__Ac__onPing&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qy89kLF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_qy9koLF1Eei1JPmRVNcCBg" name="Debug__AC__onPing" source="_qy0asLF1Eei1JPmRVNcCBg" target="_qy228LF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qy9korF1Eei1JPmRVNcCBg" name="Effect" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;ping message received.\n&quot;);
-ponger.pong().send();
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__AC__onPing&quot;,(char *)&quot;Debug__B__Ac__onPing&quot;,(char *)&quot;Debug__A__Ac__onPing&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qy9kobF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_qy-LsLF1Eei1JPmRVNcCBg" name="Debug__En__PLAYING" source="_qy228LF1Eei1JPmRVNcCBg" target="_qy4sILF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qy-LsrF1Eei1JPmRVNcCBg" name="Entry" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;Entering playing state of ponger\n&quot;);
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__En__PLAYING&quot;,(char *)&quot;Debug__A__Ac__onPing&quot;,(char *)&quot;Debug__A__En__PLAYING&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qy-LsbF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_qy-ywLF1Eei1JPmRVNcCBg" name="Debug__end__trans__onPing" source="_qy4sILF1Eei1JPmRVNcCBg" target="_qyBJcbF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qza3oLF1Eei1JPmRVNcCBg" name="Debug__end__trans__onPing__24">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__end__trans__onPing&quot;,(char *)&quot;Debug__A__En__PLAYING&quot;,(char *)&quot;ex&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qy-ywbF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <subvertex xmi:type="uml:State" xmi:id="_qyzMkLF1Eei1JPmRVNcCBg" name="Debug__B__Ex__PLAYING">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qyzMkbF1Eei1JPmRVNcCBg" name="Debug__B__Ex__PLAYING">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,2,StateExitBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__B__Ex__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_qzDrQLF1Eei1JPmRVNcCBg" name="Debug__B__Ex__PLAYING__14">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__B__Ex__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_qy0asLF1Eei1JPmRVNcCBg" name="Debug__B__Ac__onPing">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qy0asbF1Eei1JPmRVNcCBg" name="Debug__B__Ac__onPing">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,2,StateExitBreakPoint,1) or Debug__SRO.checkDebug(&quot;onPing&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__B__Ac__onPing&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_qzMOIbF1Eei1JPmRVNcCBg" name="Debug__B__Ac__onPing__15">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__B__Ac__onPing&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_qy228LF1Eei1JPmRVNcCBg" name="Debug__A__Ac__onPing">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qy228bF1Eei1JPmRVNcCBg" name="Debug__A__Ac__onPing">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;onPing&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,1) or Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__A__Ac__onPing&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_qzRtsLF1Eei1JPmRVNcCBg" name="Debug__A__Ac__onPing__16">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__A__Ac__onPing&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_qy4sILF1Eei1JPmRVNcCBg" name="Debug__A__En__PLAYING">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qy4sIbF1Eei1JPmRVNcCBg" name="Debug__A__En__PLAYING">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,1))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__A__En__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_qzSUwLF1Eei1JPmRVNcCBg" name="Debug__A__En__PLAYING__17">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__onPing::Region1::Debug__A__En__PLAYING&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-            </region>
-          </subvertex>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_qzeiALF1Eei1JPmRVNcCBg" name="Debug__Path__Initial" kind="choice"/>
-          <subvertex xmi:type="uml:State" xmi:id="_qzizcbF1Eei1JPmRVNcCBg" name="Debug__C__Initial">
-            <connectionPoint xmi:id="_qznr8bF1Eei1JPmRVNcCBg" name="en" kind="entryPoint"/>
-            <connectionPoint xmi:id="_qzr9YbF1Eei1JPmRVNcCBg" name="ex" kind="exitPoint"/>
-            <region xmi:id="_qzizcrF1Eei1JPmRVNcCBg" name="Region1">
-              <transition xmi:id="_qz8cErF1Eei1JPmRVNcCBg" name="Debug__init__trans__Initial" source="_qznr8bF1Eei1JPmRVNcCBg" target="_qz7N8bF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0Nh0LF1Eei1JPmRVNcCBg" name="Debug__init__trans__Initial__42">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__init__trans__Initial&quot;,(char *)&quot;en&quot;,(char *)&quot;Debug__B__Ac__Initial&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-              </transition>
-              <transition xmi:id="_qz8cE7F1Eei1JPmRVNcCBg" name="Debug__Ac__Initial" source="_qz7N8bF1Eei1JPmRVNcCBg" target="_qz71ALF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0OI4LF1Eei1JPmRVNcCBg" name="Debug__Ac__Initial__44">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__Ac__Initial&quot;,(char *)&quot;Debug__B__Ac__Initial&quot;,(char *)&quot;Debug__A__Ac__Initial&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qz8cFLF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_qz9DILF1Eei1JPmRVNcCBg" name="Debug__En__PLAYING" source="_qz71ALF1Eei1JPmRVNcCBg" target="_qz8cELF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_qz9DIrF1Eei1JPmRVNcCBg" name="Entry" visibility="public" isReentrant="false">
-                  <language>C++</language>
-                  <body>log.show(&quot;Entering playing state of ponger\n&quot;);
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__En__PLAYING&quot;,(char *)&quot;Debug__A__Ac__Initial&quot;,(char *)&quot;Debug__A__En__Initial&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qz9DIbF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <transition xmi:id="_qz9DI7F1Eei1JPmRVNcCBg" name="Debug__end__trans__Initial" source="_qz8cELF1Eei1JPmRVNcCBg" target="_qzr9YbF1Eei1JPmRVNcCBg">
-                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q0P-ELF1Eei1JPmRVNcCBg" name="Debug__end__trans__Initial__47">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::TRANISTION,debugEvents::TRANISTIONEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__end__trans__Initial&quot;,(char *)&quot;Debug__A__En__Initial&quot;,(char *)&quot;ex&quot;,(char *)&quot;&quot;);
-</body>
-                </effect>
-                <trigger xmi:id="_qz9DJLF1Eei1JPmRVNcCBg" name="Debug__Exec" port="_qwTSMLF1Eei1JPmRVNcCBg">
-                  <event xmi:type="uml:CallEvent" href="../CommGateWay/model.uml#_B2LakK1AEea2s6SIdFjObg"/>
-                </trigger>
-              </transition>
-              <subvertex xmi:type="uml:State" xmi:id="_qz7N8bF1Eei1JPmRVNcCBg" name="Debug__B__Ac__Initial">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qz7N8rF1Eei1JPmRVNcCBg" name="Debug__B__Ac__Initial">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;Initial&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__B__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q0B7obF1Eei1JPmRVNcCBg" name="Debug__B__Ac__Initial__38">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__B__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_qz71ALF1Eei1JPmRVNcCBg" name="Debug__A__Ac__Initial">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qz71AbF1Eei1JPmRVNcCBg" name="Debug__A__Ac__Initial">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;Initial&quot;,&quot;&quot;,&quot;&quot;,3,TransitionEffectBreakPoint,1) or Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,0))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q0HbMbF1Eei1JPmRVNcCBg" name="Debug__A__Ac__Initial__39">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__Ac__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_qz8cELF1Eei1JPmRVNcCBg" name="Debug__A__En__Initial">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_qz8cEbF1Eei1JPmRVNcCBg" name="Debug__A__En__Initial">
-                  <language>C++</language>
-                  <body>if (not(Debug__SRO.checkDebug(&quot;PLAYING&quot;,&quot;&quot;,&quot;&quot;,4,StateEntryBreakPoint,1))){
-extComm.selfExec().send();}
-
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEENTRYEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__En__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </entry>
-                <exit xmi:type="uml:OpaqueBehavior" xmi:id="_q0M6wLF1Eei1JPmRVNcCBg" name="Debug__A__En__Initial__40">
-                  <language>C++</language>
-                  <body>
-Debug__sendEvent(debugEvents::STATE,debugEvents::STATEEXITEND,this->getName(),this->getIndex(),msg->getSignalName(),this->getTypeName(),(char *)&quot;PingPong::Ponger::PongerStateMachine::Region::Debug__C__Initial::Region1::Debug__A__En__Initial&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;,(char *)&quot;&quot;);
-</body>
-                </exit>
-              </subvertex>
-            </region>
-          </subvertex>
-          <subvertex xmi:type="uml:State" xmi:id="_q0SaULF1Eei1JPmRVNcCBg" name="Debug__InitState"/>
         </region>
       </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_qwSrIbF1Eei1JPmRVNcCBg" name="Debug__recallAllMsg" specification="_qwSrILF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>ponger.recallAll();
-</body>
-      </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_qwh7sbF1Eei1JPmRVNcCBg" name="Debug__variablesViewMethod" specification="_qwh7sLF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>std::string tempS=&quot;&quot;;
-tempS.append(&quot;j,&quot;);
-tempS.append(&quot;Integer,&quot;);
-if(j!=0){
-    char tempR[10];
-    sprintf(tempR,&quot;%d&quot;,j);
-    tempS.append(tempR);
-    tempS.append(&quot;\n&quot;);
-}else {
-    tempS.append(&quot;0&quot;);
-    tempS.append(&quot;\n&quot;);
-};
-if (Debug__variablesData==NULL)
-    Debug__variablesData=(char *)malloc(strlen(tempS.c_str())+1);
-else if (strlen(Debug__variablesData)&lt;strlen(tempS.c_str()))
-    Debug__variablesData=(char *) realloc(Debug__variablesData,strlen(tempS.c_str())+1);
-strcpy(Debug__variablesData,tempS.c_str());
-</body>
-      </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_qwjw4rF1Eei1JPmRVNcCBg" name="Debug__variablesChange" specification="_qwjJ0LF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>std::string tempVarName=&quot;&quot;;
-tempVarName.append(varName);
-if (&quot;j&quot;==tempVarName){
-    j=atoi(varValue);
-    return true;
-}else 
-    return false;
-</body>
-      </ownedBehavior>
-      <ownedBehavior xmi:type="uml:OpaqueBehavior" xmi:id="_qxxR0bF1Eei1JPmRVNcCBg" name="Debug__sendEvent" specification="_qxHxkLF1Eei1JPmRVNcCBg">
-        <language>C++</language>
-        <body>this->Debug__variablesView();
-this->Debug__event.clearEventPayload();
-this->Debug__event.generateEventID();
-this->Debug__event.setCpuTik();
-this->Debug__event.setTimePointToNow();
-this->Debug__event.setEventSourceKind(eventSourceKind);
-this->Debug__event.setEventType(eventType);
-this->Debug__event.setCapsuleName(capsuleName);
-this->Debug__event.setCapsuleInstance(instanceName);
-this->Debug__event.setCapsuleIndex(capsuleIndex);
-this->Debug__event.setSourceName(sourceName);
-this->Debug__event.setVariableData(this->Debug__variablesData);
-this->Debug__event.setPayloadField(&quot;Status&quot;,this->Debug__SRO.getStatusStr());
-if (eventSourceKind==debugEvents::TRANISTION){
-this->Debug__event.setPayloadField(&quot;Source&quot;,reserve1);
-this->Debug__event.setPayloadField(&quot;Target&quot;,reserve2);
-this->Debug__event.setPayloadField(&quot;Signal&quot;,signalName);
-}
-std::string tempS=this->Debug__event.serialize();
-char eventStr[tempS.length()+1];
-strcpy(eventStr,tempS.c_str());
-extComm.event(eventStr).send();
-</body>
-      </ownedBehavior>
-      <ownedOperation xmi:id="_qwSrILF1Eei1JPmRVNcCBg" name="Debug__recallAllMsg" visibility="private" method="_qwSrIbF1Eei1JPmRVNcCBg"/>
-      <ownedOperation xmi:id="_qwh7sLF1Eei1JPmRVNcCBg" name="Debug__variablesView" visibility="private" method="_qwh7sbF1Eei1JPmRVNcCBg"/>
-      <ownedOperation xmi:id="_qwjJ0LF1Eei1JPmRVNcCBg" name="Debug__variablesChange" visibility="private" method="_qwjw4rF1Eei1JPmRVNcCBg">
-        <ownedParameter xmi:id="_qwjJ0bF1Eei1JPmRVNcCBg" name="methodReturn" direction="return">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwjw4LF1Eei1JPmRVNcCBg" name="varName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qwjw4bF1Eei1JPmRVNcCBg" name="varValue">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-      </ownedOperation>
-      <ownedOperation xmi:id="_qxHxkLF1Eei1JPmRVNcCBg" name="Debug__sendEvent" visibility="private" method="_qxxR0bF1Eei1JPmRVNcCBg">
-        <ownedParameter xmi:id="_qxIYoLF1Eei1JPmRVNcCBg" name="eventSourceKind">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxQUcLF1Eei1JPmRVNcCBg" name="eventType">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxY3ULF1Eei1JPmRVNcCBg" name="instanceName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxgzILF1Eei1JPmRVNcCBg" name="capsuleIndex">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxgzIbF1Eei1JPmRVNcCBg" name="signalName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxou8LF1Eei1JPmRVNcCBg" name="capsuleName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxwqwLF1Eei1JPmRVNcCBg" name="sourceName">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxwqwbF1Eei1JPmRVNcCBg" name="reserve1">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxwqwrF1Eei1JPmRVNcCBg" name="reserve2">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-        <ownedParameter xmi:id="_qxxR0LF1Eei1JPmRVNcCBg" name="reserve3">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedParameter>
-      </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_n15_4ExOEeeAapBXl-GW2w" name="Top" isActive="true">
-      <ownedAttribute xmi:id="_rrH98ExOEeeAapBXl-GW2w" name="pinger" visibility="protected" type="_dBdl4ExOEeeAapBXl-GW2w" isOrdered="true" aggregation="composite"/>
-      <ownedAttribute xmi:id="_sWX6YExOEeeAapBXl-GW2w" name="ponger" visibility="protected" type="_irESsExOEeeAapBXl-GW2w" isOrdered="true" aggregation="composite"/>
-      <ownedConnector xmi:id="_udBd0ExOEeeAapBXl-GW2w" name="RTConnector1">
-        <end xmi:id="_udFvQExOEeeAapBXl-GW2w" partWithPort="_rrH98ExOEeeAapBXl-GW2w" role="_gCK90ExOEeeAapBXl-GW2w"/>
-        <end xmi:id="_udGWUExOEeeAapBXl-GW2w" partWithPort="_sWX6YExOEeeAapBXl-GW2w" role="_kypqQExOEeeAapBXl-GW2w"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_rrH98ExOEeeAapBXl-GW2w" name="pinger" visibility="protected" type="_dBdl4ExOEeeAapBXl-GW2w" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_sWX6YExOEeeAapBXl-GW2w" name="ponger" visibility="protected" type="_irESsExOEeeAapBXl-GW2w" isOrdered="true" aggregation="composite"/>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_udBd0ExOEeeAapBXl-GW2w" name="RTConnector1">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_udFvQExOEeeAapBXl-GW2w" partWithPort="_rrH98ExOEeeAapBXl-GW2w" role="_gCK90ExOEeeAapBXl-GW2w"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_udGWUExOEeeAapBXl-GW2w" partWithPort="_sWX6YExOEeeAapBXl-GW2w" role="_kypqQExOEeeAapBXl-GW2w"/>
       </ownedConnector>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_qsZpoLF1Eei1JPmRVNcCBg" name="Debug__Top">
-      <ownedAttribute xmi:id="_qtt4QLF1Eei1JPmRVNcCBg" name="Debug__Gateway">
-        <type xmi:type="uml:Class" href="../CommGateWay/model.uml#_XIyCcAdxEeadtKuU2t6fMg"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qt0l8bF1Eei1JPmRVNcCBg" value="1"/>
-        <upperValue xmi:type="uml:LiteralInteger" xmi:id="_qt1NALF1Eei1JPmRVNcCBg" value="1"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_qt2bILF1Eei1JPmRVNcCBg" name="Debug__Top" type="_n15_4ExOEeeAapBXl-GW2w">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qt9I0bF1Eei1JPmRVNcCBg" value="1"/>
-        <upperValue xmi:type="uml:LiteralInteger" xmi:id="_qt9I0rF1Eei1JPmRVNcCBg" value="1"/>
-      </ownedAttribute>
-    </packagedElement>
-    <profileApplication xmi:id="_MUbn4ExOEeeAapBXl-GW2w">
-      <eAnnotations xmi:id="_MUddEExOEeeAapBXl-GW2w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_MUbn4ExOEeeAapBXl-GW2w">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_MUddEExOEeeAapBXl-GW2w" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/umlrt#/"/>
       </eAnnotations>
-      <appliedProfile href="pathmap://UML_RT_PROFILE/uml-rt.profile.uml#_1h74oEeVEeO0lv5O1DTHOQ"/>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_RT_PROFILE/uml-rt.profile.uml#_1h74oEeVEeO0lv5O1DTHOQ"/>
     </profileApplication>
-    <profileApplication xmi:id="_SJ7boExOEeeAapBXl-GW2w">
-      <eAnnotations xmi:id="_SJ8pwExOEeeAapBXl-GW2w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_SJ7boExOEeeAapBXl-GW2w">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_SJ8pwExOEeeAapBXl-GW2w" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/umlrt/cppproperties#/"/>
       </eAnnotations>
-      <appliedProfile href="pathmap://UMLRT_CPP/RTCppProperties.profile.uml#_vl5LALs8EeSTjNEQkASznQ"/>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UMLRT_CPP/RTCppProperties.profile.uml#_vl5LALs8EeSTjNEQkASznQ"/>
     </profileApplication>
-    <profileApplication xmi:id="_UV8AMExOEeeAapBXl-GW2w">
-      <eAnnotations xmi:id="_UV8nQExOEeeAapBXl-GW2w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_UV8AMExOEeeAapBXl-GW2w">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_UV8nQExOEeeAapBXl-GW2w" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/umlrt/statemachine#/"/>
       </eAnnotations>
-      <appliedProfile href="pathmap://UML_RT_PROFILE/UMLRealTimeSM-addendum.profile.uml#_KLcn0FDtEeOA4ecmvfqvaw"/>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_RT_PROFILE/UMLRealTimeSM-addendum.profile.uml#_KLcn0FDtEeOA4ecmvfqvaw"/>
     </profileApplication>
   </uml:Model>
   <UMLRealTime:ProtocolContainer xmi:id="_YKnywExOEeeAapBXl-GW2w" base_Package="_YKTpsExOEeeAapBXl-GW2w"/>
@@ -1359,10 +139,10 @@ extComm.event(eventStr).send();
   <UMLRealTime:RTMessageSet xmi:id="_YLt-8ExOEeeAapBXl-GW2w" base_Interface="_YLnRQExOEeeAapBXl-GW2w" rtMsgKind="inOut"/>
   <UMLRealTime:Protocol xmi:id="_YLxCQExOEeeAapBXl-GW2w" base_Collaboration="_YKDyEExOEeeAapBXl-GW2w"/>
   <UMLRealTime:Capsule xmi:id="_dCzpsExOEeeAapBXl-GW2w" base_Class="_dBdl4ExOEeeAapBXl-GW2w"/>
-  <UMLRealTime:RTPort xmi:id="_e-suoExOEeeAapBXl-GW2w" isWired="false" base_Port="_e-deEExOEeeAapBXl-GW2w"/>
+  <UMLRealTime:RTPort xmi:id="_e-suoExOEeeAapBXl-GW2w" isPublish="false" isWired="false" base_Port="_e-deEExOEeeAapBXl-GW2w"/>
   <UMLRealTime:RTPort xmi:id="_gCa1cExOEeeAapBXl-GW2w" base_Port="_gCK90ExOEeeAapBXl-GW2w"/>
   <UMLRealTime:Capsule xmi:id="_irM1kExOEeeAapBXl-GW2w" base_Class="_irESsExOEeeAapBXl-GW2w"/>
-  <UMLRealTime:RTPort xmi:id="_j9j1UExOEeeAapBXl-GW2w" isWired="false" base_Port="_j9fj4ExOEeeAapBXl-GW2w"/>
+  <UMLRealTime:RTPort xmi:id="_j9j1UExOEeeAapBXl-GW2w" isPublish="false" isWired="false" base_Port="_j9fj4ExOEeeAapBXl-GW2w"/>
   <UMLRealTime:RTPort xmi:id="_kyvJ0ExOEeeAapBXl-GW2w" base_Port="_kypqQExOEeeAapBXl-GW2w"/>
   <UMLRealTime:Capsule xmi:id="_n2EX8ExOEeeAapBXl-GW2w" base_Class="_n15_4ExOEeeAapBXl-GW2w"/>
   <UMLRealTime:CapsulePart xmi:id="_rrLoUExOEeeAapBXl-GW2w" base_Property="_rrH98ExOEeeAapBXl-GW2w"/>
@@ -1376,61 +156,4 @@ extComm.event(eventStr).send();
   <UMLRTStateMachines:RTState xmi:id="_P9pfYExQEeeAapBXl-GW2w" base_State="_P9jYwExQEeeAapBXl-GW2w"/>
   <UMLRTStateMachines:RTRegion xmi:id="_P9qtgExQEeeAapBXl-GW2w" base_Region="_P9XykExQEeeAapBXl-GW2w"/>
   <UMLRTStateMachines:RTStateMachine xmi:id="_P9wNEExQEeeAapBXl-GW2w" base_StateMachine="_P8x8sExQEeeAapBXl-GW2w"/>
-  <UMLRealTime:Capsule xmi:id="_qtpm0LF1Eei1JPmRVNcCBg" base_Class="_qsZpoLF1Eei1JPmRVNcCBg"/>
-  <UMLRealTime:CapsulePart xmi:id="_qt0l8LF1Eei1JPmRVNcCBg" base_Property="_qtt4QLF1Eei1JPmRVNcCBg"/>
-  <UMLRealTime:CapsulePart xmi:id="_qt9I0LF1Eei1JPmRVNcCBg" base_Property="_qt2bILF1Eei1JPmRVNcCBg"/>
-  <UMLRealTime:RTPort xmi:id="_quOOkLF1Eei1JPmRVNcCBg" isNotification="true" isWired="false" base_Port="_quIH8bF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:AttributeProperties xmi:id="_quqTcLF1Eei1JPmRVNcCBg" type="debugEvents::Event" base_Property="_qukz4rF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:AttributeProperties xmi:id="_qvGYULF1Eei1JPmRVNcCBg" type="SROManager" base_Property="_qvBf0LF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:CapsuleProperties xmi:id="_qvPiQLF1Eei1JPmRVNcCBg" headerPreface="#include &quot;Event.h&quot;&#xA;&#xA;#include &quot;SROManager.h&quot;&#xA;" base_Class="_dBdl4ExOEeeAapBXl-GW2w"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qvmuoLF1Eei1JPmRVNcCBg" type="debugEvents::EVENTSOURCEKIND" base_Parameter="_qvgoAbF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qvxGsLF1Eei1JPmRVNcCBg" type="debugEvents::EVENTTYPE" base_Parameter="_qvqZALF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qv5pkLF1Eei1JPmRVNcCBg" type="const char *" base_Parameter="_qv0xELF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qwCzgLF1Eei1JPmRVNcCBg" type="const char *" base_Parameter="_qv-iELF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qwLWYLF1Eei1JPmRVNcCBg" type="const char *" base_Parameter="_qwHE8LF1Eei1JPmRVNcCBg"/>
-  <UMLRealTime:RTPort xmi:id="_qwXjoLF1Eei1JPmRVNcCBg" isNotification="true" isWired="false" base_Port="_qwTSMLF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:AttributeProperties xmi:id="_qwopYLF1Eei1JPmRVNcCBg" type="debugEvents::Event" base_Property="_qwkX8bF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:AttributeProperties xmi:id="_qwxMQLF1Eei1JPmRVNcCBg" type="SROManager" base_Property="_qwsTwLF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:CapsuleProperties xmi:id="_qw5IELF1Eei1JPmRVNcCBg" headerPreface="#include &quot;Event.h&quot;&#xA;&#xA;#include &quot;SROManager.h&quot;&#xA;" base_Class="_irESsExOEeeAapBXl-GW2w"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qxMqELF1Eei1JPmRVNcCBg" type="debugEvents::EVENTSOURCEKIND" base_Parameter="_qxIYoLF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qxUl4LF1Eei1JPmRVNcCBg" type="debugEvents::EVENTTYPE" base_Parameter="_qxQUcLF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qxdIwLF1Eei1JPmRVNcCBg" type="const char *" base_Parameter="_qxY3ULF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qxlEkLF1Eei1JPmRVNcCBg" type="const char *" base_Parameter="_qxgzIbF1Eei1JPmRVNcCBg"/>
-  <RTCppProperties:ParameterProperties xmi:id="_qxsZULF1Eei1JPmRVNcCBg" type="const char *" base_Parameter="_qxou8LF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_qx5NoLF1Eei1JPmRVNcCBg" base_Pseudostate="_qx0VILF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_qx84ALF1Eei1JPmRVNcCBg" base_State="_qx5NobF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_qyBJcLF1Eei1JPmRVNcCBg" base_Pseudostate="_qx9fELF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_qyaLALF1Eei1JPmRVNcCBg" base_Pseudostate="_qyBJcbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTRegion xmi:id="_qyylgLF1Eei1JPmRVNcCBg" base_Region="_qx5NorF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_qzDEMLF1Eei1JPmRVNcCBg" base_State="_qyzMkLF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_qzMOILF1Eei1JPmRVNcCBg" base_State="_qy0asLF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_qzRGoLF1Eei1JPmRVNcCBg" base_State="_qy228LF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_qzWmMLF1Eei1JPmRVNcCBg" base_State="_qy4sILF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_qzizcLF1Eei1JPmRVNcCBg" base_Pseudostate="_qzeiALF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_qznr8LF1Eei1JPmRVNcCBg" base_State="_qzizcbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_qzr9YLF1Eei1JPmRVNcCBg" base_Pseudostate="_qznr8bF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_qzw14LF1Eei1JPmRVNcCBg" base_Pseudostate="_qzr9YbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTRegion xmi:id="_qz7N8LF1Eei1JPmRVNcCBg" base_Region="_qzizcrF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q0B7oLF1Eei1JPmRVNcCBg" base_State="_qz7N8bF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q0HbMLF1Eei1JPmRVNcCBg" base_State="_qz71ALF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q0MTsLF1Eei1JPmRVNcCBg" base_State="_qz8cELF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q0WrwLF1Eei1JPmRVNcCBg" base_State="_q0SaULF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_q0gcwLF1Eei1JPmRVNcCBg" base_Pseudostate="_q0cLULF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q0lVQLF1Eei1JPmRVNcCBg" base_State="_q0gcwbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_q0pmsLF1Eei1JPmRVNcCBg" base_Pseudostate="_q0lVQbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_q0t4ILF1Eei1JPmRVNcCBg" base_Pseudostate="_q0pmsbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTRegion xmi:id="_q04QMLF1Eei1JPmRVNcCBg" base_Region="_q0gcwrF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q1AMALF1Eei1JPmRVNcCBg" base_State="_q043QLF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q1WxULF1Eei1JPmRVNcCBg" base_State="_q05eULF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q1cQ4LF1Eei1JPmRVNcCBg" base_State="_q06FYLF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q1iXgLF1Eei1JPmRVNcCBg" base_State="_q06scLF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_q1svkLF1Eei1JPmRVNcCBg" base_Pseudostate="_q1n3ELF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q1xBALF1Eei1JPmRVNcCBg" base_State="_q1svkbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_q11ScLF1Eei1JPmRVNcCBg" base_Pseudostate="_q1xBAbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_q15j4LF1Eei1JPmRVNcCBg" base_Pseudostate="_q11ScbF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTRegion xmi:id="_q2DU4LF1Eei1JPmRVNcCBg" base_Region="_q1svkrF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q2JbgLF1Eei1JPmRVNcCBg" base_State="_q2DU4bF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q2OUALF1Eei1JPmRVNcCBg" base_State="_q2D78LF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q2TMgLF1Eei1JPmRVNcCBg" base_State="_q2D78rF1Eei1JPmRVNcCBg"/>
-  <UMLRTStateMachines:RTState xmi:id="_q2c9gLF1Eei1JPmRVNcCBg" base_State="_q2YsELF1Eei1JPmRVNcCBg"/>
 </xmi:XMI>

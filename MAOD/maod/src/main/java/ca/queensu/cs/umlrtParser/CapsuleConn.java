@@ -5,37 +5,47 @@ import java.util.List;
 
 public class CapsuleConn {
 	
-	private List<String> listPortName_protocolName_connectorName;
+	private List<String> listPortName_connectorName_PortName_protocolName;
 	private String capsuleName;
+	private List<String> listPortName;
 	
 	
 	public CapsuleConn (String portName_protocolName_connectorName, String capsuleName) {
-		this.listPortName_protocolName_connectorName = new ArrayList<String>();
+		this.listPortName_connectorName_PortName_protocolName = new ArrayList<String>();
+		this.listPortName = new ArrayList<String>();
+
 		this.capsuleName = capsuleName;
 	}
 	public CapsuleConn() {
 		this(null, null);
 	}
 
-	public void addPortName_connectorName_protocolName(String portName_protocolName_connectorName) {
-		this.listPortName_protocolName_connectorName.add(portName_protocolName_connectorName);
+	public void addPortName_connectorName_protocolName(String listPortName_connectorName_PortName_protocolName) {
+		this.listPortName_connectorName_PortName_protocolName.add(listPortName_connectorName_PortName_protocolName);
 	}
 
-	
 	public void setCapsuleName(String capsuleName) {
 		this.capsuleName = capsuleName;
 	}
 	
-	public void setPortName_connectorName_protocolName(int i, String portName_protocolName_connectorName) {
-		this.listPortName_protocolName_connectorName.set(i,portName_protocolName_connectorName);
+	public void addListPortName(String portName) {
+		this.listPortName.add(portName);
 	}
 	
-	public  List<String> getListPortName_connectorName_protocolName() {
-		return this.listPortName_protocolName_connectorName;
+	public void setPortName_connectorName_protocolName(int i, String PortName_connectorName_PortName_protocolName) {
+		this.listPortName_connectorName_PortName_protocolName.set(i,PortName_connectorName_PortName_protocolName);
 	}
 	
-	public String getPortName_connectorName_protocolName(int i) {
-		return this.listPortName_protocolName_connectorName.get(i);
+	public List<String> getListPortName() {
+		return this.listPortName;
+	}
+	
+	public  List<String> getListPortName_connectorName_PortName_protocolName() {
+		return this.listPortName_connectorName_PortName_protocolName;
+	}
+	
+	public String getPortName_connectorName_PortName_protocolName(int i) {
+		return this.listPortName_connectorName_PortName_protocolName.get(i);
 	}
 	
 	public String getCapsuleName() {
@@ -43,7 +53,7 @@ public class CapsuleConn {
 	}
 	
 	public String allDataToString() {
-		return "CapsuleConn [capsuleName= "+capsuleName+", listPortName_protocolName_connectorName= " + listPortName_protocolName_connectorName+"]";
+		return "CapsuleConn [capsuleName= "+capsuleName+", listPortName_connectorName_PortName_protocolName= " + listPortName_connectorName_PortName_protocolName+", listPortName= " + listPortName+"]";
 	}
 
 }

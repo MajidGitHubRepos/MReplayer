@@ -99,10 +99,12 @@ public class UmlrtParser {
     public void run() {
 		   
 		 	//String modelPath = "/home/majid/workspace/PingPong.bk/PingPong.uml";
-		 	String modelPath = "/home/majid/workspace-papyrusrt/PingPong.bk/PingPong.uml";
+		 	//String modelPath = "/home/majid/workspace-papyrusrt/PingPong.bk/PingPong.uml";
+		 	String modelPath = "/home/majid/workspace-papyrusrt/NonDeterministic.bk/NonDeterministic/NonDeterministic.uml";
 		 	
 		 	XMIResource mainResource = UmlrtUtils.getResource(modelPath);
 		    Model inputModel = (Model) EcoreUtil.getObjectByType(mainResource.getContents(), UMLPackage.Literals.MODEL);
+		    String topCapsuleName = UmlrtUtils.getTopCapsuleName(inputModel);
 
 		    List<XMIResource> allResources = new LinkedList<XMIResource>();
 		    allResources.add(mainResource);
@@ -111,7 +113,7 @@ public class UmlrtParser {
 		    
 		    //System.out.println("--------------> modelElements.size(): "+ modelElements.size() );
 		    
-		    parserEngine = new ParserEngine(modelElements);
+		    parserEngine = new ParserEngine(modelElements, topCapsuleName);
 		    Thread parserEngineT = new Thread(parserEngine);
 		    
 		    parserEngineT.start();

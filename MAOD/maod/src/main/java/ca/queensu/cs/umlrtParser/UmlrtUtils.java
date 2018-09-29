@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -18,6 +19,7 @@ import org.eclipse.uml2.uml.CallEvent;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Connector;
 import org.eclipse.uml2.uml.ConnectorEnd;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.FinalState;
 import org.eclipse.uml2.uml.Model;
@@ -253,6 +255,37 @@ public class UmlrtUtils {
 		return connectorEnds;
 	}
 	
+	//==================================================================	
+	//==============================================[getTopCapsuleName]
+	//==================================================================	
+	
+	public static String getTopCapsuleName(Element root) {
+        String retVal = null;
+
+        EAnnotation anno = root.getEAnnotation("UMLRT_Default_top");
+        if (anno != null) {
+                retVal = anno.getDetails().get("top_name");
+        }
+
+        return retVal != null ? retVal : "Top";
+	}
+
+	//==================================================================	
+		//==============================================[getTopCapsuleName]
+		//==================================================================	
+			
+		public static boolean foundPortName_connectorName_PortName(List<CapsuleConn> listCapsuleConn, String PortName_connectorName_PortName , String capsuleName){
+			
+			for (int i = 0 ; i< listCapsuleConn.size(); i++) {
+				
+				String tmp = listCapsuleConn.get(i).allDataToString();
+				if ((tmp.contains(PortName_connectorName_PortName) && (listCapsuleConn.get(i).getCapsuleName().contentEquals(capsuleName)))) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
 	
 
 }
