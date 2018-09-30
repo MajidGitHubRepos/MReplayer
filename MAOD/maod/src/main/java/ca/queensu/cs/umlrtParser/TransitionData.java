@@ -11,6 +11,7 @@ import org.springframework.statemachine.transition.TransitionKind;
 public class TransitionData {
 	//private  String name;
 	public String capsuleName;
+	public String capsuleInstanceName;
 	private final String transitonName;
 	private final State source;
 	private final State target;
@@ -27,23 +28,24 @@ public class TransitionData {
 	//private final SecurityRule securityRule;
 
 	//public TransitionData() {}
-	public TransitionData(String capsuleName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit ) {
-		this(capsuleName,transitonName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count, isInit);
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit ) {
+		this(capsuleName,capsuleInstanceName,transitonName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count, isInit);
 	}
 	
-	public TransitionData(String capsuleName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
-		this(capsuleName,transitonName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null, false);
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind) {
+		this(capsuleName,capsuleInstanceName,transitonName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null, false);
 	}
 	
-	public TransitionData(String capsuleName, String transitonName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit ) {
-		this(capsuleName,transitonName, null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit);
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit ) {
+		this(capsuleName,capsuleInstanceName,transitonName, null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit);
 	}
 	public TransitionData() {
-		this(null,null,null,null,null,null,null,null,null,false);
+		this(null,null,null,null,null,null,null,null,null,null,false);
 	}
 	
-	public TransitionData(String capsuleName, String transitonName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
 		this.capsuleName = capsuleName;
+		this.capsuleInstanceName = capsuleInstanceName;
 		this.source = source;
 		this.sourceName = sourceName;
 		this.target = target;
@@ -66,6 +68,11 @@ public class TransitionData {
 	public String getCapsuleName() {
 		return capsuleName;
 	}
+	
+	public void setCapsuleInstanceName(String capsuleInstanceName) {
+		this.capsuleInstanceName = capsuleInstanceName;
+	}
+	
 	
 	public String getTransitonName() {
 		return transitonName;
@@ -118,7 +125,10 @@ public class TransitionData {
 	public void setIsInit() {
 		this.isInit = true;;
 	}
-
+	
+	public String getCapsuleInstanceName() {
+		return this.capsuleInstanceName;
+	}
 
 	//------------[SETTERS]
 	//public void setName(String n) {
@@ -159,7 +169,7 @@ public class TransitionData {
 	*/
 	
 	public String allDataToString() {
-		return "TransitionData [CapsuleName= "+capsuleName+", transitonName= " + transitonName +", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
+		return "TransitionData [CapsuleName= "+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+", transitonName= " + transitonName +", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
 				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + "]";
 	}
 

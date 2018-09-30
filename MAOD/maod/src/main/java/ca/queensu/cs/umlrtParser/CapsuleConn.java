@@ -7,17 +7,19 @@ public class CapsuleConn {
 	
 	private List<String> listPortName_connectorName_PortName_protocolName;
 	private String capsuleName;
+	private String capsuleInstanceName;
 	private List<String> listPortName;
 	
 	
-	public CapsuleConn (String portName_protocolName_connectorName, String capsuleName) {
+	public CapsuleConn (String portName_protocolName_connectorName, String capsuleName, String capsuleInstanceName) {
 		this.listPortName_connectorName_PortName_protocolName = new ArrayList<String>();
 		this.listPortName = new ArrayList<String>();
+		this.capsuleInstanceName = capsuleInstanceName;
 
 		this.capsuleName = capsuleName;
 	}
 	public CapsuleConn() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	public void addPortName_connectorName_protocolName(String listPortName_connectorName_PortName_protocolName) {
@@ -26,6 +28,14 @@ public class CapsuleConn {
 
 	public void setCapsuleName(String capsuleName) {
 		this.capsuleName = capsuleName;
+	}
+	
+	public void setCapsuleInstanceName(String capsuleInstanceName) {
+		this.capsuleInstanceName = capsuleInstanceName;
+	}
+	
+	public String getCapsuleInstanceName() {
+		return this.capsuleInstanceName;
 	}
 	
 	public void addListPortName(String portName) {

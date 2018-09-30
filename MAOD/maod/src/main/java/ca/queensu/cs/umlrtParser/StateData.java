@@ -18,6 +18,7 @@ import ca.queensu.cs.umlrtParser.UmlrtUtils.PseudoStateKind;
 public class StateData {
 	
 	private String capsuleName;
+	public String capsuleInstanceName;
 	private String parentName;
 	private String regionName;
 	private String stateName;
@@ -29,8 +30,9 @@ public class StateData {
 	private boolean end = false;
 	private PseudoStateKind pseudoStateKind;
 		
-	public StateData(String capsuleName, State s, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
+	public StateData(String capsuleName, String capsuleInstanceName, State s, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
 		this.capsuleName = capsuleName;
+		this.capsuleInstanceName = capsuleInstanceName;
 		this.state = s;
 		this.stateName = sName;
 		this.deferred = defList;
@@ -42,14 +44,14 @@ public class StateData {
 		this.end = isFinalState;
 	}
 	
-	public StateData(String capsuleName, String sName, String pName, String rName) {
-		this(capsuleName, null,sName, null, null, null, pName,rName, false, false);
+	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName) {
+		this(capsuleName, capsuleInstanceName, null,sName, null, null, null, pName,rName, false, false);
 	}
-	public StateData(String capsuleName, String sName, String pName, String rName , boolean initial, boolean end) {
-		this(capsuleName, null,sName, null, null, null, pName,rName, initial, end);
+	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName , boolean initial, boolean end) {
+		this(capsuleName, capsuleInstanceName, null,sName, null, null, null, pName,rName, initial, end);
 	}
 	public StateData() {
-		this(null, null,null, null, null, null, null,null, false,false);
+		this(null, null, null,null, null, null, null, null,null, false,false);
 	}
 	
 	
@@ -57,6 +59,10 @@ public class StateData {
 	//------------[GETERS]
 	public String getCapsuleName() {
 		return capsuleName;
+	}
+	
+	public String getCapsuleInstanceName() {
+		return this.capsuleInstanceName;
 	}
 	
 	public State getState() {
@@ -98,6 +104,11 @@ public class StateData {
 	}
 	//------------[SETERS]
 	
+	public void setCapsuleInstanceName(String capsuleInstanceName) {
+		this.capsuleInstanceName = capsuleInstanceName;
+	}
+	
+	
 	public void setDeferred(List<String> deferred) {
 		this.deferred = deferred;
 	}
@@ -134,7 +145,7 @@ public class StateData {
 	//----------
 	
 	public String allDataToString() {
-		return "StateData [CapsuleName="+capsuleName+", StateName=" + stateName + ", region=" + regionName + ", state=" + state + ", deferred=" + deferred
+		return "StateData [CapsuleName="+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+", StateName=" + stateName + ", region=" + regionName + ", state=" + state + ", deferred=" + deferred
 				+ ", entryActions=" + entryActions + ", exitActions=" + exitActions + ", initial=" + initial
 				+  ", end=" + end + ", pseudoStateKind=" + pseudoStateKind + "]";
 	}

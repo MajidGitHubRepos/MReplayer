@@ -166,7 +166,7 @@ public class CapsuleTracker implements Runnable{
 		
 		for (int i = 0; i< Controller.umlrtParser.getlistCapsuleConn().size(); i++) {
 			List<String> listCapsulePortConn = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName_connectorName_PortName_protocolName();
-			String capsuleName = Controller.umlrtParser.getlistCapsuleConn().get(i).getCapsuleName();
+			String capsuleName = Controller.umlrtParser.getlistCapsuleConn().get(i).getCapsuleInstanceName();
 			for (int j = 0; j < listCapsulePortConn.size() ; j++) {
 				if (listCapsulePortConn.get(j).contains(port)) {
 					//let's find the other side of this connector, which port ? then which capsule?
@@ -200,7 +200,7 @@ public class CapsuleTracker implements Runnable{
 						for (int p = 0; p< Controller.umlrtParser.getlistCapsuleConn().size(); p++) {
 							
 							if (Controller.umlrtParser.getlistCapsuleConn().get(p).getListPortName().contains(sourcePort)) {
-								sourceCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleName();
+								sourceCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[sourceCapsuleName]: " +sourceCapsuleName);
 							}
 							
@@ -211,7 +211,7 @@ public class CapsuleTracker implements Runnable{
 						for (int p = 0; p< Controller.umlrtParser.getlistCapsuleConn().size(); p++) {
 							
 							if (Controller.umlrtParser.getlistCapsuleConn().get(p).getListPortName().contains(targetPort)) {
-								targetCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleName();
+								targetCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[targetCapsuleName]: " +targetCapsuleName);
 								if (!sourceCapsuleName.contentEquals(targetCapsuleName))
 									return targetCapsuleName; 

@@ -279,7 +279,7 @@ public class UmlrtUtils {
 			for (int i = 0 ; i< listCapsuleConn.size(); i++) {
 				
 				String tmp = listCapsuleConn.get(i).allDataToString();
-				if ((tmp.contains(PortName_connectorName_PortName) && (listCapsuleConn.get(i).getCapsuleName().contentEquals(capsuleName)))) {
+				if ((tmp.contains(PortName_connectorName_PortName) && (listCapsuleConn.get(i).getCapsuleInstanceName().contentEquals(capsuleName)))) {
 					return true;
 				}
 			}
