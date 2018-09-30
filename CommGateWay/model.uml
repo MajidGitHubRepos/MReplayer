@@ -34,6 +34,12 @@
       <ownedAttribute xmi:id="_D3P0oHWAEeauJcu8ajHARw" name="commandSharedMemory">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
       </ownedAttribute>
+      <ownedAttribute xmi:id="_j8rU4LU8EeilX6mgjFEw5g" name="tcpCommunication">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_P2ScILVBEeilX6mgjFEw5g" name="commMethod">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_dy-CgAdxEeadtKuU2t6fMg" name="GateWay">
         <region xmi:id="_f2Z54AdxEeadtKuU2t6fMg" name="Region1">
           <transition xmi:id="_9XO6gAdxEeadtKuU2t6fMg" name="init" source="_8BWssAdxEeadtKuU2t6fMg" target="_fxzoADCVEeaxYMPe_sHEiw">
@@ -47,7 +53,7 @@
 </body>
             </effect>
           </transition>
-          <transition xmi:id="_39bb8D7iEeaZboTzPJJ9rA" name="setupSharedMem" source="_fxzoADCVEeaxYMPe_sHEiw" target="_jxqGMD7iEeaZboTzPJJ9rA">
+          <transition xmi:id="_39bb8D7iEeaZboTzPJJ9rA" name="setupSharedMem" guard="_LK_8QLVCEeilX6mgjFEw5g" source="_zKIasLU1EeilX6mgjFEw5g" target="_jxqGMD7iEeaZboTzPJJ9rA">
             <ownedRule xmi:id="_kxvjAD8KEea_INjZTfhBHQ" name="checkCommType">
               <specification xmi:type="uml:OpaqueExpression" xmi:id="_rtbiwD8KEea_INjZTfhBHQ">
                 <language>C++</language>
@@ -59,18 +65,21 @@
 </body>
               </specification>
             </ownedRule>
+            <ownedRule xmi:id="_LK_8QLVCEeilX6mgjFEw5g">
+              <specification xmi:type="uml:OpaqueExpression" xmi:id="_LLDmoLVCEeilX6mgjFEw5g">
+                <language>C++</language>
+                <body>return (commMethod == &quot;SHM&quot;);</body>
+              </specification>
+            </ownedRule>
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_d-rn4D8XEea_INjZTfhBHQ" name="setupSHM">
               <language>C++</language>
               <body>    // set shared memory as a server
     eventSharedMemory.setUp(server);
     commandSharedMemory.setUp(server);
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot; works with SHM&quot;&lt;&lt;&quot;\n&quot;;
-    commandTimer.informIn(UMLRTTimespec(1,0),4);
+   
 </body>
             </effect>
-            <trigger xmi:id="_1M3VMKhTEea5S_8vfXhBZA" port="_W2ELwDKoEeaxYMPe_sHEiw">
-              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
-            </trigger>
           </transition>
           <transition xmi:id="_vJoOkD7jEeaZboTzPJJ9rA" name="reconfigSHM" source="_jxqGMD7iEeaZboTzPJJ9rA" target="_fxzoADCVEeaxYMPe_sHEiw"/>
           <transition xmi:id="_NZlocD8YEea_INjZTfhBHQ" name="processAndForwardEvent" source="_jxqGMD7iEeaZboTzPJJ9rA" target="_jxqGMD7iEeaZboTzPJJ9rA">
@@ -171,6 +180,134 @@
             </effect>
             <trigger xmi:id="_85e0wPCjEeaNzKhabo7mlg" name="replySelfExecTrig" event="_tCGA8PCFEeaNzKhabo7mlg" port="_k0n4EDCJEeaxYMPe_sHEiw"/>
           </transition>
+          <transition xmi:id="_AVxVkLU2EeilX6mgjFEw5g" name="setupTCP" guard="_M4IMcLVCEeilX6mgjFEw5g" source="_zKIasLU1EeilX6mgjFEw5g" target="_7UsoYLU1EeilX6mgjFEw5g">
+            <ownedRule xmi:id="_M4IMcLVCEeilX6mgjFEw5g">
+              <specification xmi:type="uml:OpaqueExpression" xmi:id="_M4IMcbVCEeilX6mgjFEw5g">
+                <language>C++</language>
+                <body>return (commMethod == &quot;TCP&quot;);</body>
+              </specification>
+            </ownedRule>
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_5iXKQLVEEeilX6mgjFEw5g" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>// setup tcp connection
+tcpCommunication.conn();
+ std::cout&lt;&lt;&quot;TCP connection stablished successfully!&quot;;
+
+</body>
+            </effect>
+          </transition>
+          <transition xmi:id="_cAg-ULU2EeilX6mgjFEw5g" name="setupConnection" source="_fxzoADCVEeaxYMPe_sHEiw" target="_zKIasLU1EeilX6mgjFEw5g">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_t5kqkLU2EeilX6mgjFEw5g" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>
+
+ //commandTimer.informIn(UMLRTTimespec(1,0),4);</body>
+            </effect>
+            <trigger xmi:id="_d0PlwLU2EeilX6mgjFEw5g" port="_W2ELwDKoEeaxYMPe_sHEiw">
+              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
+            </trigger>
+          </transition>
+          <transition xmi:id="_-IsU0LVHEeilX6mgjFEw5g" name="replySelfExecTCP" source="_7UsoYLU1EeilX6mgjFEw5g" target="_7UsoYLU1EeilX6mgjFEw5g">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_FsrqsLVIEeilX6mgjFEw5g" name="replySelfExecMethod" isReentrant="false">
+              <language>C++</language>
+              <body>extComm.dbgExec().sendAt(msg->sapIndex0_);</body>
+            </effect>
+            <trigger xmi:id="_lzraoMAwEeibh_tjddZS8A" event="_tCGA8PCFEeaNzKhabo7mlg" port="_k0n4EDCJEeaxYMPe_sHEiw"/>
+          </transition>
+          <transition xmi:id="_OQCy4LVIEeilX6mgjFEw5g" name="extCommandTCP" source="_7UsoYLU1EeilX6mgjFEw5g" target="_7UsoYLU1EeilX6mgjFEw5g">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_RVHtcLVIEeilX6mgjFEw5g" name="processExtCommand" isReentrant="false">
+              <language>C++</language>
+              <body>    //std::cout&lt;&lt;&quot;Observer: Try read command\n&quot;;
+    std::string tempStr;
+    //tempStr=commandSharedMemory.safePopFrontString();
+     tempStr=commandSharedMemory.safePopBackString();
+    if (tempStr!=&quot;&quot;){
+    char location[1024];
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: External Command= &quot;&lt;&lt;tempStr&lt;&lt;&quot;\n&quot;;
+    mdebugger::DebugCommand cmd;
+    cmd.deserialize(tempStr);
+    std::cout&lt;&lt;&quot;The capsule id is:&quot;&lt;&lt;cmd.getCapsuleId()&lt;&lt;&quot;\n&quot;;
+   // for (std::map&lt;std::string,int>::const_iterator it1=registeredCapsules.begin() ;  it1!=registeredCapsules.end();it1++)
+    //std::cout&lt;&lt;&quot;Registerd capsule:&quot;&lt;&lt;it1->first&lt;&lt;&quot;\n&quot;;
+    if (registeredCapsules.count(cmd.getCapsuleId()))
+    switch (cmd.getCmdId()){
+    case mdebugger::dbgCmd::EXEC:
+    extComm.dbgExec().sendAt(registeredCapsules[cmd.getCapsuleId()]);
+    break;
+    case mdebugger::dbgCmd::VARCHANGE:
+    char varName[256];
+    char varValue[1024];
+    for (std::map&lt;std::string,std::string>::const_iterator it1=cmd.getCmdParams().begin(); it1!=cmd.getCmdParams().end();it1++){
+    sprintf(varName,&quot;%s&quot;,it1->first.c_str());
+    sprintf(varValue,&quot;%s&quot;,it1->second.c_str());
+    extComm.dbgVarChange(varName,varValue).sendAt(registeredCapsules[cmd.getCapsuleId()]);
+    }
+    break;
+    case mdebugger::dbgCmd::SETBREAKPOINT:
+    //char location[1024];
+    sprintf(location,&quot;%s&quot;,cmd.getCmdParam(&quot;loc&quot;).c_str());
+    //std::cout&lt;&lt;&quot;Set BreakPoin command for capsule&quot; &lt;&lt; cmd.getCapsuleId()&lt;&lt;std::endl;
+    extComm.dbgSetBreakPoint(location,atoi(cmd.getCmdParam(&quot;type&quot;).c_str()),atoi(cmd.getCmdParam(&quot;place&quot;).c_str())).sendAt(registeredCapsules[cmd.getCapsuleId()]);
+    break;
+    case mdebugger::dbgCmd::REMBREAKPOINT:
+    //char location[1024];
+    sprintf(location,&quot;%s&quot;,cmd.getCmdParam(&quot;loc&quot;).c_str());
+    //std::cout&lt;&lt;&quot;Rem BreakPoin command for capsule&quot; &lt;&lt; cmd.getCapsuleId()&lt;&lt;std::endl;
+    extComm.dbgRemBreakPoint(location,atoi(cmd.getCmdParam(&quot;type&quot;).c_str()),atoi(cmd.getCmdParam(&quot;place&quot;).c_str())).sendAt(registeredCapsules[cmd.getCapsuleId()]);
+    break;
+    case mdebugger::dbgCmd::VIEWBREAKPOINTS:
+    //std::cout&lt;&lt;&quot;View BreakPoins command for capsule&quot; &lt;&lt; cmd.getCapsuleId()&lt;&lt;std::endl;
+    extComm.dbgViewBreakPoints().sendAt(registeredCapsules[cmd.getCapsuleId()]);
+    break;
+    case mdebugger::dbgCmd::SETEXECMODE:
+    //std::cout&lt;&lt;&quot;Set exec  mode for capsule &quot; &lt;&lt; cmd.getCapsuleId()&lt;&lt;std::endl;
+    extComm.dbgSetExecMode(atoi(cmd.getCmdParam(&quot;ExecMode&quot;).c_str())).sendAt(registeredCapsules[cmd.getCapsuleId()]);;
+    break;  
+  //case mdebugger::VIEWBREAKPOINTS:
+    //case mdebugger::REMBREAKPOINT:
+    //case mdebugger::REMALLBREAKPOINTS:
+    }
+    else
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Error the capsule name is not registration table, message ignored&quot;&lt;&lt;&quot;\n&quot;;
+    }
+    commandTimer.informIn(UMLRTTimespec(1,0),4);
+</body>
+            </effect>
+            <trigger xmi:id="_xgHzoMAwEeibh_tjddZS8A" port="_ykwdUHV4EeauJcu8ajHARw">
+              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
+            </trigger>
+          </transition>
+          <transition xmi:id="_eqwR0LVIEeilX6mgjFEw5g" name="registerCapsuleTCP" source="_7UsoYLU1EeilX6mgjFEw5g" target="_7UsoYLU1EeilX6mgjFEw5g">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_mvFUoLVIEeilX6mgjFEw5g" name="regisetCapsule" isReentrant="false">
+              <language>C++</language>
+              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Registration Message come at channel= \&quot;&quot;&lt;&lt;msg->sapIndex0_&lt;&lt;&quot;\&quot; from capsule instance=&quot;&lt;&lt;std::string(capsuleInstanceName)&lt;&lt;&quot;\n&quot;;
+    std::string tempS=&quot;&quot;;
+    //tempS.append(umlrtparam_capsuleInstanceName);
+    tempS.append(capsuleInstanceName);
+    //std::stringstream ss;
+    //ss&lt;&lt;msg->sapIndex0_;
+    //tempS.append(ss.str());
+    registeredCapsules[tempS] = msg->sapIndex0_;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Number of registered capsules is=&quot;&lt;&lt;registeredCapsules.size()&lt;&lt;&quot;\n&quot;;
+</body>
+            </effect>
+            <trigger xmi:id="_pbrdwLVIEeilX6mgjFEw5g" event="_mMK6kHV5EeauJcu8ajHARw" port="_k0n4EDCJEeaxYMPe_sHEiw"/>
+          </transition>
+          <transition xmi:id="_8j6S4LVIEeilX6mgjFEw5g" name="processAndForwardEventTCP" source="_7UsoYLU1EeilX6mgjFEw5g" target="_7UsoYLU1EeilX6mgjFEw5g">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_GF4YYLVJEeilX6mgjFEw5g" name="processAndForwardEvent" isReentrant="false">
+              <language>C++</language>
+              <body>    std::string tempS=&quot;&quot;;
+    //tempS.append(umlrtparam_eventInfo);
+    tempS.append(eventInfo);
+    //std::cout&lt;&lt;&quot;New message from capsule:&quot;&lt;&lt;tempS&lt;&lt;&quot;\n&quot;;
+
+    //tcpCommunication.sendData(tempS);
+	 tcpCommunication.sendDataWithLen(tempS);	
+</body>
+            </effect>
+            <trigger xmi:id="_BN1EULVJEeilX6mgjFEw5g" event="_VA1yEDCQEeaxYMPe_sHEiw" port="_k0n4EDCJEeaxYMPe_sHEiw"/>
+          </transition>
+          <transition xmi:id="_czsNELVJEeilX6mgjFEw5g" name="reconfigTCP" source="_7UsoYLU1EeilX6mgjFEw5g" target="_fxzoADCVEeaxYMPe_sHEiw"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_8BWssAdxEeadtKuU2t6fMg" name="InitObserver"/>
           <subvertex xmi:type="uml:State" xmi:id="_fxzoADCVEeaxYMPe_sHEiw" name="configLoad">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_VVPSEDG_EeaxYMPe_sHEiw" name="initObserver">
@@ -181,35 +318,58 @@
     config.loadConfig();
     ///
     std::string tempStr =&quot;&quot;;
-    tempStr=config.getConfig(&quot;eventareaname&quot;);
-    if (tempStr!=&quot;&quot;)
-    eventSharedMemory.setName(tempStr);
-    tempStr=config.getConfig(&quot;eventqname&quot;);
-    if (tempStr!=&quot;&quot;)
-    eventSharedMemory.setQueueName(tempStr);
-    tempStr=config.getConfig(&quot;eventareasize&quot;);
-    if (tempStr!=&quot;&quot;)
-    eventSharedMemory.setSize(atoi(tempStr.c_str()));
+    tempStr=config.getConfig(&quot;CommunicationMethod&quot;);
+	 if (tempStr == &quot;SHM&quot;){
+		commMethod = &quot;SHM&quot;;
+    		tempStr=config.getConfig(&quot;eventareaname&quot;);
+    		if (tempStr!=&quot;&quot;)
+   			eventSharedMemory.setName(tempStr);
+
+   		tempStr=config.getConfig(&quot;eventqname&quot;);
+   		if (tempStr!=&quot;&quot;)
+   			eventSharedMemory.setQueueName(tempStr);
+   		
+		tempStr=config.getConfig(&quot;eventareasize&quot;);
+  		if (tempStr!=&quot;&quot;)
+ 			eventSharedMemory.setSize(atoi(tempStr.c_str()));
     /////
-    tempStr=config.getConfig(&quot;commandareaname&quot;);
-    if (tempStr!=&quot;&quot;)
-    commandSharedMemory.setName(tempStr);
-    tempStr=config.getConfig(&quot;commandqname&quot;);
-    if (tempStr!=&quot;&quot;)
-    commandSharedMemory.setQueueName(tempStr);
-    tempStr=config.getConfig(&quot;commandareasize&quot;);
-    if (tempStr!=&quot;&quot;)
-    commandSharedMemory.setSize(atoi(tempStr.c_str()));
-    std::cout&lt;&lt;config;
-</body>
+    		tempStr=config.getConfig(&quot;commandareaname&quot;);
+    		if (tempStr!=&quot;&quot;)
+    			commandSharedMemory.setName(tempStr);
+    		
+		tempStr=config.getConfig(&quot;commandqname&quot;);
+   		if (tempStr!=&quot;&quot;)
+  			commandSharedMemory.setQueueName(tempStr);
+   		
+		tempStr=config.getConfig(&quot;commandareasize&quot;);
+  		if (tempStr!=&quot;&quot;)
+   			commandSharedMemory.setSize(atoi(tempStr.c_str()));
+ 		std::cout&lt;&lt;config;
+	}
+	else if (tempStr == &quot;TCP&quot;){
+		std::cout&lt;&lt;&quot;TCP is selected!&quot;;
+		commMethod = &quot;TCP&quot;;
+		tempStr=config.getConfig(&quot;port&quot;);
+    		if (tempStr!=&quot;&quot;)
+   			tcpCommunication.setPort(8001);
+			std::cout&lt;&lt;&quot;port: &quot;&lt;&lt;tempStr;
+
+		tempStr=config.getConfig(&quot;ip&quot;);
+    		if (tempStr!=&quot;&quot;)
+   			tcpCommunication.setServerAddress(tempStr);
+			std::cout&lt;&lt;&quot;ip: &quot;&lt;&lt;tempStr;	
+	
+	}</body>
             </entry>
           </subvertex>
           <subvertex xmi:type="uml:State" xmi:id="_jxqGMD7iEeaZboTzPJJ9rA" name="commWithSharedMem">
-            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_7_JoUD8LEea_INjZTfhBHQ">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_7_JoUD8LEea_INjZTfhBHQ" visibility="public">
               <language>C++</language>
               <body></body>
             </entry>
           </subvertex>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_zKIasLU1EeilX6mgjFEw5g" kind="choice"/>
+          <subvertex xmi:type="uml:State" xmi:id="_7UsoYLU1EeilX6mgjFEw5g" name="commWithTCP"/>
         </region>
       </ownedBehavior>
     </packagedElement>
@@ -330,7 +490,7 @@
     </profileApplication>
   </uml:Model>
   <UMLRealTime:Capsule xmi:id="_XJDvQAdxEeadtKuU2t6fMg" base_Class="_XIyCcAdxEeadtKuU2t6fMg"/>
-  <RTCppProperties:CapsuleProperties xmi:id="_G5QN4AdzEeadtKuU2t6fMg" headerPreface="#include &lt;iostream>&#xA;#include &lt;unistd.h>&#xA;#include &quot;Config.h&quot;&#xA;#include &quot;SharedMem.h&quot;&#xA;#include &lt;map>&#xA;#include &quot;DebugCommand.h&quot;&#xA;using  namespace  Comms;&#xA;using  namespace ConfigUtil;&#xA;" implementationPreface="" base_Class="_XIyCcAdxEeadtKuU2t6fMg"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_G5QN4AdzEeadtKuU2t6fMg" headerPreface="#include &lt;iostream>&#xA;#include &lt;unistd.h>&#xA;#include &quot;Config.h&quot;&#xA;#include &quot;SharedMem.h&quot;&#xA;#include &lt;map>&#xA;#include &quot;DebugCommand.h&quot;&#xA;#include &quot;TCPClient.h&quot;&#xA;using  namespace  Comms;&#xA;using  namespace ConfigUtil;&#xA;" implementationPreface="" base_Class="_XIyCcAdxEeadtKuU2t6fMg"/>
   <UMLRealTime:RTPort xmi:id="_k0-dYDCJEeaxYMPe_sHEiw" isPublish="true" isWired="false" base_Port="_k0n4EDCJEeaxYMPe_sHEiw"/>
   <UMLRealTime:ProtocolContainer xmi:id="_KS4M0DCLEeaxYMPe_sHEiw" base_Package="_KS2-sDCLEeaxYMPe_sHEiw"/>
   <UMLRealTime:RTMessageSet xmi:id="_KTB90DCLEeaxYMPe_sHEiw" base_Interface="_KS5a8DCLEeaxYMPe_sHEiw"/>
@@ -350,4 +510,7 @@
   <UMLRTStateMachines:RTState xmi:id="_S_bsMDt3EeeKxOtWEfBMmw" base_State="_jxqGMD7iEeaZboTzPJJ9rA"/>
   <UMLRTStateMachines:RTStateMachine xmi:id="_VNyaIDt3EeeKxOtWEfBMmw" base_StateMachine="_dy-CgAdxEeadtKuU2t6fMg"/>
   <RTCppProperties:ArtifactProperties xmi:id="_U3IbYDt8EeeKxOtWEfBMmw" base_Artifact="_SOhaYDt8EeeKxOtWEfBMmw" includeFile="# use areaname param, used to specify the shared memory area name, don't set unless there is more than one shared area.&#xA;" sourceFile="# use areaname param, used to specify the shared memory area name, don't set unless there is more than one shared area.&#xA;eventareaname=EventArea&#xA;# qname is the queue name will includes the data. you don't need set it unless there is different queue in one shared area.&#xA;eventqname=EventQ&#xA;eventareasize=99999999&#xA;#### shared mem config for command&#xA;commandareaname=CommandArea&#xA;commandqname=CommandQ&#xA;commandareasize=9999&#xA;### send message method can be instant or periodic; this mode are only can be set for TCP connection,&#xA;Debug=true"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_zKp_ILU1EeilX6mgjFEw5g" base_Pseudostate="_zKIasLU1EeilX6mgjFEw5g"/>
+  <UMLRTStateMachines:RTState xmi:id="_7UwSwLU1EeilX6mgjFEw5g" base_State="_7UsoYLU1EeilX6mgjFEw5g"/>
+  <RTCppProperties:AttributeProperties xmi:id="_IVbPkLU9EeilX6mgjFEw5g" type="TCPClient" base_Property="_j8rU4LU8EeilX6mgjFEw5g"/>
 </xmi:XMI>
