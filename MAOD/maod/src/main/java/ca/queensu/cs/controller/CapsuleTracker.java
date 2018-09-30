@@ -253,8 +253,6 @@ public class CapsuleTracker implements Runnable{
 
 			//Extracting init transition action code(s) from listTableData
 			for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
-				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking][OK0][capsuleInstance]:" + capsuleInstance);
-				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking][OK0][entry.getKey()]:" + entry.getKey());
 
 				if (entry.getKey().contains(capsuleInstance)) {
 					//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking][OK1]");

@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -199,7 +200,8 @@ public class ParserEngine implements Runnable {
 	public void elementsExtractor() {
 		HashMap<String, StateMachine> smMap = new HashMap<String, StateMachine>();
 		String capsuleName = "";
-		String capsuleQualifiedName = "";
+		String capsuleInstanceName = "";
+		List <String> listCapsuleName_InstanceName = new ArrayList<String>();
 		String connectorName = "";
 		String portName = "";
 		String protocolName = "";
@@ -211,8 +213,23 @@ public class ParserEngine implements Runnable {
 			
 			if (elementTmp.getName().contentEquals(topCapsuleName)) {
 				System.out.println("--------------> [Found!] TopModelElement: "+ topCapsuleName);
+								
+				List<Property> listPart = new ArrayList<Property>();
+				listPart = ((Class) elementTmp).getParts();
+				
+				listCapsuleName_InstanceName.add(topCapsuleName+"_"+"Top");
+				
+				for (int j = 0; j< listPart.size(); j++) {
+					String capInstanceName = listPart.get(j).getName();
+					String capName = listPart.get(j).getType().getName();
+					//System.out.println(">>>>>>>>>>>>> listPart.get(j).getQualifiedName(): "+ listPart.get(j).getName());
+					//System.out.println(">>>>>>>>>>>>> listPart.get(j).getType().getName(): "+ listPart.get(j).getType().getName());
+					listCapsuleName_InstanceName.add(capName+"_"+capInstanceName);
+				}
+				
 				//extract connectors
 				for (Connector connector : UmlrtUtils.getConnectors((Class)elementTmp)) {
+
 					connectorName = connector.getName();
 					ConnectorEnd connEnd1 = connector.getEnds().get(0);
 					ConnectorEnd connEnd2 = connector.getEnds().get(1);
@@ -230,8 +247,7 @@ public class ParserEngine implements Runnable {
 			}
 			i++;
 		}while(i < modelElements.size());
-
-		
+		//System.out.println(">>>>>>>>>>>>> listPortName_connectorName_PortName: "+ listPortName_connectorName_PortName);
 		
 		i=0;
 		List<StateMachine> stateMachines = new ArrayList<StateMachine>();
@@ -241,18 +257,23 @@ public class ParserEngine implements Runnable {
 			
 			
 			if(element instanceof Class) {
+
 				//Get capsule connector
 				CapsuleConn capsuleConn = new CapsuleConn();
 				capsuleName = element.getName();
-				capsuleQualifiedName = element.getQualifiedName();
-				String [] splitCapsuleQualifiedName = capsuleQualifiedName.split("::");
-				String capsuleInstanceName = splitCapsuleQualifiedName[splitCapsuleQualifiedName.length-1];
 
+				for (int k = 0; k<listCapsuleName_InstanceName.size();k++) {
+					String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("_");
+					if (splitCapsuleName_InstanceName[0].contentEquals(capsuleName)) {
+						capsuleInstanceName = splitCapsuleName_InstanceName[1];
+						break;
+					}
+					capsuleInstanceName = "__NOT_FOUND__";
+				}
 				
 				capsuleConn.setCapsuleName(capsuleName);
 				capsuleConn.setCapsuleInstanceName(capsuleInstanceName);
 				listCapsuleConn.add(capsuleConn);
-				//System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> capsuleInstanceName: " + capsuleInstanceName);
 				
 				for (Port port : UmlrtUtils.getPorts((Class)element)) {
 					
@@ -262,9 +283,8 @@ public class ParserEngine implements Runnable {
 					}
 					if (protocolName != null) {
 						for(int t=0; t<listCapsuleConn.size();t++) {
-							//System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> element.getName(): " + element.getName());
 
-							if (listCapsuleConn.get(t).getCapsuleInstanceName().contentEquals(element.getName())) {
+							if (listCapsuleConn.get(t).getCapsuleInstanceName().contentEquals(capsuleInstanceName)) {
 								
 								//add port
 								listCapsuleConn.get(t).addListPortName(portName);
@@ -320,17 +340,24 @@ public class ParserEngine implements Runnable {
 					}
 					listPortName_connectorName_PortName.add(connEnd1PortName+"::"+connectorName+"::"+connEnd2PortName);
 					}
-				System.out.println("------> [listPortName_connectorName_PortName]" + listPortName_connectorName_PortName);
+				//System.out.println("------> [listPortName_connectorName_PortName]" + listPortName_connectorName_PortName);
 				}
 
 				if ( (((Class) element).getOwnedBehaviors() != null && ((Class) element).getOwnedBehaviors().size() > 0))
 					if (((Class) element).getOwnedBehaviors().get(0) instanceof StateMachine) {
 						smMap.put(element.getName(), (StateMachine) ((Class) element).getOwnedBehaviors().get(0) );
 						
-						String elementQualifiedName = element.getQualifiedName();
-						String [] splitElementQualifiedName = capsuleQualifiedName.split("::");
-						this.elementInstanceName = splitCapsuleQualifiedName[splitCapsuleQualifiedName.length-1];
+						
 						this.elementName = element.getName();
+						for (int k = 0; k<listCapsuleName_InstanceName.size();k++) {
+							String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("_");
+							if (splitCapsuleName_InstanceName[0].contentEquals(this.elementName)) {
+								this.elementInstanceName = splitCapsuleName_InstanceName[1];
+								break;
+							}
+							this.elementInstanceName = "__NOT_FOUND__";
+						}
+						
 						handleStateMachine((StateMachine) ((Class) element).getOwnedBehaviors().get(0));
 					}
 			}
@@ -636,7 +663,8 @@ public class ParserEngine implements Runnable {
 		}
 		//[End]----------------------------------------------------------[Transitions]
 		List<TableDataMember> listTableDataMember = tableMaker();
-		listTableData.put(this.elementName, listTableDataMember); // Table is made for the given state machine !
+		//elementInstanceName is equal to capsuleInstanceName
+		listTableData.put(this.elementInstanceName, listTableDataMember); // Table is made for the given state machine !
 	}//[End] Region
 
 	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	

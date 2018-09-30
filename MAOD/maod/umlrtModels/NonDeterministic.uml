@@ -8,12 +8,12 @@
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_znpN0MNyEeiQ46qGEXn1FA" key="top_name" value="Top"/>
     </eAnnotations>
     <packagedElement xmi:type="uml:Class" xmi:id="_DGHeIMKbEeiR-e-fvzqChQ" name="Top" isActive="true">
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_jK5CMMKbEeiR-e-fvzqChQ" name="c0" visibility="protected" type="_FcPA8MKbEeiR-e-fvzqChQ" isOrdered="true" aggregation="composite"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_lqtTkMKbEeiR-e-fvzqChQ" name="c1" visibility="protected" type="_MC4k0MKbEeiR-e-fvzqChQ" isOrdered="true" aggregation="composite">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_jK5CMMKbEeiR-e-fvzqChQ" name="C0" visibility="protected" type="_FcPA8MKbEeiR-e-fvzqChQ" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_lqtTkMKbEeiR-e-fvzqChQ" name="C1" visibility="protected" type="_MC4k0MKbEeiR-e-fvzqChQ" isOrdered="true" aggregation="composite">
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_irjsgMM4EeiNurcJA2v9Sg" value="1"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ir2ncMM4EeiNurcJA2v9Sg" value="1"/>
       </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_aSo5wMM4EeiNurcJA2v9Sg" name="c2" visibility="protected" type="_X45bMMM4EeiNurcJA2v9Sg" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_aSo5wMM4EeiNurcJA2v9Sg" name="C2" visibility="protected" type="_X45bMMM4EeiNurcJA2v9Sg" isOrdered="true" aggregation="composite"/>
       <ownedConnector xmi:type="uml:Connector" xmi:id="_Pxt0gMM_EeiNurcJA2v9Sg" name="RTConnector1">
         <end xmi:type="uml:ConnectorEnd" xmi:id="_PxwQwMM_EeiNurcJA2v9Sg" partWithPort="_jK5CMMKbEeiR-e-fvzqChQ" role="_LA0RUMM_EeiNurcJA2v9Sg"/>
         <end xmi:type="uml:ConnectorEnd" xmi:id="_PxwQwcM_EeiNurcJA2v9Sg" partWithPort="_lqtTkMKbEeiR-e-fvzqChQ" role="_xumjQMKbEeiR-e-fvzqChQ"/>

@@ -33,6 +33,7 @@ import org.eclipse.uml2.uml.Signal;
 import org.eclipse.uml2.uml.SignalEvent;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.StateMachine;
+import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Transition;
 import org.eclipse.uml2.uml.Trigger;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -263,16 +264,18 @@ public class UmlrtUtils {
         String retVal = null;
 
         EAnnotation anno = root.getEAnnotation("UMLRT_Default_top");
+
         if (anno != null) {
                 retVal = anno.getDetails().get("top_name");
+
         }
 
         return retVal != null ? retVal : "Top";
 	}
 
 	//==================================================================	
-		//==============================================[getTopCapsuleName]
-		//==================================================================	
+	//==============================================[foundPortName_connectorName_PortName]
+	//==================================================================	
 			
 		public static boolean foundPortName_connectorName_PortName(List<CapsuleConn> listCapsuleConn, String PortName_connectorName_PortName , String capsuleName){
 			
@@ -287,5 +290,24 @@ public class UmlrtUtils {
 			return false;
 		}
 	
+	//==================================================================	
+	//==============================================[getCapsulePartsRecursive]
+	//==================================================================	
+		public static void getCapsulePartsRecursive(Class capsule, List<Property> parts) {
+			if (capsule == null)
+				return;
+//			List<Property> tmpParts = new ArrayList<Property>();
+			for (Property part : capsule.getParts())
+				for (Stereotype s : part.getAppliedStereotypes())
+					if (s.getName().equals("CapsulePart")){
+						parts.add(part);
+						getCapsulePartsRecursive((Class) part.getType(), parts);
+					}
+//			parts.addAll(tmpParts);
+//			for (Property part : tmpParts)
+//				getCapsulePartsRecursive((Class) part.getType(), parts);
+
+//			return parts;
+		}
 
 }

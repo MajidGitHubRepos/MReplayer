@@ -63,7 +63,7 @@ public class CapsuleConn {
 	}
 	
 	public String allDataToString() {
-		return "CapsuleConn [capsuleName= "+capsuleName+", listPortName_connectorName_PortName_protocolName= " + listPortName_connectorName_PortName_protocolName+", listPortName= " + listPortName+"]";
+		return "CapsuleConn [capsuleName= "+capsuleName +", capsuleInstanceName= "+capsuleInstanceName+", listPortName_connectorName_PortName_protocolName= " + listPortName_connectorName_PortName_protocolName+", listPortName= " + listPortName+"]";
 	}
 
 }
