@@ -1,6 +1,6 @@
 /*
  * SampleTCPServer.c
- *
+ *	[021018]v1.0: Majid Babaei
  *  Created on: Nov 8, 2016
  *      Author: mojtababagherzadeh
  *      copied from https://www.tutorialspoint.com/unix_sockets/socket_server_example.htm and changed slightly
@@ -118,5 +118,4 @@ int main1( int argc, char *argv[] ) {
 
    return 0;
 }
-
 

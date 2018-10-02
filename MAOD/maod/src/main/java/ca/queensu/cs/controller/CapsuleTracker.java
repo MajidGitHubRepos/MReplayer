@@ -254,13 +254,11 @@ public class CapsuleTracker implements Runnable{
 			for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
 
 				if (entry.getKey().contains(capsuleInstance)) {
-					//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking][OK1]");
 					for (int i = 0; i < entry.getValue().size(); i++) {
 						if ((entry.getValue().get(i).getSource().isInitial() && entry.getValue().get(i).getTransition().getIsInit())) {//isInit
 
 							if ((entry.getValue().get(i).getTransition().getActions().size()>0)) {
 								//All action codes
-								//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking][OK2][ActionSize:] " + entry.getValue().get(i).getTransition().getActions());
 
 								for (int j = 0; j < entry.getValue().get(i).getTransition().getActions().size(); j++) {
 									String[] actionParts = entry.getValue().get(i).getTransition().getActions().get(j).split("\\.|\\(");
@@ -277,7 +275,6 @@ public class CapsuleTracker implements Runnable{
 									}
 								}
 							}
-							//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking][OK3]");
 
 							result = true;
 							//[entry.getValue().get(i).getTarget()] : target found in tableData, target should be a source in a member in tableData

@@ -69,7 +69,7 @@ public class TrackerMaker implements Runnable{
 
 
 
-				//if (eventCount > 300) { for (int i = 0; i<trackerCount;i++) {capsuleTrackers[i].shutdown();} break;} // only first 100 events are considered! [for testing propose] 
+				if (eventCount > 300) { for (int i = 0; i<trackerCount;i++) {capsuleTrackers[i].shutdown();} break;} // only first 100 events are considered! [for testing propose] 
 
 				//--
 				//Sample Runnable task1 is in [https://www.callicoder.com/java-executor-service-and-thread-pool-tutorial/]

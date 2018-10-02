@@ -6,6 +6,10 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
+/*
+ * [021018]v1.0: Majid Babaei
+ */
+
 #include <iostream>
 
 #include "SharedMem.h"
@@ -145,4 +149,3 @@ int main2() {
 
 	return 0;
 }
-

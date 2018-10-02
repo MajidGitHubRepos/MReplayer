@@ -1,0 +1,1 @@
+[021018][Info]: reading the model.uml from resources/umlrtModels directory

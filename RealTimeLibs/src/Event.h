@@ -1,6 +1,6 @@
 /*
  * DebuggerEvent.hh
- *
+ *	[021018]v1.0: Majid Babaei
  *  Created on: Nov 11, 2016
  *      Author: mojtababagherzadeh
  */
@@ -455,6 +455,7 @@ inline std::string Event::dumpToString(std::string format, char seperator) {
 			else
 				needSeperator=true;
 			ss1<<this->getTimePointNano();
+
 			}
 			else if (tempS1=="eventid")
 			{
@@ -565,17 +566,17 @@ inline void Event::deSerializePayload(std::string buffer) {
 inline std::string Event::serialize() {
 
 	std::stringstream ss1;
-	ss1 << this->getEventId() <<";";
-	ss1 << this->getEventSourceKind() << ";";
-	ss1 << this->getEventType() << ';';
-	ss1 << this->getCapsuleName() << ";";
-	ss1 << this->getCapsuleInstance() << ";";
-	ss1 << this->getCapsuleIndex() << ";";
-	ss1 << this->getSourceName() << ";";
-	ss1 << this->getCpuTik() << ';';
-	ss1 << this->getTimePointSecond() << ';';
-	ss1 << this->getTimePointNano()<<";";
-	ss1 << this->getVariableData();
+	ss1 <<"[getEventId]" << this->getEventId() <<";";
+	ss1 <<"[getEventSourceKind]" <<this->getEventSourceKind() << ";";
+	ss1 <<"[getEventType]" <<this->getEventType() << ';';
+	ss1 <<"[getCapsuleName]" <<this->getCapsuleName() << ";";
+	ss1 <<"[getCapsuleInstance]" <<this->getCapsuleInstance() << ";";
+	ss1 <<"[getCapsuleIndex]" <<this->getCapsuleIndex() << ";";
+	ss1 <<"[getSourceName]" <<this->getSourceName() << ";";
+	ss1 <<"[getCpuTik]" <<this->getCpuTik() << ';';
+	ss1 <<"[getTimePointSecond]" <<this->getTimePointSecond() << ';';
+	ss1 <<"[getTimePointNano]" <<this->getTimePointNano()<<";";
+	ss1 <<"[getVariableData]"<< this->getVariableData();
 	if ((this->getEventPayload()).size()>0){
 		ss1<<';';
 		ss1 << this->serializePayload();

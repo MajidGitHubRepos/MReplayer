@@ -1,0 +1,2 @@
+[021018][Info]: CommGateWay MUST be located beside the model otherwise <Package Import> is empty and code generation is failed!
+[021018][Info]: getting threads of a processes via [top]; [ps -T -p <pid>]; OR [top -H -p <pid>]

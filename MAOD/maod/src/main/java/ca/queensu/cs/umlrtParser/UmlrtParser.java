@@ -105,7 +105,6 @@ public class UmlrtParser {
 		 	//String fileName = "umlrtModels/PingPong.uml";
     		String fileName = "umlrtModels/NonDeterministic.uml";
 	        ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
-	 
 	        File file = new File(classLoader.getResource(fileName).getFile());
 		 	System.out.println("path: " +file.getAbsolutePath());
 		 	
