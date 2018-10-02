@@ -309,8 +309,6 @@ public class CapsuleTracker implements Runnable{
 		String[] eventSourceNameSplit = event.getSourceName().split("::");
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[entryStateChecking][eventSourceNameSplit[4]]: "+ eventSourceNameSplit[4]);
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[entryStateChecking][targetStateData.getStateName()]: "+ targetStateData.getStateName());
-
-
 		
 		//Check eventSourceKind = 4 and eventType = 16 [For STATEENTRYEND] 
 		if (event.getSourceKind().contentEquals("4") && event.getType().contentEquals("16") /*&& 

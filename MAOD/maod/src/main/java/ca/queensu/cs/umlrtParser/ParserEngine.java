@@ -612,7 +612,7 @@ public class ParserEngine implements Runnable {
 
 			for (Trigger trigger : transition.getTriggers()) {
 				guards = resolveGuard(transition);
-				Event event = trigger.getEvent();
+				Event event = trigger.getEvent(); 
 				if (event instanceof CallEvent) {
 					//System.out.println("--- in Trigger CallEvent");
 					triggers = UmlrtUtils.getTriggers(transition);
