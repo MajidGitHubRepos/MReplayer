@@ -382,6 +382,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	public boolean transitionChecking(Event event) throws InterruptedException {
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[in transitionChecking]");
+		// test reverting back to the pervious version 
 		boolean result = false;
 		boolean requirementMet = false; //TODO: trigger by time!
 		TransitionData targetTransitionData = new TransitionData();
