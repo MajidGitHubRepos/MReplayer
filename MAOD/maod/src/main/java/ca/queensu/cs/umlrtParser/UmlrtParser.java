@@ -98,11 +98,18 @@ public class UmlrtParser {
 
     public void run() {
 		   
-		 	//String modelPath = "/home/majid/workspace/PingPong.bk/PingPong.uml";
-		 	//String modelPath = "/home/majid/workspace-papyrusrt/PingPong.bk/PingPong.uml";
-		 	String modelPath = "/home/majid/workspace/NonDeterministic.bk/NonDeterministic/NonDeterministic.uml";
+
+		 	//String modelPath = "/home/majid/workspace/NonDeterministic.bk/NonDeterministic/NonDeterministic.uml";
 		 	//String modelPath = "/home/majid/workspace/matd/MAOD/maod/umlrtModels/PingPong.uml";
 		 	
+		 	//String fileName = "umlrtModels/PingPong.uml";
+    		String fileName = "umlrtModels/NonDeterministic.uml";
+	        ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
+	 
+	        File file = new File(classLoader.getResource(fileName).getFile());
+		 	System.out.println("path: " +file.getAbsolutePath());
+		 	
+		 	String modelPath = file.getAbsolutePath();
 		 	XMIResource mainResource = UmlrtUtils.getResource(modelPath);
 		    Model inputModel = (Model) EcoreUtil.getObjectByType(mainResource.getContents(), UMLPackage.Literals.MODEL);
 		    String topCapsuleName = UmlrtUtils.getTopCapsuleName(inputModel);

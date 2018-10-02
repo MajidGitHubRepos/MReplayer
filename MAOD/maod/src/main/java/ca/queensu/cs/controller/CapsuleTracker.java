@@ -169,7 +169,7 @@ public class CapsuleTracker implements Runnable{
 			String capsuleName = Controller.umlrtParser.getlistCapsuleConn().get(i).getCapsuleInstanceName();
 			for (int j = 0; j < listCapsulePortConn.size() ; j++) {
 				if (listCapsulePortConn.get(j).contains(port)) {
-					//let's find the other side of this connector, which port ? then which capsule?
+					//let's find the other side of this connector, which port ? then which copiously?
 					String [] listCapsulePortConnSplit = listCapsulePortConn.get(j).split("\\::");
 					//connector
 					
@@ -216,7 +216,6 @@ public class CapsuleTracker implements Runnable{
 								if (!sourceCapsuleName.contentEquals(targetCapsuleName))
 									return targetCapsuleName; 
 							}
-							
 						}
 					}
 				}
@@ -310,8 +309,6 @@ public class CapsuleTracker implements Runnable{
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[entryStateChecking][eventSourceNameSplit[4]]: "+ eventSourceNameSplit[4]);
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[entryStateChecking][targetStateData.getStateName()]: "+ targetStateData.getStateName());
 
-
-		
 		//Check eventSourceKind = 4 and eventType = 16 [For STATEENTRYEND] 
 		if (event.getSourceKind().contentEquals("4") && event.getType().contentEquals("16") /*&& 
 				(eventSourceNameSplit[4].contentEquals(targetStateData.getStateName()) || (targetStateData.getStateName() == null))*/) {

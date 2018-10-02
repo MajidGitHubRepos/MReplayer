@@ -22,16 +22,16 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="jarFiles/common-2.1.0.v20170605.jar"/>
-	<classpathentry kind="lib" path="jarFiles/common-2.13.0.v20170609.jar"/>
-	<classpathentry kind="lib" path="jarFiles/ecore-2.13.0.v20170609.jar"/>
-	<classpathentry kind="lib" path="jarFiles/ecore.xmi-2.13.0.v20170609.jar"/>
-	<classpathentry kind="lib" path="jarFiles/emf-2.6.0.v20170609.jar"/>
-	<classpathentry kind="lib" path="jarFiles/mapping.ecore2xml-2.9.0.v20170609.jar"/>
-	<classpathentry kind="lib" path="jarFiles/profile-1.0.0.201707181432.jar"/>
-	<classpathentry kind="lib" path="jarFiles/profile.standard-1.0.100.v20170605.jar"/>
-	<classpathentry kind="lib" path="jarFiles/resources-5.3.0.v20170605.jar"/>
-	<classpathentry kind="lib" path="jarFiles/types-2.0.0.v20170605.jar"/>
-	<classpathentry kind="lib" path="jarFiles/uml-5.3.0.v20170605.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/common-2.1.0.v20170605.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/common-2.13.0.v20170609.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/ecore-2.13.0.v20170609.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/ecore.xmi-2.13.0.v20170609.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/emf-2.6.0.v20170609.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/mapping.ecore2xml-2.9.0.v20170609.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/profile-1.0.0.201707181432.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/profile.standard-1.0.100.v20170605.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/resources-5.3.0.v20170605.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/types-2.0.0.v20170605.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/uml-5.3.0.v20170605.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
