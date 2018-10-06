@@ -210,23 +210,54 @@ public class ParserEngine implements Runnable {
 		int i=0;
 		do {
 			PackageableElement elementTmp = modelElements.get(i);
-			
+
 			if (elementTmp.getName().contentEquals(topCapsuleName)) {
 				System.out.println("--------------> [Found!] TopModelElement: "+ topCapsuleName);
-								
-				List<Property> listPart = new ArrayList<Property>();
-				listPart = ((Class) elementTmp).getParts();
 				
-				listCapsuleName_InstanceName.add(topCapsuleName+"_"+"Top");
+				listCapsuleName_InstanceName.add(topCapsuleName+"::"+"Top");
+		        HashMap<String, Property> mapNameParts = new HashMap<>(); 
+
+				//List<Property> listPart = new ArrayList<Property>();
+				//------------
+				System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
+				//UmlrtUtils.setTopCapsuleInstanceName(elementTmp.getName());
+
+
+				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts);
+				//System.out.println(">>>>>>>>>>>>> listPart.size(): "+ listPart.size());
+
+				//------------
 				
-				for (int j = 0; j< listPart.size(); j++) {
+				//listPart = ((Class) elementTmp).getParts();
+
+				Iterator it = mapNameParts.entrySet().iterator();
+			    while (it.hasNext()) {
+			    	String capInstanceName ="";
+			    	String capName ="";
+			        Map.Entry pair = (Map.Entry)it.next();
+			        String key = pair.getKey().toString();
+			        
+			        if (key.contains("_")) {
+						int lastIndexOf_ = key.lastIndexOf("_");
+						capName = key.substring(0, lastIndexOf_);
+						String tmpCapInstanceName = key.substring(lastIndexOf_+1);
+						
+						lastIndexOf_ = capName.lastIndexOf("_");
+						capInstanceName = key.substring(0,lastIndexOf_+1)+tmpCapInstanceName;
+						listCapsuleName_InstanceName.add(capName+"::"+capInstanceName);
+					}		    	        
+			        it.remove(); // avoids a ConcurrentModificationException
+			    }
+				
+				
+				/*for (int j = 0; j< listPart.size(); j++) {
 					String capInstanceName = listPart.get(j).getName();
 					String capName = listPart.get(j).getType().getName();
-					//System.out.println(">>>>>>>>>>>>> listPart.get(j).getQualifiedName(): "+ listPart.get(j).getName());
-					//System.out.println(">>>>>>>>>>>>> listPart.get(j).getType().getName(): "+ listPart.get(j).getType().getName());
+					System.out.println("--> capInstanceName: "+ capInstanceName);
+					System.out.println("--> capName: "+ capName);
 					listCapsuleName_InstanceName.add(capName+"_"+capInstanceName);
-				}
-				
+				}*/
+
 				//extract connectors
 				for (Connector connector : UmlrtUtils.getConnectors((Class)elementTmp)) {
 
@@ -236,26 +267,26 @@ public class ParserEngine implements Runnable {
 
 					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
 						connEnd1PortName = connEnd1.getRole().getName();
-					
+
 					}
 					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
 						connEnd2PortName = connEnd2.getRole().getName();
 					}
 					listPortName_connectorName_PortName.add(connEnd1PortName+"::"+connectorName+"::"+connEnd2PortName);
-				//break;
-			}
+					//break;
+				}
 			}
 			i++;
 		}while(i < modelElements.size());
 		//System.out.println(">>>>>>>>>>>>> listPortName_connectorName_PortName: "+ listPortName_connectorName_PortName);
-		
+
 		i=0;
 		List<StateMachine> stateMachines = new ArrayList<StateMachine>();
 		while(i < modelElements.size()) {
 			PackageableElement element = modelElements.get(i);
 			//System.out.println("--------------> modelElement: "+ element )
-			
-			
+
+
 			if(element instanceof Class) {
 
 				//Get capsule connector
@@ -263,20 +294,20 @@ public class ParserEngine implements Runnable {
 				capsuleName = element.getName();
 
 				for (int k = 0; k<listCapsuleName_InstanceName.size();k++) {
-					String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("_");
-					if (splitCapsuleName_InstanceName[0].contentEquals(capsuleName)) {
+					String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("::");
+					if (splitCapsuleName_InstanceName[0].contains(capsuleName)) {
 						capsuleInstanceName = splitCapsuleName_InstanceName[1];
 						break;
 					}
 					capsuleInstanceName = "__NOT_FOUND__";
 				}
-				
+
 				capsuleConn.setCapsuleName(capsuleName);
 				capsuleConn.setCapsuleInstanceName(capsuleInstanceName);
 				listCapsuleConn.add(capsuleConn);
-				
+
 				for (Port port : UmlrtUtils.getPorts((Class)element)) {
-					
+
 					portName = port.getName();
 					if (port.getType() != null){
 						protocolName = port.getType().getName();
@@ -285,18 +316,18 @@ public class ParserEngine implements Runnable {
 						for(int t=0; t<listCapsuleConn.size();t++) {
 
 							if (listCapsuleConn.get(t).getCapsuleInstanceName().contentEquals(capsuleInstanceName)) {
-								
+
 								//add port
 								listCapsuleConn.get(t).addListPortName(portName);
-								
+
 								for (int k = 0; k< listPortName_connectorName_PortName.size(); k++) {
 									if (listPortName_connectorName_PortName.get(k).contains(portName)) {
 										String tmpPortName_connectorName_PortName =  listPortName_connectorName_PortName.get(k);
 
 										if (!UmlrtUtils.foundPortName_connectorName_PortName(listCapsuleConn, tmpPortName_connectorName_PortName, capsuleInstanceName)) {
-										
-										listCapsuleConn.get(t).addPortName_connectorName_protocolName(listPortName_connectorName_PortName.get(k)+"::"+protocolName);
-										break;
+
+											listCapsuleConn.get(t).addPortName_connectorName_protocolName(listPortName_connectorName_PortName.get(k)+"::"+protocolName);
+											break;
 										}
 									}
 								}
@@ -350,8 +381,8 @@ public class ParserEngine implements Runnable {
 						
 						this.elementName = element.getName();
 						for (int k = 0; k<listCapsuleName_InstanceName.size();k++) {
-							String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("_");
-							if (splitCapsuleName_InstanceName[0].contentEquals(this.elementName)) {
+							String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("::");
+							if (splitCapsuleName_InstanceName[0].contains(this.elementName)) {
 								this.elementInstanceName = splitCapsuleName_InstanceName[1];
 								break;
 							}

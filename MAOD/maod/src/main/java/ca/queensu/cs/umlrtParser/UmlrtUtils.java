@@ -3,6 +3,7 @@ package ca.queensu.cs.umlrtParser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.PackageableElement;
 import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.Profile;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.PseudostateKind;
@@ -41,6 +43,8 @@ import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 import org.springframework.statemachine.transition.TransitionKind;
 
 public class UmlrtUtils {
+	public static String partName = "";
+	public static String topCapsuleInstanceName;
 	
 	public enum PseudoStateKind {
 
@@ -218,6 +222,8 @@ public class UmlrtUtils {
 		for (Trigger trig : t.getTriggers()) {
 			if (trig.getPorts() != null && trig.getPorts().size() > 0) {
 				String port = trig.getPorts().get(0).getName();
+				System.out.println("---> trig.getPorts().get(0).getName():"+ port);
+				System.out.println("---> ((CallEvent) trig.getEvent()):"+ ((CallEvent) trig.getEvent()));
 				String msg = ((CallEvent) trig.getEvent()).getOperation().getName();
 				// Object e3 = triggers.get(0).getEvent();
 				// List<Element> elems = triggers.get(0).getEvent().eGet(Operation.class);
@@ -290,24 +296,41 @@ public class UmlrtUtils {
 			return false;
 		}
 	
-	//==================================================================	
-	//==============================================[getCapsulePartsRecursive]
-	//==================================================================	
-		public static void getCapsulePartsRecursive(Class capsule, List<Property> parts) {
+		//==================================================================	
+		//==============================================[getCapsulePartsRecursive]
+		//==================================================================	
+		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts) {
 			if (capsule == null)
 				return;
-//			List<Property> tmpParts = new ArrayList<Property>();
-			for (Property part : capsule.getParts())
-				for (Stereotype s : part.getAppliedStereotypes())
-					if (s.getName().equals("CapsulePart")){
-						parts.add(part);
-						getCapsulePartsRecursive((Class) part.getType(), parts);
-					}
-//			parts.addAll(tmpParts);
-//			for (Property part : tmpParts)
-//				getCapsulePartsRecursive((Class) part.getType(), parts);
+			//			List<Property> tmpParts = new ArrayList<Property>();
+			
+		
+			
+			for (Property part : capsule.getParts()) {
+				// TODO: why getAppliedStereotypes is always empty! [https://www.eclipse.org/forums/index.php/t/953534/]
+				// for (Stereotype s : part.getAppliedStereotypes()) 
+				// if (s.getName().equals("CapsulePart")){
+				if (part.getType() instanceof Class) {
+					
+					if (partName != "") {
+						partName = partName + "_" + part.getType().getName()+ "_" +part.getName();
+				}else {
+					topCapsuleInstanceName = prvInstanceName;
+					partName=topCapsuleInstanceName+"_"+part.getType().getName()+ "_" +part.getName();
+				}
+					mapNameParts.put(partName, part);
 
-//			return parts;
+					//parts.add(part);
+					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts);
+					if (partName.contains("_")) {
+						int lastIndexOf_ = partName.lastIndexOf("_");
+						String tmpStr = partName.substring(0, lastIndexOf_);
+						lastIndexOf_ = tmpStr.lastIndexOf("_");
+						partName = tmpStr.substring(0, lastIndexOf_);
+					}
+				}
+				// }
+			}
 		}
 
 }

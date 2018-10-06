@@ -141,7 +141,7 @@ public class CapsuleTracker implements Runnable{
 		boolean sentSuccessfully = false;
 		Message sentMsg = new Message(port,msg);
 		for (int i=0; i< TrackerMaker.trackerCount; i++) {
-			if(TrackerMaker.capsuleTrackers[i].capsuleInstance.contains(targetCapsuleName)){
+			if(targetCapsuleName.contains(TrackerMaker.capsuleTrackers[i].capsuleInstance)){
 				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[TrackerMaker.capsuleTrackers[i].capsuleInstance]"+TrackerMaker.capsuleTrackers[i].capsuleInstance);
 
 				TrackerMaker.capsuleTrackers[i].messageQueue.put(sentMsg);
@@ -213,7 +213,7 @@ public class CapsuleTracker implements Runnable{
 							if (Controller.umlrtParser.getlistCapsuleConn().get(p).getListPortName().contains(targetPort)) {
 								targetCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[targetCapsuleName]: " +targetCapsuleName);
-								if (!sourceCapsuleName.contentEquals(targetCapsuleName))
+								if (!sourceCapsuleName.contains(targetCapsuleName))
 									return targetCapsuleName; 
 							}
 						}
@@ -456,7 +456,7 @@ public class CapsuleTracker implements Runnable{
 				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[in transitionChecking][before Check requirementMet!]: " + requirementMet);
 
 				//Check requirementMet!
-				if ((eventSourceNameSplit[4].contentEquals(targetTransitionData.getTransitonName()) || (targetTransitionData.getTransitonName() == null)) &&
+				if ((eventSourceNameSplit[4].contains(targetTransitionData.getTransitonName()) || (targetTransitionData.getTransitonName() == null)) &&
 						requirementMet) {
 
 					//TODO:checking for guards will be done later
