@@ -185,10 +185,10 @@ public class CapsuleTracker implements Runnable{
 					String protocol = listCapsulePortConnSplit[3];
 					//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[protocol]: " +protocol);
 
-					if (port.contentEquals(port1)) {
+					if (port1.contains(port)) {
 						targetPort = port2;
 						sourcePort = port1;
-					} else if (port.contentEquals(port2)) {
+					} else if (port2.contains(port)) {
 						targetPort = port1;
 						sourcePort = port2;
 					} else {
@@ -199,7 +199,7 @@ public class CapsuleTracker implements Runnable{
 					if (sourcePort != "") {
 						for (int p = 0; p< Controller.umlrtParser.getlistCapsuleConn().size(); p++) {
 							
-							if (Controller.umlrtParser.getlistCapsuleConn().get(p).getListPortName().contains(sourcePort)) {
+							if (Controller.umlrtParser.getlistCapsuleConn().get(p).isListPortNameContainsPort(sourcePort)) {
 								sourceCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[sourceCapsuleName]: " +sourceCapsuleName);
 							}
@@ -210,10 +210,10 @@ public class CapsuleTracker implements Runnable{
 					if (targetPort != "") {
 						for (int p = 0; p< Controller.umlrtParser.getlistCapsuleConn().size(); p++) {
 							
-							if (Controller.umlrtParser.getlistCapsuleConn().get(p).getListPortName().contains(targetPort)) {
+							if (Controller.umlrtParser.getlistCapsuleConn().get(p).isListPortNameContainsPort(targetPort)) {
 								targetCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[targetCapsuleName]: " +targetCapsuleName);
-								if (!sourceCapsuleName.contains(targetCapsuleName))
+								if (!sourceCapsuleName.contains(targetCapsuleName)) // TODO: what about self-transitions
 									return targetCapsuleName; 
 							}
 						}
@@ -400,7 +400,7 @@ public class CapsuleTracker implements Runnable{
 				for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
 					if (entry.getKey().contains(capsuleInstance)) {
 						for (int i = 0; i < entry.getValue().size(); i++) {
-							if (entry.getValue().get(i).getTransition().getTransitonName().contentEquals(eventTransitionName)) {
+							if (entry.getValue().get(i).getTransition().getTransitonName().contains(eventTransitionName)) {
 								//Transition found in the tabalData
 								targetTransitionData = entry.getValue().get(i).getTransition();
 								List <String> listTriggers = entry.getValue().get(i).getTransition().getTriggers();

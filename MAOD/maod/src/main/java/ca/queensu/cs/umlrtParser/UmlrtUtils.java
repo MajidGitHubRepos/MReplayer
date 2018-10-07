@@ -222,9 +222,16 @@ public class UmlrtUtils {
 		for (Trigger trig : t.getTriggers()) {
 			if (trig.getPorts() != null && trig.getPorts().size() > 0) {
 				String port = trig.getPorts().get(0).getName();
-				System.out.println("---> trig.getPorts().get(0).getName():"+ port);
-				System.out.println("---> ((CallEvent) trig.getEvent()):"+ ((CallEvent) trig.getEvent()));
-				String msg = ((CallEvent) trig.getEvent()).getOperation().getName();
+				//System.out.println("---> trig.getPorts().get(0).getName():"+ port);
+				//System.out.println("---> ((CallEvent) trig.getEvent()):"+ ((CallEvent) trig.getEvent()));
+				String msg = "";
+				if (((CallEvent) trig.getEvent()).getOperation() != null)
+					msg = ((CallEvent) trig.getEvent()).getOperation().getName();
+				else {
+					CallEvent timeEvent = (CallEvent) trig.getEvent();
+					//period = getTimePeriod(timeEvent);
+				}
+					
 				// Object e3 = triggers.get(0).getEvent();
 				// List<Element> elems = triggers.get(0).getEvent().eGet(Operation.class);
 				triggers.add(String.format("%s.%s", port, msg));
@@ -283,23 +290,27 @@ public class UmlrtUtils {
 	//==============================================[foundPortName_connectorName_PortName]
 	//==================================================================	
 			
-		public static boolean foundPortName_connectorName_PortName(List<CapsuleConn> listCapsuleConn, String PortName_connectorName_PortName , String capsuleName){
+		public static boolean isConnected__PortName_connectorName_PortName__TocapsuleInstanceName(List<CapsuleConn> listCapsuleConn, String portName_connectorName_PortName , String capsuleInstanceName, String portName){
 			
-			for (int i = 0 ; i< listCapsuleConn.size(); i++) {
-				
-				String tmp = listCapsuleConn.get(i).allDataToString();
-				if ((tmp.contains(PortName_connectorName_PortName) && (listCapsuleConn.get(i).getCapsuleInstanceName().contentEquals(capsuleName)))) {
-					return true;
+			String[] splitPortName_connectorName_PortName = portName_connectorName_PortName.split("::");
+			String[] splitCapsuleInstanceName = capsuleInstanceName.split(",");
+			
+			for (int i = 0 ; i< splitCapsuleInstanceName.length; i++) {
+				String CapsuleInstanceName__portName = splitCapsuleInstanceName[i]+"__"+portName;
+				for (int j = 0 ; j< splitPortName_connectorName_PortName.length; j++) {
+					if (CapsuleInstanceName__portName.contains(splitPortName_connectorName_PortName[j]))
+						return true;
 				}
+				
 			}
-			
+				
 			return false;
 		}
 	
 		//==================================================================	
 		//==============================================[getCapsulePartsRecursive]
 		//==================================================================	
-		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts) {
+		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts,  List<String> listPortName_connectorName_PortName) {
 			if (capsule == null)
 				return;
 			//			List<Property> tmpParts = new ArrayList<Property>();
@@ -313,19 +324,64 @@ public class UmlrtUtils {
 				if (part.getType() instanceof Class) {
 					
 					if (partName != "") {
-						partName = partName + "_" + part.getType().getName()+ "_" +part.getName();
+						partName = partName + "__" + part.getType().getName()+ "__" +part.getName();
 				}else {
 					topCapsuleInstanceName = prvInstanceName;
-					partName=topCapsuleInstanceName+"_"+part.getType().getName()+ "_" +part.getName();
+					partName=topCapsuleInstanceName+"__"+part.getType().getName()+ "__" +part.getName();
 				}
 					mapNameParts.put(partName, part);
+					
+					int lastIndexOf_ = partName.lastIndexOf("__");
+					String tmpInstanceName = partName.substring(lastIndexOf_+2);
+					String tmpStr = partName.substring(0,lastIndexOf_);
+					lastIndexOf_ = tmpStr.lastIndexOf("__");
+					String capName = tmpStr.substring(lastIndexOf_+2);
+					
+					for(int i=0;i < ParserEngine.getModelElements().size();i++) {
+						PackageableElement element = ParserEngine.getModelElements().get(i);
+						if((element instanceof Class) && (capName.contains(element.getName()))) {
+							//extract connectors
+							for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {  // Not for top 
+								String connectorName = "";
+								String portName = "";
+								String protocolName = "";
+								String connEnd1PortName = "";
+								String connEnd2PortName = "";
+								String partWithPort1 = "";
+								String partWithPort2 = "";
 
+								connectorName = connector.getName();
+								ConnectorEnd connEnd1 = connector.getEnds().get(0);
+								ConnectorEnd connEnd2 = connector.getEnds().get(1);
+
+								if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
+									connEnd1PortName = connEnd1.getRole().getName();
+									if (connEnd1.getPartWithPort() != null)
+										partWithPort1 = connEnd1.getPartWithPort().getName();
+									else
+										partWithPort1 = tmpInstanceName;
+								}
+								
+								if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
+									connEnd2PortName = connEnd2.getRole().getName();
+									if (connEnd2.getPartWithPort() != null)
+										partWithPort2 = connEnd2.getPartWithPort().getName();
+									else
+										partWithPort2 = tmpInstanceName;
+								}
+								listPortName_connectorName_PortName.add(partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName);
+								//break;
+							}
+						}
+					}
+					
+					
 					//parts.add(part);
-					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts);
+					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts, listPortName_connectorName_PortName);
 					if (partName.contains("_")) {
-						int lastIndexOf_ = partName.lastIndexOf("_");
-						String tmpStr = partName.substring(0, lastIndexOf_);
-						lastIndexOf_ = tmpStr.lastIndexOf("_");
+						lastIndexOf_ = partName.lastIndexOf("__");
+						tmpStr = partName.substring(0, lastIndexOf_);
+						lastIndexOf_ = tmpStr.lastIndexOf("__");
 						partName = tmpStr.substring(0, lastIndexOf_);
 					}
 				}

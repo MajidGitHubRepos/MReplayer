@@ -18,6 +18,11 @@ public class CapsuleConn {
 
 		this.capsuleName = capsuleName;
 	}
+	
+	public CapsuleConn (String capsuleName, String capsuleInstanceName) {
+		this(null, capsuleName, capsuleInstanceName);
+	}
+	
 	public CapsuleConn() {
 		this(null, null, null);
 	}
@@ -48,6 +53,14 @@ public class CapsuleConn {
 	
 	public List<String> getListPortName() {
 		return this.listPortName;
+	}
+	
+	public boolean isListPortNameContainsPort(String port) {
+		for(int i = 0; i<this.listPortName.size();i++) {
+			if (port.contains(listPortName.get(i)))
+				return true;
+		}
+		return false;
 	}
 	
 	public  List<String> getListPortName_connectorName_PortName_protocolName() {

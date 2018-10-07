@@ -82,7 +82,7 @@ import org.eclipse.uml2.uml.OpaqueExpression;
 
 public class ParserEngine implements Runnable {
 	private String topCapsuleName;
-	private EList<PackageableElement> modelElements;
+	private static EList<PackageableElement> modelElements;
 	public HashMap<String, StateMachine> stateMachineMap;
 	public List<StateData> listStateData;
 	public List<TransitionData> listTransitionData;
@@ -117,7 +117,10 @@ public class ParserEngine implements Runnable {
 		this.topCapsuleName = topCapsuleName;
 
 	}
-
+	
+	public static EList<PackageableElement> getModelElements() {
+		return modelElements;
+	}
 	public boolean getUmlrtParsingDone() {
 		return this.umlrtParsingDone;
 	}
@@ -207,6 +210,7 @@ public class ParserEngine implements Runnable {
 		String protocolName = "";
 		String connEnd1PortName = "";
 		String connEnd2PortName = "";
+	
 		int i=0;
 		do {
 			PackageableElement elementTmp = modelElements.get(i);
@@ -223,7 +227,7 @@ public class ParserEngine implements Runnable {
 				//UmlrtUtils.setTopCapsuleInstanceName(elementTmp.getName());
 
 
-				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts);
+				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts, listPortName_connectorName_PortName);
 				//System.out.println(">>>>>>>>>>>>> listPart.size(): "+ listPart.size());
 
 				//------------
@@ -238,12 +242,12 @@ public class ParserEngine implements Runnable {
 			        String key = pair.getKey().toString();
 			        
 			        if (key.contains("_")) {
-						int lastIndexOf_ = key.lastIndexOf("_");
+						int lastIndexOf_ = key.lastIndexOf("__");
 						capName = key.substring(0, lastIndexOf_);
-						String tmpCapInstanceName = key.substring(lastIndexOf_+1);
+						String tmpCapInstanceName = key.substring(lastIndexOf_+2);
 						
-						lastIndexOf_ = capName.lastIndexOf("_");
-						capInstanceName = key.substring(0,lastIndexOf_+1)+tmpCapInstanceName;
+						lastIndexOf_ = capName.lastIndexOf("__");
+						capInstanceName = key.substring(0,lastIndexOf_+2)+tmpCapInstanceName;
 						listCapsuleName_InstanceName.add(capName+"::"+capInstanceName);
 					}		    	        
 			        it.remove(); // avoids a ConcurrentModificationException
@@ -264,15 +268,19 @@ public class ParserEngine implements Runnable {
 					connectorName = connector.getName();
 					ConnectorEnd connEnd1 = connector.getEnds().get(0);
 					ConnectorEnd connEnd2 = connector.getEnds().get(1);
+					String partWithPort1 = "";
+					String partWithPort2 = "";
 
 					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
 						connEnd1PortName = connEnd1.getRole().getName();
+						partWithPort1 = connEnd1.getPartWithPort().getName();
 
 					}
 					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
 						connEnd2PortName = connEnd2.getRole().getName();
+						partWithPort2 = connEnd2.getPartWithPort().getName();
 					}
-					listPortName_connectorName_PortName.add(connEnd1PortName+"::"+connectorName+"::"+connEnd2PortName);
+					listPortName_connectorName_PortName.add(partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName);
 					//break;
 				}
 			}
@@ -284,6 +292,8 @@ public class ParserEngine implements Runnable {
 		List<StateMachine> stateMachines = new ArrayList<StateMachine>();
 		while(i < modelElements.size()) {
 			PackageableElement element = modelElements.get(i);
+			this.elementInstanceName = "";
+			this.elementName = "";
 			//System.out.println("--------------> modelElement: "+ element )
 
 
@@ -292,15 +302,40 @@ public class ParserEngine implements Runnable {
 				//Get capsule connector
 				CapsuleConn capsuleConn = new CapsuleConn();
 				capsuleName = element.getName();
-
+				capsuleInstanceName = "";
+				String tmpStr = "";
+				String tmpCapsuleName = "";
+				
 				for (int k = 0; k<listCapsuleName_InstanceName.size();k++) {
 					String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("::");
-					if (splitCapsuleName_InstanceName[0].contains(capsuleName)) {
-						capsuleInstanceName = splitCapsuleName_InstanceName[1];
-						break;
+					int firstIndexOf_ = splitCapsuleName_InstanceName[0].indexOf("__");
+					int lastIndexOf_ = splitCapsuleName_InstanceName[0].lastIndexOf("__");
+					if (lastIndexOf_ > 0)
+						tmpCapsuleName = splitCapsuleName_InstanceName[0].substring(lastIndexOf_+2);
+					else //it is Top capsule
+						tmpCapsuleName = this.topCapsuleName;
+					if (firstIndexOf_ > 0)
+						tmpStr = splitCapsuleName_InstanceName[0].substring(firstIndexOf_+2);
+					
+					if (tmpCapsuleName.contentEquals(capsuleName)) {
+						this.elementName = capsuleName;
+						if (this.elementInstanceName != "")
+							this.elementInstanceName = this.elementInstanceName + ", " +splitCapsuleName_InstanceName[1];
+						else
+							this.elementInstanceName = splitCapsuleName_InstanceName[1];
+
+						if (capsuleInstanceName == "") {
+							capsuleInstanceName = splitCapsuleName_InstanceName[1];
+							if (capsuleInstanceName.contentEquals("Top")) //Top dosen't have any instance 
+								break;
+						} else
+							capsuleInstanceName = capsuleInstanceName + ", "+ splitCapsuleName_InstanceName[1];
+						//break;
 					}
-					capsuleInstanceName = "__NOT_FOUND__";
+					
 				}
+				if (capsuleInstanceName == "")
+					capsuleInstanceName = "__NOT_FOUND__";
 
 				capsuleConn.setCapsuleName(capsuleName);
 				capsuleConn.setCapsuleInstanceName(capsuleInstanceName);
@@ -324,20 +359,20 @@ public class ParserEngine implements Runnable {
 									if (listPortName_connectorName_PortName.get(k).contains(portName)) {
 										String tmpPortName_connectorName_PortName =  listPortName_connectorName_PortName.get(k);
 
-										if (!UmlrtUtils.foundPortName_connectorName_PortName(listCapsuleConn, tmpPortName_connectorName_PortName, capsuleInstanceName)) {
+										if (UmlrtUtils.isConnected__PortName_connectorName_PortName__TocapsuleInstanceName(listCapsuleConn, tmpPortName_connectorName_PortName, capsuleInstanceName, portName)) {
 
 											listCapsuleConn.get(t).addPortName_connectorName_protocolName(listPortName_connectorName_PortName.get(k)+"::"+protocolName);
-											break;
+											//break;
 										}
 									}
 								}
-								break;
+								//break;
 							}
 						}
 					}
 				}
 
-				for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {
+				/*for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {
 					
 					if (!element.getName().contentEquals(topCapsuleName)) { // for top cap already done!
 					connectorName = connector.getName();
@@ -347,47 +382,22 @@ public class ParserEngine implements Runnable {
 					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
 						connEnd1PortName = connEnd1.getRole().getName();
 					
-						/*for(int t=0; t<listCapsuleConn.size();t++) {
-							for (int k = 0; k < listCapsuleConn.get(t).getListPortName_connectorName_protocolName().size(); k++) {
-								if(listCapsuleConn.get(t).getPortName_connectorName_protocolName(k).contains(connEnd1PortName)) {
-									String tmp = listCapsuleConn.get(t).getPortName_connectorName_protocolName(k);
-									listCapsuleConn.get(t).setPortName_connectorName_protocolName(k,tmp.concat("::").concat(connectorName));
-								}
-							}
-						}*/
+
 					}
 					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
 						connEnd2PortName = connEnd2.getRole().getName();
 						//System.out.println("------> connEnd2PortName: " + connEnd2PortName);
 
-						/*for(int t=0; t<listCapsuleConn.size();t++) {
-							for (int k = 0; k < listCapsuleConn.get(t).getListPortName_connectorName_protocolName().size(); k++) {
-								if(listCapsuleConn.get(t).getPortName_connectorName_protocolName(k).contains(connEnd2PortName)) {
-									String tmp = listCapsuleConn.get(t).getPortName_connectorName_protocolName(k);
-									listCapsuleConn.get(t).setPortName_connectorName_protocolName(k,tmp.concat("::").concat(connectorName));
-								}
-							}
-						}*/
+
 					}
 					listPortName_connectorName_PortName.add(connEnd1PortName+"::"+connectorName+"::"+connEnd2PortName);
 					}
 				//System.out.println("------> [listPortName_connectorName_PortName]" + listPortName_connectorName_PortName);
-				}
+				}*/
 
 				if ( (((Class) element).getOwnedBehaviors() != null && ((Class) element).getOwnedBehaviors().size() > 0))
 					if (((Class) element).getOwnedBehaviors().get(0) instanceof StateMachine) {
 						smMap.put(element.getName(), (StateMachine) ((Class) element).getOwnedBehaviors().get(0) );
-						
-						
-						this.elementName = element.getName();
-						for (int k = 0; k<listCapsuleName_InstanceName.size();k++) {
-							String [] splitCapsuleName_InstanceName = listCapsuleName_InstanceName.get(k).split("::");
-							if (splitCapsuleName_InstanceName[0].contains(this.elementName)) {
-								this.elementInstanceName = splitCapsuleName_InstanceName[1];
-								break;
-							}
-							this.elementInstanceName = "__NOT_FOUND__";
-						}
 						
 						handleStateMachine((StateMachine) ((Class) element).getOwnedBehaviors().get(0));
 					}
