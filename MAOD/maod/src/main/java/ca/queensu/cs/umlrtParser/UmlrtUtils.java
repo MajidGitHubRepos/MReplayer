@@ -225,21 +225,23 @@ public class UmlrtUtils {
 				//System.out.println("---> trig.getPorts().get(0).getName():"+ port);
 				//System.out.println("---> ((CallEvent) trig.getEvent()):"+ ((CallEvent) trig.getEvent()));
 				String msg = "";
-				if (((CallEvent) trig.getEvent()).getOperation() != null)
+				if (((CallEvent) trig.getEvent()).getOperation() != null) {
 					msg = ((CallEvent) trig.getEvent()).getOperation().getName();
-				else {
+					triggers.add(String.format("%s.%s", port, msg));
+				}else {
+					//TODO: We should handle time events properly!
 					CallEvent timeEvent = (CallEvent) trig.getEvent();
 					//period = getTimePeriod(timeEvent);
 				}
-					
+
 				// Object e3 = triggers.get(0).getEvent();
 				// List<Element> elems = triggers.get(0).getEvent().eGet(Operation.class);
-				triggers.add(String.format("%s.%s", port, msg));
+
 			}
 		}
 		return triggers;
 	}
-	
+
 	//==================================================================	
 	//==============================================[getPorts]
 	//==================================================================	

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.State;
+import org.eclipse.uml2.uml.Vertex;
 import org.springframework.statemachine.transition.TransitionKind;
 
 public class TransitionData {
@@ -13,8 +14,8 @@ public class TransitionData {
 	public String capsuleName;
 	public String capsuleInstanceName;
 	private final String transitonName;
-	private final State source;
-	private final State target;
+	private final Vertex source;
+	private final Vertex target;
 	private final String sourceName;
 	private final String targetName;
 	private final List<String> triggers;
@@ -39,11 +40,14 @@ public class TransitionData {
 	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit ) {
 		this(capsuleName,capsuleInstanceName,transitonName, null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit);
 	}
+	
 	public TransitionData() {
 		this(null,null,null,null,null,null,null,null,null,null,false);
 	}
 	
-	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, State source, String sourceName, State target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
+
+	
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, Vertex source, String sourceName, Vertex target, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count, boolean isInit) {
 		this.capsuleName = capsuleName;
 		this.capsuleInstanceName = capsuleInstanceName;
 		this.source = source;
@@ -78,11 +82,11 @@ public class TransitionData {
 		return transitonName;
 	}
 	
-	public State getSource() {
+	public Vertex getSource() {
 		return source;
 	}
 
-	public State getTarget() {
+	public Vertex getTarget() {
 		return target;
 	}
 	

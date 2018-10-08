@@ -69,7 +69,7 @@ c0Count++;</body>
           <transition xmi:type="uml:Transition" xmi:id="_9hPuEMKfEeiR-e-fvzqChQ" name="T3" kind="external" source="_STqJ4MKcEeiR-e-fvzqChQ" target="_LxSpEMKcEeiR-e-fvzqChQ">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_Fuaj0MKgEeiR-e-fvzqChQ" name="Effect" isReentrant="false">
               <language>C++</language>
-              <body>log.show(&quot;m1 received!, T5 transition taken in C0.\n&quot;);
+              <body>log.show(&quot;m1 received!, ==========> T3 transition taken in C0.\n&quot;);
 c0c1Port.m3().send();
 c0Count++;</body>
             </effect>
@@ -78,7 +78,7 @@ c0Count++;</body>
           <transition xmi:type="uml:Transition" xmi:id="_PjHlYMpyEeilQNK_FFHx0g" name="T0" kind="external" source="_LxSpEMKcEeiR-e-fvzqChQ" target="_K7lZkMpyEeilQNK_FFHx0g">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ls_mkMpyEeilQNK_FFHx0g" name="Effect" isReentrant="false">
               <language>C++</language>
-              <body>log.show(&quot;m1 received!, T1 or T2 will be taken in C0.\n&quot;);</body>
+              <body>log.show(&quot;m1 received!, =========> T1 or T2 will be taken in C0.\n&quot;);</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_71CNAMp4EeiyzP7kl86JOA" event="_R94GIMKnEeiR-e-fvzqChQ" port="_LA0RUMM_EeiNurcJA2v9Sg"/>
           </transition>
@@ -99,7 +99,7 @@ std::cout&lt;&lt;&quot;c0Count:&quot;&lt;&lt;c0Count&lt;&lt;&quot;\n&quot;;
 </body>
             </entry>
           </subvertex>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_K7lZkMpyEeilQNK_FFHx0g" kind="choice"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_K7lZkMpyEeilQNK_FFHx0g" name="choice" kind="choice"/>
         </region>
       </ownedBehavior>
     </packagedElement>

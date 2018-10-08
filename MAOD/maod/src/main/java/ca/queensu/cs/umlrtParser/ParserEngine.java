@@ -575,6 +575,7 @@ public class ParserEngine implements Runnable {
 			Integer count = null;
 			isInitTr = false;
 			String transitonName = transition.getName();
+			boolean srcOrTrgPseudostate = false;
 
 			if (transition.getSource() instanceof ConnectionPointReference) {
 				// support ref points if only one is defined as for some
@@ -592,6 +593,7 @@ public class ParserEngine implements Runnable {
 
 			//State s = (State)transition.getSource();
 			if (transition.getSource() instanceof Pseudostate) {
+				srcOrTrgPseudostate = true;
 				if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.ENTRY_POINT_LITERAL) {
 					entrys.add(new EntryData(transition.getSource().getName(), transition.getTarget().getName()));
 				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
@@ -638,6 +640,7 @@ public class ParserEngine implements Runnable {
 				} 
 			}
 			if (transition.getTarget() instanceof Pseudostate) {
+				srcOrTrgPseudostate = true;
 				if (((Pseudostate)transition.getTarget()).getKind() == PseudostateKind.JOIN_LITERAL) {
 					List<String> list = joins.get(transition.getTarget().getName());
 					if (list == null) {
@@ -688,17 +691,18 @@ public class ParserEngine implements Runnable {
 						}	
 					}
 				}
-				listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource().getName(),
-						transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
+				listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
+						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
 				break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
 
 			// create anonymous transition if needed
-			if (shouldCreateAnonymousTransition(transition)) {
-				listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource().getName(),
-						transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
-						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
+			if (shouldCreateAnonymousTransition(transition) || srcOrTrgPseudostate) {
+				
+					listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName, transition.getSource(),transition.getSource().getName(),
+							transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
+							guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
 			}
 
 		}
@@ -745,9 +749,7 @@ public class ParserEngine implements Runnable {
 							//System.out.println("[TRG] listStateData.get("+j+"): " + listStateData.get(j).allDataToString());
 							break;
 					}
-
 				}
-
 			}
 
 			if (((tableDataMember.getTarget() != null) && (tableDataMember.getSource() != null))) {
