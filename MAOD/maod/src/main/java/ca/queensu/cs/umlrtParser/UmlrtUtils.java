@@ -41,6 +41,8 @@ import org.eclipse.uml2.uml.Trigger;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 import org.springframework.statemachine.transition.TransitionKind;
+import org.springframework.util.StringUtils;
+
 
 public class UmlrtUtils {
 	public static String partName = "";
@@ -332,10 +334,10 @@ public class UmlrtUtils {
 					partName=topCapsuleInstanceName+"__"+part.getType().getName()+ "__" +part.getName();
 				}
 					mapNameParts.put(partName, part);
+					String tmpStr = "";
 					
 					int lastIndexOf_ = partName.lastIndexOf("__");
-					String tmpInstanceName = partName.substring(lastIndexOf_+2);
-					String tmpStr = partName.substring(0,lastIndexOf_);
+					tmpStr = partName.substring(0,lastIndexOf_);
 					lastIndexOf_ = tmpStr.lastIndexOf("__");
 					String capName = tmpStr.substring(lastIndexOf_+2);
 					
@@ -351,6 +353,7 @@ public class UmlrtUtils {
 								String connEnd2PortName = "";
 								String partWithPort1 = "";
 								String partWithPort2 = "";
+								
 
 								connectorName = connector.getName();
 								ConnectorEnd connEnd1 = connector.getEnds().get(0);
@@ -361,7 +364,7 @@ public class UmlrtUtils {
 									if (connEnd1.getPartWithPort() != null)
 										partWithPort1 = connEnd1.getPartWithPort().getName();
 									else
-										partWithPort1 = tmpInstanceName;
+										partWithPort1 = getUpperCapsuleInstanceName(partName);
 								}
 								
 								if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
@@ -369,7 +372,7 @@ public class UmlrtUtils {
 									if (connEnd2.getPartWithPort() != null)
 										partWithPort2 = connEnd2.getPartWithPort().getName();
 									else
-										partWithPort2 = tmpInstanceName;
+										partWithPort2 = getUpperCapsuleInstanceName(partName);
 								}
 								listPortName_connectorName_PortName.add(partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName);
 								//break;
@@ -390,5 +393,50 @@ public class UmlrtUtils {
 				// }
 			}
 		}
+
+
+		//==================================================================	
+		//==============================================[getUpperCapsuleInstanceName]
+		//==================================================================			
+		public static String getUpperCapsuleInstanceName(String partName){
+			// extracting upperCapsuleInstanceName for relay ports when getPartWithPort() returns null
+
+			String tmpStr = "";
+			String upperCapsuleInstanceName = "__NOT_FOUND__";
+			int lastIndexOf_ = 0;
+			if (countOccurences(partName,"__")>2) {
+				//example: Top_C0_c0_C01_c01    =>  c0
+				lastIndexOf_ = partName.lastIndexOf("__");
+				tmpStr = partName.substring(0, lastIndexOf_);
+				lastIndexOf_ = tmpStr.lastIndexOf("__");
+				tmpStr = tmpStr.substring(0, lastIndexOf_);
+				lastIndexOf_ = tmpStr.lastIndexOf("__");
+				upperCapsuleInstanceName = tmpStr.substring(lastIndexOf_+2);
+
+			} else {
+				//example: Top_C0_c0    =>  c0
+				lastIndexOf_ = partName.lastIndexOf("__");
+				upperCapsuleInstanceName = partName.substring(lastIndexOf_+2);
+			}
+			return upperCapsuleInstanceName;
+		}
+		//==================================================================	
+		//==============================================[countOccurences]
+		//==================================================================			
+
+		static int countOccurences(String string, String substring)  
+		{ 
+			// split the string by spaces in a 
+			int count = 0;
+		     int idx = 0;
+
+		     while ((idx = string.indexOf(substring, idx)) != -1)
+		     {
+		        idx++;
+		        count++;
+		     }
+
+		     return count;
+		} 
 
 }

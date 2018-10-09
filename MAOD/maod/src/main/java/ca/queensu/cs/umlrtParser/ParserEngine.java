@@ -576,6 +576,7 @@ public class ParserEngine implements Runnable {
 			isInitTr = false;
 			String transitonName = transition.getName();
 			boolean srcOrTrgPseudostate = false;
+			boolean trAdded = false;
 
 			if (transition.getSource() instanceof ConnectionPointReference) {
 				// support ref points if only one is defined as for some
@@ -694,11 +695,12 @@ public class ParserEngine implements Runnable {
 				listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
 						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
+				trAdded = true;
 				break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
 
 			// create anonymous transition if needed
-			if (shouldCreateAnonymousTransition(transition) || srcOrTrgPseudostate) {
+			if ((shouldCreateAnonymousTransition(transition) || srcOrTrgPseudostate) && !trAdded) {
 				
 					listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName, transition.getSource(),transition.getSource().getName(),
 							transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),

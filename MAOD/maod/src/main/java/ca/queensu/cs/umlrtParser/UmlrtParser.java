@@ -105,7 +105,8 @@ public class UmlrtParser {
 		 	//String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/CarDoorLock.uml";
-	 		String fileName = "umlrtModels/SimpleCP.uml";
+	 		//String fileName = "umlrtModels/SimpleCP.uml";
+	 		String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
     	
 	        ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
 	        File file = new File(classLoader.getResource(fileName).getFile());
