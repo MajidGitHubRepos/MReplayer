@@ -16,11 +16,15 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.*; 
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import ca.queensu.cs.server.ByteReader.Command;
 import ca.queensu.cs.server.SocketIO;
 
@@ -301,17 +305,22 @@ public final class ByteReader implements Runnable {
 				Server.io.close();
 				return;
 			}
-
+			
+			byteBuffer1 = null;
+			
 			size = Integer.parseInt(new String(sizeBuffer));
+			
+			sizeBuffer =  null;
 			//System.out.println(">>>>>>>>>>>>>>>>>>>> sizeBuffer: "+size);
 			messageBuffer = new char[size];
 
-			byte[] byteBuffer2 = new byte[messageBuffer.length];
+			byte[] byteBuffer2 = new byte[messageBuffer.length+100];
 
 			message = new String(messageBuffer);
 			Server.io.read(byteBuffer2, 0, size);
-
+			messageBuffer = null;
 			message = new String(byteBuffer2, StandardCharsets.UTF_8);
+			byteBuffer2 = null;
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
 			//if (Server.eventQueue.size()<100)

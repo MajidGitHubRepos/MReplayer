@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
+import org.eclipse.papyrusrt.umlrt.uml.UMLRTFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
 
 /*import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
@@ -296,7 +297,6 @@ public class ParserEngine implements Runnable {
 			this.elementName = "";
 			//System.out.println("--------------> modelElement: "+ element )
 
-
 			if(element instanceof Class) {
 
 				//Get capsule connector
@@ -342,7 +342,9 @@ public class ParserEngine implements Runnable {
 				listCapsuleConn.add(capsuleConn);
 
 				for (Port port : UmlrtUtils.getPorts((Class)element)) {
-
+					
+					
+					
 					portName = port.getName();
 					if (port.getType() != null){
 						protocolName = port.getType().getName();
@@ -353,14 +355,16 @@ public class ParserEngine implements Runnable {
 							if (listCapsuleConn.get(t).getCapsuleInstanceName().contentEquals(capsuleInstanceName)) {
 
 								//add port
-								listCapsuleConn.get(t).addListPortName(portName);
+								//port.isBehavior() added
+								//when it is not a Behavior port is means it a Relay port!
+								//TODO: SAP/SPP can be checked later
+								listCapsuleConn.get(t).addListPortName(portName+"::"+port.isBehavior());
 
 								for (int k = 0; k< listPortName_connectorName_PortName.size(); k++) {
 									if (listPortName_connectorName_PortName.get(k).contains(portName)) {
 										String tmpPortName_connectorName_PortName =  listPortName_connectorName_PortName.get(k);
 
 										if (UmlrtUtils.isConnected__PortName_connectorName_PortName__TocapsuleInstanceName(listCapsuleConn, tmpPortName_connectorName_PortName, capsuleInstanceName, portName)) {
-
 											listCapsuleConn.get(t).addPortName_connectorName_protocolName(listPortName_connectorName_PortName.get(k)+"::"+protocolName);
 											//break;
 										}

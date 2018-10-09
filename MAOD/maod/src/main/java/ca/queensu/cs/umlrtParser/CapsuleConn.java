@@ -51,13 +51,16 @@ public class CapsuleConn {
 		this.listPortName_connectorName_PortName_protocolName.set(i,PortName_connectorName_PortName_protocolName);
 	}
 	
+	
+	
 	public List<String> getListPortName() {
 		return this.listPortName;
 	}
 	
 	public boolean isListPortNameContainsPort(String port) {
 		for(int i = 0; i<this.listPortName.size();i++) {
-			if (port.contains(listPortName.get(i)))
+			String [] splitPort = this.listPortName.get(i).split("::"); //<portName>::<true/false>
+			if (port.contains(splitPort[0]))
 				return true;
 		}
 		return false;

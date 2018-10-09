@@ -43,6 +43,8 @@ import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 import org.springframework.statemachine.transition.TransitionKind;
 import org.springframework.util.StringUtils;
 
+import ca.queensu.cs.controller.Controller;
+
 
 public class UmlrtUtils {
 	public static String partName = "";
@@ -374,7 +376,9 @@ public class UmlrtUtils {
 									else
 										partWithPort2 = getUpperCapsuleInstanceName(partName);
 								}
-								listPortName_connectorName_PortName.add(partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName);
+								String tmpPortName_connectorName_PortName = partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName;
+								if (!existsInListPortName_connectorName_PortName(listPortName_connectorName_PortName, tmpPortName_connectorName_PortName))
+									listPortName_connectorName_PortName.add(tmpPortName_connectorName_PortName);
 								//break;
 							}
 						}
@@ -393,7 +397,69 @@ public class UmlrtUtils {
 				// }
 			}
 		}
+	
+		//==================================================================	
+		//==============================================[lookingForTargetPort]
+		//==================================================================			
+		public static String lookingForTargetPort(List<CapsuleConn> listCapsuleConn, String srcPort, String trgPort) {
+			for (int i = 0; i< listCapsuleConn.size(); i++) {
+				List<String> listCapsulePortName = listCapsuleConn.get(i).getListPortName(); //TODO: when more than one relay port is required should be checked 
+				List<String> listCapsulePortConn = listCapsuleConn.get(i).getListPortName_connectorName_PortName_protocolName();
+				
+				for (int j = 0; j< listCapsulePortConn.size(); j++) {
+					
+					String [] spiltCapsulePortConn = listCapsulePortConn.get(j).split("::");
+					if (spiltCapsulePortConn[0].contentEquals(trgPort)) {
+						//TODO: should be checked whether this port is relay or not
+						//Only one relay port is supported for now!
+						if (!spiltCapsulePortConn[2].contentEquals(srcPort))
+							return spiltCapsulePortConn[2];
+					}
+					if (spiltCapsulePortConn[2].contentEquals(trgPort)) {
+						//TODO: should be checked whether this port is relay or not
+						//Only one relay port is supported for now!
+						if (!spiltCapsulePortConn[0].contentEquals(srcPort))
+							return spiltCapsulePortConn[0];
+					}
+				}
+			}
 
+			return "__NOT_FOUND__";
+		}
+		
+		//==================================================================	
+		//==============================================[isRelayPort]
+		//==================================================================			
+		public static boolean isRelayPort(List<CapsuleConn> listCapsulePortConn, String port) {
+			
+			for (int i = 0; i< listCapsulePortConn.size();i++) {
+				List<String> listCapsulePortName = listCapsulePortConn.get(i).getListPortName();
+				for (int j = 0; j< listCapsulePortName.size();j++) {
+					String [] spiltCapsulePortName = listCapsulePortName.get(j).split("::");
+					if (port.contains(spiltCapsulePortName[0])) {
+						if (spiltCapsulePortName[1].contentEquals("true")) //isBehavior
+							return false;
+						else
+							return true; //it is a Relay port
+					}
+				}
+			}
+			System.err.println("==================[The port is not match!]======================");
+			return false;
+			
+		}
+		//==================================================================	
+		//==============================================[existsInListPortName_connectorName_PortName]
+		//==================================================================			
+		public static boolean existsInListPortName_connectorName_PortName(List<String> listPortName_connectorName_PortName, String tmpPortName_connectorName_PortName){
+			for (int i = 0; i<listPortName_connectorName_PortName.size(); i++) {
+				
+				if(listPortName_connectorName_PortName.get(i).contentEquals(tmpPortName_connectorName_PortName))
+					return true;
+			}
+			
+			return false;
+		}
 
 		//==================================================================	
 		//==============================================[getUpperCapsuleInstanceName]

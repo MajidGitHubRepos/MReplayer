@@ -196,11 +196,12 @@ public class CapsuleTracker implements Runnable{
 		boolean portFound = false;
 
 		for (int i = 0; i< Controller.umlrtParser.getlistCapsuleConn().size(); i++) {
+			List<String> listCapsulePortName = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName();
 			List<String> listCapsulePortConn = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName_connectorName_PortName_protocolName();
 			String capsuleName = Controller.umlrtParser.getlistCapsuleConn().get(i).getCapsuleInstanceName();
 			for (int j = 0; j < listCapsulePortConn.size() ; j++) {
 				if (listCapsulePortConn.get(j).contains(port)) {
-					//let's find the other side of this connector, which port ? then which copiously?
+					//let's find the other side of this connector, which port ? then which capsule?
 					String [] listCapsulePortConnSplit = listCapsulePortConn.get(j).split("\\::");
 					//connector
 
@@ -210,12 +211,29 @@ public class CapsuleTracker implements Runnable{
 					String protocol = listCapsulePortConnSplit[3];
 
 					if (port1.contains(port)) {
-						targetPort = port2;
-						sourcePort = port1;
+						//conn found, let's check for relay
+						if (!UmlrtUtils.isRelayPort(Controller.umlrtParser.getlistCapsuleConn(), port2)) {
+							targetPort = port2;
+							sourcePort = port1;
+						}
+						else {
+							//we should look for the port that this port is connected to that
+							sourcePort = port1;
+							targetPort = UmlrtUtils.lookingForTargetPort(Controller.umlrtParser.getlistCapsuleConn(), port1, port2);
+						}
 					} else if (port2.contains(port)) {
-						targetPort = port1;
-						sourcePort = port2;
-					} else {
+						//conn found, let's check for relay
+						if (!UmlrtUtils.isRelayPort(Controller.umlrtParser.getlistCapsuleConn(), port1)) {
+							targetPort = port1;
+							sourcePort = port2;
+						}
+						else {
+							//we should look for the port that this port is connected to that
+							sourcePort = port2;
+							targetPort = UmlrtUtils.lookingForTargetPort(Controller.umlrtParser.getlistCapsuleConn(), port2, port1);
+						}
+						
+					}else {
 						System.err.println("=================[Target Port Not Found]================");
 						//TODO: exception handling 
 					}
@@ -245,6 +263,8 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 		}
+		if (targetCapsuleName == "")
+			System.err.println("==================[targetCapsuleName not found!]======================");
 		return targetCapsuleName;		
 	}
 

@@ -74,15 +74,16 @@ public class UmlrtParser {
 		this.listTableData = new HashMap<String, List<TableDataMember>>();
 		this.listCapsuleConn = new ArrayList<CapsuleConn>();
 		this.umlrtParsingDone = false;
-		
 	}
 	
 	public Map<String, List<TableDataMember>> getlistTableData() {
 		return this.listTableData;
 	}
+	
 	public List<CapsuleConn> getlistCapsuleConn() {
 		return this.listCapsuleConn;
 	}
+	
 	public boolean getUmlrtParsingDone() {
 		return this.umlrtParsingDone;
 	}
@@ -116,10 +117,10 @@ public class UmlrtParser {
 		 	XMIResource mainResource = UmlrtUtils.getResource(modelPath);
 		    Model inputModel = (Model) EcoreUtil.getObjectByType(mainResource.getContents(), UMLPackage.Literals.MODEL);
 		    String topCapsuleName = UmlrtUtils.getTopCapsuleName(inputModel);
-
+		    
 		    List<XMIResource> allResources = new LinkedList<XMIResource>();
 		    allResources.add(mainResource);
-
+		    
 		    EList<PackageableElement> modelElements = inputModel.getPackagedElements();	
 		    
 		    //System.out.println("--------------> modelElements.size(): "+ modelElements.size() );
