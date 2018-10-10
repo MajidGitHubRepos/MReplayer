@@ -63,7 +63,7 @@ public class Controller {
 			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[Starting Data Process]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 			System.out.println("Waiting for the UmlrtParsing thread complete the process ....");
 			while (true) {if (umlrtParser.getUmlrtParsingDone()) break; else System.out.print(""); }
-			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n --> umlrtParser.getlistTableData():" +  umlrtParser.getlistTableData());
+			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n\n");
 			
 			Controller.listTableData = umlrtParser.getlistTableData();
 			//Message msg = new Message("process it", event);
