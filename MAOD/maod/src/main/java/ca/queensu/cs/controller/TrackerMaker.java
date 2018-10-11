@@ -1,5 +1,11 @@
 package ca.queensu.cs.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /*
 
 Developers:
@@ -36,7 +42,8 @@ public class TrackerMaker implements Runnable{
 
 	public static int trackerCount;
 	public static int eventCount;
-
+	public static OutputStream os;
+	
 	public TrackerMaker(Semaphore semServer){
 		this.semServer = semServer;
 		this.semCapsuleTracker = new Semaphore(1); 
@@ -45,6 +52,16 @@ public class TrackerMaker implements Runnable{
 		this.trackerCount = 0;
 		this.eventCount = 0;
 		this.capsuleInstances = "";
+
+		
+
+			try {
+				this.os = new FileOutputStream(new File("/home/majid/workspace/matd/MAOD/maod/src/main/resources/outputFiles/output.txt"));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 
 	public void run() {
@@ -121,7 +138,7 @@ public class TrackerMaker implements Runnable{
 			dataArray[trackerCount] =  data;
 			System.out.println("- data is created and first event added into the Queue successfully!" );
 			//System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
-			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, event.getCapsuleInstance());
+			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, event.getCapsuleInstance(), os);
 			Thread capsuleTrackerT = new Thread(capsuleTracker); 
 			capsuleTrackerT.start(); 
 			capsuleTrackers[trackerCount++] = capsuleTracker;
@@ -144,6 +161,9 @@ public class TrackerMaker implements Runnable{
 			System.out.println("--> dataArray["+i+"]: " + dataArray[i].allDataToString());
 		}
 	}
+	
+
+
 
 
 }

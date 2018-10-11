@@ -1,6 +1,11 @@
 package ca.queensu.cs.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -32,12 +37,18 @@ public class CapsuleTracker implements Runnable{
 	private StateData targetStateData;
 	private boolean targetChoiceState;
 	private boolean sourceChoiceState;
+	private OutputStream os;
+	private Date date;
+	private double timeMilli;
+	private String outputStrTofile;
+	private long offset;
 
 
 
-	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance) {
+	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream os) {
 		this.semCapsuleTracker = semCapsuleTracker;
 		this.capsuleInstance = capsuleInstance;
+		this.os = os;
 		this.eventQueueTmp = new LinkedBlockingQueue<Event>(); // read but not consume!
 		this.messageQueue = new LinkedBlockingQueue<Message>();
 		this.currentStatus = "REGISTER";
@@ -46,6 +57,9 @@ public class CapsuleTracker implements Runnable{
 		this.sourceStateData = new StateData();
 		this.targetChoiceState = false;
 		this.sourceChoiceState = false;
+		this.timeMilli = 0;
+		this.outputStrTofile = "";
+		this.date = new Date();
 	}
 
 
@@ -67,6 +81,11 @@ public class CapsuleTracker implements Runnable{
 										Event currentEventTmp = eventQueueTmp.take();
 										//checking its validity based on the state machine
 										if (isConsumable(currentEventTmp)) {
+											timeMilli = System.nanoTime();
+											//timeMilli = date.getTime();
+											outputStrTofile = "["+timeMilli+"]: "+currentEventTmp.allDataToString()+"\n";
+											outputStreamToFile(this.os,outputStrTofile);
+											
 											//current state changed in *checking functions 
 											break;
 										}
@@ -79,6 +98,11 @@ public class CapsuleTracker implements Runnable{
 
 								while(true) {
 									if (isConsumable(currentEvent)) {
+										timeMilli = System.nanoTime();
+										//timeMilli = date.getTime(); //Milisec by imposing delay to the producers that would be enough
+										outputStrTofile = "["+timeMilli+"]: "+currentEvent.allDataToString()+"\n";
+										outputStreamToFile(this.os,outputStrTofile);
+										
 										//current state changed in *checking functions
 										currentEvent =  TrackerMaker.dataArray[i].getFromQueue();
 										//System.out.println("\n-->["+ Thread.currentThread().getName() +"] [currentEvent]:" + currentEvent.allDataToString());
@@ -544,8 +568,23 @@ public class CapsuleTracker implements Runnable{
 		}
 		return result;
 	}
-
-
+	
+	//==================================================================	
+	//==============================================[openOutputStreamFile]
+	//==================================================================	
+	private static void outputStreamToFile(OutputStream os, String data) {
+        try {
+        	os.write(data.getBytes(), 0, data.length());
+        	} catch (IOException e) {
+            e.printStackTrace();
+        }/*finally{
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
+    }
 
 	@SuppressWarnings("deprecation")
 	public void shutdown() {
