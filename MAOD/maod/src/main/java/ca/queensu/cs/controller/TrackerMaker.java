@@ -85,7 +85,7 @@ public class TrackerMaker implements Runnable{
 	}//run()
 
 	public Event getEventFromServerQueue() throws InterruptedException {
-		//semServer.acquire();
+		//semServer.acquire(); //blockingQueue can handle that with an internal semaphore
 		Event event = Server.eventQueue.take();
 		//semServer.release(); 
 		return event;
