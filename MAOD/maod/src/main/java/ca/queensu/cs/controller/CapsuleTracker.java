@@ -13,6 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.uml2.uml.State;
 
 import ca.queensu.cs.server.Event;
@@ -42,6 +43,7 @@ public class CapsuleTracker implements Runnable{
 	private double timeMilli;
 	private String outputStrTofile;
 	private long offset;
+	private Timer timer;
 
 
 
@@ -60,6 +62,7 @@ public class CapsuleTracker implements Runnable{
 		this.timeMilli = 0;
 		this.outputStrTofile = "";
 		this.date = new Date();
+		this.timer = new TimerImpl();
 	}
 
 
@@ -81,9 +84,9 @@ public class CapsuleTracker implements Runnable{
 										Event currentEventTmp = eventQueueTmp.take();
 										//checking its validity based on the state machine
 										if (isConsumable(currentEventTmp)) {
-											timeMilli = System.nanoTime();
+											//timeMilli = System.nanoTime();
 											//timeMilli = date.getTime();
-											outputStrTofile = "["+timeMilli+"]: "+currentEventTmp.allDataToString()+"\n";
+											outputStrTofile = "["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
 											outputStreamToFile(this.os,outputStrTofile);
 											
 											//current state changed in *checking functions 
@@ -98,9 +101,9 @@ public class CapsuleTracker implements Runnable{
 
 								while(true) {
 									if (isConsumable(currentEvent)) {
-										timeMilli = System.nanoTime();
+										//timeMilli = System.nanoTime();
 										//timeMilli = date.getTime(); //Milisec by imposing delay to the producers that would be enough
-										outputStrTofile = "["+timeMilli+"]: "+currentEvent.allDataToString()+"\n";
+										outputStrTofile = "["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
 										outputStreamToFile(this.os,outputStrTofile);
 										
 										//current state changed in *checking functions
