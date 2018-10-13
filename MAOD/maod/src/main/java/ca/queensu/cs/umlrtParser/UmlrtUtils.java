@@ -235,6 +235,7 @@ public class UmlrtUtils {
 				}else {
 					//TODO: We should handle time events properly!
 					CallEvent timeEvent = (CallEvent) trig.getEvent();
+					triggers.add(String.format("%s.%s", "__TIMER__", "__TIME__"));
 					//period = getTimePeriod(timeEvent);
 				}
 

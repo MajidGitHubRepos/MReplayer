@@ -74,28 +74,27 @@ public class CapsuleTracker implements Runnable{
 				semCapsuleTracker.acquire();
 				for (int i = 0; i< TrackerMaker.trackerCount; i ++) {
 					if (TrackerMaker.dataArray[i].getCapsuleInstance().contains(capsuleInstance)) {
-						if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty()) {
-							try {
+						try {
+							if (!eventQueueTmp.isEmpty()) {
+								//First: checking eventQueueTmp
+								int eventQueueTmpSize = eventQueueTmp.size();
+								for (int j = 0; j < eventQueueTmpSize;  j++) {
+									Event currentEventTmp = eventQueueTmp.take();
+									//checking its validity based on the state machine
+									if (isConsumable(currentEventTmp)) {
+										//timeMilli = System.nanoTime();
+										//timeMilli = date.getTime();
+										outputStrTofile = "["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
+										outputStreamToFile(this.os,outputStrTofile);
 
-								if (!eventQueueTmp.isEmpty()) {
-									//First: checking eventQueueTmp
-									int eventQueueTmpSize = eventQueueTmp.size();
-									for (int j = 0; j < eventQueueTmpSize;  j++) {
-										Event currentEventTmp = eventQueueTmp.take();
-										//checking its validity based on the state machine
-										if (isConsumable(currentEventTmp)) {
-											//timeMilli = System.nanoTime();
-											//timeMilli = date.getTime();
-											outputStrTofile = "["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
-											outputStreamToFile(this.os,outputStrTofile);
-											
-											//current state changed in *checking functions 
-											break;
-										}
-										//still not consume from eventQueueTmp to eventQueueTmp
-										else {eventQueueTmp.put(currentEventTmp);/*System.out.println("\n-->["+ Thread.currentThread().getName() +"] currentEventTmp back to the eventQueueTmp");*/}
+										//current state changed in *checking functions 
+										//break;
 									}
+									//still not consume from eventQueueTmp to eventQueueTmp
+									else {eventQueueTmp.put(currentEventTmp); break;}
 								}
+							}
+							if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty()) {
 								currentEvent =  TrackerMaker.dataArray[i].getFromQueue(); //push it back to the queue if it dose not consume !
 								//System.out.println("\n["+ Thread.currentThread().getName() +"]-> [currentEvent]:" + currentEvent.allDataToString());
 
@@ -105,18 +104,21 @@ public class CapsuleTracker implements Runnable{
 										//timeMilli = date.getTime(); //Milisec by imposing delay to the producers that would be enough
 										outputStrTofile = "["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
 										outputStreamToFile(this.os,outputStrTofile);
-										
+
 										//current state changed in *checking functions
-										currentEvent =  TrackerMaker.dataArray[i].getFromQueue();
+										if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty())
+											currentEvent =  TrackerMaker.dataArray[i].getFromQueue();
+										else break;
 										//System.out.println("\n-->["+ Thread.currentThread().getName() +"] [currentEvent]:" + currentEvent.allDataToString());
 
 									}
 									//still not consume from eventQueue to eventQueueTmp
-									else {eventQueueTmp.put(currentEvent); /*System.out.println("\n["+ Thread.currentThread().getName() +"]--> currentEvent back to the eventQueueTmp");*/ break;}
+									else {eventQueueTmp.put(currentEvent); break;}
 								}
 
-							}catch (NoSuchElementException e) {System.err.println("====[NoSuchElementException]===");break;}
-						}
+
+							}
+						}catch (NoSuchElementException e) {System.err.println("====[NoSuchElementException]===");break;}
 						break; //back to the first while
 					}
 				}
@@ -154,7 +156,7 @@ public class CapsuleTracker implements Runnable{
 			
 			case "TRANISTIONEND":     if (transitionChecking(event))     {
 				if (!this.targetChoiceState && !this.sourceChoiceState) {
-					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ previousState);
+					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received!");
 				}
 					return true;};
@@ -505,23 +507,26 @@ public class CapsuleTracker implements Runnable{
 						String triggerPort = triggerSplit[0];
 						String triggerMsg = triggerSplit[1];
 
-						//semCapsuleTracker.acquire();
+						if (triggerPort.contentEquals("__TIMER__") && triggerMsg.contentEquals("__TIME__")) {
+							requirementMet = true;
+							break;
+						}else {
+							for (int t = 0; t<messageQueue.size(); t++) {
+								if (!messageQueue.isEmpty()) {
+									Message tmpMessage = messageQueue.take();
 
-						for (int t = 0; t<messageQueue.size(); t++) {
-							if (!messageQueue.isEmpty()) {
-								Message tmpMessage = messageQueue.take();
-
-								if (tmpMessage.getMsg().contains(triggerMsg)) { requirementMet = true;break;}
-								else {messageQueue.put(tmpMessage);} //back to the messageQueue
-							}else { //isEmpty
-								requirementMet = false;
+									if (tmpMessage.getMsg().contains(triggerMsg)) { requirementMet = true;break;}
+									else {messageQueue.put(tmpMessage);} //back to the messageQueue
+								}else { //isEmpty
+									requirementMet = false;
+								}
 							}
+							if (requirementMet)
+								break;
 						}
-						if (requirementMet)
-							break;//}
 						//semCapsuleTracker.release();
 					}
-					if (triggerSize == 0) {
+					if (listTriggers.size() == 0) {
 						//this.currentState = targetTransitionData.getTarget().getName();
 						requirementMet = true;
 					}
@@ -571,23 +576,23 @@ public class CapsuleTracker implements Runnable{
 		}
 		return result;
 	}
-	
+
 	//==================================================================	
 	//==============================================[openOutputStreamFile]
 	//==================================================================	
 	private static void outputStreamToFile(OutputStream os, String data) {
-        try {
-        	os.write(data.getBytes(), 0, data.length());
-        	} catch (IOException e) {
-            e.printStackTrace();
-        }/*finally{
+		try {
+			os.write(data.getBytes(), 0, data.length());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}/*finally{
             try {
                 os.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }*/
-    }
+	}
 
 	@SuppressWarnings("deprecation")
 	public void shutdown() {

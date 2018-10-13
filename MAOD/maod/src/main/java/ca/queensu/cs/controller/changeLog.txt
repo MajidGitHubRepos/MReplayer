@@ -1,3 +1,5 @@
+[131018][Info]:  adding CausalMsgOrdering.uml
+[131018][Debug]: fix some bugs in obtaining events from TrackerMaker.dataArray[i].getEventQueue()
 [111018][Debug]: removing Semaphore from getEventFromServerQueue because it makes the thread very slow and also using blockingQueue can handle that
 [081018][Debug]: related function to handle choice points added;
 [021018][Info]:  CommGateWay MUST be located beside the model otherwise <Package Import> is empty and code generation is failed!
