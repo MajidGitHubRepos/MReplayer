@@ -34,6 +34,7 @@ public class CapsuleTracker implements Runnable{
 	private String currentStatus;
 	public String currentState;
 	public String previousState;
+	public String transitionName;
 	private StateData sourceStateData;
 	private StateData targetStateData;
 	private boolean targetChoiceState;
@@ -44,6 +45,7 @@ public class CapsuleTracker implements Runnable{
 	private String outputStrTofile;
 	private long offset;
 	private Timer timer;
+	private int MAX_TRY_TO_SEND;
 
 
 
@@ -63,6 +65,7 @@ public class CapsuleTracker implements Runnable{
 		this.outputStrTofile = "";
 		this.date = new Date();
 		this.timer = new TimerImpl();
+		this.MAX_TRY_TO_SEND = 2;
 	}
 
 
@@ -157,7 +160,7 @@ public class CapsuleTracker implements Runnable{
 			case "TRANISTIONEND":     if (transitionChecking(event))     {
 				if (!this.targetChoiceState && !this.sourceChoiceState) {
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
-					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received!");
+					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ transitionName);
 				}
 					return true;};
 			break;
@@ -340,11 +343,14 @@ public class CapsuleTracker implements Runnable{
 									//System.out.println("\n["+ Thread.currentThread().getName() +"]***[msg]"+actionParts[1]);
 
 									String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
+									int send_to_msgQ_count = 0;
 									if (targetCapsuleName != "") {
 										do {
 											// Sleep current thread, if capsuleTracker for the target capsule has not been created!
 											System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
 											Thread.currentThread().sleep(1);
+											if (send_to_msgQ_count++ == MAX_TRY_TO_SEND)
+												return false;
 										}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
 									}
 								}
@@ -545,10 +551,13 @@ public class CapsuleTracker implements Runnable{
 							String[] actionParts = targetTransitionData.getActions().get(j).split("\\.|\\(");
 							String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
 							//semCapsuleTracker.acquire();
+							int send_to_msgQ_count = 0;
 							do {
 								// Sleep current thread, if capsuleTracker for the target capsule has not been created!
 								System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
 								Thread.currentThread().sleep(1);
+								if (send_to_msgQ_count++ == MAX_TRY_TO_SEND)
+									return false;
 							}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
 							//semCapsuleTracker.release();
 						}
@@ -568,6 +577,7 @@ public class CapsuleTracker implements Runnable{
 						}
 						sourceStateData = tableDataMember.getSource();
 						targetStateData = tableDataMember.getTarget();
+						transitionName = targetTransitionData.getTransitonName();
 						result = true;
 
 					}

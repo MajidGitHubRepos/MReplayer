@@ -1,3 +1,4 @@
+[141018][Debug]: adding MAX_TRY_TO_SEND to capsuleTracker and testing with 2Pinger1Ponger.uml model
 [131018][Info]:  adding CausalMsgOrdering.uml
 [131018][Debug]: fix some bugs in obtaining events from TrackerMaker.dataArray[i].getEventQueue()
 [111018][Debug]: removing Semaphore from getEventFromServerQueue because it makes the thread very slow and also using blockingQueue can handle that

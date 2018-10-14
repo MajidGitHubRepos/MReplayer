@@ -103,13 +103,13 @@ public class UmlrtParser {
 		 	//String modelPath = "/home/majid/workspace/NonDeterministic.bk/NonDeterministic/NonDeterministic.uml";
 		 	//String modelPath = "/home/majid/workspace/matd/MAOD/maod/umlrtModels/PingPong.uml";
 		 	
-		 	//String fileName = "umlrtModels/PingPong.uml";
+		 	String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/CarDoorLock.uml";
 	 		//String fileName = "umlrtModels/SimpleCP.uml";
 	 		//String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
     		//String fileName = "umlrtModels/2Pinger1Ponger.uml";
-    		String fileName = "umlrtModels/CausalMsgOrdering.uml";
+    		//String fileName = "umlrtModels/CausalMsgOrdering.uml";
 
     	
 	        ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
