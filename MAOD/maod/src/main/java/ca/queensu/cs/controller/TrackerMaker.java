@@ -43,17 +43,18 @@ public class TrackerMaker implements Runnable{
 	public static int trackerCount;
 	public static int eventCount;
 	public static OutputStream os;
+	public static int[] logicalVectorTime;
+	private int MAX_NUM_CAPSULE;
 	
 	public TrackerMaker(Semaphore semServer){
+		this.MAX_NUM_CAPSULE = 3;
 		this.semServer = semServer;
 		this.semCapsuleTracker = new Semaphore(1); 
-		this.capsuleTrackers = new CapsuleTracker[10];
-		this.dataArray = new Data[10];
+		this.capsuleTrackers = new CapsuleTracker[MAX_NUM_CAPSULE];
+		this.dataArray = new Data[MAX_NUM_CAPSULE];
 		this.trackerCount = 0;
 		this.eventCount = 0;
 		this.capsuleInstances = "";
-
-		
 
 			try {
 				this.os = new FileOutputStream(new File("/home/majid/workspace/matd/MAOD/maod/src/main/resources/outputFiles/output.txt"));
@@ -138,7 +139,8 @@ public class TrackerMaker implements Runnable{
 			dataArray[trackerCount] =  data;
 			System.out.println("- data is created and first event added into the Queue successfully!" );
 			//System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
-			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, event.getCapsuleInstance(), os);
+			this.logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
+			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, event.getCapsuleInstance(), os, logicalVectorTime);
 			Thread capsuleTrackerT = new Thread(capsuleTracker); 
 			capsuleTrackerT.start(); 
 			capsuleTrackers[trackerCount++] = capsuleTracker;
