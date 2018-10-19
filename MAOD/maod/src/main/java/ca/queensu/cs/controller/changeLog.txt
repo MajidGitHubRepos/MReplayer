@@ -1,3 +1,4 @@
+[201018][Debug]: logicalVectorTime is carried by the message content to the target capsule message queue
 [201018][Debug]: Finding the reception when we have port replication in CapsuleTracker by adding senderCapInstanceName to all messages
 [141018][Debug]: adding MAX_TRY_TO_SEND to capsuleTracker and testing with 2Pinger1Ponger.uml model
 [131018][Info]:  adding CausalMsgOrdering.uml

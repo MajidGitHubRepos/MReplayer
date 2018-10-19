@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -83,7 +84,7 @@ public class CapsuleTracker implements Runnable{
 				for (int i = 0; i< TrackerMaker.trackerCount; i ++) {
 					if (TrackerMaker.dataArray[i].getCapsuleInstance().contains(capsuleInstance)) {
 						try {
-							TrackerMakerNumber = i;
+							TrackerMakerNumber = i; // used to show which element in logicalVectorTime should be changed later 
 							if (!eventQueueTmp.isEmpty()) {
 								//First: checking eventQueueTmp
 								int eventQueueTmpSize = eventQueueTmp.size();
@@ -107,7 +108,7 @@ public class CapsuleTracker implements Runnable{
 								currentEvent =  TrackerMaker.dataArray[i].getFromQueue(); //push it back to the queue if it dose not consume !
 								//System.out.println("\n["+ Thread.currentThread().getName() +"]-> [currentEvent]:" + currentEvent.allDataToString());
 
-								while(true) {
+								//while(true) {
 									if (isConsumable(currentEvent)) {
 										//timeMilli = System.nanoTime();
 										//timeMilli = date.getTime(); //Milisec by imposing delay to the producers that would be enough
@@ -115,15 +116,16 @@ public class CapsuleTracker implements Runnable{
 										outputStreamToFile(this.os,outputStrTofile);
 
 										//current state changed in *checking functions
-										if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty())
-											currentEvent =  TrackerMaker.dataArray[i].getFromQueue();
-										else break;
+										//if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty())
+										//	currentEvent =  TrackerMaker.dataArray[i].getFromQueue();
+										//else break;
 										//System.out.println("\n-->["+ Thread.currentThread().getName() +"] [currentEvent]:" + currentEvent.allDataToString());
 
 									}
 									//still not consume from eventQueue to eventQueueTmp
-									else {eventQueueTmp.put(currentEvent); break;}
-								}
+									else {eventQueueTmp.put(currentEvent);}
+									break;
+								//}
 
 
 							}
@@ -161,7 +163,7 @@ public class CapsuleTracker implements Runnable{
 			
 			
 			case "PREtr":     if (preTransitionChecking(event))          {logicalVectorTime[TrackerMakerNumber]++; 	 return true;};
-				break;
+			logicalVectorTime[TrackerMakerNumber]++; break;
 			
 			case "TRANISTIONEND":     if (transitionChecking(event))     {
 				if (!this.targetChoiceState && !this.sourceChoiceState) {
@@ -178,7 +180,15 @@ public class CapsuleTracker implements Runnable{
 		return false;
 	}
 
-
+	//==================================================================	
+	//==============================================[setLogicalVectorTime]
+	//==================================================================		
+	public void setLogicalVectorTime (int [] logicalVT) {
+		for (int i = 0; i<logicalVectorTime.length -1 ; i++)
+		if (logicalVectorTime[i]< logicalVT[i]) {
+			logicalVectorTime[i] = logicalVT[i];
+		}
+	}
 	//==================================================================	
 	//==============================================[transitionEventGoesToTheTargetState]
 	//==================================================================		
@@ -210,11 +220,20 @@ public class CapsuleTracker implements Runnable{
 	public boolean sendToMessageQueue(String targetCapsuleName, String port, String msg) throws InterruptedException {
 
 		boolean sentSuccessfully = false;
-		Message sentMsg = new Message(port,msg, this.capsuleInstance);
+		int [] tmpLogicalVectorTime = this.logicalVectorTime;
+
+		Message sentMsg = new Message(port,msg, this.capsuleInstance,this.logicalVectorTime);
+
 		for (int i=0; i< TrackerMaker.trackerCount; i++) {
 			if(targetCapsuleName.contains(TrackerMaker.capsuleTrackers[i].capsuleInstance)){
 
+				for (int j = 0; j<= TrackerMaker.capsuleTrackers[i].logicalVectorTime.length; j++) {
+					if (j == TrackerMakerNumber)
+						tmpLogicalVectorTime[j]=this.logicalVectorTime[j]; // because it gonna be incremented by 1 later but at this point it didn't
+				}
+				sentMsg.setLogicalVectorTime(tmpLogicalVectorTime);
 				TrackerMaker.capsuleTrackers[i].messageQueue.put(sentMsg);
+
 				sentSuccessfully = true;
 				return sentSuccessfully;
 			}
@@ -226,7 +245,6 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[lookingForTargetCapsuleName]
 	//==================================================================
 	public String lookingForTargetCapsuleName(String port) {
-		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[in lookingForTargetCapsuleName]: ");
 
 		String targetCapsuleName = "";
 		String sourceCapsuleName = "";
@@ -346,9 +364,7 @@ public class CapsuleTracker implements Runnable{
 
 								for (int j = 0; j < entry.getValue().get(i).getTransition().getActions().size(); j++) {
 									String[] actionParts = entry.getValue().get(i).getTransition().getActions().get(j).split("\\.|\\(");
-									//System.out.println("\n["+ Thread.currentThread().getName() +"]***[port]"+actionParts[0]);
-									//System.out.println("\n["+ Thread.currentThread().getName() +"]***[msg]"+actionParts[1]);
-
+								
 									String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
 									int send_to_msgQ_count = 0;
 									if (targetCapsuleName != "") {
@@ -530,7 +546,11 @@ public class CapsuleTracker implements Runnable{
 								if (!messageQueue.isEmpty()) {
 									Message tmpMessage = messageQueue.take();
 
-									if (tmpMessage.getMsg().contains(triggerMsg)) { senderCapInstanceName = tmpMessage.getCapsuleInstance(); requirementMet = true;break;}
+									if (tmpMessage.getMsg().contains(triggerMsg)) { 
+										senderCapInstanceName = tmpMessage.getCapsuleInstance(); 
+										setLogicalVectorTime(tmpMessage.getLogicalVectorTime());
+										requirementMet = true;
+										break;}
 									else {messageQueue.put(tmpMessage);} //back to the messageQueue
 								}else { //isEmpty
 									requirementMet = false;

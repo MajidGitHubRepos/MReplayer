@@ -107,8 +107,8 @@ public class UmlrtParser {
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/CarDoorLock.uml";
 	 		//String fileName = "umlrtModels/SimpleCP.uml";
-	 		String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
-    		//String fileName = "umlrtModels/2Pinger1Ponger.uml";
+	 		//String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
+    		String fileName = "umlrtModels/2Pinger1Ponger.uml";
     		//String fileName = "umlrtModels/CausalMsgOrdering.uml";
 
     	
