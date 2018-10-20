@@ -106,7 +106,6 @@ public class CapsuleTracker implements Runnable{
 							}
 							if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty()) {
 								currentEvent =  TrackerMaker.dataArray[i].getFromQueue(); //push it back to the queue if it dose not consume !
-								//System.out.println("\n["+ Thread.currentThread().getName() +"]-> [currentEvent]:" + currentEvent.allDataToString());
 
 								//while(true) {
 									if (isConsumable(currentEvent)) {
@@ -160,7 +159,6 @@ public class CapsuleTracker implements Runnable{
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEENTRYEND received! for: "+ currentState);
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
 				break;
-			
 			
 			case "PREtr":     if (preTransitionChecking(event))          {logicalVectorTime[TrackerMakerNumber]++; 	 return true;};
 			logicalVectorTime[TrackerMakerNumber]++; break;
