@@ -179,7 +179,18 @@ public class UmlrtUtils {
             	for (String token : tokens) {
             		if (token.contains(".send(")) {
             			list.add(token);
-            		}
+            		}else if (token.contains(".sendAt(")) {
+            			list.add(token);
+            		} 
+                }
+            }else if (line.contains(".sendAt(")) {
+            	String[] tokens = line.split("\\s+");
+            	for (String token : tokens) {
+            		if (token.contains(".send(")) {
+            			list.add(token);
+            		}else if (token.contains(".sendAt(")) {
+            			list.add(token);
+            		} 
                 }
             }
         }
@@ -299,8 +310,8 @@ public class UmlrtUtils {
 			
 		public static boolean isConnected__PortName_connectorName_PortName__TocapsuleInstanceName(List<CapsuleConn> listCapsuleConn, String portName_connectorName_PortName , String capsuleInstanceName, String portName){
 			
-			String[] splitPortName_connectorName_PortName = portName_connectorName_PortName.split("::");
-			String[] splitCapsuleInstanceName = capsuleInstanceName.split(",");
+			String[] splitPortName_connectorName_PortName = portName_connectorName_PortName.split("\\::");
+			String[] splitCapsuleInstanceName = capsuleInstanceName.split("\\,");
 			
 			for (int i = 0 ; i< splitCapsuleInstanceName.length; i++) {
 				String CapsuleInstanceName__portName = splitCapsuleInstanceName[i]+"__"+portName;
@@ -409,7 +420,7 @@ public class UmlrtUtils {
 				
 				for (int j = 0; j< listCapsulePortConn.size(); j++) {
 					
-					String [] spiltCapsulePortConn = listCapsulePortConn.get(j).split("::");
+					String [] spiltCapsulePortConn = listCapsulePortConn.get(j).split("\\::");
 					if (spiltCapsulePortConn[0].contentEquals(trgPort)) {
 						//TODO: should be checked whether this port is relay or not
 						//Only one relay port is supported for now!
@@ -436,7 +447,7 @@ public class UmlrtUtils {
 			for (int i = 0; i< listCapsulePortConn.size();i++) {
 				List<String> listCapsulePortName = listCapsulePortConn.get(i).getListPortName();
 				for (int j = 0; j< listCapsulePortName.size();j++) {
-					String [] spiltCapsulePortName = listCapsulePortName.get(j).split("::");
+					String [] spiltCapsulePortName = listCapsulePortName.get(j).split("\\::");
 					if (port.contains(spiltCapsulePortName[0])) {
 						if (spiltCapsulePortName[1].contentEquals("true")) //isBehavior
 							return false;

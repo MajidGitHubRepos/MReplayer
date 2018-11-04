@@ -1,3 +1,5 @@
+[041118][Debug]: senderCapInstanceName condition removed before lookingForTargetCapsuleName(...), because targetCapsuleName maybe different from the capsuleInstance that mentioned in the message
+[031118][Info]:  BankATM.uml added into the resource
 [201018][Debug]: logicalVectorTime is carried by the message content to the target capsule message queue
 [201018][Debug]: Finding the reception when we have port replication in CapsuleTracker by adding senderCapInstanceName to all messages
 [141018][Debug]: adding MAX_TRY_TO_SEND to capsuleTracker and testing with 2Pinger1Ponger.uml model

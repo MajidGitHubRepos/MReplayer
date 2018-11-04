@@ -195,8 +195,10 @@ public class CapsuleTracker implements Runnable{
 		for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
 			if (entry.getKey().contains(capsuleInstance)) {
 				for (int i = 0; i < entry.getValue().size(); i++) {
-					//check transition source with targetStateName, they have to be the same 
+					//check transition target with targetStateName, they have to be the same 
 					if ((targetStateName!= null)) {
+						//System.out.println("\n["+ Thread.currentThread().getName() +"]+++>[entry.getValue().get(i)] : "+ entry.getValue().get(i));
+
 						if (entry.getValue().get(i).getTransition().getTransitonName().contentEquals(eventTransitionName) && 
 								(entry.getValue().get(i).getTransition().getSource().getName().contentEquals(targetStateName))) {
 							return entry.getValue().get(i);
@@ -226,8 +228,10 @@ public class CapsuleTracker implements Runnable{
 			if(targetCapsuleName.contains(TrackerMaker.capsuleTrackers[i].capsuleInstance)){
 
 				for (int j = 0; j<= TrackerMaker.capsuleTrackers[i].logicalVectorTime.length; j++) {
-					if (j == TrackerMakerNumber)
+					if (j == TrackerMakerNumber) {
 						tmpLogicalVectorTime[j]=this.logicalVectorTime[j]; // because it gonna be incremented by 1 later but at this point it didn't
+						break;
+					}
 				}
 				sentMsg.setLogicalVectorTime(tmpLogicalVectorTime);
 				TrackerMaker.capsuleTrackers[i].messageQueue.put(sentMsg);
@@ -342,7 +346,7 @@ public class CapsuleTracker implements Runnable{
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking] [event]: "+ event.allDataToString());
 		boolean result = false;
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		String[] eventSourceNameSplit = event.getSourceName().split("::");
+		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
 
 		//Check transitionKind = 3 and eventType = 14 [For Init] 
 		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14") && 
@@ -403,7 +407,7 @@ public class CapsuleTracker implements Runnable{
 
 		boolean result = false;
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		String[] eventSourceNameSplit = event.getSourceName().split("::");
+		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
 
 		//Check eventSourceKind = 4 and eventType = 16 [For STATEENTRYEND] 
 		if (event.getSourceKind().contentEquals("4") && event.getType().contentEquals("16") && 
@@ -411,7 +415,9 @@ public class CapsuleTracker implements Runnable{
 			//event would be consumed!
 			//looking into the targetStateData.getEntryActions() for sending messages into messageQueues
 			for (int j = 0; j < targetStateData.getEntryActions().size(); j++) {
-				String[] actionParts = targetStateData.getEntryActions().get(j).split(".");
+				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[targetStateData.getEntryActions()] : "+ targetStateData.getEntryActions());
+
+				String[] actionParts = targetStateData.getEntryActions().get(j).split("\\.");
 				String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
 
 				//semCapsuleTracker.acquire();
@@ -452,7 +458,7 @@ public class CapsuleTracker implements Runnable{
 
 		boolean result = false;
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		String[] eventSourceNameSplit = event.getSourceName().split("::");
+		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
 
 		//checking trigger requirement will be done in the  following transition
 
@@ -497,7 +503,8 @@ public class CapsuleTracker implements Runnable{
 		TableDataMember tableDataMember = new TableDataMember();
 
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		String[] eventSourceNameSplit = event.getSourceName().split("::");
+
+		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
 		String eventTransitionName = eventSourceNameSplit[4];
 
 
@@ -578,10 +585,12 @@ public class CapsuleTracker implements Runnable{
 						//looking into the targetStateData.getExitActions() for sending messages into messageQueues
 						for (int j = 0; j < targetTransitionData.getActions().size(); j++) {
 							String[] actionParts = targetTransitionData.getActions().get(j).split("\\.|\\(");
-							if (senderCapInstanceName == "")
+							//if (senderCapInstanceName == "") { //commented because targetCapsuleName maybe different from the capsuleInstance that mentioned in the message
 								targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
-							else
-								targetCapsuleName = senderCapInstanceName;
+							//}else {
+							//	targetCapsuleName = senderCapInstanceName;
+							//	senderCapInstanceName = "";
+							//}
 							//semCapsuleTracker.acquire();
 							int send_to_msgQ_count = 0;
 							do {

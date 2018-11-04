@@ -47,7 +47,7 @@ public class TrackerMaker implements Runnable{
 	private int MAX_NUM_CAPSULE;
 	
 	public TrackerMaker(Semaphore semServer){
-		this.MAX_NUM_CAPSULE = 3;
+		this.MAX_NUM_CAPSULE = 100;
 		this.semServer = semServer;
 		this.semCapsuleTracker = new Semaphore(1); 
 		this.capsuleTrackers = new CapsuleTracker[MAX_NUM_CAPSULE];
@@ -57,7 +57,7 @@ public class TrackerMaker implements Runnable{
 		this.capsuleInstances = "";
 
 			try {
-				this.os = new FileOutputStream(new File("/home/babaei/git/matd/MAOD/maod/src/main/resources/outputFiles/output.txt"));
+				this.os = new FileOutputStream(new File("/home/majid/workspace/matd/MAOD/maod/src/main/resources/outputFiles/output.txt"));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
