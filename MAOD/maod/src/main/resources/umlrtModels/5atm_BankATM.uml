@@ -11,6 +11,9 @@
       <ownedAttribute xmi:type="uml:Property" xmi:id="_PJv1gN7eEei0INX0aX4iTw" name="bank" visibility="protected" type="_jlsxwN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_QRcdYN7eEei0INX0aX4iTw" name="atm1" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_4JAf0OB0Eeiu2bu5wy7VJw" name="atm2" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_NzjOsOE7Eeiu2bu5wy7VJw" name="atm3" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_ZusyEOE7Eeiu2bu5wy7VJw" name="atm4" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_fHHoQOE7Eeiu2bu5wy7VJw" name="atm5" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
       <ownedConnector xmi:type="uml:Connector" xmi:id="_qfbXwN7fEei0INX0aX4iTw" name="RTConnector1">
         <end xmi:type="uml:ConnectorEnd" xmi:id="_qfdM8N7fEei0INX0aX4iTw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
         <end xmi:type="uml:ConnectorEnd" xmi:id="_qfd0AN7fEei0INX0aX4iTw" partWithPort="_QRcdYN7eEei0INX0aX4iTw" role="_nFWdkN7fEei0INX0aX4iTw"/>
@@ -19,11 +22,23 @@
         <end xmi:type="uml:ConnectorEnd" xmi:id="_6J5ZgOB0Eeiu2bu5wy7VJw" partWithPort="_4JAf0OB0Eeiu2bu5wy7VJw" role="_nFWdkN7fEei0INX0aX4iTw"/>
         <end xmi:type="uml:ConnectorEnd" xmi:id="_6J5ZgeB0Eeiu2bu5wy7VJw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
       </ownedConnector>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_korzYOE7Eeiu2bu5wy7VJw" name="RTConnector3">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_kou2sOE7Eeiu2bu5wy7VJw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_kovdwOE7Eeiu2bu5wy7VJw" partWithPort="_NzjOsOE7Eeiu2bu5wy7VJw" role="_nFWdkN7fEei0INX0aX4iTw"/>
+      </ownedConnector>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_lsDU4OE7Eeiu2bu5wy7VJw" name="RTConnector4">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_lsFKEOE7Eeiu2bu5wy7VJw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_lsFKEeE7Eeiu2bu5wy7VJw" partWithPort="_ZusyEOE7Eeiu2bu5wy7VJw" role="_nFWdkN7fEei0INX0aX4iTw"/>
+      </ownedConnector>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_nI8wsOE7Eeiu2bu5wy7VJw" name="RTConnector5">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_nI_M8OE7Eeiu2bu5wy7VJw" partWithPort="_fHHoQOE7Eeiu2bu5wy7VJw" role="_nFWdkN7fEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_nI_0AOE7Eeiu2bu5wy7VJw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
+      </ownedConnector>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_jlsxwN7dEei0INX0aX4iTw" name="Bank" classifierBehavior="_ctp_EN7hEei0INX0aX4iTw" isActive="true">
       <ownedAttribute xmi:type="uml:Port" xmi:id="_h94NcN7fEei0INX0aX4iTw" name="bankPort" visibility="public" type="_prNiAN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isService="true">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_liT9gN7fEei0INX0aX4iTw" value="3"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_liotoN7fEei0INX0aX4iTw" value="3"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_liT9gN7fEei0INX0aX4iTw" value="5"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_liotoN7fEei0INX0aX4iTw" value="5"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_KCk1cN7gEei0INX0aX4iTw" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
         <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
@@ -307,7 +322,7 @@ commandPort.transaction().send(); //TODO: sending cashAmount
               <body>
 	randNumber = rand()%100+1;
 
-	log.show(&quot;[PinPad]---------------> A new withdrawal request for &lt;&lt; %i $ >> cash generated: %s:%s\n&quot;,
+	log.show(&quot;\n\n=========================================================\n=========================================================\n\n[PinPad]---------------> A new withdrawal request for &lt;&lt; %i $ >> cash generated: %s:%s\n&quot;,
 	randNumber,
 	this->getTypeName(),	        // name of the capsule. 
 	this->getName()			// name of the capsule part.
@@ -486,4 +501,10 @@ commandPort.transaction().send(); //TODO: sending cashAmount
   <UMLRealTime:RTPort xmi:id="_AfYm8N7rEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_AfVjoN7rEei0INX0aX4iTw"/>
   <UMLRealTime:CapsulePart xmi:id="_4LTl4OB0Eeiu2bu5wy7VJw" base_Property="_4JAf0OB0Eeiu2bu5wy7VJw"/>
   <UMLRealTime:RTConnector xmi:id="_6J6AkOB0Eeiu2bu5wy7VJw" base_Connector="_6J1vIOB0Eeiu2bu5wy7VJw"/>
+  <UMLRealTime:CapsulePart xmi:id="_Nzlq8OE7Eeiu2bu5wy7VJw" base_Property="_NzjOsOE7Eeiu2bu5wy7VJw"/>
+  <UMLRealTime:CapsulePart xmi:id="_ZvA7IOE7Eeiu2bu5wy7VJw" base_Property="_ZusyEOE7Eeiu2bu5wy7VJw"/>
+  <UMLRealTime:CapsulePart xmi:id="_fHPkEOE7Eeiu2bu5wy7VJw" base_Property="_fHHoQOE7Eeiu2bu5wy7VJw"/>
+  <UMLRealTime:RTConnector xmi:id="_kowE0OE7Eeiu2bu5wy7VJw" base_Connector="_korzYOE7Eeiu2bu5wy7VJw"/>
+  <UMLRealTime:RTConnector xmi:id="_lsFxIOE7Eeiu2bu5wy7VJw" base_Connector="_lsDU4OE7Eeiu2bu5wy7VJw"/>
+  <UMLRealTime:RTConnector xmi:id="_nI_0AeE7Eeiu2bu5wy7VJw" base_Connector="_nI8wsOE7Eeiu2bu5wy7VJw"/>
 </xmi:XMI>

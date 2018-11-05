@@ -66,8 +66,9 @@ public class Controller {
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n\n");
 			
 			Controller.listTableData = umlrtParser.getlistTableData();
+			int numberOfCapsules =  countCapsule();
 			//Message msg = new Message("process it", event);
-			TrackerMaker trackerMaker = new TrackerMaker(semServer);
+			TrackerMaker trackerMaker = new TrackerMaker(semServer, numberOfCapsules);
 			new Thread(trackerMaker,"waiter").start();
 			//Notifier notifier = new Notifier(msg, Controller.sem);
 			//new Thread(notifier, "notifier").start();
@@ -85,5 +86,27 @@ public class Controller {
 			}
 
 		}
+	}
+	
+	
+	//==================================================================	
+	//==============================================[countCapsule]
+	//==================================================================			
+
+	public int countCapsule()  
+	{
+		int numberOfCapsules = 0;
+		for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
+
+			if (entry.getKey().contains(",")) {
+
+				String [] spiltCapsuleFullname = entry.getKey().split("\\,");
+				numberOfCapsules = numberOfCapsules + spiltCapsuleFullname.length;
+			}else {
+				numberOfCapsules++;
+			}
+
+		}
+		return numberOfCapsules;
 	}
 }

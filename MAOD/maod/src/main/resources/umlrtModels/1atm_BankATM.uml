@@ -10,14 +10,9 @@
     <packagedElement xmi:type="uml:Class" xmi:id="_hisYMN7dEei0INX0aX4iTw" name="Top" isActive="true">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_PJv1gN7eEei0INX0aX4iTw" name="bank" visibility="protected" type="_jlsxwN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_QRcdYN7eEei0INX0aX4iTw" name="atm1" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_4JAf0OB0Eeiu2bu5wy7VJw" name="atm2" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
       <ownedConnector xmi:type="uml:Connector" xmi:id="_qfbXwN7fEei0INX0aX4iTw" name="RTConnector1">
         <end xmi:type="uml:ConnectorEnd" xmi:id="_qfdM8N7fEei0INX0aX4iTw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
         <end xmi:type="uml:ConnectorEnd" xmi:id="_qfd0AN7fEei0INX0aX4iTw" partWithPort="_QRcdYN7eEei0INX0aX4iTw" role="_nFWdkN7fEei0INX0aX4iTw"/>
-      </ownedConnector>
-      <ownedConnector xmi:type="uml:Connector" xmi:id="_6J1vIOB0Eeiu2bu5wy7VJw" name="RTConnector2">
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_6J5ZgOB0Eeiu2bu5wy7VJw" partWithPort="_4JAf0OB0Eeiu2bu5wy7VJw" role="_nFWdkN7fEei0INX0aX4iTw"/>
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_6J5ZgeB0Eeiu2bu5wy7VJw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
       </ownedConnector>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_jlsxwN7dEei0INX0aX4iTw" name="Bank" classifierBehavior="_ctp_EN7hEei0INX0aX4iTw" isActive="true">
@@ -484,6 +479,4 @@ commandPort.transaction().send(); //TODO: sending cashAmount
   <UMLRTStateMachines:RTStateMachine xmi:id="_34qlkN7mEei0INX0aX4iTw" base_StateMachine="_34TZMN7mEei0INX0aX4iTw"/>
   <UMLRealTime:RTPort xmi:id="_6HvvcN7qEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_6Ht6QN7qEei0INX0aX4iTw"/>
   <UMLRealTime:RTPort xmi:id="_AfYm8N7rEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_AfVjoN7rEei0INX0aX4iTw"/>
-  <UMLRealTime:CapsulePart xmi:id="_4LTl4OB0Eeiu2bu5wy7VJw" base_Property="_4JAf0OB0Eeiu2bu5wy7VJw"/>
-  <UMLRealTime:RTConnector xmi:id="_6J6AkOB0Eeiu2bu5wy7VJw" base_Connector="_6J1vIOB0Eeiu2bu5wy7VJw"/>
 </xmi:XMI>

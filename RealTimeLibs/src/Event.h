@@ -1,5 +1,6 @@
 /*
  * DebuggerEvent.hh
+ *  [051118]v1.0: sending address of this as the capsuleIndex
  *	[021018]v1.0: Majid Babaei
  *  Created on: Nov 11, 2016
  *      Author: mojtababagherzadeh
