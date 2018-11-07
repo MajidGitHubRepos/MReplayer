@@ -225,11 +225,9 @@ public class ParserEngine implements Runnable {
 				//List<Property> listPart = new ArrayList<Property>();
 				//------------
 				System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
-				//UmlrtUtils.setTopCapsuleInstanceName(elementTmp.getName());
 
 
 				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts, listPortName_connectorName_PortName);
-				//System.out.println(">>>>>>>>>>>>> listPart.size(): "+ listPart.size());
 
 				//------------
 				
@@ -254,15 +252,6 @@ public class ParserEngine implements Runnable {
 			        it.remove(); // avoids a ConcurrentModificationException
 			    }
 				
-				
-				/*for (int j = 0; j< listPart.size(); j++) {
-					String capInstanceName = listPart.get(j).getName();
-					String capName = listPart.get(j).getType().getName();
-					System.out.println("--> capInstanceName: "+ capInstanceName);
-					System.out.println("--> capName: "+ capName);
-					listCapsuleName_InstanceName.add(capName+"_"+capInstanceName);
-				}*/
-
 				//extract connectors
 				for (Connector connector : UmlrtUtils.getConnectors((Class)elementTmp)) {
 
@@ -375,29 +364,6 @@ public class ParserEngine implements Runnable {
 						}
 					}
 				}
-
-				/*for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {
-					
-					if (!element.getName().contentEquals(topCapsuleName)) { // for top cap already done!
-					connectorName = connector.getName();
-					ConnectorEnd connEnd1 = connector.getEnds().get(0);
-					ConnectorEnd connEnd2 = connector.getEnds().get(1);
-
-					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
-						connEnd1PortName = connEnd1.getRole().getName();
-					
-
-					}
-					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
-						connEnd2PortName = connEnd2.getRole().getName();
-						//System.out.println("------> connEnd2PortName: " + connEnd2PortName);
-
-
-					}
-					listPortName_connectorName_PortName.add(connEnd1PortName+"::"+connectorName+"::"+connEnd2PortName);
-					}
-				//System.out.println("------> [listPortName_connectorName_PortName]" + listPortName_connectorName_PortName);
-				}*/
 
 				if ( (((Class) element).getOwnedBehaviors() != null && ((Class) element).getOwnedBehaviors().size() > 0))
 					if (((Class) element).getOwnedBehaviors().get(0) instanceof StateMachine) {

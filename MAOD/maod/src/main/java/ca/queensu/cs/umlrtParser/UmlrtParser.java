@@ -98,11 +98,7 @@ public class UmlrtParser {
     public class RunnableImpl implements Runnable { 
 
     public void run() {
-		   
-
-		 	//String modelPath = "/home/majid/workspace/NonDeterministic.bk/NonDeterministic/NonDeterministic.uml";
-		 	//String modelPath = "/home/majid/workspace/matd/MAOD/maod/umlrtModels/PingPong.uml";
-		 	
+		   		 	
 		 	//String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/CarDoorLock.uml";

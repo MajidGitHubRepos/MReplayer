@@ -204,7 +204,7 @@ public class TrackerMaker implements Runnable{
 						String tmpCapsuleInstances__capsuleIndex = capInstIdxMap.get(capsuleFullname);
 						
 						if (tmpCapsuleInstances__capsuleIndex == null) { //does not exist!
-						    
+						    capsuleFullname = capsuleFullname.replaceAll("\\s+","");
 							capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
 							break;
 							
@@ -220,7 +220,7 @@ public class TrackerMaker implements Runnable{
 					String tmpCapsuleInstances__capsuleIndex = capInstIdxMap.get(capsuleFullname);
 					
 					if (tmpCapsuleInstances__capsuleIndex == null) { //does not exist!
-					    
+					    capsuleFullname = capsuleFullname.replaceAll("\\s+","");
 						capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
 						
 					} else {
@@ -240,7 +240,8 @@ public class TrackerMaker implements Runnable{
 	{
 		for (Map.Entry<String, String> entry  : capInstIdxMap.entrySet()) {
 			if(entry.getValue().contains(capsuleInstance__capsuleIndex)) {
-				return entry.getKey();
+				String capfullName = entry.getKey().replaceAll("\\s+","");
+				return capfullName;
 			}
 		}
 		System.err.println("==================[__capsuleFullNameNotFound__]======================");

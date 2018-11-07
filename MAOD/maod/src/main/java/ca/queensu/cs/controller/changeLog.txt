@@ -1,5 +1,6 @@
+[071118][Debug]: some changes in lookingForTargetCapsuleName and mappingCapInstanceIdxToCapfullName() in CapsuleTracker.java in order to handel multiple capsule instances
 [051118][Info]:  adding countCapsule() in Controller.java in order to obtain number of capsule
-[051118][Debug]: adding findCapfullNameByCapInstanceIdx()
+[051118][Debug]: adding findCapfullNameByCapInstanceIdx(). in Event.h 'this' address is being sent   
 [051118][Debug]: adding capInstIdxMap to map capsuleInstance_capsuleIndex and capsuleFullname in TrackerMaker.java
 [041118][Debug]: senderCapInstanceName condition removed before lookingForTargetCapsuleName(...), because targetCapsuleName maybe different from the capsuleInstance that mentioned in the message
 [031118][Info]:  BankATM.uml added into the resource

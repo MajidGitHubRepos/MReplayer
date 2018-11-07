@@ -50,10 +50,15 @@ public class CapsuleTracker implements Runnable{
 	private int MAX_TRY_TO_SEND;
 	private int[] logicalVectorTime;
 	private int TrackerMakerNumber;
+	private Event stateExitEvent;
+	private double stateExitTimer =0;
+	private static String senderCapInstanceName;
 
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream os, int[] logicalVectorTime) {
+		this.senderCapInstanceName = "";
+		this.stateExitEvent = null;
 		this.TrackerMakerNumber = 0;
 		this.semCapsuleTracker = semCapsuleTracker;
 		this.capsuleInstance = capsuleInstance;
@@ -94,8 +99,22 @@ public class CapsuleTracker implements Runnable{
 									if (isConsumable(currentEventTmp)) {
 										//timeMilli = System.nanoTime();
 										//timeMilli = date.getTime();
-										outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
-										outputStreamToFile(this.os,outputStrTofile);
+										if (currentStatus.contains("TRANISTIONEND")) { // current event is stateExit => save event and do not put timestamp before transition done
+											stateExitEvent = currentEventTmp;
+											stateExitTimer = ((TimerImpl) timer).nowNano();
+										}else if ((currentStatus.contains("STATEENTRYEND")) && (stateExitEvent != null)) { // current event is transition => put timestamp for stateExit and transition
+											logicalVectorTime[TrackerMakerNumber]--;
+											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", stateExitTimer)+"]: "+stateExitEvent.allDataToString()+"\n<=======================================>\n";
+											outputStreamToFile(this.os,outputStrTofile);
+											logicalVectorTime[TrackerMakerNumber]++;
+											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
+											outputStreamToFile(this.os,outputStrTofile);
+											stateExitEvent = null;
+											stateExitTimer = 0;
+										}else {
+											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
+											outputStreamToFile(this.os,outputStrTofile);
+										}
 
 										//current state changed in *checking functions 
 										break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
@@ -111,8 +130,23 @@ public class CapsuleTracker implements Runnable{
 									if (isConsumable(currentEvent)) {
 										//timeMilli = System.nanoTime();
 										//timeMilli = date.getTime(); //Milisec by imposing delay to the producers that would be enough
-										outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
-										outputStreamToFile(this.os,outputStrTofile);
+										
+										if (currentStatus.contains("TRANISTIONEND")) { // current event is stateExit => save event and do not put timestamp before transition done
+											stateExitEvent = currentEvent;
+											stateExitTimer = ((TimerImpl) timer).nowNano();
+										}else if ((currentStatus.contains("STATEENTRYEND")) && (stateExitEvent != null)) { // current event is transition => put timestamp for stateExit and transition
+											logicalVectorTime[TrackerMakerNumber]--;
+											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", stateExitTimer)+"]: "+stateExitEvent.allDataToString()+"\n<=======================================>\n";
+											outputStreamToFile(this.os,outputStrTofile);
+											logicalVectorTime[TrackerMakerNumber]++;
+											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
+											outputStreamToFile(this.os,outputStrTofile);
+											stateExitEvent = null;
+											stateExitTimer = 0;
+										}else {
+											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
+											outputStreamToFile(this.os,outputStrTofile);
+										}
 
 										//current state changed in *checking functions
 										//if(!TrackerMaker.dataArray[i].getEventQueue().isEmpty())
@@ -150,6 +184,7 @@ public class CapsuleTracker implements Runnable{
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: REGISTER received!");
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
 				break;
+				
 			case "Initial":  	      if (initChecking(event))           {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Initial received!"); 
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
@@ -160,8 +195,8 @@ public class CapsuleTracker implements Runnable{
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
 				break;
 			
-			case "PREtr":     if (preTransitionChecking(event))          {logicalVectorTime[TrackerMakerNumber]++; 	 return true;};
-			logicalVectorTime[TrackerMakerNumber]++; break;
+			case "PREtr":             if (preTransitionChecking(event))  {logicalVectorTime[TrackerMakerNumber]++; 	 return true;};
+				break;
 			
 			case "TRANISTIONEND":     if (transitionChecking(event))     {
 				if (!this.targetChoiceState && !this.sourceChoiceState) {
@@ -303,6 +338,25 @@ public class CapsuleTracker implements Runnable{
 							if (Controller.umlrtParser.getlistCapsuleConn().get(p).isListPortNameContainsPort(sourcePort)) {
 								sourceCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[sourceCapsuleName]: " +sourceCapsuleName);
+								
+								//check sourceCapsuleName containing more than one capsule name, then we consider the capsule that are closer to the current capsule
+								if (sourceCapsuleName.contains(",")) {
+									sourceCapsuleName = sourceCapsuleName.replaceAll("\\s+","");
+									String [] splitSourceCapsuleName = sourceCapsuleName.split("\\,");
+									for (int q = 0; q<splitSourceCapsuleName.length; q++) {
+										
+										int lastIndexOf_ = splitSourceCapsuleName[q].lastIndexOf("__");
+										String sourceCapsuleName__withoutInstanceName = splitSourceCapsuleName[q].substring(0, lastIndexOf_);
+										if (capsuleInstance.contains(sourceCapsuleName__withoutInstanceName)) {
+											//sourceCapsuleName found!
+											sourceCapsuleName = splitSourceCapsuleName[q];
+											break;
+										}
+									}
+									if (sourceCapsuleName.contains(",")){ //sourceCapsuleName not found!
+										System.err.println("=================[sourceCapsuleName Not Found]================");
+									}
+								}
 							}
 
 						}
@@ -314,6 +368,26 @@ public class CapsuleTracker implements Runnable{
 							if (Controller.umlrtParser.getlistCapsuleConn().get(p).isListPortNameContainsPort(targetPort)) {
 								targetCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[targetCapsuleName]: " +targetCapsuleName);
+								
+								//check targetCapsuleName containing more than one capsule name, then we consider the capsule that are closer to the current capsule
+								if (targetCapsuleName.contains(",")) {
+									targetCapsuleName = targetCapsuleName.replaceAll("\\s+","");
+									String [] splitTargetCapsuleName = targetCapsuleName.split("\\,");
+									for (int q = 0; q<splitTargetCapsuleName.length; q++) {
+										
+										int lastIndexOf_ = splitTargetCapsuleName[q].lastIndexOf("__");
+										String targetCapsuleName__withoutInstanceName = splitTargetCapsuleName[q].substring(0, lastIndexOf_);
+										if (capsuleInstance.contains(targetCapsuleName__withoutInstanceName)) {
+											//targetCapsulName found!
+											targetCapsuleName = splitTargetCapsuleName[q];
+											break;
+										}
+									}
+									if (targetCapsuleName.contains(",")){ //targetCapsulName not found!
+										System.err.println("=================[targetCapsulName Not Found]================");
+									}
+								}
+								
 								if (!sourceCapsuleName.contains(targetCapsuleName)) // TODO: what about self-transitions
 									return targetCapsuleName; 
 							}
@@ -322,8 +396,10 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 		}
+
+		
 		if (targetCapsuleName == "")
-			System.err.println("==================[targetCapsuleName not found!]======================");
+			System.err.println("==================[targetCapsuleName Not Found]======================");
 		return targetCapsuleName;		
 	}
 
@@ -366,8 +442,8 @@ public class CapsuleTracker implements Runnable{
 
 								for (int j = 0; j < entry.getValue().get(i).getTransition().getActions().size(); j++) {
 									String[] actionParts = entry.getValue().get(i).getTransition().getActions().get(j).split("\\.|\\(");
-								
 									String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
+									
 									int send_to_msgQ_count = 0;
 									if (targetCapsuleName != "") {
 										do {
@@ -417,7 +493,7 @@ public class CapsuleTracker implements Runnable{
 			for (int j = 0; j < targetStateData.getEntryActions().size(); j++) {
 				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[targetStateData.getEntryActions()] : "+ targetStateData.getEntryActions());
 
-				String[] actionParts = targetStateData.getEntryActions().get(j).split("\\.");
+				String[] actionParts = targetStateData.getEntryActions().get(j).split("\\."); //TODO: should be the same actions that we do at transition 
 				String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
 
 				//semCapsuleTracker.acquire();
@@ -496,7 +572,6 @@ public class CapsuleTracker implements Runnable{
 		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[in transitionChecking] event: " + event.allDataToString());
 		this.targetChoiceState = false;
 		this.sourceChoiceState = false;
-		String senderCapInstanceName = "";
 		boolean result = false;
 		boolean requirementMet = false; //TODO: trigger by time!
 		TransitionData targetTransitionData = new TransitionData();
@@ -585,8 +660,15 @@ public class CapsuleTracker implements Runnable{
 						//looking into the targetStateData.getExitActions() for sending messages into messageQueues
 						for (int j = 0; j < targetTransitionData.getActions().size(); j++) {
 							String[] actionParts = targetTransitionData.getActions().get(j).split("\\.|\\(");
-							//if (senderCapInstanceName == "") { //commented because targetCapsuleName maybe different from the capsuleInstance that mentioned in the message
+							if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("msg->sapIndex0_"))) { //TODO: only msg->sapIndex0_ handled 
+								//System.out.println("\n====================>["+ Thread.currentThread().getName() +"]"+ "--> senderCapInstanceName:" + senderCapInstanceName);
+								targetCapsuleName = senderCapInstanceName;
+							} else if ((actionParts[3].contains("sendAt")) && !(actionParts[4].contains("msg->sapIndex0_"))) {
+								System.err.println("__________ sendAt an unknown capsule __________");
+							} else {
 								targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
+							}
+							
 							//}else {
 							//	targetCapsuleName = senderCapInstanceName;
 							//	senderCapInstanceName = "";
