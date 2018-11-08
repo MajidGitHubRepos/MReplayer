@@ -69,12 +69,34 @@ public class UmlrtParser {
 	private boolean umlrtParsingDone;
 	private  Map<String, List<TableDataMember>> listTableData;
 	private List<CapsuleConn> listCapsuleConn;
+	public File outputFile;
+	public File policyFile;
 	
 	public UmlrtParser() {
+		this.outputFile = new File("");
+		this.policyFile = new File("");
 		this.listTableData = new HashMap<String, List<TableDataMember>>();
 		this.listCapsuleConn = new ArrayList<CapsuleConn>();
 		this.umlrtParsingDone = false;
 	}
+	
+	//----------------------------------
+	public void setOutputFile(File outputFile) {
+		this.outputFile = outputFile;
+	}
+	
+	public void setPolicyFile(File policyFile) {
+		this.policyFile = policyFile;
+	}
+	
+	public File getOutputFile() {
+		return this.outputFile;
+	}
+	
+	public File getPolicyFile() {
+		return this.policyFile;
+	}
+	//----------------------------------
 	
 	public Map<String, List<TableDataMember>> getlistTableData() {
 		return this.listTableData;
@@ -97,7 +119,16 @@ public class UmlrtParser {
   
     public class RunnableImpl implements Runnable { 
 
-    public void run() {
+	public void run() {
+    	
+    		ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
+    	
+    		String outputFileName = "input_output_Files/output.txt";
+    		File outputFile = new File(classLoader.getResource(outputFileName).getFile());
+    		
+    		String policyFileName = "input_output_Files/policy.txt";
+    		File policyFile = new File(classLoader.getResource(policyFileName).getFile());
+    		
 		   		 	
 		 	//String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
@@ -109,7 +140,7 @@ public class UmlrtParser {
     		String fileName = "umlrtModels/BankATM.uml";
 
     	
-	        ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
+	        
 	        File file = new File(classLoader.getResource(fileName).getFile());
 		 	System.out.println("path: " +file.getAbsolutePath());
 		 	

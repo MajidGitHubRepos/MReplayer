@@ -61,7 +61,7 @@ public class TrackerMaker implements Runnable{
 		this.capsuleInstances__indexes = "";
 
 			try {
-				this.os = new FileOutputStream(new File("/home/majid/workspace/matd/MAOD/maod/src/main/resources/outputFiles/output.txt"));
+				this.os = new FileOutputStream(new File("/home/majid/workspace/matd/MAOD/maod/src/main/resources/input_output_Files/output.txt"));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

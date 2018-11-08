@@ -1,0 +1,2 @@
+[081118][Debug]: generating allDataToString_originalFromMDebugger()
+[081118][Debug]: removing some parameter that are not required from Event.java from allDataToString()

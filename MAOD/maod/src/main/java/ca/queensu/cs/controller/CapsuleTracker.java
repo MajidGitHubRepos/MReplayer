@@ -104,15 +104,15 @@ public class CapsuleTracker implements Runnable{
 											stateExitTimer = ((TimerImpl) timer).nowNano();
 										}else if ((currentStatus.contains("STATEENTRYEND")) && (stateExitEvent != null)) { // current event is transition => put timestamp for stateExit and transition
 											logicalVectorTime[TrackerMakerNumber]--;
-											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", stateExitTimer)+"]: "+stateExitEvent.allDataToString()+"\n<=======================================>\n";
+											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", stateExitTimer)+"]: "+*/stateExitEvent.allDataToString()+"\n\n";
 											outputStreamToFile(this.os,outputStrTofile);
 											logicalVectorTime[TrackerMakerNumber]++;
-											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
+											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEventTmp.allDataToString()+"\n\n";
 											outputStreamToFile(this.os,outputStrTofile);
 											stateExitEvent = null;
 											stateExitTimer = 0;
 										}else {
-											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEventTmp.allDataToString()+"\n<=======================================>\n";
+											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEventTmp.allDataToString()+"\n\n";
 											outputStreamToFile(this.os,outputStrTofile);
 										}
 
@@ -136,15 +136,15 @@ public class CapsuleTracker implements Runnable{
 											stateExitTimer = ((TimerImpl) timer).nowNano();
 										}else if ((currentStatus.contains("STATEENTRYEND")) && (stateExitEvent != null)) { // current event is transition => put timestamp for stateExit and transition
 											logicalVectorTime[TrackerMakerNumber]--;
-											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", stateExitTimer)+"]: "+stateExitEvent.allDataToString()+"\n<=======================================>\n";
+											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", stateExitTimer)+"]: "+*/stateExitEvent.allDataToString()+"\n\n";
 											outputStreamToFile(this.os,outputStrTofile);
 											logicalVectorTime[TrackerMakerNumber]++;
-											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
+											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEvent.allDataToString()+"\n\n";
 											outputStreamToFile(this.os,outputStrTofile);
 											stateExitEvent = null;
 											stateExitTimer = 0;
 										}else {
-											outputStrTofile = Arrays.toString(logicalVectorTime)+"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+currentEvent.allDataToString()+"\n<=======================================>\n";
+											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEvent.allDataToString()+"\n\n";
 											outputStreamToFile(this.os,outputStrTofile);
 										}
 

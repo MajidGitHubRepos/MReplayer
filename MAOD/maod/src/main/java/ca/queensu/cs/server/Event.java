@@ -115,11 +115,17 @@ public class Event {
 	
 	
 	public String allDataToString() {
-		return "Event [eventId="+eventId+", eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleName=" + eventCapsuleName + ", eventCapsuleInstance=" + eventCapsuleInstance
+		return ", Event: [eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleInstance=" + eventCapsuleInstance
+				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + "]";
+	}
+	
+	public String allDataToString_originalFromMDebugger() {
+		return ", Event: [eventId="+eventId+", eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleName=" + eventCapsuleName + ", eventCapsuleInstance=" + eventCapsuleInstance
 				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + ", eventCpuTik=" + eventCpuTik
 				+  ", eventTimePointSecond=" + eventTimePointSecond + ", eventTimePointNano=" + eventTimePointNano +
 				", eventVariableData=" + eventVariableData +", eventSignal=" + eventSignal +", eventSource=" + eventSource +
 				", eventStatus=" + eventStatus +", eventTarget=" + eventTarget +"]";
 	}
+	
 
 }
