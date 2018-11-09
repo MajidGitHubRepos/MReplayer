@@ -62,11 +62,11 @@ public class TrackerMaker implements Runnable{
 		this.capsuleInstances__indexes = "";
 
 			try {
-	    		System.out.println("=================================================[Output/Policy files]=================================================");
+	    		System.out.println("=================================================[Output/Policy files]========================================");
 	    		ClassLoader classLoader = getClass().getClassLoader();
 	    		String outputFileName = "input_output_Files/output.txt";
 	    		File outputFile = new File(classLoader.getResource(outputFileName).getFile());
-	    		System.out.println("\n["+ Thread.currentThread().getName() +"]++>[outputFile.getAbsolutePath()] : "+ outputFile.getAbsolutePath());
+	    		System.out.println("\n["+ Thread.currentThread().getName() +"]> outputFile exists in : "+ outputFile.getAbsolutePath());
 				this.outputFileStream = new FileOutputStream(new File(outputFile.getAbsolutePath().toString()));
 				//-----------
 				
@@ -76,9 +76,9 @@ public class TrackerMaker implements Runnable{
 	    		if (this.listPolicies.size() == 0) {
 		    		System.out.println("["+ Thread.currentThread().getName() +"]> NO Policy defined in : "+ outputFile.getAbsolutePath());
 	    		}else {
-		    		System.out.println("["+ Thread.currentThread().getName() +"]> ["+ this.listPolicies.size() +"] Policy/Policies defined in : "+ outputFile.getAbsolutePath());
+		    		System.out.println("["+ Thread.currentThread().getName() +"]> <<"+ this.listPolicies.size() +">> Policy/Policies defined in : "+ policyFile.getAbsolutePath());
 	    		}
-	    		System.out.println("=============================================================================================================");
+	    		System.out.println("\n============================================================================================================");
 
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
