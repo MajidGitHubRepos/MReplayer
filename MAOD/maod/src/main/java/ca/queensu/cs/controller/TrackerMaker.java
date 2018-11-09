@@ -45,9 +45,10 @@ public class TrackerMaker implements Runnable{
 
 	public static int trackerCount;
 	public static int eventCount;
-	public static OutputStream os;
+	public static OutputStream outputFileStream;
 	public static int[] logicalVectorTime;
 	private int MAX_NUM_CAPSULE;
+	public List<String[]> listPolicies;
 	
 	public TrackerMaker(Semaphore semServer, int numberOfCapsules){
 		this.MAX_NUM_CAPSULE = numberOfCapsules;
@@ -61,8 +62,28 @@ public class TrackerMaker implements Runnable{
 		this.capsuleInstances__indexes = "";
 
 			try {
-				this.os = new FileOutputStream(new File("/home/majid/workspace/matd/MAOD/maod/src/main/resources/input_output_Files/output.txt"));
+	    		System.out.println("=================================================[Output/Policy files]=================================================");
+	    		ClassLoader classLoader = getClass().getClassLoader();
+	    		String outputFileName = "input_output_Files/output.txt";
+	    		File outputFile = new File(classLoader.getResource(outputFileName).getFile());
+	    		System.out.println("\n["+ Thread.currentThread().getName() +"]++>[outputFile.getAbsolutePath()] : "+ outputFile.getAbsolutePath());
+				this.outputFileStream = new FileOutputStream(new File(outputFile.getAbsolutePath().toString()));
+				//-----------
+				
+	    		String policyFileName = "input_output_Files/policy.txt";
+	    		File policyFile = new File(classLoader.getResource(policyFileName).getFile());
+	    		this.listPolicies = UmlrtUtils.readListPolicies(policyFile.getAbsolutePath().toString());
+	    		if (this.listPolicies.size() == 0) {
+		    		System.out.println("["+ Thread.currentThread().getName() +"]> NO Policy defined in : "+ outputFile.getAbsolutePath());
+	    		}else {
+		    		System.out.println("["+ Thread.currentThread().getName() +"]> ["+ this.listPolicies.size() +"] Policy/Policies defined in : "+ outputFile.getAbsolutePath());
+	    		}
+	    		System.out.println("=============================================================================================================");
+
 			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -157,7 +178,7 @@ public class TrackerMaker implements Runnable{
 			System.out.println("- data is created and first event added into the Queue successfully!" );
 			//System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
 			this.logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
-			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, capsuleFullname, os, logicalVectorTime);
+			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, capsuleFullname, outputFileStream, logicalVectorTime);
 			Thread capsuleTrackerT = new Thread(capsuleTracker); 
 			capsuleTrackerT.start(); 
 			capsuleTrackers[trackerCount++] = capsuleTracker;

@@ -1,6 +1,11 @@
 package ca.queensu.cs.umlrtParser;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -515,6 +520,35 @@ public class UmlrtUtils {
 		     }
 
 		     return count;
-		} 
+		}
 		
+		//==================================================================	
+		//==============================================[readListPolicies]
+		//==================================================================			
+
+		public static List<String[]> readListPolicies(String policyFilePath) throws IOException  
+		{
+			List<String[]> listPolicies = new ArrayList<String[]>();
+			String [] policies;
+
+			FileInputStream fstream = new FileInputStream(policyFilePath);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+			String policy;
+
+			//Read File Line By Line
+			while ((policy = br.readLine()) != null)   {
+				// Print the content on the console
+				//System.out.println (strLine);
+				policy = policy.replaceAll("\\s+",""); //remove all spaces
+				policies = policy.split("\\,");
+				listPolicies.add(policies);
+			}
+
+			//Close the input stream
+			br.close();
+			return listPolicies;
+
+		}
+
 }

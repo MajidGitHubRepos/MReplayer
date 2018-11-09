@@ -1,6 +1,7 @@
-[081118][Debug]: adding policy.txt into input_output_Files in order to introduce runtime policies
-[081118][Debug]: change outputFiles dir to input_output_Files
-[081118][Debug]: removing timer (in nano) to put in the output.txt
+[091118][Info]:  processing policy.txt in TrackerMaker
+[081118][Info]:  adding policy.txt into input_output_Files in order to introduce runtime policies
+[081118][Info]:  change outputFiles dir to input_output_Files
+[081118][Info]:  removing timer (in nano) to put in the output.txt
 [071118][Debug]: some changes in lookingForTargetCapsuleName and mappingCapInstanceIdxToCapfullName() in CapsuleTracker.java in order to handel multiple capsule instances
 [051118][Info]:  adding countCapsule() in Controller.java in order to obtain number of capsule
 [051118][Debug]: adding findCapfullNameByCapInstanceIdx(). in Event.h 'this' address is being sent   

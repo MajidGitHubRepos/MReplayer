@@ -120,16 +120,7 @@ public class UmlrtParser {
     public class RunnableImpl implements Runnable { 
 
 	public void run() {
-    	
-    		ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
-    	
-    		String outputFileName = "input_output_Files/output.txt";
-    		File outputFile = new File(classLoader.getResource(outputFileName).getFile());
-    		
-    		String policyFileName = "input_output_Files/policy.txt";
-    		File policyFile = new File(classLoader.getResource(policyFileName).getFile());
-    		
-		   		 	
+    			   		 	
 		 	//String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/CarDoorLock.uml";
@@ -140,7 +131,7 @@ public class UmlrtParser {
     		String fileName = "umlrtModels/BankATM.uml";
 
     	
-	        
+    		ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
 	        File file = new File(classLoader.getResource(fileName).getFile());
 		 	System.out.println("path: " +file.getAbsolutePath());
 		 	

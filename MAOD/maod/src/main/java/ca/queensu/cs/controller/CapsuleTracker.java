@@ -41,7 +41,7 @@ public class CapsuleTracker implements Runnable{
 	private StateData targetStateData;
 	private boolean targetChoiceState;
 	private boolean sourceChoiceState;
-	private OutputStream os;
+	private OutputStream outputFileStream;
 	private Date date;
 	private double timeMilli;
 	private String outputStrTofile;
@@ -56,13 +56,13 @@ public class CapsuleTracker implements Runnable{
 
 
 
-	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream os, int[] logicalVectorTime) {
+	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream outputFileStream, int[] logicalVectorTime) {
 		this.senderCapInstanceName = "";
 		this.stateExitEvent = null;
 		this.TrackerMakerNumber = 0;
 		this.semCapsuleTracker = semCapsuleTracker;
 		this.capsuleInstance = capsuleInstance;
-		this.os = os;
+		this.outputFileStream = outputFileStream;
 		this.logicalVectorTime = logicalVectorTime;
 		this.eventQueueTmp = new LinkedBlockingQueue<Event>(); // read but not consume!
 		this.messageQueue = new LinkedBlockingQueue<Message>();
@@ -105,15 +105,15 @@ public class CapsuleTracker implements Runnable{
 										}else if ((currentStatus.contains("STATEENTRYEND")) && (stateExitEvent != null)) { // current event is transition => put timestamp for stateExit and transition
 											logicalVectorTime[TrackerMakerNumber]--;
 											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", stateExitTimer)+"]: "+*/stateExitEvent.allDataToString()+"\n\n";
-											outputStreamToFile(this.os,outputStrTofile);
+											outputStreamToFile(this.outputFileStream,outputStrTofile);
 											logicalVectorTime[TrackerMakerNumber]++;
 											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEventTmp.allDataToString()+"\n\n";
-											outputStreamToFile(this.os,outputStrTofile);
+											outputStreamToFile(this.outputFileStream,outputStrTofile);
 											stateExitEvent = null;
 											stateExitTimer = 0;
 										}else {
 											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEventTmp.allDataToString()+"\n\n";
-											outputStreamToFile(this.os,outputStrTofile);
+											outputStreamToFile(this.outputFileStream,outputStrTofile);
 										}
 
 										//current state changed in *checking functions 
@@ -137,15 +137,15 @@ public class CapsuleTracker implements Runnable{
 										}else if ((currentStatus.contains("STATEENTRYEND")) && (stateExitEvent != null)) { // current event is transition => put timestamp for stateExit and transition
 											logicalVectorTime[TrackerMakerNumber]--;
 											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", stateExitTimer)+"]: "+*/stateExitEvent.allDataToString()+"\n\n";
-											outputStreamToFile(this.os,outputStrTofile);
+											outputStreamToFile(this.outputFileStream,outputStrTofile);
 											logicalVectorTime[TrackerMakerNumber]++;
 											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEvent.allDataToString()+"\n\n";
-											outputStreamToFile(this.os,outputStrTofile);
+											outputStreamToFile(this.outputFileStream,outputStrTofile);
 											stateExitEvent = null;
 											stateExitTimer = 0;
 										}else {
 											outputStrTofile = "Vector Time: "+Arrays.toString(logicalVectorTime)+/*"-["+String.format("%f", ((TimerImpl) timer).nowNano())+"]: "+*/currentEvent.allDataToString()+"\n\n";
-											outputStreamToFile(this.os,outputStrTofile);
+											outputStreamToFile(this.outputFileStream,outputStrTofile);
 										}
 
 										//current state changed in *checking functions
