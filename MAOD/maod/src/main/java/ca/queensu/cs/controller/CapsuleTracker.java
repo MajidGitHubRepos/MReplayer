@@ -55,7 +55,6 @@ public class CapsuleTracker implements Runnable{
 	private static String senderCapInstanceName;
 
 
-
 	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream outputFileStream, int[] logicalVectorTime) {
 		this.senderCapInstanceName = "";
 		this.stateExitEvent = null;
@@ -99,6 +98,19 @@ public class CapsuleTracker implements Runnable{
 									if (isConsumable(currentEventTmp)) {
 										//timeMilli = System.nanoTime();
 										//timeMilli = date.getTime();
+										
+										if (TrackerMaker.checkPolicy) {
+											if (!TrackerMaker.checkPolicyViolation(capsuleInstance,currentEventTmp)) {
+												// policy respected so far!
+												TrackerMaker.addCapsulePaths(capsuleInstance, currentEventTmp);
+											}else {
+												System.err.println("=================[A violation form defined policy happend!]================");
+												TrackerMaker.addCapsulePaths(capsuleInstance, currentEventTmp);
+											}
+										}else {
+											TrackerMaker.addCapsulePaths(capsuleInstance, currentEventTmp);
+										}
+										
 										if (currentStatus.contains("TRANISTIONEND")) { // current event is stateExit => save event and do not put timestamp before transition done
 											stateExitEvent = currentEventTmp;
 											stateExitTimer = ((TimerImpl) timer).nowNano();
@@ -130,6 +142,17 @@ public class CapsuleTracker implements Runnable{
 									if (isConsumable(currentEvent)) {
 										//timeMilli = System.nanoTime();
 										//timeMilli = date.getTime(); //Milisec by imposing delay to the producers that would be enough
+										
+										if (TrackerMaker.checkPolicy) {
+											if (!TrackerMaker.checkPolicyViolation(capsuleInstance, currentEvent)) {
+												// policy respected so far!
+												TrackerMaker.addCapsulePaths(capsuleInstance, currentEvent);
+											}else {
+												System.err.println("=================[A violation form defined policy happend!]================");
+											}
+										}else {
+											TrackerMaker.addCapsulePaths(capsuleInstance, currentEvent);
+										}
 										
 										if (currentStatus.contains("TRANISTIONEND")) { // current event is stateExit => save event and do not put timestamp before transition done
 											stateExitEvent = currentEvent;

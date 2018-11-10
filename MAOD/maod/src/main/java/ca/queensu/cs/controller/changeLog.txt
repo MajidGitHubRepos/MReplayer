@@ -1,3 +1,4 @@
+[091118][Info]:  listPolicies are given to the capsuleTracker to check consumable event with the policy
 [091118][Info]:  processing policy.txt in TrackerMaker
 [081118][Info]:  adding policy.txt into input_output_Files in order to introduce runtime policies
 [081118][Info]:  change outputFiles dir to input_output_Files

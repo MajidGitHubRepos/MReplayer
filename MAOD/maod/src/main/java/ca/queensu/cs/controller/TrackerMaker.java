@@ -26,6 +26,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 import ca.queensu.cs.controller.Controller.RunnableImpl;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
@@ -48,9 +50,15 @@ public class TrackerMaker implements Runnable{
 	public static OutputStream outputFileStream;
 	public static int[] logicalVectorTime;
 	private int MAX_NUM_CAPSULE;
-	public List<String[]> listPolicies;
+	private static int MAX_NUM_POLICY;
+	private static List<String[]> listPolicies;
+	public static boolean checkPolicy;
+	public static HashMap<String, String> capsulePathsMap;
+
 	
 	public TrackerMaker(Semaphore semServer, int numberOfCapsules){
+		this.MAX_NUM_POLICY = 2; //Maximum number of entities in the policy chain
+		this.capsulePathsMap =  new HashMap<String, String>();
 		this.MAX_NUM_CAPSULE = numberOfCapsules;
 		this.capInstIdxMap = new HashMap<String, String>();
 		this.semServer = semServer;
@@ -75,8 +83,10 @@ public class TrackerMaker implements Runnable{
 	    		this.listPolicies = UmlrtUtils.readListPolicies(policyFile.getAbsolutePath().toString());
 	    		if (this.listPolicies.size() == 0) {
 		    		System.out.println("["+ Thread.currentThread().getName() +"]> NO Policy defined in : "+ outputFile.getAbsolutePath());
+		    		this.checkPolicy = false;
 	    		}else {
 		    		System.out.println("["+ Thread.currentThread().getName() +"]> <<"+ this.listPolicies.size() +">> Policy/Policies defined in : "+ policyFile.getAbsolutePath());
+		    		this.checkPolicy = true;
 	    		}
 	    		System.out.println("\n============================================================================================================");
 
@@ -109,8 +119,6 @@ public class TrackerMaker implements Runnable{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-
 
 				//if (eventCount > 300) { for (int i = 0; i<trackerCount;i++) {capsuleTrackers[i].shutdown();} break;} // only first 100 events are considered! [for testing propose] 
 
@@ -178,7 +186,8 @@ public class TrackerMaker implements Runnable{
 			System.out.println("- data is created and first event added into the Queue successfully!" );
 			//System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
 			this.logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
-			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, capsuleFullname, outputFileStream, logicalVectorTime);
+			// listPolicies given to the capsuleTracker to check consumable event with the policy
+			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, capsuleFullname, outputFileStream, logicalVectorTime); 
 			Thread capsuleTrackerT = new Thread(capsuleTracker); 
 			capsuleTrackerT.start(); 
 			capsuleTrackers[trackerCount++] = capsuleTracker;
@@ -286,5 +295,84 @@ public class TrackerMaker implements Runnable{
 
 	}
 
+	//==================================================================	
+	//==============================================[checkPolicyViolation]
+	//==================================================================			
 
+	public static boolean checkPolicyViolation(String capsuleInstance, Event event)  
+	{
+		boolean result = false; //policy respected! //TODO: too much optimistic assumption
+		String requirement = "";
+		
+		for (Map.Entry<String, String> entry  : capsulePathsMap.entrySet()) {
+			if (entry.getKey().contentEquals(capsuleInstance)) {
+				String [] currPathArr = entry.getValue().split("\\,");
+				System.out.println("["+ Thread.currentThread().getName() +"]===================> [capsuleInstance]: "+ capsuleInstance +" [PATH]: "+ entry.getValue());
+				//Arbitrary security policy can be applied here on the received event
+				
+				// looking for the requirement in listPolices
+				for(int i = 0; i < listPolicies.size();i++) {
+					String [] policies = listPolicies.get(i);
+					for (int j = 0; j < policies.length ;j++) {
+						if ((capsuleInstance.contains(policies[j])) && (j > 0)){
+							requirement = policies[j-1];
+							break;
+						}
+					}
+					if (requirement != "")
+						break;
+				}
+				
+				//Check Happen-Before rule
+				// TODO: only internal Happen-Before relationship supported in this version
+				if (requirement != "") {
+					int lastIndexOf_ = capsuleInstance.lastIndexOf("__");
+					String rootName = capsuleInstance.substring(0, lastIndexOf_);
+					
+					for (Map.Entry<String, String> entryPath  : capsulePathsMap.entrySet()) {
+						if ((entryPath.getKey().contains(rootName)) && (entryPath.getKey().contains(requirement))) {
+							//check security policy
+							String [] pathArr = entryPath.getValue().split("\\,");
+							if (pathArr.length == 0) { //assumption: if pathArr.length > 0 then required capsule is being sent or has been done! 
+								//requirement has not met!
+								result = true;
+								System.out.println("["+ Thread.currentThread().getName() +"]*****************> [rootName]: "+ rootName +" [requirement]: "+ requirement);
+								System.out.println("["+ Thread.currentThread().getName() +"]*****************> [capsuleInstance]: "+ capsuleInstance +" [BAD PATH]: "+ entryPath.getValue());
+
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return result;
+
+	}
+
+	//==================================================================	
+	//==============================================[addCapsulePaths]
+	//==================================================================			
+
+	public static boolean addCapsulePaths(String capsuleInstance, Event event)  
+	{
+		for (Map.Entry<String, String> entry  : capsulePathsMap.entrySet()) {
+			if (entry.getKey().contentEquals(capsuleInstance)) {
+				String currPath = entry.getValue();
+				// check MAX_NUM_POLICY to avoid memory overflow
+				String [] currPathArr = currPath.split("\\,");
+				if (currPathArr.length > MAX_NUM_POLICY) {
+					currPath = event.getSourceKind()+"_"+event.getType()+"_"+event.getCapsuleInstance()+"_"+event.getCapsuleIndex();
+				} else {
+				currPath = currPath + ","+event.getSourceKind()+"_"+event.getType()+"_"+event.getCapsuleInstance()+"_"+event.getCapsuleIndex();
+				}
+				capsulePathsMap.put(entry.getKey(),currPath);
+				return true;
+			}
+		}
+	
+		capsulePathsMap.put(capsuleInstance, event.getSourceKind()+"_"+event.getType()+"_"+event.getCapsuleInstance()+"_"+event.getCapsuleIndex());
+		return false;
+	}
 }
