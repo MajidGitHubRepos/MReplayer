@@ -3,6 +3,7 @@
     Developers:
     Mojtaba Bagherzadeh(mojtaba@cs.queensu.ca): Initial development
 	-110918:Majid: Changing "Stepping" to "Running" for getting message without interrupt via tcp
+	-191118:Majid: Removing Running statments
 
 */
 
@@ -36,11 +37,11 @@ operation  generateConfigLoad(flag:String) : String{
     result=result.concat("if (tempStr==\"true\")").concat(endLine);
     //result=result.concat("    this->".concat(flag).concat("=true;").concat(endLine));
     //result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Stepping);").concat(endLine)); // Stepping: works fine with SHM , Running: works fine with tcp 
-    result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine));
+    //result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine));
     //..test it tommorow
 	result=result.concat("else").concat(endLine); 
 	//result=result.concat("    this->".concat(flag).concat("=false;").concat(endLine));
-	result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine));
+	//result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine));
 	result=result.concat("std::cout<<\"Config is loaded\\n\";").concat(endLine);
 	return  result;
 }
@@ -53,7 +54,7 @@ operation  generateAskForConfig(flag:String) : String{
    // result=result.concat("std::cin>> tempS;").concat(endLine);
    // result=result.concat("if (tempS==\"1\")").concat(endLine);
     //result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Stepping);").concat(endLine)); // Stepping: works fine with SHM , Running: works fine with tcp 
-    result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine)); 
+    //result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine)); 
    // result=result.concat("else").concat(endLine);
    // result=result.concat("    this->".concat(instrumentPrefix).concat("SRO.setExecMode(Running);").concat(endLine));
 	return  result;

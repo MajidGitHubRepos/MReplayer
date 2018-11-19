@@ -3,6 +3,7 @@
     Developers:
     Mojtaba Bagherzadeh(mojtaba@cs.queensu.ca): Initial development
     Majid Babaei: changing refineForSRO in order to remove addTrace for debugging
+	Majid Babaei: remove lines added Running mode 
 */
 
 import "UMLRTQuery.eol";

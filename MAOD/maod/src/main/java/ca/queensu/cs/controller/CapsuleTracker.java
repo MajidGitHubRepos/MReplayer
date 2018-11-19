@@ -255,12 +255,14 @@ public class CapsuleTracker implements Runnable{
 				for (int i = 0; i < entry.getValue().size(); i++) {
 					//check transition target with targetStateName, they have to be the same 
 					if ((targetStateName!= null)) {
-						//System.out.println("\n["+ Thread.currentThread().getName() +"]+++>[entry.getValue().get(i)] : "+ entry.getValue().get(i));
+						//System.out.println("\n=={Debug}==["+ Thread.currentThread().getName() +"]+++>[getTransition().getSource()] : "+ entry.getValue().get(i).getTransition().getSource().getName());
 
+						if (entry.getValue().get(i).getTransition().getSource().getName() != null) {
 						if (entry.getValue().get(i).getTransition().getTransitonName().contentEquals(eventTransitionName) && 
 								(entry.getValue().get(i).getTransition().getSource().getName().contentEquals(targetStateName))) {
 							return entry.getValue().get(i);
 						}
+					}
 					}else if ((targetStateName == null)) {
 						if (entry.getValue().get(i).getTransition().getTransitonName().contentEquals(eventTransitionName) && 
 								(entry.getValue().get(i).getSource().getPseudoStateKind() == targetStateData.getPseudoStateKind())) {
@@ -592,7 +594,7 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[transitionChecking]
 	//==================================================================	
 	public boolean transitionChecking(Event event) throws InterruptedException {
-		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[in transitionChecking] event: " + event.allDataToString());
+		//System.out.println("\n1["+ Thread.currentThread().getName() +"]*********[in transitionChecking] event: " + event.allDataToString());
 		this.targetChoiceState = false;
 		this.sourceChoiceState = false;
 		boolean result = false;
@@ -602,16 +604,14 @@ public class CapsuleTracker implements Runnable{
 
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
 
-		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
-		String eventTransitionName = eventSourceNameSplit[4];
-
-
 		if (currentStatus.contains("TRANISTIONEND")) {
 
 			//Check eventSourceKind = 3 and eventType = 14 [For TRANISTIONEND]
 
 
 			if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14")){
+				String[] eventSourceNameSplit = event.getSourceName().split("\\::");
+				String eventTransitionName = eventSourceNameSplit[4];
 
 				tableDataMember = rowInTableDataMemberLeadsToTargetState(eventSourceNameSplit[4], targetStateData.getStateName());
 				if (tableDataMember != null) {

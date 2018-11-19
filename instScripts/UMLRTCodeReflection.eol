@@ -2,6 +2,7 @@
     
     Developers:
     Mojtaba Bagherzadeh(mojtaba@cs.queensu.ca): Initial development
+	Majid Babaei: set default value for variablesData
 
 */
 
@@ -34,6 +35,9 @@ operation UMLRTModel!Class  addRequiredAttributes() {
 	vraiablesMetaData.name=instrumentPrefix.concat("variablesData");
 	//vraiablesMetaData.type=UMLPrimitiveTypes!Package.all().selectOne(p|p.name="PrimitiveTypes").packagedElement.selectOne(t|t.name="String");
 	vraiablesMetaData.type=UMLPrimitiveTypes.packagedElement.selectOne(t|t.name="String");
+	
+	vraiablesMetaData.defaultValue = new UMLRTModel!LiteralInteger;
+	vraiablesMetaData.defaultValue.value = 0; // init, 0 is fine!
 	self.ownedAttribute.add(vraiablesMetaData);
 	self.ownedAttribute.add(vraiablesMetaData);
 	//// add a property to save last event for a caspule, this will be forwared to gateway
