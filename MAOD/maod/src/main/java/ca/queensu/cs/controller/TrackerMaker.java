@@ -86,7 +86,7 @@ public class TrackerMaker implements Runnable{
 		    		this.checkPolicy = false;
 	    		}else {
 		    		System.out.println("["+ Thread.currentThread().getName() +"]> <<"+ this.listPolicies.size() +">> Policy/Policies defined in : "+ policyFile.getAbsolutePath());
-		    		this.checkPolicy = true;
+		    		this.checkPolicy = true; //e.g: bank,controller,cashDispenser
 	    		}
 	    		System.out.println("\n============================================================================================================");
 

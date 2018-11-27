@@ -1,4 +1,6 @@
-[191118][Debug]:  adding check the null value in rowInTableDataMemberLeadsToTargetState
+[271118][Info]:  Staring view thread to make a mxGraph for the given model in Controller.java
+[271118][Info]:  default policy check false adding an example for defining policy
+[191118][Debug]: adding check the null value in rowInTableDataMemberLeadsToTargetState
 [091118][Info]:  listPolicies are given to the capsuleTracker to check consumable event with the policy
 [091118][Info]:  processing policy.txt in TrackerMaker
 [081118][Info]:  adding policy.txt into input_output_Files in order to introduce runtime policies

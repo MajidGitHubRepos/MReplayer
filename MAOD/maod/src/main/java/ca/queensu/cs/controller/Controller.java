@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
+import ca.queensu.cs.graph.viewController;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.server.Server.RunnableImpl;
@@ -22,6 +23,7 @@ public class Controller {
 
 	private OrderingEngine orderingEngine;
 	public static UmlrtParser umlrtParser;
+	public static viewController viewer;
 	public static Server server;
 	public static Event event;
 	public static Semaphore semServer;
@@ -29,6 +31,7 @@ public class Controller {
 	
 
 	public Controller() {
+		viewer = new viewController();
 		this.semServer = new Semaphore(1); 
 		Event event = new Event();
 		umlrtParser = new UmlrtParser();
@@ -54,6 +57,7 @@ public class Controller {
 		Thread serverT = new Thread(server.new RunnableImpl()); 
 		serverT.start(); 
 		//--------------------------------------------------------------------------
+		
 
 	}
 
@@ -72,6 +76,12 @@ public class Controller {
 			new Thread(trackerMaker,"waiter").start();
 			//Notifier notifier = new Notifier(msg, Controller.sem);
 			//new Thread(notifier, "notifier").start();
+			
+			//Staring view thread to make a mxGraph for the given model
+			//--------------------------------------------------------------------------
+			Thread viewerT = new Thread(viewer.new RunnableImpl()); 
+			viewerT.start(); 
+			//--------------------------------------------------------------------------
 
 			orderingEngine = new OrderingEngine(umlrtParser.getlistTableData());
 			Thread orderingEngineT = new Thread(orderingEngine);
