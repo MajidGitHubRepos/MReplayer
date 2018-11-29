@@ -74,8 +74,9 @@ public class TrackerMaker implements Runnable{
 	    		ClassLoader classLoader = getClass().getClassLoader();
 	    		String outputFileName = "input_output_Files/output.txt";
 	    		File outputFile = new File(classLoader.getResource(outputFileName).getFile());
+	    		outputFile.createNewFile();
 	    		System.out.println("\n["+ Thread.currentThread().getName() +"]> outputFile exists in : "+ outputFile.getAbsolutePath());
-				this.outputFileStream = new FileOutputStream(new File(outputFile.getAbsolutePath().toString()));
+				this.outputFileStream = new FileOutputStream(outputFile,false);
 				//-----------
 				
 	    		String policyFileName = "input_output_Files/policy.txt";

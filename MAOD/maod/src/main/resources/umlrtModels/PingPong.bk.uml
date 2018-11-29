@@ -42,7 +42,7 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_7eBO8ExOEeeAapBXl-GW2w" name="PingerStateMachine" isReentrant="false">
         <region xmi:type="uml:Region" xmi:id="_7eS7wExOEeeAapBXl-GW2w" name="Region">
-          <transition xmi:type="uml:Transition" xmi:id="_7emdwExOEeeAapBXl-GW2w" name="InitialTr" source="_7eXNMExOEeeAapBXl-GW2w" target="_7ehlQExOEeeAapBXl-GW2w">
+          <transition xmi:type="uml:Transition" xmi:id="_7emdwExOEeeAapBXl-GW2w" name="Initial" source="_7eXNMExOEeeAapBXl-GW2w" target="_7ehlQExOEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_-mSyAExPEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.show(&quot;leaving initial pseudo state of pinger\n&quot;);
@@ -59,7 +59,7 @@ pingCount=pingCount+1;</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_DrVZMExQEeeAapBXl-GW2w" event="_bV-UcExOEeeAapBXl-GW2w" port="_gCK90ExOEeeAapBXl-GW2w"/>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_7eXNMExOEeeAapBXl-GW2w" name="initState" kind="initial"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_7eXNMExOEeeAapBXl-GW2w" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_7ehlQExOEeeAapBXl-GW2w" name="PLAYING">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_e3YJMExPEeeAapBXl-GW2w" name="Entry" isReentrant="false">
               <language>C++</language>
@@ -83,7 +83,7 @@ pingCount=pingCount+1;</body>
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_P8x8sExQEeeAapBXl-GW2w" name="PongerStateMachine" isReentrant="false">
         <region xmi:type="uml:Region" xmi:id="_P9XykExQEeeAapBXl-GW2w" name="Region">
-          <transition xmi:type="uml:Transition" xmi:id="_P9qGcExQEeeAapBXl-GW2w" name="InitialTr" source="_P9fHUExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w"/>
+          <transition xmi:type="uml:Transition" xmi:id="_P9qGcExQEeeAapBXl-GW2w" name="Initial" source="_P9fHUExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w"/>
           <transition xmi:type="uml:Transition" xmi:id="_ZUZMUExQEeeAapBXl-GW2w" name="onPing" kind="external" source="_P9jYwExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q3J4cExQEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
@@ -92,7 +92,7 @@ ponger.pong().send();</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_b3gpUExQEeeAapBXl-GW2w" event="_akzWMExOEeeAapBXl-GW2w" port="_kypqQExOEeeAapBXl-GW2w"/>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_P9fHUExQEeeAapBXl-GW2w" name="initState" kind="initial"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_P9fHUExQEeeAapBXl-GW2w" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_P9jYwExQEeeAapBXl-GW2w" name="PLAYING">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_fs-fAExQEeeAapBXl-GW2w" name="Entry" isReentrant="false">
               <language>C++</language>

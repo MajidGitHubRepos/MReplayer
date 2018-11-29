@@ -80,7 +80,7 @@ public class Controller {
 			//Staring view thread to make a mxGraph for the given model
 			//--------------------------------------------------------------------------
 			Thread viewerT = new Thread(viewer.new RunnableImpl()); 
-			viewerT.start(); 
+			viewerT.start();
 			//--------------------------------------------------------------------------
 
 			orderingEngine = new OrderingEngine(umlrtParser.getlistTableData());

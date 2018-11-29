@@ -1,3 +1,6 @@
+[291118][Debug]: Some bugs in outputStream in graphic package fixed
+[291118][Debug]: Some bugs in makeInitJsonFile function fixed 
+[281118][Info]:  Adding functions to create json file based on the content of TabelData object
 [271118][Info]:  Adding viewController and viewEngine classes
 [181118][Info]:  Initial version, making the package
 

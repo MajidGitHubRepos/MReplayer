@@ -734,7 +734,7 @@ public class CapsuleTracker implements Runnable{
 	}
 
 	//==================================================================	
-	//==============================================[openOutputStreamFile]
+	//==============================================[outputStreamToFile]
 	//==================================================================	
 	private static void outputStreamToFile(OutputStream os, String data) {
 		try {

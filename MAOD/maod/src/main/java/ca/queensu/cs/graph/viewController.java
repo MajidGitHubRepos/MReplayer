@@ -19,18 +19,12 @@ import ca.queensu.cs.umlrtParser.UmlrtParser.RunnableImpl;
 
 public class viewController {
 	public ViewEngine viewEngine;
-	public static void main(String[] args) throws IOException 
-    { 
-		UmlrtParser umlrtParser = new UmlrtParser();
-        Thread t1 = new Thread(umlrtParser.new RunnableImpl()); 
-        t1.start(); 
-    } 
+	public static UmlrtParser umlrtParser;
   
     public class RunnableImpl implements Runnable { 
 
-	public void run() {
-    			   		 	
- 
+	public void run() {		   		 	
+		
 		    viewEngine = new ViewEngine();
 		    Thread viewEngineT = new Thread(viewEngine);
 		    
