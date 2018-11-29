@@ -103,56 +103,65 @@ public class ViewEngine implements Runnable {
 						JSONObject objTR = new JSONObject();
 						objTR.put("name",entry.getValue().get(j).getTransition().getTransitonName());
 						objTR.put("style","");
-						listSM.add(objTR);
+						
+						JSONArray listTR = new JSONArray();
 
 						JSONObject objStateSrc = new JSONObject();
 						objStateSrc.put("name",entry.getValue().get(j).getSource().getStateName());
 						objStateSrc.put("style","");
-						listSM.add(objStateSrc);
+						//listSM.add(objStateSrc);
+						listTR.add(objStateSrc);
 
 						JSONObject objStateTrg = new JSONObject();
 						objStateTrg.put("name",entry.getValue().get(j).getTarget().getStateName());
 						objStateTrg.put("style","");
-						listSM.add(objStateTrg);
+						//listSM.add(objStateTrg);
+						listTR.add(objStateTrg);
+						
+						objTR.put("SrcTrg",listTR);
+						listSM.add(objTR);
 					}
 					objCapsulesInstance.put("stateMachine", listSM);
 					listCapsulesInstances.add(objCapsulesInstance);
 				}
-				objTop.put("capsules", listCapsulesInstances);
+				//objTop.put("capsules", listCapsulesInstances);
 			}
 			
 			else {
-				System.out.println("==================================[in else]============================");
-
 					JSONObject objCapsulesInstance = new JSONObject();
 					objCapsulesInstance.put("name", capsuleInstance);
 					JSONArray listSM = new JSONArray();
 					
-
 					for (int j = 0; j < entry.getValue().size(); j++) {
 						//every value is a transition
 
 						JSONObject objTR = new JSONObject();
 						objTR.put("name",entry.getValue().get(j).getTransition().getTransitonName());
 						objTR.put("style","");
-						listSM.add(objTR);
+						
+						JSONArray listTR = new JSONArray();
 
 						JSONObject objStateSrc = new JSONObject();
 						objStateSrc.put("name",entry.getValue().get(j).getSource().getStateName());
 						objStateSrc.put("style","");
-						listSM.add(objStateSrc);
+						//listSM.add(objStateSrc);
+						listTR.add(objStateSrc);
 
 						JSONObject objStateTrg = new JSONObject();
 						objStateTrg.put("name",entry.getValue().get(j).getTarget().getStateName());
 						objStateTrg.put("style","");
-						listSM.add(objStateTrg);
+						//listSM.add(objStateTrg);
+						listTR.add(objStateTrg);
+						
+						objTR.put("SrcTrg",listTR);
+						listSM.add(objTR);
 					}
 					objCapsulesInstance.put("stateMachine", listSM);
-					listCapsulesInstance.add(objCapsulesInstance);
+					listCapsulesInstances.add(objCapsulesInstance);
 				//}
 					
 			}
-			objTop.put("capsules", listCapsulesInstance);
+			objTop.put("capsules", listCapsulesInstances);
 			
 		}
 		System.out.println("==================================[write into the model.json]============================");
