@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -20,10 +21,12 @@ import ca.queensu.cs.umlrtParser.UmlrtParser.RunnableImpl;
 public class viewController {
 	public ViewEngine viewEngine;
 	public static UmlrtParser umlrtParser;
+	
   
     public class RunnableImpl implements Runnable { 
 
-	public void run() {		   		 	
+	public void run() {
+		
 		
 		    viewEngine = new ViewEngine();
 		    Thread viewEngineT = new Thread(viewEngine);

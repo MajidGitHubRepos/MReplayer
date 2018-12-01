@@ -1,3 +1,4 @@
+[301118][Info]:  Sending transition notification to the draw.io server in CapsuleTracker.java
 [291118][Info]:  the outputStreaming method to write vt in output file improved
 [281118][Info]:  Adding sample pingPong json file to input_output_Files directory
 [271118][Info]:  Staring view thread to make a mxGraph for the given model in Controller.java

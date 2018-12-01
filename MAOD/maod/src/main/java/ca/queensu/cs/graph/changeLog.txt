@@ -1,3 +1,4 @@
+[301118][Info]:  Sending changes in a json format to the draw.io server
 [291118][Debug]: Some bugs in ViewEngine.java, makeInitJsonFile fixed, now it is able to make json file for complex umlrt models
 [291118][Debug]: Some bugs in outputStream in graphic package fixed
 [291118][Debug]: Some bugs in makeInitJsonFile function fixed 

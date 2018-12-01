@@ -6,9 +6,12 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +26,7 @@ public class ViewEngine implements Runnable {
 	public static UmlrtParser umlrtParser;
 	public static OutputStream outputFileStream;
 	
+	
 
 
 	public ViewEngine() {
@@ -32,7 +36,7 @@ public class ViewEngine implements Runnable {
 	//==================================================================	
 	//==============================================[Run]
 	//==================================================================	
-	public final void run() {		
+	public final void run() {
 		try {
 			makeInitJsonFile();
 		} catch (FileNotFoundException e) {
@@ -43,6 +47,7 @@ public class ViewEngine implements Runnable {
 			e.printStackTrace();
 		}
 		makeMxGraphModel();
+		//sendJsonToServer();
 
 	}
 
@@ -175,7 +180,9 @@ public class ViewEngine implements Runnable {
 		//FileWriter file;
 		outputStreamToFile(outputFileStream,objTop.toJSONString());
 		//-------
-
+		
+		sendJsonToServer(objTop.toJSONString()); //will be analysied in index.html by initialModelAnalysis()
+		
 
 
 	}
@@ -190,13 +197,7 @@ public class ViewEngine implements Runnable {
 			os.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}/*finally{
-            try {
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
+		}
 	}
 	//==================================================================	
 	//==============================================[makeMxGraphModel]
@@ -205,6 +206,20 @@ public class ViewEngine implements Runnable {
 		System.out.println("["+ Thread.currentThread().getName() +"]==========================[makeMxGraphModel]==========================");
 
 
+	}
+	
+
+	//==================================================================	
+	//==============================================[sendJsonToServer]
+	//==================================================================	
+	public final static void sendJsonToServer(String jsonString) throws IOException {
+		PrintWriter out;
+		Socket socket = new Socket("localhost", 8090);
+		out = new PrintWriter(socket.getOutputStream(), true);
+		out.println(jsonString);
+		out.flush();
+		out.close();
+		socket.close();
 	}
 
 }

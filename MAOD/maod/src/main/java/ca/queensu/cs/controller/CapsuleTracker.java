@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,7 +20,10 @@ import java.util.concurrent.Semaphore;
 
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.uml2.uml.State;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+import ca.queensu.cs.graph.ViewEngine;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.umlrtParser.StateData;
 import ca.queensu.cs.umlrtParser.TableDataMember;
@@ -225,6 +231,16 @@ public class CapsuleTracker implements Runnable{
 				if (!this.targetChoiceState && !this.sourceChoiceState) {
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ transitionName);
+				}
+				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
+					try {
+						JSONObject jsonObj = makeJSONobj(capsuleInstance, transitionName);
+						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				}
 				logicalVectorTime[TrackerMakerNumber]++; 	
 			    return true;};
@@ -750,6 +766,41 @@ public class CapsuleTracker implements Runnable{
         }*/
 	}
 
+	//==================================================================	
+	//==============================================[isPortInUse]
+	//==================================================================
+	private static boolean isPortInUse(String host, int port) {
+		  // Assume no connection is possible.
+		  boolean result = false;
+
+		  try {
+		    (new Socket(host, port)).close();
+		    result = true;
+		  }
+		  catch(SocketException e) {
+		    // Could not connect.
+		  } catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		  return result;
+		}
+	//==================================================================	
+	//==============================================[makeJSONobj]
+	//==================================================================
+	private static JSONObject makeJSONobj(String capInstName, String transitionName) {
+			JSONObject jsonObj = new JSONObject();
+			
+			JSONArray list = new JSONArray();
+			list.add(capInstName); list.add(transitionName);
+			jsonObj.put("list", list);
+			return jsonObj;
+			
+		}
 	@SuppressWarnings("deprecation")
 	public void shutdown() {
 		Thread.currentThread().stop();
