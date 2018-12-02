@@ -182,6 +182,7 @@ public class ViewEngine implements Runnable {
 		//-------
 		
 		sendJsonToServer(objTop.toJSONString()); //will be analysied in index.html by initialModelAnalysis()
+			//NOTE: ModelJsonServer checks if its Queue is empty then it is a registation message and save it in a registration.json file
 		
 
 

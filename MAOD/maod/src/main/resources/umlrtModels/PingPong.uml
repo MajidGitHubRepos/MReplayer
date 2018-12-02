@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:UMLRTStateMachines="http://www.eclipse.org/papyrus/umlrt/statemachine" xmlns:UMLRealTime="http://www.eclipse.org/papyrus/umlrt" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:RTCppProperties="http://www.eclipse.org/papyrus/umlrt/cppproperties" xmlns:UMLRTStateMachines="http://www.eclipse.org/papyrus/umlrt/statemachine" xmlns:UMLRealTime="http://www.eclipse.org/papyrus/umlrt" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
   <uml:Model xmi:id="_MImLUExOEeeAapBXl-GW2w" name="PingPong">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_SI_ngExOEeeAapBXl-GW2w" source="http://www.eclipse.org/papyrus-rt/language/1.0.0">
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_SJAOkExOEeeAapBXl-GW2w" key="language" value="umlrt-cpp"/>
@@ -42,7 +42,7 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_7eBO8ExOEeeAapBXl-GW2w" name="PingerStateMachine" isReentrant="false">
         <region xmi:type="uml:Region" xmi:id="_7eS7wExOEeeAapBXl-GW2w" name="Region">
-          <transition xmi:type="uml:Transition" xmi:id="_7emdwExOEeeAapBXl-GW2w" name="InitialTr" source="_7eXNMExOEeeAapBXl-GW2w" target="_7ehlQExOEeeAapBXl-GW2w">
+          <transition xmi:type="uml:Transition" xmi:id="_7emdwExOEeeAapBXl-GW2w" name="InitTr" source="_7eXNMExOEeeAapBXl-GW2w" target="_7ehlQExOEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_-mSyAExPEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.show(&quot;leaving initial pseudo state of pinger\n&quot;);
@@ -63,7 +63,8 @@ pingCount=pingCount+1;</body>
           <subvertex xmi:type="uml:State" xmi:id="_7ehlQExOEeeAapBXl-GW2w" name="PLAYING">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_e3YJMExPEeeAapBXl-GW2w" name="Entry" isReentrant="false">
               <language>C++</language>
-              <body>log.show(&quot;Entering playing state of pinger\n&quot;);</body>
+              <body>log.show(&quot;Entering playing state of pinger\n&quot;);
+std::this_thread::sleep_for(std::chrono::milliseconds(1000));</body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_gBgaAExPEeeAapBXl-GW2w" name="Exit" isReentrant="false">
               <language>C++</language>
@@ -83,7 +84,7 @@ pingCount=pingCount+1;</body>
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_P8x8sExQEeeAapBXl-GW2w" name="PongerStateMachine" isReentrant="false">
         <region xmi:type="uml:Region" xmi:id="_P9XykExQEeeAapBXl-GW2w" name="Region">
-          <transition xmi:type="uml:Transition" xmi:id="_P9qGcExQEeeAapBXl-GW2w" name="InitialTr" source="_P9fHUExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w"/>
+          <transition xmi:type="uml:Transition" xmi:id="_P9qGcExQEeeAapBXl-GW2w" name="InitTr" source="_P9fHUExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w"/>
           <transition xmi:type="uml:Transition" xmi:id="_ZUZMUExQEeeAapBXl-GW2w" name="onPing" kind="external" source="_P9jYwExQEeeAapBXl-GW2w" target="_P9jYwExQEeeAapBXl-GW2w">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_q3J4cExQEeeAapBXl-GW2w" name="Effect" isReentrant="false">
               <language>C++</language>
@@ -96,7 +97,8 @@ ponger.pong().send();</body>
           <subvertex xmi:type="uml:State" xmi:id="_P9jYwExQEeeAapBXl-GW2w" name="PLAYING">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_fs-fAExQEeeAapBXl-GW2w" name="Entry" isReentrant="false">
               <language>C++</language>
-              <body>log.show(&quot;Entering playing state of ponger\n&quot;);</body>
+              <body>log.show(&quot;Entering playing state of ponger\n&quot;);
+std::this_thread::sleep_for(std::chrono::milliseconds(1000));</body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_j-wdQExQEeeAapBXl-GW2w" name="Exit" isReentrant="false">
               <language>C++</language>
@@ -156,4 +158,7 @@ ponger.pong().send();</body>
   <UMLRTStateMachines:RTState xmi:id="_P9pfYExQEeeAapBXl-GW2w" base_State="_P9jYwExQEeeAapBXl-GW2w"/>
   <UMLRTStateMachines:RTRegion xmi:id="_P9qtgExQEeeAapBXl-GW2w" base_Region="_P9XykExQEeeAapBXl-GW2w"/>
   <UMLRTStateMachines:RTStateMachine xmi:id="_P9wNEExQEeeAapBXl-GW2w" base_StateMachine="_P8x8sExQEeeAapBXl-GW2w"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_oHD00M1dEeiMnPgc7UXnZQ" headerPreface="#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_n15_4ExOEeeAapBXl-GW2w"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_7hYfgM1dEeiMnPgc7UXnZQ" headerPreface="#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_dBdl4ExOEeeAapBXl-GW2w"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_-I7JgM1dEeiMnPgc7UXnZQ" headerPreface="#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_irESsExOEeeAapBXl-GW2w"/>
 </xmi:XMI>
