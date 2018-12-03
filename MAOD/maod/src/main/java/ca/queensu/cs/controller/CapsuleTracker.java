@@ -211,20 +211,42 @@ public class CapsuleTracker implements Runnable{
 		switch (currentStatus) {
 			case "REGISTER":          if (registerChecking(event))       {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: REGISTER received!");
-				logicalVectorTime[TrackerMakerNumber]++; return true;};
+				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 				break;
 				
 			case "Initial":  	      if (initChecking(event))           {
-				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Initial received!"); 
-				logicalVectorTime[TrackerMakerNumber]++; return true;};
+				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Initial received!");
+				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
+					try {
+						JSONObject jsonObj = makeJSONobj(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr");
+						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 				break;
 			
 			case "STATEENTRYEND":     if (entryStateChecking(event))     {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEENTRYEND received! for: "+ currentState);
-				logicalVectorTime[TrackerMakerNumber]++; return true;};
+				
+				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
+					try {
+						JSONObject jsonObj = makeJSONobj(TrackerMaker.priorityEventCounter,capsuleInstance, currentState);
+						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+				
+				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 				break;
 			
-			case "PREtr":             if (preTransitionChecking(event))  {logicalVectorTime[TrackerMakerNumber]++; 	 return true;};
+			case "PREtr":             if (preTransitionChecking(event))  {logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 				break;
 			
 			case "TRANISTIONEND":     if (transitionChecking(event))     {
@@ -234,7 +256,7 @@ public class CapsuleTracker implements Runnable{
 				}
 				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 					try {
-						JSONObject jsonObj = makeJSONobj(capsuleInstance, transitionName);
+						JSONObject jsonObj = makeJSONobj(TrackerMaker.priorityEventCounter,capsuleInstance, transitionName);
 						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -242,8 +264,7 @@ public class CapsuleTracker implements Runnable{
 					}
 
 				}
-				logicalVectorTime[TrackerMakerNumber]++; 	
-			    return true;};
+				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 			break;
 				
 		}
@@ -466,8 +487,8 @@ public class CapsuleTracker implements Runnable{
 		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
 
 		//Check transitionKind = 3 and eventType = 14 [For Init] 
-		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14") && 
-				event.getSourceName().contains("Initial")) {
+		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14") /*&& 
+				event.getSourceName().contains("initTr")*/) { 
 			//No need to check for trigger because it is init transition!
 
 			//Extracting init transition action code(s) from listTableData
@@ -792,11 +813,11 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[makeJSONobj]
 	//==================================================================
-	private static JSONObject makeJSONobj(String capInstName, String transitionName) {
+	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String transitionName) {
 			JSONObject jsonObj = new JSONObject();
 			
 			JSONArray list = new JSONArray();
-			list.add(capInstName); list.add(transitionName);
+			list.add(priorityEventCounter); list.add(capInstName); list.add(transitionName);
 			jsonObj.put("list", list);
 			return jsonObj;
 			

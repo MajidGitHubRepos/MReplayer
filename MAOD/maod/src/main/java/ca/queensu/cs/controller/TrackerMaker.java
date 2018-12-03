@@ -46,6 +46,7 @@ public class TrackerMaker implements Runnable{
 	public static HashMap<String, String> capInstIdxMap;
 
 	public static int trackerCount;
+	public static int priorityEventCounter;
 	public static int eventCount;
 	public static OutputStream outputFileStream;
 	public static int[] logicalVectorTime;
@@ -66,6 +67,7 @@ public class TrackerMaker implements Runnable{
 		this.capsuleTrackers = new CapsuleTracker[MAX_NUM_CAPSULE];
 		this.dataArray = new Data[MAX_NUM_CAPSULE];
 		this.trackerCount = 0;
+		this.priorityEventCounter = 0;
 		this.eventCount = 0;
 		this.capsuleInstances__indexes = "";
 

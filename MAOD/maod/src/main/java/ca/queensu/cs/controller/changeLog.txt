@@ -1,3 +1,5 @@
+[031218][Info]:  Adding sendJsonToServer for every consumable evet in CapsuleTracker.java 
+[031218][Debug]: Init transition no longer to be called initTr, the dependency removed in initChecking() in CapsuleTracker.java
 [301118][Info]:  Sending transition notification to the draw.io server in CapsuleTracker.java
 [291118][Info]:  the outputStreaming method to write vt in output file improved
 [281118][Info]:  Adding sample pingPong json file to input_output_Files directory
