@@ -202,6 +202,26 @@ public class CapsuleTracker implements Runnable{
 			}
 		}
 	}
+	
+	//==================================================================	
+	//==============================================[callSendJsonToServer]
+	//==================================================================
+	public boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName) {
+		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
+			try {
+				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, itemName);
+				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			TrackerMaker.priorityEventCounter++;
+			return true;
+
+		}else {
+			return false;
+		}
+	}
 
 	//==================================================================	
 	//==============================================[isConsumable]
@@ -216,33 +236,16 @@ public class CapsuleTracker implements Runnable{
 				
 			case "Initial":  	      if (initChecking(event))           {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Initial received!");
-				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
-					try {
-						JSONObject jsonObj = makeJSONobj(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr");
-						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				
+				if (sourceStateData.getStateName()!=null)
+					if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, sourceStateData.getStateName())) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 
-				}
-				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
+				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+				logicalVectorTime[TrackerMakerNumber]++; return true;};
 				break;
 			
 			case "STATEENTRYEND":     if (entryStateChecking(event))     {
-				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEENTRYEND received! for: "+ currentState);
-				
-				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
-					try {
-						JSONObject jsonObj = makeJSONobj(TrackerMaker.priorityEventCounter,capsuleInstance, currentState);
-						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-				
+				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEENTRYEND received! for: "+ currentState);	
 				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 				break;
 			
@@ -254,17 +257,10 @@ public class CapsuleTracker implements Runnable{
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ transitionName);
 				}
-				if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
-					try {
-						JSONObject jsonObj = makeJSONobj(TrackerMaker.priorityEventCounter,capsuleInstance, transitionName);
-						ViewEngine.sendJsonToServer(jsonObj.toJSONString());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, currentState))   System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, transitionName)) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 
-				}
-				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
+				logicalVectorTime[TrackerMakerNumber]++; return true;};
 			break;
 				
 		}
