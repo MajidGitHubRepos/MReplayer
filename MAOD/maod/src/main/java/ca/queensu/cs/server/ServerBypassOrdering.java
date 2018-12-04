@@ -36,8 +36,10 @@ public class ServerBypassOrdering {
 	public static BlockingQueue<Event> eventQueue;
 	static Semaphore sem;
 	public static UmlrtParser umlrtParser;
+	public static int priorityEventCounter;
 
 	public ServerBypassOrdering(final String ipAddress, final int portNumber, Semaphore sem) throws IOException {
+		this.priorityEventCounter = 0;
 		viewer = new viewController();
 		umlrtParser = new UmlrtParser();
 		this.sem = sem;
