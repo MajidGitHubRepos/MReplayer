@@ -28,10 +28,12 @@ public class ViewEngine implements Runnable {
 	public static OutputStream outputFileStream;
 	
 	
+	
 
 
 	public ViewEngine() {
 		this.umlrtParser = new UmlrtParser();
+		
 	}
 
 	//==================================================================	
@@ -61,7 +63,7 @@ public class ViewEngine implements Runnable {
 	//==================================================================	
 	//==============================================[makeInitJsonFile]
 	//==================================================================	
-	public final void makeInitJsonFile() throws IOException {
+	public final static void makeInitJsonFile() throws IOException {
 		System.out.println("["+ Thread.currentThread().getName() +"]==========================[makeInitJsonFile]==========================");
 
 		//		
@@ -94,9 +96,10 @@ public class ViewEngine implements Runnable {
 		JSONArray listCapsulesInstances = new JSONArray();
 		objTop.put("name", "Top");
 		//listJSONobj.add(topObj);
-		//System.out.println("---> listTableData: " + Controller.listTableData.entrySet());
-		for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
-			System.out.println("---> entry.getKey(): "+entry.getKey());
+		System.out.println("---> listTableData: " + viewController.listTableData);
+		//ViewEngine.listTableData = umlrtParser.getlistTableData();
+		for (Map.Entry<String, List<TableDataMember>> entry  : viewController.listTableData.entrySet()) {
+			//System.out.println("---> entry.getKey(): "+entry.getKey());
 			
 			//JSONObject objCapsules = new JSONObject();
 			String capsuleInstance = entry.getKey().replaceAll("\\s+","");
@@ -176,8 +179,8 @@ public class ViewEngine implements Runnable {
 			objTop.put("capsules", listCapsulesInstances);
 			
 		}
-		System.out.println("==================================[write into the model.json]============================");
-		ClassLoader classLoader = getClass().getClassLoader();
+		System.out.println("=====[SEND INITIAL JSON FILE TO THE WEBSERVER]======");
+		/*ClassLoader classLoader = getClass().getClassLoader();
 		String outputFileName = "input_output_Files/model.json";
 		File outputFile = new File(classLoader.getResource(outputFileName).getFile());
 		outputFile.createNewFile();
@@ -187,7 +190,7 @@ public class ViewEngine implements Runnable {
 		//FileWriter file;
 		outputStreamToFile(outputFileStream,objTop.toJSONString());
 		//-------
-		
+*/		
 		sendJsonToServer(objTop.toJSONString()); //will be analysied in index.html by initialModelAnalysis()
 			//NOTE: ModelJsonServer checks if its Queue is empty then it is a registation message and save it in a registration.json file
 		

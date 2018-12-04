@@ -94,7 +94,7 @@ varBool,Boolean,false
 ===========================================================================
  */
 
-public final class ByteReader implements Runnable {
+public final class ReaderBypassOrdering implements Runnable {
 
 	public static enum Command {
 		WAITING_FOR_BREAKPOINT_REACHED,
@@ -114,7 +114,7 @@ public final class ByteReader implements Runnable {
 	private Semaphore sem; 
 
 
-	public ByteReader(String[] caps, Semaphore sem ) {
+	public ReaderBypassOrdering(String[] caps, Semaphore sem ) {
 		capsuleNames = caps;
 		this.sem = sem; 
 	}
@@ -122,7 +122,7 @@ public final class ByteReader implements Runnable {
 	public final void run() {
 		try {
 			try {
-				Server.io.input = new DataInputStream(Server.io.socket.getInputStream());
+				ServerBypassOrdering.io.input = new DataInputStream(ServerBypassOrdering.io.socket.getInputStream());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -287,8 +287,8 @@ public final class ByteReader implements Runnable {
 	//==================================================================	
 	public void readFromSocketWithSize() throws InterruptedException {
 		try {
-			if (!Server.io.isConnected()) {
-				Server.io.close();
+			if (!ServerBypassOrdering.io.isConnected()) {
+				ServerBypassOrdering.io.close();
 				return;
 			}
 			char[] sizeBuffer = new char[4];
@@ -299,12 +299,12 @@ public final class ByteReader implements Runnable {
 			//----------[Reading size and message from client]
 
 			byte[] byteBuffer1 = new byte[sizeBuffer.length];
-			int result = Server.io.read(byteBuffer1, 0, 4);
+			int result = ServerBypassOrdering.io.read(byteBuffer1, 0, 4);
 			for (int i = 0; i < byteBuffer1.length; i++) {
 				sizeBuffer[i] = (char) byteBuffer1[i];
 			}
 			if (result == -1) {
-				Server.io.close();
+				ServerBypassOrdering.io.close();
 				return;
 			}
 			
@@ -319,7 +319,7 @@ public final class ByteReader implements Runnable {
 			byte[] byteBuffer2 = new byte[messageBuffer.length+100];
 
 			message = new String(messageBuffer);
-			Server.io.read(byteBuffer2, 0, size);
+			ServerBypassOrdering.io.read(byteBuffer2, 0, size);
 			messageBuffer = null;
 			message = new String(byteBuffer2, StandardCharsets.UTF_8);
 			byteBuffer2 = null;
@@ -328,7 +328,7 @@ public final class ByteReader implements Runnable {
 			//if (Server.eventQueue.size()<100)
 				//System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
 
-			Server.eventQueue.put(event);
+			ServerBypassOrdering.eventQueue.put(event);
 
 			int id = 0;
 

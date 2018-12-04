@@ -70,6 +70,7 @@ public class Controller {
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n\n");
 			
 			Controller.listTableData = umlrtParser.getlistTableData();
+			viewer.setListTableData(umlrtParser.getlistTableData());
 			int numberOfCapsules =  countCapsule();
 			//Message msg = new Message("process it", event);
 			TrackerMaker trackerMaker = new TrackerMaker(semServer, numberOfCapsules);

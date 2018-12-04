@@ -67,7 +67,7 @@ public class UmlrtParser {
 	//private  Thread parserEngineT;
 	private ParserEngine parserEngine;
 	private boolean umlrtParsingDone;
-	private  Map<String, List<TableDataMember>> listTableData;
+	public static  Map<String, List<TableDataMember>> listTableData;
 	private List<CapsuleConn> listCapsuleConn;
 	public File outputFile;
 	public File policyFile;

@@ -59,7 +59,7 @@ public class CapsuleTracker implements Runnable{
 	private Event stateExitEvent;
 	private double stateExitTimer =0;
 	private static String senderCapInstanceName;
-	private int WEBSERVER_PORT;
+	private static int WEBSERVER_PORT;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream outputFileStream, int[] logicalVectorTime) {
@@ -208,8 +208,8 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[callSendJsonToServer]
 	//==================================================================
-	public boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName) throws Exception {
-		if (isPortInUse("localhost",WEBSERVER_PORT)) { //8090 used to send command to the local draw.io server
+	public static boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName) throws Exception {
+		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
 				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, itemName);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
@@ -221,7 +221,7 @@ public class CapsuleTracker implements Runnable{
 			return true;
 
 		}else {
-			throw new Exception(WEBSERVER_PORT+" IS NOT AVAILABLE");
+			throw new Exception(8090+" IS NOT AVAILABLE");
 		}
 	}
 
