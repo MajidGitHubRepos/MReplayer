@@ -125,9 +125,9 @@ public final class ByteReader implements Runnable {
 
 
 			while (!Thread.currentThread().isInterrupted()) {
-				this.sem.acquire(); 
+				//this.sem.acquire(); 
 				readFromSocketWithSize();
-				this.sem.release(); 
+				//this.sem.release(); 
 			}
 			System.out.println("Deleting client");
 		} catch (IOException e) {
@@ -324,7 +324,7 @@ public final class ByteReader implements Runnable {
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
 			//if (Server.eventQueue.size()<100)
-			//	System.out.println("[Event]: "+event.allDataToString() + "\n\n");
+				System.out.println("[Event]: "+event.allDataToString() + "\n\n");
 
 			Server.eventQueue.put(event);
 

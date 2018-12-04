@@ -59,9 +59,11 @@ public class CapsuleTracker implements Runnable{
 	private Event stateExitEvent;
 	private double stateExitTimer =0;
 	private static String senderCapInstanceName;
+	private int WEBSERVER_PORT;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream outputFileStream, int[] logicalVectorTime) {
+		this.WEBSERVER_PORT = 8090;
 		this.senderCapInstanceName = "";
 		this.stateExitEvent = null;
 		this.TrackerMakerNumber = 0;
@@ -206,8 +208,8 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[callSendJsonToServer]
 	//==================================================================
-	public boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName) {
-		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
+	public boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName) throws Exception {
+		if (isPortInUse("localhost",WEBSERVER_PORT)) { //8090 used to send command to the local draw.io server
 			try {
 				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, itemName);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
@@ -219,7 +221,7 @@ public class CapsuleTracker implements Runnable{
 			return true;
 
 		}else {
-			return false;
+			throw new Exception(WEBSERVER_PORT+" IS NOT AVAILABLE");
 		}
 	}
 
@@ -227,7 +229,7 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[isConsumable]
 	//==================================================================
 	public boolean isConsumable(Event event) throws InterruptedException {
-
+		try {
 		switch (currentStatus) {
 			case "REGISTER":          if (registerChecking(event))       {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: REGISTER received!");
@@ -238,7 +240,9 @@ public class CapsuleTracker implements Runnable{
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Initial received!");
 				
 				if (sourceStateData.getStateName()!=null)
-					if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, sourceStateData.getStateName())) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+					
+						if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, sourceStateData.getStateName())) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+					
 
 				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
@@ -267,6 +271,12 @@ public class CapsuleTracker implements Runnable{
 
 
 		return false;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			return false;
+			
+		}
 	}
 
 	//==================================================================	
@@ -786,7 +796,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[isPortInUse]
 	//==================================================================
-	private static boolean isPortInUse(String host, int port) {
+	public static boolean isPortInUse(String host, int port) {
 		  // Assume no connection is possible.
 		  boolean result = false;
 

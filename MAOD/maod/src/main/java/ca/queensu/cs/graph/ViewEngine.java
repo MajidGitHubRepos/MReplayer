@@ -16,6 +16,7 @@ import java.util.concurrent.Semaphore;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import ca.queensu.cs.controller.CapsuleTracker;
 import ca.queensu.cs.controller.Controller;
 import ca.queensu.cs.umlrtParser.EntryData;
 import ca.queensu.cs.umlrtParser.TableDataMember;
@@ -38,7 +39,13 @@ public class ViewEngine implements Runnable {
 	//==================================================================	
 	public final void run() {
 		try {
-			makeInitJsonFile();
+			if (CapsuleTracker.isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
+				makeInitJsonFile();
+			}else {
+				System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+				System.err.println("=====[PROGRAM TERMINATED]=====");
+				System.exit(0);
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
