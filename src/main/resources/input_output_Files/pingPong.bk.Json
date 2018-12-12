@@ -1,0 +1,56 @@
+{
+  "TopCapsule": [
+    {
+      "name": "Top",
+      "parts": {
+        "capsules": [
+          {
+            "name": "pinger",
+            "stateMachine": [
+              {
+                "S1": {
+                  "name": "Init",
+                  "style": ""
+                },
+                "S2": {
+                  "name": "Playing",
+                  "style": ""
+                },
+                "T1": {
+                  "name": "InitTr",
+                  "style": ""
+                },
+                "T2": {
+                  "name": "onPong",
+                  "style": ""
+                }
+              }
+            ]
+          },{
+            "name": "ponger",
+            "stateMachine": [
+              {
+                "S1": {
+                  "name": "Init",
+                  "style": ""
+                },
+                "S2": {
+                  "name": "Playing",
+                  "style": ""
+                },
+                "T1": {
+                  "name": "InitTr",
+                  "style": ""
+                },
+                "T2": {
+                  "name": "onPing",
+                  "style": ""
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
