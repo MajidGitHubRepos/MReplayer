@@ -1,5 +1,0 @@
-[091118][Info]:  adding readListPolicies() in UmlrtUtils.java
-[091018][Info]:  port.isBehavior() added to the port as <portName>::true/false in listCapsuleConn.get(t).addListPortName
-[091018][Debug]: Adding upperCapsuleInstanceName for handling relay ports
-[091018][Debug]: trAdded as a boolean variable check the transition whether or not added previously 
-[021018][Info]:  reading the model.uml from resources/umlrtModels directory

@@ -1,4 +1,0 @@
-041218][Debug]:  adding priorityEventCounter to the ServerBypassOrdering in order to preserve initial ordering of the recieved events  
-[041218][Info]:  Adding Bypass features including: ReadBypassOrdering.java and ServerBypassOrdering.java
-[081118][Debug]: generating allDataToString_originalFromMDebugger()
-[081118][Debug]: removing some parameter that are not required from Event.java from allDataToString()
