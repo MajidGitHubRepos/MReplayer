@@ -19,6 +19,7 @@ Actions.prototype.init = function()
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
+	var modelHahMap = {};
 	var isGraphEnabled = function()
 	{
 		return Action.prototype.isEnabled.apply(this, arguments) && graph.isEnabled();
@@ -33,6 +34,15 @@ Actions.prototype.init = function()
 		
 		ui.openFile();
 	});
+	//---------------
+	this.addAction('openUml...', function()
+	{
+				window.openNew = true;
+				window.openKey = 'openUml';
+				
+				ui.openUmlFile();
+	});
+	//--------------
 	this.addAction('import...', function()
 	{
 		window.openNew = false;
@@ -1055,6 +1065,91 @@ Actions.prototype.init = function()
 			ui.clearDefaultStyle();
 		}
 	}, null, null, Editor.ctrlKey + '+Shift+R');
+	//------------------------------------------------------
+	this.addAction('replayNext', function()
+	{
+		if (graph.isEnabled())
+		{
+			//take the next action from msgQueue
+			var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			     // console.log(this.responseText);
+			    	var listChanges = JSON.parse(this.responseText);
+			      	var capsuleName = "";
+			      	var itemName = "";
+			      	//CapsuleInstance
+			     	console.log(listChanges);
+				if (listChanges.list != null){
+				if (listChanges.list[0].includes('__')){
+				      	var lastIndex = listChanges.list[0].lastIndexOf('__');
+				      	capsuleName = listChanges.list[0].substr(lastIndex+2);
+				}else{
+					capsuleName = listChanges.list[0];
+				}
+			        var itemName = listChanges.list[1];
+				
+			      //console.log(capsuleName + ", " +itemName);
+			      //console.log(editor.modelAnalysis);
+			      //console.log(editor.getIDfromHashMap(capsuleName,itemName));
+			      var id = editor.getIDfromHashMap(capsuleName,itemName);
+			      //console.log("Majid");
+				// parse the json file
+			      // find the ids
+		              // call colorItem();
+
+			//console.log(editor.getModelAnalysis());
+
+		graph.getModel().beginUpdate();
+		try
+		{
+
+		var model = graph.getModel();
+		var cell = model.getCell(editor.lastID);
+
+		if (cell != null)
+                {
+			//graph.setCellStyles(editor.lastStyle);
+                        //console.log(cell);
+                        // Resets the fillcolor and the overlay
+                        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
+                        graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
+                        graph.removeCellOverlays(cell);
+                }
+
+
+		cell = model.getCell(id);
+                if (cell != null)
+                {
+                        //console.log(cell);
+                        // Resets the fillcolor and the overlay
+			
+                        editor.lastStyle = graph.getCellStyle(cell);
+                        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+                        graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+                        graph.removeCellOverlays(cell);
+                }
+		editor.lastID = id;
+
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+
+
+
+
+
+			    }
+			  }
+			  };
+			  xhttp.open("POST", "/model", true);
+			  xhttp.send();
+			//this.editorUi..........;
+		}
+	}, null, null, Editor.ctrlKey + '+Shift+N');
+	//----------------------------------------------------
 	this.addAction('addWaypoint', function()
 	{
 		var cell = graph.getSelectionCell();

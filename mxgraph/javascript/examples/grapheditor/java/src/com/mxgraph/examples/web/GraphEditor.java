@@ -20,6 +20,7 @@ public class GraphEditor
 {
 
 	public static int PORT = 8080;
+	public static int PORT_json = 8090; //observerPort to recieve json
 
 	/**
 	 * Uncomment this for better font size rendering in px units within labels.
@@ -42,6 +43,7 @@ public class GraphEditor
 		context.addServlet(new ServletHolder(new EchoServlet()), "/save");
 		context.addServlet(new ServletHolder(new ExportServlet()), "/export");
 		context.addServlet(new ServletHolder(new OpenServlet()), "/open");
+		context.addServlet(new ServletHolder(new ModelServlet()), "/model");
 
 		ResourceHandler fileHandler = new ResourceHandler();
 		fileHandler.setResourceBase(".");
@@ -49,10 +51,28 @@ public class GraphEditor
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { fileHandler, context });
 		server.setHandler(handlers);
-
-		System.out.println("Go to http://localhost:" + PORT + "/javascript/examples/grapheditor/www/index.html");
 		
-		server.start();
+		System.out.println("\n====================================================================================\n");
+		System.out.println("[Queensu] Go to http://localhost:" + PORT + "/javascript/examples/grapheditor/www/index.html\n");
+		System.out.println("====================================================================================\n");
+
+		
+		
+    	server.start();
+		
+		ModelJsonServer modelServer = new ModelJsonServer(PORT_json);
+	    Thread ModelServerT = new Thread(modelServer);
+	    
+	    ModelServerT.start();
+	    ModelServerT.interrupt();
+    	try {
+    		ModelServerT.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+
 		server.join();
 	}
 }

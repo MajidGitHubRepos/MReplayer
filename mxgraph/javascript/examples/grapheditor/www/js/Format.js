@@ -3804,6 +3804,7 @@ StyleFormatPanel.prototype.init = function()
 	}
 	
 	this.container.appendChild(this.addStyleOps(opsPanel));
+	this.container.appendChild(this.addReplayOps(opsPanel)); //--Majid
 };
 
 /**
@@ -5022,7 +5023,17 @@ StyleFormatPanel.prototype.addStyleOps = function(div)
 
 	return div;
 };
-
+//---------------------------------------------------------------------
+/**
+ * Adds the label menu items to the given menu and parent. --Majid
+ */
+StyleFormatPanel.prototype.addReplayOps = function(div)
+{
+	// when you click a particular item it would be appeared !	
+	
+	return div;
+};
+//---------------------------------------------------------------------
 /**
  * Adds the label menu items to the given menu and parent.
  */
@@ -5060,6 +5071,7 @@ DiagramFormatPanel.prototype.init = function()
 		this.container.appendChild(this.addOptions(this.createPanel()));
 		this.container.appendChild(this.addPaperSize(this.createPanel()));
 		this.container.appendChild(this.addStyleOps(this.createPanel()));
+		this.container.appendChild(this.addReplayOps(this.createPanel())); //--Majid
 	}
 };
 
@@ -5481,6 +5493,39 @@ DiagramFormatPanel.prototype.addStyleOps = function(div)
 
 	return div;
 };
+
+//--Majid
+/**
+ * replaying menue
+ */
+DiagramFormatPanel.prototype.addReplayOps = function(div)
+{
+	var btn = mxUtils.button(mxResources.get('editData'), mxUtils.bind(this, function(evt)
+	{
+		this.editorUi.actions.get('editData').funct();
+	}));
+	
+	//btn.setAttribute('title', mxResources.get('editData') + ' (' + this.editorUi.actions.get('editData').shortcut + ')');
+	//btn.style.width = '202px';
+	//btn.style.marginBottom = '2px';
+	//div.appendChild(btn);
+
+	mxUtils.br(div);
+	div.appendChild(this.createTitle(mxResources.get('replaySection')));
+	
+	btn = mxUtils.button(mxResources.get('next'), mxUtils.bind(this, function(evt)
+	{
+		this.editorUi.actions.get('replayNext').funct();
+	}));
+	
+	btn.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
+	btn.style.width = '202px';
+	div.appendChild(btn);
+
+	return div;
+};
+
+
 
 /**
  * Adds the label menu items to the given menu and parent.

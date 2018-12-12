@@ -6,6 +6,9 @@
  */
 Editor = function(chromeless, themes, model, graph, editable)
 {
+	var modelAnalysis = {}; //--Majid
+	var lastID = 0; //--Majid
+	var lastStyle; //--Majid
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
 	this.initStencilRegistry();
@@ -671,7 +674,19 @@ OpenFile = function(done)
 	this.done = done;
 	this.args = null;
 };
-
+//----------------------
+/**
+ * Class for asynchronously opening a new window and loading a file at the same
+ * time. This acts as a bridge between the open dialog and the new editor.
+ */
+OpenUmlFile = function(done)
+{
+	this.producer = null;
+	this.consumer = null;
+	this.done = done;
+	this.args = null;
+};
+//------------------------
 /**
  * Registers the editor from the new window.
  */
@@ -2252,5 +2267,57 @@ PageSetupDialog.getFormats = function()
 		
 		return cell;
 	};
+//-------------------------------------------------------------- 	
+	/**
+	 * coloring an item in the model
+	 */
+	Editor.prototype.colorItem = function(id, color)
+	{
+		var editorUi = this;
+		var model = this.graph.getModel();
+		var cell = model.getCell(id);
+		if (cell != null)
+		{
+			//console.log(cell);
+			// Resets the fillcolor and the overlay
+			this.graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, color , [cell]);
+			this.graph.removeCellOverlays(cell);
+		}
+	}
+
+	/**
+	 * set hashmap from the InitialModelAnalysis
+	 */
+	Editor.prototype.setModelAnalysis = function(hashMapModel)
+	{
+		modelAnalysis = hashMapModel;
+		console.log(modelAnalysis);	
+	}
+	/**
+	 * set hashmap from the InitialModelAnalysis
+	 */
+	Editor.prototype.getIDfromHashMap = function(capsuleName,itemName)
+	{
+		for (var i = 0, keys = Object.keys(modelAnalysis), j = keys.length; i < j; i++) {
+			 var capsuleSplit = keys[i].split(",");
+			 if (capsuleSplit[0].includes(capsuleName)){
+				//console.log(modelAnalysis[keys[i]]);
+				//console.log(modelAnalysis[keys[i]].length);
+				//console.log(modelAnalysis[keys[i]][1]);
+				//console.log(modelAnalysis[keys[i]][1][1]);
+			 	for (var k = 0 ; k<modelAnalysis[keys[i]].length; k++){	
+			 		var itemValue = modelAnalysis[keys[i]][k][0];
+			 		var itemID = modelAnalysis[keys[i]][k][1];
+					//console.log(itemValue);
+					if (itemValue.includes(itemName)){
+						return itemID;
+					}
+				}
+			 }
+		}
+			 // console.log('key : ' + keys[i] + ' val : ' + modelAnalysis[keys[i]][1]);
+		
+	}
+//-------------------------------------------------------------- 	
 
 })();

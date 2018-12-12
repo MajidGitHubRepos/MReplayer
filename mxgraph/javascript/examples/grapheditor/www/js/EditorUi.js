@@ -3364,7 +3364,28 @@ EditorUi.prototype.openFile = function()
 		window.openFile = null;
 	});
 };
+//-----------------
 
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+EditorUi.prototype.openUmlFile = function()
+{
+	// Closes dialog after open
+	window.openUmlFile = new OpenUmlFile(mxUtils.bind(this, function(cancel)
+	{
+		this.hideDialog(cancel);
+	}));
+
+	// Removes openFile if dialog is closed
+	this.showDialog(new OpenDialog(this).container, (Editor.useLocalStorage) ? 640 : 320,
+			(Editor.useLocalStorage) ? 480 : 220, true, true, function()
+	{
+		window.openUmlFile = null;
+	});
+};
+
+//-----------------
 /**
  * Extracs the graph model from the given HTML data from a data transfer event.
  */
@@ -4224,4 +4245,5 @@ EditorUi.prototype.destroy = function()
 			c[i].parentNode.removeChild(c[i]);
 		}
 	}
+	
 };

@@ -150,6 +150,7 @@
 				<pathelement location="${basedir}/jars/jetty-6.1.1.jar"/>
 				<pathelement location="${basedir}/jars/jetty-util-6.1.1.jar"/>
 				<pathelement location="${basedir}/jars/servlet-api-2.5-6.1.1.jar"/>
+				<pathelement location="${basedir}/jars/java-json.jar"/>
 			</classpath>
 		</javac>
 		<copy todir="${basedir}/example-classes">
@@ -170,6 +171,7 @@
 				<pathelement location="${basedir}/jars/jetty-6.1.1.jar"/>
 				<pathelement location="${basedir}/jars/jetty-util-6.1.1.jar"/>
 				<pathelement location="${basedir}/jars/servlet-api-2.5-6.1.1.jar"/>
+				<pathelement location="${basedir}/jars/java-json.jar"/>
 			</classpath>
 		</java>
 	</target>
@@ -185,6 +187,7 @@
 				<pathelement location="${basedir}/jars/jetty-6.1.1.jar"/>
 				<pathelement location="${basedir}/jars/jetty-util-6.1.1.jar"/>
 				<pathelement location="${basedir}/jars/servlet-api-2.5-6.1.1.jar"/>
+				<pathelement location="${basedir}/jars/java-json.jar"/>
 			</classpath>
 		</java>
 	</target>

@@ -2,16 +2,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Grapheditor</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="styles/grapheditor.css">
-	<script type="text/javascript">
+<title>Grapheditor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<link rel="stylesheet" type="text/css" href="styles/grapheditor.css">
+<script type="text/javascript">
 		// Parses URL parameters. Supported parameters are:
 		// - lang=xy: Specifies the language of the user interface.
 		// - touch=1: Enables a touch-style user interface.
 		// - storage=local: Enables HTML5 local storage.
 		// - chrome=0: Chromeless mode.
+		
 		var urlParams = (function(url)
 		{
 			var result = new Object();
@@ -36,27 +41,31 @@
 		})(window.location.href);
 	
 		// Default resources are included in grapheditor resources
-		mxLoadResources = false;
+		mxLoadResources = true;
 	</script>
-	<script type="text/javascript" src="js/Init.js"></script>
-	<script type="text/javascript" src="deflate/pako.min.js"></script>
-	<script type="text/javascript" src="deflate/base64.js"></script>
-	<script type="text/javascript" src="jscolor/jscolor.js"></script>
-	<script type="text/javascript" src="sanitizer/sanitizer.min.js"></script>
-	<script type="text/javascript" src="../../../src/js/mxClient.js"></script>
-	<script type="text/javascript" src="js/EditorUi.js"></script>
-	<script type="text/javascript" src="js/Editor.js"></script>
-	<script type="text/javascript" src="js/Sidebar.js"></script>
-	<script type="text/javascript" src="js/Graph.js"></script>
-	<script type="text/javascript" src="js/Format.js"></script>
-	<script type="text/javascript" src="js/Shapes.js"></script>
-	<script type="text/javascript" src="js/Actions.js"></script>
-	<script type="text/javascript" src="js/Menus.js"></script>
-	<script type="text/javascript" src="js/Toolbar.js"></script>
-	<script type="text/javascript" src="js/Dialogs.js"></script>
+<script type="text/javascript" src="js/Init.js"></script>
+<script type="text/javascript" src="deflate/pako.min.js"></script>
+<script type="text/javascript" src="deflate/base64.js"></script>
+<script type="text/javascript" src="jscolor/jscolor.js"></script>
+<script type="text/javascript" src="sanitizer/sanitizer.min.js"></script>
+<script type="text/javascript" src="../../../src/js/mxClient.js"></script>
+<script type="text/javascript" src="js/EditorUi.js"></script>
+<script type="text/javascript" src="js/Editor.js"></script>
+<script type="text/javascript" src="js/Sidebar.js"></script>
+<script type="text/javascript" src="js/Graph.js"></script>
+<script type="text/javascript" src="js/Format.js"></script>
+<script type="text/javascript" src="js/Shapes.js"></script>
+<script type="text/javascript" src="js/Actions.js"></script>
+<script type="text/javascript" src="js/Menus.js"></script>
+<script type="text/javascript" src="js/Toolbar.js"></script>
+<script type="text/javascript" src="js/Dialogs.js"></script>
 </head>
 <body class="geEditor">
 	<script type="text/javascript">
+		var localModelxml = "";
+		var hashMapCapsulesChildren = {};
+		var registrationJSON = null;
+		var initialModelAnalysisDone = false;
 		// Extends EditorUi to update I/O action states based on availability of backend
 		(function()
 		{
@@ -64,6 +73,8 @@
 			
 			EditorUi.prototype.init = function()
 			{
+				//document.body.innerHTML = '<center style="margin-top:10%;"> EditorUi.prototype.init </center>';
+				
 				editorUiInit.apply(this, arguments);
 				this.actions.get('export').setEnabled(false);
 
@@ -84,13 +95,15 @@
 			
 			// Adds required resources (disables loading of fallback properties, this can only
 			// be used if we know that all keys are defined in the language specific file)
-			mxResources.loadDefaultBundle = false;
+			mxResources.loadDefaultBundle = true;
 			var bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
 				mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
 
 			// Fixes possible asynchronous requests
 			mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr)
 			{
+				var graph = new mxGraph();
+				
 				// Adds bundle text to resources
 				mxResources.parse(xhr[0].getText());
 				
@@ -99,12 +112,217 @@
 				themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement(); 
 				
 				// Main
-				new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+				var editorUi = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+				loadModel(editorUi);
+				console.log(localModelxml);
+				//drawModel(editorUi);
+				var updateInterval = 1000;
+				setInterval(function(){updateModel(editorUi)}, updateInterval); 
 			}, function()
 			{
 				document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
 			});
+			
+
 		})();
+		//==================================================================	
+		//==============================================[updateModel]       //Adding button
+		//==================================================================
+	      var updateModel = function (editorUi) {
+	        	
+	    	 // loadChanges(editorUi);
+	    	 //test()
+	  	};
+		//==================================================================	
+		//==============================================[loadModel]
+		//==================================================================
+		function loadModel(editorUi) {
+
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			    	
+			    	drawModel(editorUi,this.responseText);
+			    	//console.log("XML:" + this.responseText);
+			    	localModelxml = this.responseText;
+			    	if (initialModelAnalysisDone == false){
+			    		
+			    		initialModelAnalysis(editorUi);
+			    	}
+			    }
+			  };
+			  xhttp.open("GET", "./resources/localModel.xml", true);
+			  //xhttp.responseType = "document";
+			  xhttp.send();
+			};
+		//==================================================================	
+		//==============================================[drawModel]
+		//==================================================================	
+		function drawModel(editorUi,xml)
+		{
+			//var xmlDoc = xml.responseXML;
+			//document.write(String(xmlDoc));
+			//document.write(String(editorUi));
+
+			//var xml = '<mxGraphModel dx="1361" dy="730" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1"><mxGeometry x="390" y="340" width="80" height="80" as="geometry"/></mxCell></root></mxGraphModel>';
+			
+			editorUi.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
+			
+			
+		};
+		//==================================================================	
+		//==============================================[modelRegistration]
+		//==================================================================	
+		function modelRegistration(callback) {
+
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			    	var jsonArr = JSON.parse(this.responseText);
+			    	registrationJSON = jsonArr;
+			    	callback();
+			    	//console.log(registrationJSON);
+			    }
+			  };
+				xhttp.open("GET", "./resources/registration.json", true);
+			  //xhttp.responseType = "document";
+			  xhttp.send();
+		};
+		//==================================================================	
+		//==============================================[loadChanges]
+		//==================================================================	
+		function loadChanges(editorUi) {
+
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			    	var jsonArr = JSON.parse(this.responseText);
+			    	registrationJSON = jsonArr;
+			    	console.log("registration: "+registrationJSON);
+			    	test();
+			    	//if (initialModelAnalysisDone == false)
+			    	//	initialModelAnalysis(editorUi);
+			    	modifyModel(editorUi,jsonArr);
+			    }
+			  };
+				xhttp.open("GET", "./resources/registration.json", true);
+			  //xhttp.responseType = "document";
+			  xhttp.send();
+		};
+		//==================================================================	
+		//==============================================[servletTest]
+		//==================================================================	
+		function test() {
+			var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			      //document.getElementById("demo").innerHTML = this.responseText;
+			      console.log(this.responseText);
+			    }
+			  };
+			  xhttp.open("POST", "/model", true);
+			  xhttp.send();
+			         
+			};
+		//==================================================================	
+		//==============================================[initialModelAnalysis]
+		//==================================================================	
+
+		function initialModelAnalysis(editorUi) {
+			modelRegistration(function(){ 
+			    //alert('Finished !');
+   
+			console.log(registrationJSON);
+			if (registrationJSON != null) {
+				var capsuleInfo = {};
+				var capsuleName = "";
+				var listChildrenID = [];
+				//looking for capsules' children !
+				for (var i = 0; i < registrationJSON.capsules.length; i++) {
+					
+					//console.log(registrationJSON.capsules[i].name);
+					
+					if (registrationJSON.capsules[i].name.includes("__")){
+						
+						var lastIndex = registrationJSON.capsules[i].name.lastIndexOf('__');
+						capsuleName = registrationJSON.capsules[i].name.substr(lastIndex+2);
+					}else{
+						capsuleName = registrationJSON.capsules[i].name;
+					}
+					listChildrenID = [];
+					
+					//console.log(capsuleName)
+					//========================================================== [XML]
+					if (localModelxml != null && localModelxml.length > 0) {
+						var doc = mxUtils.parseXml(localModelxml);
+
+						if (doc != null && doc.documentElement != null) {
+							var nodes = doc.documentElement
+									.getElementsByTagName('mxCell');
+	
+							//console.log(nodes[5].attributes.value.textContent); // returns a string contains "Playing" in pingPong model!
+							if (nodes != null && nodes.length > 0) {
+								//model.beginUpdate();
+
+								try {
+									for (var j = 0; j < nodes.length; j++) {
+										if (nodes[j].attributes.value != null) {
+											var value = nodes[j].getAttribute('value').toLowerCase();
+											if (value.includes(capsuleName)){
+												var capsuleID = nodes[j].getAttribute('id');
+												capsuleInfo = [capsuleName,capsuleID];
+											
+												//console.log("capsuleID: " + capsuleID +", nodes[j]: " +nodes[j])
+												//console.log(nodes)
+												var itemInfo = {};
+												for (var k = 0; k < nodes.length; k++) {
+													if (nodes[k].attributes.parent != null){
+														if (nodes[k].attributes.parent.value == capsuleID){
+															itemInfo = [nodes[k].attributes.value.value,nodes[k].id];
+															listChildrenID.push(itemInfo);
+														}
+													}
+												}
+												
+											}
+											
+												//listChildrenID.push(nodes[j].id);
+												
+												//editorUi.editor.makeRed(id,'green');
+										}
+									}
+									
+									}finally {
+										//model.endUpdate();
+									}
+									hashMapCapsulesChildren[capsuleInfo] = listChildrenID;
+									//console.log(hashMapCapsulesChildren)
+							}
+						}
+					}
+					
+					
+					//for (j = 0; j < registrationJSON.capsules[i].stateMachine.length; j++) {
+					//}
+				}
+				initialModelAnalysisDone = true;
+				editorUi.editor.setModelAnalysis(hashMapCapsulesChildren);
+			}
+			});
+		}
+		//==================================================================	
+		//==============================================[modifyModel]
+		//==================================================================	
+		function modifyModel(editorUi, json) {
+			//console.log("NewChanges:" + json);
+			//editorUi.editor.colorItem(17,'green');
+
+
+			//}
+			//editorUi.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
+
+		};
 	</script>
+	<p id="demo"></p>
 </body>
 </html>
