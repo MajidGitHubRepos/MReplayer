@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> old_MDebugger/master
 # Prerequisites
@@ -53,9 +54,14 @@ node_modules
 .project
 >>>>>>> old_matd1/master
 =======
+=======
+>>>>>>> old_mxgraph/master
 node_modules
 javascript/dist
 .jshintrc
 javascript/examples/**/dist
 .idea/
+<<<<<<< HEAD
 >>>>>>> old_mxGraph/master
+=======
+>>>>>>> old_mxgraph/master
