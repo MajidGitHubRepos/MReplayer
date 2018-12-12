@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:RTCppProperties="http://www.eclipse.org/papyrus/umlrt/cppproperties" xmlns:UMLRTStateMachines="http://www.eclipse.org/papyrus/umlrt/statemachine" xmlns:UMLRealTime="http://www.eclipse.org/papyrus/umlrt" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
+  <uml:Model xmi:id="_e0-NsN7dEei0INX0aX4iTw" name="BankATM">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_e0-Nsd7dEei0INX0aX4iTw" source="http://www.eclipse.org/papyrus-rt/language/1.0.0">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_e0-Nst7dEei0INX0aX4iTw" key="language" value="umlrt-cpp"/>
+    </eAnnotations>
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_SnBNoN7eEei0INX0aX4iTw" source="UMLRT_Default_top">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_SnCbwN7eEei0INX0aX4iTw" key="top_name" value="Top"/>
+    </eAnnotations>
+    <packagedElement xmi:type="uml:Class" xmi:id="_hisYMN7dEei0INX0aX4iTw" name="Top" isActive="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_PJv1gN7eEei0INX0aX4iTw" name="bank" visibility="protected" type="_jlsxwN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_QRcdYN7eEei0INX0aX4iTw" name="atm1" visibility="protected" type="_llEogN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_qfbXwN7fEei0INX0aX4iTw" name="RTConnector1">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_qfdM8N7fEei0INX0aX4iTw" partWithPort="_PJv1gN7eEei0INX0aX4iTw" role="_h94NcN7fEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_qfd0AN7fEei0INX0aX4iTw" partWithPort="_QRcdYN7eEei0INX0aX4iTw" role="_nFWdkN7fEei0INX0aX4iTw"/>
+      </ownedConnector>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_jlsxwN7dEei0INX0aX4iTw" name="Bank" classifierBehavior="_ctp_EN7hEei0INX0aX4iTw" isActive="true">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_h94NcN7fEei0INX0aX4iTw" name="bankPort" visibility="public" type="_prNiAN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isService="true">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_liT9gN7fEei0INX0aX4iTw" value="3"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_liotoN7fEei0INX0aX4iTw" value="3"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_KCk1cN7gEei0INX0aX4iTw" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_L6NsgN7gEei0INX0aX4iTw" name="timing" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
+      </ownedAttribute>
+      <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_ctp_EN7hEei0INX0aX4iTw" name="SM" isReentrant="false">
+        <region xmi:type="uml:Region" xmi:id="_ctxT0N7hEei0INX0aX4iTw" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_ct2MUd7hEei0INX0aX4iTw" name="Initial" source="_ctyh8N7hEei0INX0aX4iTw" target="_ct0-MN7hEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_lD5RQN7hEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>log.show(&quot;------------> Initial transition taken in BANK \n&quot;);</body>
+            </effect>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_maIrcN7hEei0INX0aX4iTw" name="onTransaction" kind="external" source="_ct0-MN7hEei0INX0aX4iTw" target="_ct0-MN7hEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_roxTgN7hEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>log.show(&quot;[BANK] transaction request received at channel number [%i] \n&quot;, msg->sapIndex0_);
+std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+bankPort.approved().sendAt(msg->sapIndex0_);</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_oFahgN7hEei0INX0aX4iTw" event="_xMbQsN7eEei0INX0aX4iTw" port="_h94NcN7fEei0INX0aX4iTw"/>
+          </transition>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_ctyh8N7hEei0INX0aX4iTw" kind="initial"/>
+          <subvertex xmi:type="uml:State" xmi:id="_ct0-MN7hEei0INX0aX4iTw" name="Running">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_jLtnoN7hEei0INX0aX4iTw" name="Entry" isReentrant="false">
+              <language>C++</language>
+              <body>log.show(&quot;Running state in BANK \n&quot;);</body>
+            </entry>
+          </subvertex>
+        </region>
+      </ownedBehavior>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_llEogN7dEei0INX0aX4iTw" name="ATM" isActive="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_VxlsMN7eEei0INX0aX4iTw" name="controller" visibility="protected" type="_yimO4N7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_X7q-IN7eEei0INX0aX4iTw" name="cashDispenser" visibility="protected" type="_mugVwN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_YnydQN7eEei0INX0aX4iTw" name="journalPrinter" visibility="protected" type="_08gFgN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_ZsNusN7eEei0INX0aX4iTw" name="pinPad" visibility="protected" type="_3eXlUN7dEei0INX0aX4iTw" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_nFWdkN7fEei0INX0aX4iTw" name="atmPort" visibility="public" type="_prNiAN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="false" isConjugated="true" isService="true"/>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_yADQkN7fEei0INX0aX4iTw" name="RTConnector1">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_yAEesN7fEei0INX0aX4iTw" role="_nFWdkN7fEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_yAEesd7fEei0INX0aX4iTw" partWithPort="_VxlsMN7eEei0INX0aX4iTw" role="_tdJGEN7fEei0INX0aX4iTw"/>
+      </ownedConnector>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_Fx_xEN7gEei0INX0aX4iTw" name="RTConnector2">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_FyECgN7gEei0INX0aX4iTw" partWithPort="_VxlsMN7eEei0INX0aX4iTw" role="_y9wO8N7fEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_FyECgd7gEei0INX0aX4iTw" partWithPort="_X7q-IN7eEei0INX0aX4iTw" role="_3mdfcN7fEei0INX0aX4iTw"/>
+      </ownedConnector>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_GgDJ4N7gEei0INX0aX4iTw" name="RTConnector3">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_GgGNMN7gEei0INX0aX4iTw" partWithPort="_VxlsMN7eEei0INX0aX4iTw" role="_6Ht6QN7qEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_GgG0QN7gEei0INX0aX4iTw" partWithPort="_YnydQN7eEei0INX0aX4iTw" role="_7zPo8N7fEei0INX0aX4iTw"/>
+      </ownedConnector>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_HuiWQN7gEei0INX0aX4iTw" name="RTConnector4">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_HujkYN7gEei0INX0aX4iTw" partWithPort="_VxlsMN7eEei0INX0aX4iTw" role="_AfVjoN7rEei0INX0aX4iTw"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_HujkYd7gEei0INX0aX4iTw" partWithPort="_ZsNusN7eEei0INX0aX4iTw" role="_AiJBAN7gEei0INX0aX4iTw"/>
+      </ownedConnector>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_mugVwN7dEei0INX0aX4iTw" name="CashDispenser" classifierBehavior="_pvwmoN7lEei0INX0aX4iTw" isActive="true">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_3mdfcN7fEei0INX0aX4iTw" name="cashDispenserPort" visibility="public" type="_hr47AN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true" isService="true"/>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_Q5EzMN7gEei0INX0aX4iTw" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_RZ_H4N7gEei0INX0aX4iTw" name="timing" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_lAFLcN7lEei0INX0aX4iTw" name="cashAmount">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_lAFLcd7lEei0INX0aX4iTw" value="0"/>
+      </ownedAttribute>
+      <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_pvwmoN7lEei0INX0aX4iTw" name="SM" isReentrant="false">
+        <region xmi:type="uml:Region" xmi:id="_pv7lwN7lEei0INX0aX4iTw" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_pwCTcN7lEei0INX0aX4iTw" name="Initial" source="_pv9a8N7lEei0INX0aX4iTw" target="_pwAeQN7lEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_Guzd8N7oEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;Init transition taken in the cashDispenser in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_w1q5YN7lEei0INX0aX4iTw" name="onCashOut" kind="external" source="_pwAeQN7lEei0INX0aX4iTw" target="_pwAeQN7lEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_CgnRIN7mEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[CashDispenser]---------------> CashOut request received from the controller in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);
+	
+	cashDispenserPort.cashDispenserDone().send(); //TODO: a few seconds for delay can be applied
+
+	log.show(&quot;[CashDispenser]---------------> Money sent out in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_-dRXgN7lEei0INX0aX4iTw" event="_6DTtoN7lEei0INX0aX4iTw" port="_3mdfcN7fEei0INX0aX4iTw"/>
+          </transition>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_pv9a8N7lEei0INX0aX4iTw" kind="initial"/>
+          <subvertex xmi:type="uml:State" xmi:id="_pwAeQN7lEei0INX0aX4iTw" name="Idle">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_ugWAwN7lEei0INX0aX4iTw" name="Entry" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[CashDispenser] Idle sate in the cashDispenser in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </entry>
+          </subvertex>
+        </region>
+      </ownedBehavior>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_yimO4N7dEei0INX0aX4iTw" name="Controller" classifierBehavior="_3JGjIN7hEei0INX0aX4iTw" isActive="true">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_tdJGEN7fEei0INX0aX4iTw" name="commandPort" visibility="public" type="_prNiAN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true" isService="true"/>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_y9wO8N7fEei0INX0aX4iTw" name="controllerCashPort" visibility="public" type="_hr47AN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isService="true">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2qN5oN7fEei0INX0aX4iTw" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2qpXcN7fEei0INX0aX4iTw" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_PM0swN7gEei0INX0aX4iTw" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_PuDxkN7gEei0INX0aX4iTw" name="timing" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_gpmTYN7lEei0INX0aX4iTw" name="cashAmount">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_gpmTYd7lEei0INX0aX4iTw" value="0"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_6Ht6QN7qEei0INX0aX4iTw" name="controllerPrintPort" visibility="public" type="_hr47AN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isService="true"/>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_AfVjoN7rEei0INX0aX4iTw" name="controllerPadPort" visibility="public" type="_hr47AN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isService="true"/>
+      <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_3JGjIN7hEei0INX0aX4iTw" name="SM" isReentrant="false">
+        <region xmi:type="uml:Region" xmi:id="_3JQ7MN7hEei0INX0aX4iTw" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_3JXB0N7hEei0INX0aX4iTw" name="Initial" source="_3JSJUN7hEei0INX0aX4iTw" target="_3JUlkN7hEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_CFn7EN7iEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;Initial transition taken in the controller: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_Yg_78N7iEei0INX0aX4iTw" name="onWithdrawCash" kind="external" source="_3JUlkN7hEei0INX0aX4iTw" target="_M1HjoN7iEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ZwUOwN7iEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[Conroller]---------------> onWithdrawCash transition taken in the controller: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_fWjegN7iEei0INX0aX4iTw" event="_HyzAoN7fEei0INX0aX4iTw" port="_AfVjoN7rEei0INX0aX4iTw"/>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_uoqWoN7iEei0INX0aX4iTw" name="withdrawToIdle" kind="external" source="_M1HjoN7iEei0INX0aX4iTw" target="_3JUlkN7hEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_xHWmoN7iEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[Controller]---> approved/disapproved received from Bank, cashOut request sent to the cashDispenser, withdrawToIdle transition taken in the controller: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);
+
+controllerCashPort.cashOut(cashAmount).send();
+</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_BAvhMN7jEei0INX0aX4iTw" event="_vghvkN7eEei0INX0aX4iTw" port="_tdJGEN7fEei0INX0aX4iTw"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="__Yd70N7iEei0INX0aX4iTw" event="_uTxokN7eEei0INX0aX4iTw" port="_tdJGEN7fEei0INX0aX4iTw"/>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_RsmagN7jEei0INX0aX4iTw" name="onCashDispenserDone" kind="external" source="_3JUlkN7hEei0INX0aX4iTw" target="_3JUlkN7hEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_UeBZQN7jEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[Controller]--> cashDispenserDone message received in the controller in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);
+
+controllerPadPort.transactionDone().send();
+controllerPrintPort.printLog().send();</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_V6zgUN7jEei0INX0aX4iTw" event="_XgUCYN7fEei0INX0aX4iTw" port="_y9wO8N7fEei0INX0aX4iTw"/>
+          </transition>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_3JSJUN7hEei0INX0aX4iTw" kind="initial"/>
+          <subvertex xmi:type="uml:State" xmi:id="_3JUlkN7hEei0INX0aX4iTw" name="Idle">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_-kc6YN7hEei0INX0aX4iTw" name="Entry" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[Controller]--> Idle state in : %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </entry>
+          </subvertex>
+          <subvertex xmi:type="uml:State" xmi:id="_M1HjoN7iEei0INX0aX4iTw" name="WithdrawCash">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_N3PH8N7iEei0INX0aX4iTw" name="Entry" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[Controller] In WithdrawCash state in the controller: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);
+
+commandPort.transaction().send(); //TODO: sending cashAmount
+</body>
+            </entry>
+          </subvertex>
+        </region>
+      </ownedBehavior>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_08gFgN7dEei0INX0aX4iTw" name="JournalPrinter" classifierBehavior="_34TZMN7mEei0INX0aX4iTw" isActive="true">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_7zPo8N7fEei0INX0aX4iTw" name="journalPrinterPort" visibility="public" type="_hr47AN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true" isService="true"/>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_S5ImcN7gEei0INX0aX4iTw" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_TSQ4IN7gEei0INX0aX4iTw" name="timing" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
+      </ownedAttribute>
+      <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_34TZMN7mEei0INX0aX4iTw" name="SM" isReentrant="false">
+        <region xmi:type="uml:Region" xmi:id="_34e_YN7mEei0INX0aX4iTw" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_34lGAN7mEei0INX0aX4iTw" name="Initial" source="_34gNgN7mEei0INX0aX4iTw" target="_34ipwN7mEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_HC6iMN7nEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;Initial transition taken in the JournalPrinter in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_9TAuYN7mEei0INX0aX4iTw" name="onPrintLog" kind="external" source="_34ipwN7mEei0INX0aX4iTw" target="_34ipwN7mEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="__Yi3gN7mEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[JournalPrinter]---------------> Writing the log in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_A-GgEN7nEei0INX0aX4iTw" event="_93sCYN7eEei0INX0aX4iTw" port="_7zPo8N7fEei0INX0aX4iTw"/>
+          </transition>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_34gNgN7mEei0INX0aX4iTw" kind="initial"/>
+          <subvertex xmi:type="uml:State" xmi:id="_34ipwN7mEei0INX0aX4iTw" name="Idle">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_6iVWgN7mEei0INX0aX4iTw" name="Entry" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;[JournalPrinter] Idle state in the JournalPrinter in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </entry>
+          </subvertex>
+        </region>
+      </ownedBehavior>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_3eXlUN7dEei0INX0aX4iTw" name="PinPad" classifierBehavior="_NTHKYN7mEei0INX0aX4iTw" isActive="true">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_AiJBAN7gEei0INX0aX4iTw" name="pinPadPort" visibility="public" type="_hr47AN7eEei0INX0aX4iTw" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true" isService="true"/>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_USe_AN7gEei0INX0aX4iTw" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6kIb0IeXEeSVyrlWP4nYew"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_UvwJ0N7gEei0INX0aX4iTw" name="timing" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
+        <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_YIYq0N7mEei0INX0aX4iTw" name="randNumber">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_YIYq0d7mEei0INX0aX4iTw" value="0"/>
+      </ownedAttribute>
+      <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_NTHKYN7mEei0INX0aX4iTw" name="SM" isReentrant="false">
+        <region xmi:type="uml:Region" xmi:id="_NTSwkN7mEei0INX0aX4iTw" name="Region">
+          <transition xmi:type="uml:Transition" xmi:id="_NTZeQN7mEei0INX0aX4iTw" name="Initial" source="_NTVM0N7mEei0INX0aX4iTw" target="_NTXCAN7mEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_TJO5EN--Eei20pnGHE1FGQ" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>	log.show(&quot;Initial transition taken in the pinPad in: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);</body>
+            </effect>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_b6KTUN7mEei0INX0aX4iTw" name="onTransactionDone" kind="external" source="_NTXCAN7mEei0INX0aX4iTw" target="_NTXCAN7mEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ckVRsN7mEei0INX0aX4iTw" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>log.show(&quot;[PinPad] transactionDone message received: %s:%s\n&quot;,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			  	// name of the capsule part.
+	);</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_u-v-kN7mEei0INX0aX4iTw" event="_pgzIIN7mEei0INX0aX4iTw" port="_AiJBAN7gEei0INX0aX4iTw"/>
+          </transition>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_NTVM0N7mEei0INX0aX4iTw" kind="initial"/>
+          <subvertex xmi:type="uml:State" xmi:id="_NTXCAN7mEei0INX0aX4iTw" name="Idle">
+            <entry xmi:type="uml:OpaqueBehavior" xmi:id="_Q79gYN7mEei0INX0aX4iTw" name="Entry" isReentrant="false">
+              <language>C++</language>
+              <body>
+	randNumber = rand()%100+1;
+
+	log.show(&quot;[PinPad]---------------> A new withdrawal request for &lt;&lt; %i $ >> cash generated: %s:%s\n&quot;,
+	randNumber,
+	this->getTypeName(),	        // name of the capsule. 
+	this->getName()			// name of the capsule part.
+	);
+	
+	pinPadPort.withdrawCash(randNumber).send(); // 0 does not make sense !
+</body>
+            </entry>
+          </subvertex>
+        </region>
+      </ownedBehavior>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_hr9McN7eEei0INX0aX4iTw" name="atmInternalProtocol">
+      <packagedElement xmi:type="uml:Collaboration" xmi:id="_hr47AN7eEei0INX0aX4iTw" name="atmInternalProtocol">
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_hsBd4N7eEei0INX0aX4iTw" client="_hr47AN7eEei0INX0aX4iTw" supplier="_hr_osN7eEei0INX0aX4iTw" contract="_hr_osN7eEei0INX0aX4iTw"/>
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_hsHkgN7eEei0INX0aX4iTw" client="_hr47AN7eEei0INX0aX4iTw" supplier="_hsFvUN7eEei0INX0aX4iTw" contract="_hsFvUN7eEei0INX0aX4iTw"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_hr_osN7eEei0INX0aX4iTw" name="atmInternalProtocol">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_HyuIIN7fEei0INX0aX4iTw" name="withdrawCash">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_JopH8N7fEei0INX0aX4iTw" name="cashAmount">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://PapyrusC_Cpp_LIBRARIES/AnsiCLibrary.uml#_7wRIABydEduyofBvg4RL2w"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_NJ0vsN7fEei0INX0aX4iTw" name="dipositCash"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_XgN7wN7fEei0INX0aX4iTw" name="cashDispenserDone"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_hsCsAN7eEei0INX0aX4iTw" name="atmInternalProtocol~">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_93lUsN7eEei0INX0aX4iTw" name="printLog"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_6DSfgN7lEei0INX0aX4iTw" name="cashOut">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_7QHfAN7lEei0INX0aX4iTw" name="cashAmount">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://PapyrusC_Cpp_LIBRARIES/AnsiCLibrary.uml#_7wRIABydEduyofBvg4RL2w"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_pgm64N7mEei0INX0aX4iTw" name="transactionDone"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_hsEhMN7eEei0INX0aX4iTw" client="_hr47AN7eEei0INX0aX4iTw" supplier="_hsCsAN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:AnyReceiveEvent" xmi:id="_hsFIQN7eEei0INX0aX4iTw" name="*"/>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_hsFvUN7eEei0INX0aX4iTw" name="atmInternalProtocolIO"/>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_hsILkN7eEei0INX0aX4iTw" client="_hr47AN7eEei0INX0aX4iTw" supplier="_hsFvUN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_93sCYN7eEei0INX0aX4iTw" operation="_93lUsN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_HyzAoN7fEei0INX0aX4iTw" operation="_HyuIIN7fEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_NJ7dYN7fEei0INX0aX4iTw" operation="_NJ0vsN7fEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_XgUCYN7fEei0INX0aX4iTw" operation="_XgN7wN7fEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_6DTtoN7lEei0INX0aX4iTw" operation="_6DSfgN7lEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_pgzIIN7mEei0INX0aX4iTw" operation="_pgm64N7mEei0INX0aX4iTw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_mjx3AN7eEei0INX0aX4iTw" name="bankInternalProtocol">
+      <packagedElement xmi:type="uml:Collaboration" xmi:id="_mjwo4N7eEei0INX0aX4iTw" name="bankInternalProtocol">
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_mj06UN7eEei0INX0aX4iTw" client="_mjwo4N7eEei0INX0aX4iTw" supplier="_mjzFId7eEei0INX0aX4iTw" contract="_mjzFId7eEei0INX0aX4iTw"/>
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_mj5y0N7eEei0INX0aX4iTw" client="_mjwo4N7eEei0INX0aX4iTw" supplier="_mj39od7eEei0INX0aX4iTw" contract="_mj39od7eEei0INX0aX4iTw"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_mjzFId7eEei0INX0aX4iTw" name="bankInternalProtocol"/>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_mj2IcN7eEei0INX0aX4iTw" name="bankInternalProtocol~"/>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_mj3WkN7eEei0INX0aX4iTw" client="_mjwo4N7eEei0INX0aX4iTw" supplier="_mj2IcN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:AnyReceiveEvent" xmi:id="_mj39oN7eEei0INX0aX4iTw" name="*"/>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_mj39od7eEei0INX0aX4iTw" name="bankInternalProtocolIO"/>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_mj5y0d7eEei0INX0aX4iTw" client="_mjwo4N7eEei0INX0aX4iTw" supplier="_mj39od7eEei0INX0aX4iTw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_prOwIN7eEei0INX0aX4iTw" name="transactionProtocol">
+      <packagedElement xmi:type="uml:Collaboration" xmi:id="_prNiAN7eEei0INX0aX4iTw" name="transactionProtocol">
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_prTBkN7eEei0INX0aX4iTw" client="_prNiAN7eEei0INX0aX4iTw" supplier="_prRMYN7eEei0INX0aX4iTw" contract="_prRMYN7eEei0INX0aX4iTw"/>
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_prX6EN7eEei0INX0aX4iTw" client="_prNiAN7eEei0INX0aX4iTw" supplier="_prWE4N7eEei0INX0aX4iTw" contract="_prWE4N7eEei0INX0aX4iTw"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_prRMYN7eEei0INX0aX4iTw" name="transactionProtocol">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_xMUjAN7eEei0INX0aX4iTw" name="transaction"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_prTooN7eEei0INX0aX4iTw" name="transactionProtocol~">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_uTn3kN7eEei0INX0aX4iTw" name="approved"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_vgcQAN7eEei0INX0aX4iTw" name="disapproved"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_prVd0N7eEei0INX0aX4iTw" client="_prNiAN7eEei0INX0aX4iTw" supplier="_prTooN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:AnyReceiveEvent" xmi:id="_prVd0d7eEei0INX0aX4iTw" name="*"/>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_prWE4N7eEei0INX0aX4iTw" name="transactionProtocolIO"/>
+      <packagedElement xmi:type="uml:Usage" xmi:id="_prX6Ed7eEei0INX0aX4iTw" client="_prNiAN7eEei0INX0aX4iTw" supplier="_prWE4N7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_uTxokN7eEei0INX0aX4iTw" operation="_uTn3kN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_vghvkN7eEei0INX0aX4iTw" operation="_vgcQAN7eEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_xMbQsN7eEei0INX0aX4iTw" operation="_xMUjAN7eEei0INX0aX4iTw"/>
+    </packagedElement>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_e0-Ns97dEei0INX0aX4iTw">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_e0-NtN7dEei0INX0aX4iTw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/umlrt#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_RT_PROFILE/uml-rt.profile.uml#_1h74oEeVEeO0lv5O1DTHOQ"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_e0-Ntd7dEei0INX0aX4iTw">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_e0-Ntt7dEei0INX0aX4iTw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/umlrt/statemachine#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_RT_PROFILE/UMLRealTimeSM-addendum.profile.uml#_KLcn0FDtEeOA4ecmvfqvaw"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_e0-Nt97dEei0INX0aX4iTw">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_e0-NuN7dEei0INX0aX4iTw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/umlrt/cppproperties#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UMLRT_CPP/RTCppProperties.profile.uml#_vl5LALs8EeSTjNEQkASznQ"/>
+    </profileApplication>
+  </uml:Model>
+  <UMLRealTime:Capsule xmi:id="_hkbdmN7dEei0INX0aX4iTw" base_Class="_hisYMN7dEei0INX0aX4iTw"/>
+  <UMLRealTime:Capsule xmi:id="_jlwcI97dEei0INX0aX4iTw" base_Class="_jlsxwN7dEei0INX0aX4iTw"/>
+  <UMLRealTime:Capsule xmi:id="_llL9QN7dEei0INX0aX4iTw" base_Class="_llEogN7dEei0INX0aX4iTw"/>
+  <UMLRealTime:Capsule xmi:id="_mujZFd7dEei0INX0aX4iTw" base_Class="_mugVwN7dEei0INX0aX4iTw"/>
+  <UMLRealTime:Capsule xmi:id="_yip5QN7dEei0INX0aX4iTw" base_Class="_yimO4N7dEei0INX0aX4iTw"/>
+  <UMLRealTime:Capsule xmi:id="_08jI3N7dEei0INX0aX4iTw" base_Class="_08gFgN7dEei0INX0aX4iTw"/>
+  <UMLRealTime:Capsule xmi:id="_3ebPsN7dEei0INX0aX4iTw" base_Class="_3eXlUN7dEei0INX0aX4iTw"/>
+  <UMLRealTime:CapsulePart xmi:id="_PJyRwN7eEei0INX0aX4iTw" base_Property="_PJv1gN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:CapsulePart xmi:id="_QReSkN7eEei0INX0aX4iTw" base_Property="_QRcdYN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:CapsulePart xmi:id="_VxoIcN7eEei0INX0aX4iTw" base_Property="_VxlsMN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:CapsulePart xmi:id="_X7szUN7eEei0INX0aX4iTw" base_Property="_X7q-IN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:CapsulePart xmi:id="_Yn05gN7eEei0INX0aX4iTw" base_Property="_YnydQN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:CapsulePart xmi:id="_ZsQK8N7eEei0INX0aX4iTw" base_Property="_ZsNusN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:ProtocolContainer xmi:id="_hr_BoN7eEei0INX0aX4iTw" base_Package="_hr9McN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTMessageSet xmi:id="_hsA20N7eEei0INX0aX4iTw" base_Interface="_hr_osN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTMessageSet xmi:id="_hsD6IN7eEei0INX0aX4iTw" base_Interface="_hsCsAN7eEei0INX0aX4iTw" rtMsgKind="out"/>
+  <UMLRealTime:RTMessageSet xmi:id="_hsG9cN7eEei0INX0aX4iTw" base_Interface="_hsFvUN7eEei0INX0aX4iTw" rtMsgKind="inOut"/>
+  <UMLRealTime:Protocol xmi:id="_hsIyoN7eEei0INX0aX4iTw" base_Collaboration="_hr47AN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:ProtocolContainer xmi:id="_mjzFIN7eEei0INX0aX4iTw" base_Package="_mjx3AN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTMessageSet xmi:id="_mj0TQN7eEei0INX0aX4iTw" base_Interface="_mjzFId7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTMessageSet xmi:id="_mj2vgN7eEei0INX0aX4iTw" base_Interface="_mj2IcN7eEei0INX0aX4iTw" rtMsgKind="out"/>
+  <UMLRealTime:RTMessageSet xmi:id="_mj5LwN7eEei0INX0aX4iTw" base_Interface="_mj39od7eEei0INX0aX4iTw" rtMsgKind="inOut"/>
+  <UMLRealTime:Protocol xmi:id="_mj6Z4N7eEei0INX0aX4iTw" base_Collaboration="_mjwo4N7eEei0INX0aX4iTw"/>
+  <UMLRealTime:ProtocolContainer xmi:id="_prQlUN7eEei0INX0aX4iTw" base_Package="_prOwIN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTMessageSet xmi:id="_prSagN7eEei0INX0aX4iTw" base_Interface="_prRMYN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTMessageSet xmi:id="_prU2wN7eEei0INX0aX4iTw" base_Interface="_prTooN7eEei0INX0aX4iTw" rtMsgKind="out"/>
+  <UMLRealTime:RTMessageSet xmi:id="_prXTAN7eEei0INX0aX4iTw" base_Interface="_prWE4N7eEei0INX0aX4iTw" rtMsgKind="inOut"/>
+  <UMLRealTime:Protocol xmi:id="_prYhIN7eEei0INX0aX4iTw" base_Collaboration="_prNiAN7eEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_h96psN7fEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_h94NcN7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_nFY50N7fEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_nFWdkN7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTConnector xmi:id="_qfd0Ad7fEei0INX0aX4iTw" base_Connector="_qfbXwN7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_tdLiUN7fEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_tdJGEN7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTConnector xmi:id="_yAFFwN7fEei0INX0aX4iTw" base_Connector="_yADQkN7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_y9yrMN7fEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_y9wO8N7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_3mi_AN7fEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_3mdfcN7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_7zReIN7fEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_7zPo8N7fEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_AiK2MN7gEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_AiJBAN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTConnector xmi:id="_FyEpkN7gEei0INX0aX4iTw" base_Connector="_Fx_xEN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTConnector xmi:id="_GgHbUN7gEei0INX0aX4iTw" base_Connector="_GgDJ4N7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTConnector xmi:id="_HukLcN7gEei0INX0aX4iTw" base_Connector="_HuiWQN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_KCqVAN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_KCk1cN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_L6SlAN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_L6NsgN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_PM4-MN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_PM0swN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_PuFmwN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_PuDxkN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_Q5GoYN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_Q5EzMN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_RaCLMN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_RZ_H4N7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_S5LCsN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_S5ImcN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_TSSGQN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_TSQ4IN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_USjQcN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_USe_AN7gEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_Uv0bQN7gEei0INX0aX4iTw" isPublish="false" isWired="false" base_Port="_UvwJ0N7gEei0INX0aX4iTw"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_aoCL0N7gEei0INX0aX4iTw" headerPreface="#include &lt;iostream>&#xA;#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_hisYMN7dEei0INX0aX4iTw"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_hgqQgN7gEei0INX0aX4iTw" headerPreface="#include &lt;iostream>&#xA;#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_3eXlUN7dEei0INX0aX4iTw"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_jJyxgN7gEei0INX0aX4iTw" headerPreface="#include &lt;iostream>&#xA;#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_08gFgN7dEei0INX0aX4iTw"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_mzmJwN7gEei0INX0aX4iTw" headerPreface="#include &lt;iostream>&#xA;#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_yimO4N7dEei0INX0aX4iTw"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_pVmMcN7gEei0INX0aX4iTw" headerPreface="#include &lt;iostream>&#xA;#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_mugVwN7dEei0INX0aX4iTw"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_yBF88N7gEei0INX0aX4iTw" headerPreface="#include &lt;iostream>&#xA;#include &lt;chrono>&#xA;#include &lt;thread>" base_Class="_jlsxwN7dEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_ctzwEN7hEei0INX0aX4iTw" base_Pseudostate="_ctyh8N7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTState xmi:id="_ct2MUN7hEei0INX0aX4iTw" base_State="_ct0-MN7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_ct2zYN7hEei0INX0aX4iTw" base_Region="_ctxT0N7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTStateMachine xmi:id="_ct4ooN7hEei0INX0aX4iTw" base_StateMachine="_ctp_EN7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_3JTXcN7hEei0INX0aX4iTw" base_Pseudostate="_3JSJUN7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTState xmi:id="_3JVzsN7hEei0INX0aX4iTw" base_State="_3JUlkN7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_3JXB0d7hEei0INX0aX4iTw" base_Region="_3JQ7MN7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTStateMachine xmi:id="_3JZeEN7hEei0INX0aX4iTw" base_StateMachine="_3JGjIN7hEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTState xmi:id="_M1IxwN7iEei0INX0aX4iTw" base_State="_M1HjoN7iEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_pv_3MN7lEei0INX0aX4iTw" base_Pseudostate="_pv9a8N7lEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTState xmi:id="_pwBsYN7lEei0INX0aX4iTw" base_State="_pwAeQN7lEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_pwC6gN7lEei0INX0aX4iTw" base_Region="_pv7lwN7lEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTStateMachine xmi:id="_pwGk4N7lEei0INX0aX4iTw" base_StateMachine="_pvwmoN7lEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_NTWa8N7mEei0INX0aX4iTw" base_Pseudostate="_NTVM0N7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTState xmi:id="_NTY3MN7mEei0INX0aX4iTw" base_State="_NTXCAN7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_NTaFUN7mEei0INX0aX4iTw" base_Region="_NTSwkN7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTStateMachine xmi:id="_NTdvsN7mEei0INX0aX4iTw" base_StateMachine="_NTHKYN7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_34iCsN7mEei0INX0aX4iTw" base_Pseudostate="_34gNgN7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTState xmi:id="_34ke8N7mEei0INX0aX4iTw" base_State="_34ipwN7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_34ltEN7mEei0INX0aX4iTw" base_Region="_34e_YN7mEei0INX0aX4iTw"/>
+  <UMLRTStateMachines:RTStateMachine xmi:id="_34qlkN7mEei0INX0aX4iTw" base_StateMachine="_34TZMN7mEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_6HvvcN7qEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_6Ht6QN7qEei0INX0aX4iTw"/>
+  <UMLRealTime:RTPort xmi:id="_AfYm8N7rEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_AfVjoN7rEei0INX0aX4iTw"/>
+</xmi:XMI>
