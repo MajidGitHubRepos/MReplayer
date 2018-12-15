@@ -27,7 +27,7 @@ import org.json.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ModelServlet extends HttpServlet
+public class ReplayPreviousServlet extends HttpServlet
 {
 
 	/**

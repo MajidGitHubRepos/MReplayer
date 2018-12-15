@@ -1144,7 +1144,7 @@ Actions.prototype.init = function()
 			    }
 			  }
 			  };
-			  xhttp.open("POST", "/model", true);
+			  xhttp.open("POST", "/replayNext", true);
 			  xhttp.send();
 			//this.editorUi..........;
 		}
