@@ -76,25 +76,18 @@ public class ReplayPreviousServlet extends HttpServlet
 				String inMsg = "";
 				Message msg = new Message();
 				
-				if (!ModelJsonServer.inMsgQueue.isEmpty()) {
-					msg= ModelJsonServer.inMsgQueue.take();
+				
+				if (!ModelJsonServer.mainStack.isEmpty()) { //tmpStak is not null!
+					msg = ModelJsonServer.mainStack.pop();
+					ModelJsonServer.tmpStack.push(msg);
 					inMsg = msg.makeJSON();
-					System.out.println("\n["+ Thread.currentThread().getName() +"]> inMsg: "+ inMsg);
-
-				//writer.println("console.log(content:"+msg+");");
-					//JSONObject jsonObj = new JSONObject();
-					
-					//JSONArray list = new JSONArray();
-					//list.add(msg.getCapsuleName()); list.add(msg.getItemName());
-					//jsonObj.put("list", list);
-					//inMsg = jsonObj.toJSONString();
+					writer.println(inMsg);
+					System.out.println("\n[ReplayPreviousServlet]> inMsg: "+ inMsg);
+					//System.out.println("\n[ModelJsonServer.mainStack]>: "+ ModelJsonServer.mainStack);
+					//System.out.println("\n[ModelJsonServer.tmpStack]>: "+ ModelJsonServer.tmpStack);
+				}else {
+					// NO PREVIOUS ACTION !
 				}
-				else {
-					writer.println("Empty Queue");
-				}
-				
-				writer.println(inMsg);
-				
 			}
 			else
 			{

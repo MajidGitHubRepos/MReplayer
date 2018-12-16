@@ -5513,14 +5513,24 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 	mxUtils.br(div);
 	div.appendChild(this.createTitle(mxResources.get('replaySection')));
 	
-	btn = mxUtils.button(mxResources.get('next'), mxUtils.bind(this, function(evt)
+	btnNext = mxUtils.button(mxResources.get('next'), mxUtils.bind(this, function(evt)
 	{
 		this.editorUi.actions.get('replayNext').funct();
 	}));
 	
-	btn.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
-	btn.style.width = '202px';
-	div.appendChild(btn);
+	
+	
+	btnNext.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
+	btnNext.style.width = '202px';
+	div.appendChild(btnNext);
+	mxUtils.br(div);
+	btnPrevious = mxUtils.button(mxResources.get('previous'), mxUtils.bind(this, function(evt)
+	{
+				this.editorUi.actions.get('replayPrevious').funct();
+	}));
+	btnPrevious.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
+	btnPrevious.style.width = '202px';
+	div.appendChild(btnPrevious);
 
 	return div;
 };

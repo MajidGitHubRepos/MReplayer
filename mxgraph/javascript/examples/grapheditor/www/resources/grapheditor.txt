@@ -55,6 +55,7 @@ circle=Circle
 classic=Classic
 clearDefaultStyle=Clear Default Style
 next=Next
+previous=Previous
 replaySection=Replay Section
 clearWaypoints=Clear Waypoints
 clipart=Clipart

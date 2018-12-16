@@ -1,6 +1,7 @@
 package com.mxgraph.examples.web;
 
 import java.io.*;
+import java.util.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLDecoder;
@@ -22,13 +23,17 @@ public class ModelJsonServer implements Runnable {
 	public static int PORT;
 	public  static OutputStream outputFileStream;
 	public  static BlockingQueue <Message> inMsgQueue;
+	public  static Stack <Message> mainStack;
+	public  static Stack <Message> tmpStack;
 	public static String outputFileName;
     public static File outputFile;
 
 
 	public ModelJsonServer(int PORT) {
 		this.PORT = PORT;
-		this.inMsgQueue = new PriorityBlockingQueue<Message>(); // read but not consume!
+		this.inMsgQueue = new PriorityBlockingQueue<Message>(); // input events --> ReplayNextServlet.java
+		this.mainStack = new Stack(); // consumed events --> ReplayPreviousServlet.java
+		this.tmpStack = new Stack();
 		try {
     		this.outputFileName = "./javascript/examples/grapheditor/www/resources/registration.json";
     		this.outputFile = new File(outputFileName);

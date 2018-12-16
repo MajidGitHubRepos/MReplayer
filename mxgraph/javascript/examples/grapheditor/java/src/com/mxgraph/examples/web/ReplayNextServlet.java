@@ -75,26 +75,21 @@ public class ReplayNextServlet extends HttpServlet
 				//String name=request.getParameter("name");
 				String inMsg = "";
 				Message msg = new Message();
-				
-				if (!ModelJsonServer.inMsgQueue.isEmpty()) {
-					msg= ModelJsonServer.inMsgQueue.take();
-					inMsg = msg.makeJSON();
-					System.out.println("\n["+ Thread.currentThread().getName() +"]> inMsg: "+ inMsg);
 
-				//writer.println("console.log(content:"+msg+");");
-					//JSONObject jsonObj = new JSONObject();
-					
-					//JSONArray list = new JSONArray();
-					//list.add(msg.getCapsuleName()); list.add(msg.getItemName());
-					//jsonObj.put("list", list);
-					//inMsg = jsonObj.toJSONString();
+				if (!ModelJsonServer.tmpStack.isEmpty()) { //tmpStak is not null!
+					msg = ModelJsonServer.tmpStack.pop();
+				}else {
+					msg= ModelJsonServer.inMsgQueue.take();
 				}
-				else {
-					writer.println("Empty Queue");
-				}
-				
+
+				ModelJsonServer.mainStack.push(msg);
+
+				inMsg = msg.makeJSON();
+				System.out.println("\n[ReplayNextServlet]> inMsg: "+ inMsg);
+				//System.out.println("\n[ModelJsonServer.mainStack]>: "+ ModelJsonServer.mainStack);
+				//System.out.println("\n[ModelJsonServer.tmpStack]>: "+ ModelJsonServer.tmpStack);
 				writer.println(inMsg);
-				
+
 			}
 			else
 			{
@@ -119,6 +114,6 @@ public class ReplayNextServlet extends HttpServlet
 		w.println("<b><p>ERROR in MY CODE </p></b>");
 	}
 
-	
+
 
 }
