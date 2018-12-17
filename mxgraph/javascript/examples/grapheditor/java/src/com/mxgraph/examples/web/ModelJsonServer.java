@@ -27,9 +27,11 @@ public class ModelJsonServer implements Runnable {
 	public  static Stack <Message> tmpStack;
 	public static String outputFileName;
     public static File outputFile;
+    public static boolean run;
 
 
 	public ModelJsonServer(int PORT) {
+		this.run  = true;
 		this.PORT = PORT;
 		this.inMsgQueue = new PriorityBlockingQueue<Message>(); // input events --> ReplayNextServlet.java
 		this.mainStack = new Stack(); // consumed events --> ReplayPreviousServlet.java

@@ -75,6 +75,7 @@ public class ReplayNextServlet extends HttpServlet
 				//String name=request.getParameter("name");
 				String inMsg = "";
 				Message msg = new Message();
+				//ModelJsonServer.run = false;
 
 				if (!ModelJsonServer.tmpStack.isEmpty()) { //tmpStak is not null!
 					msg = ModelJsonServer.tmpStack.pop();
