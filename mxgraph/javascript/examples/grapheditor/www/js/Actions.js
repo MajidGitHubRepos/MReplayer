@@ -1066,7 +1066,12 @@ Actions.prototype.init = function()
 			ui.clearDefaultStyle();
 		}
 			}, null, null, Editor.ctrlKey + '+Shift+R');
-	//------------------------------------------------------
+	
+	//===============================================================================
+	//===============================[REPALY FUNCTIONS]==============================
+	//===============================================================================
+	
+	//===============================[replayNext]====================================
 	this.addAction('replayNext', function()
 			{
 		if (graph.isEnabled())
@@ -1076,74 +1081,7 @@ Actions.prototype.init = function()
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					stopRun = true;
-					// console.log(this.responseText);
-					var listChanges = JSON.parse(this.responseText);
-					var capsuleName = "";
-					var itemName = "";
-					//CapsuleInstance
-					console.log(listChanges);
-					if (listChanges.list != null){
-						if (listChanges.list[0].includes('__')){
-							var lastIndex = listChanges.list[0].lastIndexOf('__');
-							capsuleName = listChanges.list[0].substr(lastIndex+2);
-						}else{
-							capsuleName = listChanges.list[0];
-						}
-						var itemName = listChanges.list[1];
-
-						//console.log(capsuleName + ", " +itemName);
-						//console.log(editor.modelAnalysis);
-						//console.log(editor.getIDfromHashMap(capsuleName,itemName));
-						var id = editor.getIDfromHashMap(capsuleName,itemName);
-						//console.log("Majid");
-						// parse the json file
-						// find the ids
-						// call colorItem();
-
-						//console.log(editor.getModelAnalysis());
-
-						graph.getModel().beginUpdate();
-						try
-						{
-
-							var model = graph.getModel();
-							var cell = model.getCell(editor.lastID);
-
-							if (cell != null)
-							{
-								//graph.setCellStyles(editor.lastStyle);
-								//console.log(cell);
-								// Resets the fillcolor and the overlay
-								graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
-								graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
-								graph.removeCellOverlays(cell);
-							}
-
-
-							cell = model.getCell(id);
-							if (cell != null)
-							{
-								//console.log(cell);
-								// Resets the fillcolor and the overlay
-
-								editor.lastStyle = graph.getCellStyle(cell);
-								graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-								graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
-								graph.removeCellOverlays(cell);
-							}
-							editor.lastID = id;
-
-						}
-						finally
-						{
-							graph.getModel().endUpdate();
-						}
-
-
-
-
-
-					}
+					responseProcess(this.responseText,editor,graph);
 				}
 			};
 			xhttp.open("POST", "/replayNext", true);
@@ -1151,7 +1089,8 @@ Actions.prototype.init = function()
 			//this.editorUi..........;
 		}
 			}, null, null, Editor.ctrlKey + '+Shift+N');
-
+	
+	//===============================[replayPrevious]================================
 	this.addAction('replayPrevious', function()
 			{
 		if (graph.isEnabled())
@@ -1161,74 +1100,7 @@ Actions.prototype.init = function()
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					stopRun = true;
-					// console.log(this.responseText);
-					var listChanges = JSON.parse(this.responseText);
-					var capsuleName = "";
-					var itemName = "";
-					//CapsuleInstance
-					console.log(listChanges);
-					if (listChanges.list != null){
-						if (listChanges.list[0].includes('__')){
-							var lastIndex = listChanges.list[0].lastIndexOf('__');
-							capsuleName = listChanges.list[0].substr(lastIndex+2);
-						}else{
-							capsuleName = listChanges.list[0];
-						}
-						var itemName = listChanges.list[1];
-
-						//console.log(capsuleName + ", " +itemName);
-						//console.log(editor.modelAnalysis);
-						//console.log(editor.getIDfromHashMap(capsuleName,itemName));
-						var id = editor.getIDfromHashMap(capsuleName,itemName);
-						//console.log("Majid");
-						// parse the json file
-						// find the ids
-						// call colorItem();
-
-						//console.log(editor.getModelAnalysis());
-
-						graph.getModel().beginUpdate();
-						try
-						{
-
-							var model = graph.getModel();
-							var cell = model.getCell(editor.lastID);
-
-							if (cell != null)
-							{
-								//graph.setCellStyles(editor.lastStyle);
-								//console.log(cell);
-								// Resets the fillcolor and the overlay
-								graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
-								graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
-								graph.removeCellOverlays(cell);
-							}
-
-
-							cell = model.getCell(id);
-							if (cell != null)
-							{
-								//console.log(cell);
-								// Resets the fillcolor and the overlay
-
-								editor.lastStyle = graph.getCellStyle(cell);
-								graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-								graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
-								graph.removeCellOverlays(cell);
-							}
-							editor.lastID = id;
-
-						}
-						finally
-						{
-							graph.getModel().endUpdate();
-						}
-
-
-
-
-
-					}
+					responseProcess(this.responseText,editor,graph);
 				}
 			};
 			xhttp.open("POST", "/replayPrevious", true);
@@ -1237,6 +1109,7 @@ Actions.prototype.init = function()
 		}
 			}, null, null, Editor.ctrlKey + '+Shift+P');
 	
+	//===============================[stopRun]=======================================
 	this.addAction('stopRun', function()
 			{
 		if (graph.isEnabled())
@@ -1246,18 +1119,20 @@ Actions.prototype.init = function()
 		}
 			}, null, null, Editor.ctrlKey + '+Shift+S');
 	
+	//===============================[RUN]===========================================
 	this.addAction('run', function()
 			{
 		if (graph.isEnabled())
 		{
-			//take the next action from msgQueue
-			//while(1){
+
 			var xhttp = new XMLHttpRequest();
 			stopRun = false;
 			
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
-					// console.log(this.responseText);
+					responseProcess(this.responseText,editor,graph);
+					
+					//Extract capsuleName
 					var listChanges = JSON.parse(this.responseText);
 					var capsuleName = "";
 					var itemName = "";
@@ -1271,55 +1146,8 @@ Actions.prototype.init = function()
 							capsuleName = listChanges.list[0];
 						}
 						var itemName = listChanges.list[1];
-
-						//console.log(capsuleName + ", " +itemName);
-						//console.log(editor.modelAnalysis);
-						//console.log(editor.getIDfromHashMap(capsuleName,itemName));
-						var id = editor.getIDfromHashMap(capsuleName,itemName);
-						//console.log("Majid");
-						// parse the json file
-						// find the ids
-						// call colorItem();
-
-						//console.log(editor.getModelAnalysis());
-
-						graph.getModel().beginUpdate();
-						try
-						{
-
-							var model = graph.getModel();
-							var cell = model.getCell(editor.lastID);
-
-							if (cell != null)
-							{
-								//graph.setCellStyles(editor.lastStyle);
-								//console.log(cell);
-								// Resets the fillcolor and the overlay
-								graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
-								graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
-								graph.removeCellOverlays(cell);
-							}
-
-
-							cell = model.getCell(id);
-							if (cell != null)
-							{
-								//console.log(cell);
-								// Resets the fillcolor and the overlay
-
-								editor.lastStyle = graph.getCellStyle(cell);
-								graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-								graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
-								graph.removeCellOverlays(cell);
-							}
-							editor.lastID = id;
-
-						}
-						finally
-						{
-							graph.getModel().endUpdate();
-						}
 					}
+					// Checking capsuleName
 					if (!stopRun && (capsuleName != "null")){
 						xhttp.open("POST", "/run", true);
 						xhttp.send();
@@ -1328,8 +1156,6 @@ Actions.prototype.init = function()
 			};
 			xhttp.open("POST", "/run", true);
 			xhttp.send();
-			//this.editorUi..........;
-		//}
 		}
 			}, null, null, Editor.ctrlKey + '+Shift+R');
 	//----------------------------------------------------
@@ -1605,6 +1431,67 @@ Actions.prototype.addAction = function(key, funct, enabled, iconCls, shortcut)
 /**
  * Registers the given action under the given name.
  */
+//===============================================================================
+//===============================[MY FUNCTIONS]==================================
+//===============================================================================
+responseProcess = function(response,editor,graph){
+
+	// console.log(this.responseText);
+	var listChanges = JSON.parse(response);
+	var capsuleName = "";
+	var itemName = "";
+	//CapsuleInstance
+	console.log(listChanges);
+	if (listChanges.list != null){
+		if (listChanges.list[0].includes('__')){
+			var lastIndex = listChanges.list[0].lastIndexOf('__');
+			capsuleName = listChanges.list[0].substr(lastIndex+2);
+		}else{
+			capsuleName = listChanges.list[0];
+		}
+		var itemName = listChanges.list[1];
+
+		var id = editor.getIDfromHashMap(capsuleName,itemName);
+
+		graph.getModel().beginUpdate();
+		try
+		{
+
+			var model = graph.getModel();
+			var cell = model.getCell(editor.lastID);
+
+			if (cell != null)
+			{
+				//graph.setCellStyles(editor.lastStyle);
+				//console.log(cell);
+				// Resets the fillcolor and the overlay
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
+				graph.removeCellOverlays(cell);
+			}
+
+
+			cell = model.getCell(id);
+			if (cell != null)
+			{
+				//console.log(cell);
+				// Resets the fillcolor and the overlay
+
+				editor.lastStyle = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.removeCellOverlays(cell);
+			}
+			editor.lastID = id;
+
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	}
+};
+
 Actions.prototype.put = function(name, action)
 {
 	this.actions[name] = action;
