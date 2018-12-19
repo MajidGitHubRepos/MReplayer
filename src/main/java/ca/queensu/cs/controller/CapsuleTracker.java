@@ -235,6 +235,7 @@ public class CapsuleTracker implements Runnable{
 				break;
 				
 			case "Initial":  	      if (initChecking(event))           {
+				//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]-->[variables]"+ event.getVariableData() );
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Initial received!");
 				
 				if (sourceStateData.getStateName()!=null)
@@ -256,6 +257,7 @@ public class CapsuleTracker implements Runnable{
 			
 			case "TRANISTIONEND":     if (transitionChecking(event))     {
 				if (!this.targetChoiceState && !this.sourceChoiceState) {
+					//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]-->[variables]"+ event.getVariableData() );
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ transitionName);
 				}

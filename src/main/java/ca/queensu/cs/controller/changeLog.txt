@@ -1,3 +1,5 @@
+[191218][Info]:  pingCount,Integer,6 [each variable defined in one line]
+[191218][Info]:  update PingPong.uml, removing some extera varibales and adding pongCount
 [071218][Info]:  defining args0 in Controller.java as "view" to show the diagram
 [071218][Info]:  Adding input_output_Files dir to TrackerMaker.java
 [041218][Info]:  Some minor changes in Controller and CapsuleTracker in order to manage ViewEngine for our Bypass feature
