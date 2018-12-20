@@ -5500,6 +5500,7 @@ DiagramFormatPanel.prototype.addStyleOps = function(div)
  */
 DiagramFormatPanel.prototype.addReplayOps = function(div)
 {
+	div.style.margin = '0 auto';
 	var btn = mxUtils.button(mxResources.get('editData'), mxUtils.bind(this, function(evt)
 			{
 		this.editorUi.actions.get('editData').funct();
@@ -5510,50 +5511,107 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 	//btn.style.marginBottom = '2px';
 	//div.appendChild(btn);
 
-	mxUtils.br(div);
+	//mxUtils.br(div);
 	div.appendChild(this.createTitle(mxResources.get('replaySection')));
-
-	btnNext = mxUtils.button(mxResources.get('next'), mxUtils.bind(this, function(evt)
-			{
-		this.editorUi.actions.get('replayNext').funct();
-			}));
-
-
-
-	btnNext.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
-	btnNext.style.width = '202px';
-	div.appendChild(btnNext);
-
-	mxUtils.br(div);
-
-	btnPrevious = mxUtils.button(mxResources.get('previous'), mxUtils.bind(this, function(evt)
-			{
-		this.editorUi.actions.get('replayPrevious').funct();
-			}));
-	btnPrevious.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
-	btnPrevious.style.width = '202px';
-	div.appendChild(btnPrevious);
-
-	mxUtils.br(div);
-
-	btnRun = mxUtils.button(mxResources.get('run'), mxUtils.bind(this, function(evt)
-			{
-		this.editorUi.actions.get('run').funct();
-			}));
-	btnRun.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
-	btnRun.style.width = '202px';
-	div.appendChild(btnRun);
 	
+	var btnNext = document.createElement('div');
+	
+	var ui = this.editorUi;
+	//if (this.showCloseButton)
+	//{
+		
+		
+		var imgBack = document.createElement('img');
+		imgBack.setAttribute('border', '0');
+		imgBack.setAttribute('src', (IMAGE_PATH + '/back.png'));
+		imgBack.setAttribute('title', mxResources.get('previous'));
+		imgBack.style.position = 'inline-block';
+		imgBack.style.height='40px';
+		imgBack.style.width ='40px';
+		imgBack.style.padding = '1px';
+		imgBack.style.margin = '0 auto';
+		mxEvent.addListener(imgBack, 'click', function()
+				{
+			ui.actions.get('replayPrevious').funct();
+				});
+		div.appendChild(imgBack);
+		
+		//====
+		
+		var imgRun = document.createElement('img');
+		imgRun.setAttribute('border', '0');
+		imgRun.setAttribute('src', (IMAGE_PATH + '/run.png'));
+		imgRun.setAttribute('title', mxResources.get('run'));
+		imgRun.style.position = 'inline-block';
+		imgRun.style.height='40px';
+		imgRun.style.width ='40px';
+		imgRun.style.padding = '1px';
+		imgRun.style.margin = '0 auto';
+		mxEvent.addListener(imgRun, 'click', function()
+				{
+			ui.actions.get('run').funct();
+				});
+		div.appendChild(imgRun);
+		
+		var imgStop = document.createElement('img');
+		imgStop.setAttribute('border', '0');
+		imgStop.setAttribute('src', (IMAGE_PATH + '/stop.png'));
+		imgStop.setAttribute('title', mxResources.get('stopRun'));
+		imgStop.style.position = 'inline-block';
+		imgStop.style.height='40px';
+		imgStop.style.width ='40px';
+		imgStop.style.padding = '1px';
+		imgStop.style.margin = '0 auto';
+		mxEvent.addListener(imgStop, 'click', function()
+				{
+			ui.actions.get('stopRun').funct();
+				});
+		div.appendChild(imgStop);
+		
+		//====
+		
+		
+		var imgNext = document.createElement('img');
+		imgNext.setAttribute('border', '0');
+		imgNext.setAttribute('src', (IMAGE_PATH + '/next.png'));
+		imgNext.setAttribute('title', mxResources.get('next'));
+		imgNext.style.position = 'inline-block';
+		imgNext.style.height='40px';
+		imgNext.style.width ='40px';
+		imgNext.style.padding = '1px';
+		imgNext.style.margin = '0 auto';
+		//imgNext.style.backgroundColor='red';
+		mxEvent.addListener(imgNext, 'click', function()
+				{
+			ui.actions.get('replayNext').funct();
+				});
+		
+		
+		div.appendChild(imgNext);
+		
+	//}
+
+	
+	//------------
+
 	mxUtils.br(div);
 
-	btnStopRun = mxUtils.button(mxResources.get('stopRun'), mxUtils.bind(this, function(evt)
-			{
-		this.editorUi.actions.get('stopRun').funct();
-			}));
-	btnStopRun.setAttribute('title', mxResources.get('clearDefaultStyle') + ' (' + this.editorUi.actions.get('clearDefaultStyle').shortcut + ')');
-	btnStopRun.style.width = '202px';
-	div.appendChild(btnStopRun);
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	return div;
 };
