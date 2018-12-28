@@ -1138,14 +1138,14 @@ Actions.prototype.init = function()
 					var itemName = "";
 					//CapsuleInstance
 					console.log(listChanges);
-					if (listChanges.list != null){
-						if (listChanges.list[0].includes('__')){
-							var lastIndex = listChanges.list[0].lastIndexOf('__');
-							capsuleName = listChanges.list[0].substr(lastIndex+2);
+					if (listChanges.traceID != null){
+						if (listChanges.traceID[0].includes('__')){
+							var lastIndex = listChanges.traceID[0].lastIndexOf('__');
+							capsuleName = listChanges.traceID[0].substr(lastIndex+2);
 						}else{
-							capsuleName = listChanges.list[0];
+							capsuleName = listChanges.traceID[0];
 						}
-						var itemName = listChanges.list[1];
+						var itemName = listChanges.traceID[1];
 					}
 					// Checking capsuleName
 					if (!stopRun && (capsuleName != "null")){
@@ -1442,14 +1442,14 @@ responseProcess = function(response,editor,graph){
 	var itemName = "";
 	//CapsuleInstance
 	console.log(listChanges);
-	if (listChanges.list != null){
-		if (listChanges.list[0].includes('__')){
-			var lastIndex = listChanges.list[0].lastIndexOf('__');
-			capsuleName = listChanges.list[0].substr(lastIndex+2);
+	if (listChanges.traceID != null){
+		if (listChanges.traceID[0].includes('__')){
+			var lastIndex = listChanges.traceID[0].lastIndexOf('__');
+			capsuleName = listChanges.traceID[0].substr(lastIndex+2);
 		}else{
-			capsuleName = listChanges.list[0];
+			capsuleName = listChanges.traceID[0];
 		}
-		var itemName = listChanges.list[1];
+		var itemName = listChanges.traceID[1];
 
 		var id = editor.getIDfromHashMap(capsuleName,itemName);
 

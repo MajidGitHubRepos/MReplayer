@@ -1,3 +1,4 @@
+[281218][Info]:  sending variables to the webserver
 [191218][Info]:  pingCount,Integer,6 [each variable defined in one line]
 [191218][Info]:  update PingPong.uml, removing some extera varibales and adding pongCount
 [071218][Info]:  defining args0 in Controller.java as "view" to show the diagram

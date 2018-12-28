@@ -59,6 +59,7 @@ previous=Previous
 run=Run
 stopRun=Stop
 replaySection=Replay Section
+variableSection=Variables
 clearWaypoints=Clear Waypoints
 clipart=Clipart
 collapse=Collapse

@@ -9,12 +9,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.io.*;
-
 import org.json.*;
 
 public class Handler extends Thread {
@@ -74,14 +75,25 @@ public class Handler extends Thread {
 				}else {
 					//System.out.println("inMsgQueue: " + ModelJsonServer.inMsgQueue);
 					JSONObject inMsgJSON = new JSONObject(inMsg);
-					JSONArray inMsgJSONArr = inMsgJSON.getJSONArray("list");
-					System.out.println("\n>>>>> inMsgJSON: "+ inMsgJSONArr.toString());
+					JSONArray inMsgJSONArrID = inMsgJSON.getJSONArray("traceID");
+					JSONArray inMsgJSONArrVar = inMsgJSON.getJSONArray("traceVar");
+					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString());
+					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString());
 
-					Message msg = new Message( Integer.parseInt(inMsgJSONArr.get(0).toString()), inMsgJSONArr.get(1).toString(), inMsgJSONArr.get(2).toString());
+					for (int i=0;i<inMsgJSONArrVar.length();i++) {
+						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());
+						i++;
+						String varValue = inMsgJSONArrVar.get(i).toString();
+						ModelJsonServer.vatriablesHashMap.put(varName, varValue);
+						msg.putToVatriablesHashMap(varName, varValue);
+					}
+					showVatriablesHashMap();
+					//System.out.println("\n>>>>> inMsgJSONArrVar: "+ inMsgJSONArrVar.toString());
+
 
 					ModelJsonServer.inMsgQueue.put(msg);
 					inMsgJSON = null;
-					inMsgJSONArr = null;
+					inMsgJSONArrID = null;
 					msg = null;
 				}
 				//outputStreamToFile();
@@ -101,6 +113,24 @@ public class Handler extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	//==================================================================	
+	//==============================================[showVatriablesHashMap]
+	//==================================================================
+		public void showVatriablesHashMap() {
+			System.out.println("=======================[showVatriablesHashMap]==========================");
+
+			Iterator iterator = ModelJsonServer.vatriablesHashMap.entrySet().iterator();
+			int counter = 0;
+			while(iterator.hasNext())
+			{
+				counter++;
+				Map.Entry mentry = (Map.Entry) iterator.next();  
+				System.out.println("["+ counter+"]> (Name): "+ mentry.getKey() + ", (Variable): " + mentry.getValue());
+			}
+
+		}
+
 
 
 	//==================================================================	

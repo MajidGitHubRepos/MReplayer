@@ -208,11 +208,13 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[callSendJsonToServer]
 	//==================================================================
-	public static boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName) throws Exception {
+	public static boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName, String allVariables) throws Exception {
 		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
-				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, itemName);
+				
+				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, itemName, allVariables);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -240,10 +242,10 @@ public class CapsuleTracker implements Runnable{
 				
 				if (sourceStateData.getStateName()!=null)
 					
-						if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, sourceStateData.getStateName())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+						if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, sourceStateData.getStateName(),event.getVariableData())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 					
 
-				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr")&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr",event.getVariableData())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
 				break;
 			
@@ -261,8 +263,8 @@ public class CapsuleTracker implements Runnable{
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ transitionName);
 				}
-				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, currentState)&&(Controller.args0 == "view"))   System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
-				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, transitionName)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, currentState, event.getVariableData())&&(Controller.args0 == "view"))   System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, transitionName, event.getVariableData())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
 			break;
@@ -819,12 +821,29 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[makeJSONobj]
 	//==================================================================
-	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String transitionName) {
+	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String transitionName, String allVariables) {
 			JSONObject jsonObj = new JSONObject();
+			JSONArray traceID = new JSONArray();
+			traceID.add(priorityEventCounter); traceID.add(capInstName); traceID.add(transitionName);
+			jsonObj.put("traceID", traceID);
+			JSONArray traceVar = new JSONArray();
+			//processing variables
+			if(allVariables!=null) {
+				String[] variables = allVariables.split(System.getProperty("line.separator"));
+				for (int i=0; i<variables.length;i++) {
+					//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]-->[variables]"+ variables[i] );
+					String[] varData = variables[i].split("\\,"); //Sample: pongCount,Integer,7
+					if (varData.length == 3) {
+						traceVar.add(varData[0]); traceVar.add(varData[1]); traceVar.add(varData[2]);
+					}
+					else {
+						//TODO: make sure it works with mulitple variables
+						//System.err.println("__________ Error in the event's vaiables__________");
+					}
+				}
+			}
 			
-			JSONArray list = new JSONArray();
-			list.add(priorityEventCounter); list.add(capInstName); list.add(transitionName);
-			jsonObj.put("list", list);
+			jsonObj.put("traceVar", traceVar);
 			return jsonObj;
 			
 		}

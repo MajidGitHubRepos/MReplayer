@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.BufferedReader;
@@ -21,13 +22,14 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class ModelJsonServer implements Runnable {
 
 	public static int PORT;
-	public  static OutputStream outputFileStream;
-	public  static BlockingQueue <Message> inMsgQueue;
-	public  static Stack <Message> mainStack;
-	public  static Stack <Message> tmpStack;
+	public static OutputStream outputFileStream;
+	public static BlockingQueue <Message> inMsgQueue;
+	public static Stack <Message> mainStack;
+	public static Stack <Message> tmpStack;
 	public static String outputFileName;
     public static File outputFile;
     public static boolean run;
+    public static HashMap<String, String> vatriablesHashMap;
 
 
 	public ModelJsonServer(int PORT) {
@@ -36,6 +38,7 @@ public class ModelJsonServer implements Runnable {
 		this.inMsgQueue = new PriorityBlockingQueue<Message>(); // input events --> ReplayNextServlet.java
 		this.mainStack = new Stack(); // consumed events --> ReplayPreviousServlet.java
 		this.tmpStack = new Stack();
+		this.vatriablesHashMap = new HashMap<String, String>();
 		try {
     		this.outputFileName = "./javascript/examples/grapheditor/www/resources/registration.json";
     		this.outputFile = new File(outputFileName);

@@ -5596,21 +5596,14 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 
 	mxUtils.br(div);
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	mxUtils.br(div);
+	div.appendChild(this.createTitle(mxResources.get('variableSection')));
+	var cb = document.createElement('input');
+	cb.setAttribute('type', 'text');
+	cb.style.margin = '0px 6px 0px 0px';
+	cb.setAttribute('disabled','true');
+	cb.setAttribute('value','Majid Babaei');
+	div.appendChild(cb);
 	
 
 	return div;
