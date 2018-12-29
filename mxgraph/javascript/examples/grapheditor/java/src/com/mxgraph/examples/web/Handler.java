@@ -84,10 +84,10 @@ public class Handler extends Thread {
 						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());
 						i++;
 						String varValue = inMsgJSONArrVar.get(i).toString();
-						ModelJsonServer.vatriablesHashMap.put(varName, varValue);
-						msg.putToVatriablesHashMap(varName, varValue);
+						//ModelJsonServer.vatriablesHashMap.put(varName, varValue); apply them when msg is consumed 
+						msg.putToVatriablesHashMap(varName, varValue); 
 					}
-					showVatriablesHashMap();
+					//showVatriablesHashMap();
 					//System.out.println("\n>>>>> inMsgJSONArrVar: "+ inMsgJSONArrVar.toString());
 
 

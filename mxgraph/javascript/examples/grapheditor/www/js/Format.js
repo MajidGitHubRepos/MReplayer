@@ -3805,6 +3805,7 @@ StyleFormatPanel.prototype.init = function()
 
 	this.container.appendChild(this.addStyleOps(opsPanel));
 	this.container.appendChild(this.addReplayOps(opsPanel)); //--Majid
+	this.container.appendChild(this.addVariables(opsPanel)); //--Majid
 };
 
 /**
@@ -5033,6 +5034,15 @@ StyleFormatPanel.prototype.addReplayOps = function(div)
 
 	return div;
 };
+/**
+ * Adds the label menu items to the given menu and parent. --Majid
+ */
+StyleFormatPanel.prototype.addVariables = function(div)
+{
+	// when you click a particular item it would be appeared !	
+
+	return div;
+};
 //---------------------------------------------------------------------
 /**
  * Adds the label menu items to the given menu and parent.
@@ -5072,6 +5082,7 @@ DiagramFormatPanel.prototype.init = function()
 		this.container.appendChild(this.addPaperSize(this.createPanel()));
 		this.container.appendChild(this.addStyleOps(this.createPanel()));
 		this.container.appendChild(this.addReplayOps(this.createPanel())); //--Majid
+		this.container.appendChild(this.addVariables(this.createPanel())); //--Majid
 	}
 };
 
@@ -5506,12 +5517,6 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 		this.editorUi.actions.get('editData').funct();
 			}));
 
-	//btn.setAttribute('title', mxResources.get('editData') + ' (' + this.editorUi.actions.get('editData').shortcut + ')');
-	//btn.style.width = '202px';
-	//btn.style.marginBottom = '2px';
-	//div.appendChild(btn);
-
-	//mxUtils.br(div);
 	div.appendChild(this.createTitle(mxResources.get('replaySection')));
 	
 	var btnNext = document.createElement('div');
@@ -5570,7 +5575,7 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 		
 		//====
 		
-		
+		var variables = "";
 		var imgNext = document.createElement('img');
 		imgNext.setAttribute('border', '0');
 		imgNext.setAttribute('src', (IMAGE_PATH + '/next.png'));
@@ -5583,29 +5588,42 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 		//imgNext.style.backgroundColor='red';
 		mxEvent.addListener(imgNext, 'click', function()
 				{
+			//ui.actions.get('getVariables')); //Implemented but dose not called! variables handeled in Actions.java in traceVarProcess()
 			ui.actions.get('replayNext').funct();
 				});
-		
-		
 		div.appendChild(imgNext);
 		
-	//}
-
 	
-	//------------
+	return div;
+};
 
-	mxUtils.br(div);
-
-	mxUtils.br(div);
+//--Majid
+/**
+ * addVariables section
+ */
+DiagramFormatPanel.prototype.addVariables = function(div)
+{
+	var ui = this.editorUi;
+	div.id = "variables";
+	div.style.margin = '0 auto';
+	
 	div.appendChild(this.createTitle(mxResources.get('variableSection')));
+	/*var cb = document.createElement('input');
+	cb.setAttribute('type', 'text');
+	cb.style.margin = '0px 6px 0px 0px';
+	cb.setAttribute('disabled','true');
+	cb.setAttribute('size','18');
+	cb.setAttribute('value','Top__pinger::pingCount');
+	div.appendChild(cb);
+	
 	var cb = document.createElement('input');
 	cb.setAttribute('type', 'text');
 	cb.style.margin = '0px 6px 0px 0px';
 	cb.setAttribute('disabled','true');
-	cb.setAttribute('value','Majid Babaei');
+	cb.setAttribute('size','3');
+	cb.setAttribute('value','10');
 	div.appendChild(cb);
-	
-
+	*/
 	return div;
 };
 

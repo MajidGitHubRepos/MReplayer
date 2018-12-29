@@ -31,6 +31,9 @@ public class Message implements Comparable<Message> {
 	public void putToVatriablesHashMap(String key, String value) {
 		vatriablesHashMap.put(key, value);
 	}
+	public HashMap<String, String> getVatriablesHashMap() {
+		return vatriablesHashMap;
+	}
 
 	@Override
 	public int compareTo(Message msg) {

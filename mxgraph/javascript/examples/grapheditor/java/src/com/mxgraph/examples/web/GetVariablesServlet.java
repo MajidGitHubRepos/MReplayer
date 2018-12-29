@@ -28,7 +28,7 @@ import org.json.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ReplayNextServlet extends HttpServlet
+public class GetVariablesServlet extends HttpServlet
 {
 
 	/**
@@ -58,39 +58,22 @@ public class ReplayNextServlet extends HttpServlet
 		}
 
 		PrintWriter writer = new PrintWriter(out);
-		//writer.println("<html>");
-		//writer.println("<head>");
-		//writer.println("</head>");
-		//writer.println("<body>");
-		//writer.println("<script type=\"text/javascript\">");
 
 		try
 		{
 			if (request.getContentLength() < Constants.MAX_REQUEST_SIZE)
 			{
-				//Map<String, String> post = parseMultipartRequest(request);
-				//String xml = new String(post.get("upfile").getBytes(ENCODING),"UTF-8");
-				//String filename = post.get("filename");
 
-				// Uses JavaScript to load the XML on the client-side
-				//String name=request.getParameter("name");
 				String inMsg = "";
-				Message msg = new Message();
-				//ModelJsonServer.run = false;
-
-				if (!ModelJsonServer.tmpStack.isEmpty()) { //tmpStak is not null!
-					msg = ModelJsonServer.tmpStack.pop();
-				}else {
-					msg= ModelJsonServer.inMsgQueue.take();
+				Iterator iterator = ModelJsonServer.vatriablesHashMap.entrySet().iterator();
+				int counter = 0;
+				while(iterator.hasNext())
+				{
+					counter++;
+					Map.Entry mentry = (Map.Entry) iterator.next(); 
+					inMsg = inMsg + mentry.getKey().toString()+","+mentry.getValue().toString()+"*";
 				}
-				//System.out.println("\n[ModelJsonServer.vatriablesHashMap]>: "+ ModelJsonServer.vatriablesHashMap);
-				ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
-				ModelJsonServer.mainStack.push(msg);
-				
-				inMsg = msg.makeJSON();
-				System.out.println("\n[ReplayNextServlet]> inMsg: "+ inMsg);
-				//System.out.println("\n[ModelJsonServer.mainStack]>: "+ ModelJsonServer.mainStack);
-				//System.out.println("\n[ModelJsonServer.tmpStack]>: "+ ModelJsonServer.tmpStack);
+				inMsg = inMsg.substring(0, inMsg.length() - 1);
 				writer.println(inMsg);
 
 			}

@@ -72,7 +72,19 @@ public class ModelJsonServer implements Runnable {
 	}
 
 	//==================================================================	
-	//==============================================[]
-	//==================================================================	
+	//==============================================[updateVatriablesHashMap]
+	//==================================================================
+		public static void updateVatriablesHashMap(HashMap<String, String> msgHashMap) {
+
+			Iterator iterator = msgHashMap.entrySet().iterator();
+			int counter = 0;
+			while(iterator.hasNext())
+			{
+				counter++;
+				Map.Entry mentry = (Map.Entry) iterator.next(); 
+				ModelJsonServer.vatriablesHashMap.put(mentry.getKey().toString(), mentry.getValue().toString());
+			}
+
+		}
 	
 }

@@ -1,3 +1,4 @@
+[291218][Info]: showing variables in the webserver by adding traceVarProcess() to Actions.java and adding Variables section to Format.java
 [281218][Info]: receiving variables in a json format
 [191218][Info]: adding all buttons to the Format.js 
 [181218][Info]: repsonceProcess() added to Actions.java providing on integerated point for processing responses 

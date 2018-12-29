@@ -88,7 +88,7 @@ public class RunServlet extends HttpServlet
 						ModelJsonServer.inMsgQueue.put(msg);
 						//break;
 					}
-					
+					ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
 					ModelJsonServer.mainStack.push(msg);
 					inMsg = msg.makeJSON();
 					System.out.println("\n[Run]> inMsg: "+ inMsg);

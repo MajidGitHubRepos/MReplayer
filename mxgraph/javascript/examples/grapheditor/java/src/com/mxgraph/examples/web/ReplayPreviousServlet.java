@@ -81,6 +81,7 @@ public class ReplayPreviousServlet extends HttpServlet
 				if (!ModelJsonServer.mainStack.isEmpty()) { //tmpStak is not null!
 					msg = ModelJsonServer.mainStack.pop();
 					ModelJsonServer.tmpStack.push(msg);
+					ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
 					inMsg = msg.makeJSON();
 					writer.println(inMsg);
 					System.out.println("\n[ReplayPreviousServlet]> inMsg: "+ inMsg);

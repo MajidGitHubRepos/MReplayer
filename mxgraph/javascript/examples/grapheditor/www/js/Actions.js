@@ -16,11 +16,13 @@ function Actions(editorUi)
  */
 Actions.prototype.init = function()
 {
+	var variablesHahMap = {};  //JS hash map: https://www.geeksforgeeks.org/map-in-javascript/
 	var stopRun = false;
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
 	var modelHahMap = {};
+	var variables = {};
 	var isGraphEnabled = function()
 	{
 		return Action.prototype.isEnabled.apply(this, arguments) && graph.isEnabled();
@@ -1070,7 +1072,24 @@ Actions.prototype.init = function()
 	//===============================================================================
 	//===============================[REPALY FUNCTIONS]==============================
 	//===============================================================================
-	
+	//===============================[getVariables]====================================
+	this.addAction('getVariables', function()
+			{
+		if (graph.isEnabled())
+		{
+			//take the next action from msgQueue
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					//console.log(this.responseText);
+					return this.responseText;
+				}
+			};
+			xhttp.open("POST", "/getVariables", true);
+			xhttp.send();
+			//this.editorUi..........;
+		}
+			}, null, null, Editor.ctrlKey + '+Shift+V');
 	//===============================[replayNext]====================================
 	this.addAction('replayNext', function()
 			{
@@ -1082,6 +1101,9 @@ Actions.prototype.init = function()
 				if (this.readyState == 4 && this.status == 200) {
 					stopRun = true;
 					responseProcess(this.responseText,editor,graph);
+					variablesHahMap = traceVarProcess(this.responseText,variablesHahMap);
+					
+					//console.log(variablesHahMap);
 				}
 			};
 			xhttp.open("POST", "/replayNext", true);
@@ -1101,6 +1123,7 @@ Actions.prototype.init = function()
 				if (this.readyState == 4 && this.status == 200) {
 					stopRun = true;
 					responseProcess(this.responseText,editor,graph);
+					variablesHahMap = traceVarProcess(this.responseText,variablesHahMap);
 				}
 			};
 			xhttp.open("POST", "/replayPrevious", true);
@@ -1131,6 +1154,7 @@ Actions.prototype.init = function()
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					responseProcess(this.responseText,editor,graph);
+					variablesHahMap = traceVarProcess(this.responseText,variablesHahMap);
 					
 					//Extract capsuleName
 					var listChanges = JSON.parse(this.responseText);
@@ -1434,6 +1458,38 @@ Actions.prototype.addAction = function(key, funct, enabled, iconCls, shortcut)
 //===============================================================================
 //===============================[MY FUNCTIONS]==================================
 //===============================================================================
+traceVarProcess = function(response,variablesHahMap){
+	var listChanges = JSON.parse(response);
+	var variables = variablesHahMap;
+	//console.log(variables);
+	//adding disabled input for name and variables
+	//<input type="text" disabled="true" size="18" value="Top__pinger::pingCount" style="margin: 0px 6px 0px 0px;">
+	//<input type="text" disabled="true" size="3" value="10" style="margin: 0px 6px 0px 0px;">
+	if (listChanges.traceVar != null){
+		for (var i=0; i<listChanges.traceVar.length;i++){
+			obj = listChanges.traceVar[i];
+			variables[obj['name'].toString()]=obj['value'].toString();
+			//variables = variables + obj['name']+','+obj['value']+'*'; // [*] sperator between variables [,] sperator between variable's name and value  
+		}
+		//variables = variables.slice(0, -1);
+	}
+	//console.log(Object.keys(variables).length);
+	if (Object.keys(variables).length > 0){
+		document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML +'<div>';
+		for (var name in variables) {
+			//console.log(name);
+			//console.log(variables[name]);
+			var input1 = '<input type="text" disabled="true" size="18" value="' + name+ '" style="margin: 0px 6px 0px 0px;">';
+			var input2 = '<input type="text" disabled="true" size="3" value="' + variables[name]+ '" style="margin: 0px 6px 0px 0px;"> </br>';
+			document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML + input1 + input2;
+		}
+		document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML + '</div>';
+	}
+	console.log(document.getElementById("variables").innerHTML);
+	return variables;
+	
+};
+//===============================================================================
 responseProcess = function(response,editor,graph){
 
 	// console.log(this.responseText);
@@ -1490,6 +1546,8 @@ responseProcess = function(response,editor,graph){
 			graph.getModel().endUpdate();
 		}
 	}
+	
+	
 };
 
 Actions.prototype.put = function(name, action)
