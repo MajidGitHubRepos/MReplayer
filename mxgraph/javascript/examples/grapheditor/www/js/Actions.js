@@ -1479,8 +1479,8 @@ traceVarProcess = function(response,variablesHahMap){
 		for (var name in variables) {
 			//console.log(name);
 			//console.log(variables[name]);
-			var input1 = '<input type="text" disabled="true" size="18" value="' + name+ '" style="margin: 0px 6px 0px 0px;">';
-			var input2 = '<input type="text" disabled="true" size="3" value="' + variables[name]+ '" style="margin: 0px 6px 0px 0px;"> </br>';
+			var input1 = '<input type="text" disabled="true" size="20" value="' + name+ '" style="margin: 0px 6px 0px 0px;font-weight: bold;">';
+			var input2 = '<input type="text" disabled="true" size="3" value="' + variables[name]+ '" style="margin: 0px 6px 0px 0px;font-weight: bold;"> </br>';
 			document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML + input1 + input2;
 		}
 		document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML + '</div>';
