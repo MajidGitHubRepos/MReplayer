@@ -215,16 +215,20 @@ public class ParserEngine implements Runnable {
 		int i=0;
 		do {
 			PackageableElement elementTmp = modelElements.get(i);
+			System.out.println(">>>>>>>>>>>>> elementTmp: "+ elementTmp.getName());
+			
 
-			if (elementTmp.getName().contentEquals(topCapsuleName)) {
+			if ((elementTmp.getName() != null) && (elementTmp.getName().contentEquals(topCapsuleName))) {
 				System.out.println("--------------> [Found!] TopModelElement: "+ topCapsuleName);
 				
-				listCapsuleName_InstanceName.add(topCapsuleName+"::"+"Top");
+				listCapsuleName_InstanceName.add(topCapsuleName+"::"+"Top"); //TODO: top capusle must be named "Top"
 		        HashMap<String, Property> mapNameParts = new HashMap<>(); 
 
 				//List<Property> listPart = new ArrayList<Property>();
 				//------------
 				System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
+				System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
+
 
 
 				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts, listPortName_connectorName_PortName);

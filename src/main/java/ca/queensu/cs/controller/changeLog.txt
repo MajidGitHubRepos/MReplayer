@@ -1,3 +1,4 @@
+[310119][Info]:  adding some obj null checkPoints for the Replication.uml
 [301218][Info]:  [StableVersion]=====> tesing replay and variable sections for the PingPong model with WebServer
 [281218][Info]:  sending variables to the webserver
 [191218][Info]:  pingCount,Integer,6 [each variable defined in one line]

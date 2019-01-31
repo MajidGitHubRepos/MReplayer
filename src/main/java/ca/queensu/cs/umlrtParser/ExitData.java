@@ -12,9 +12,15 @@ public class ExitData {
 	
 	public ExitData(State source, String sourceName , State target, String targetName) {
 		this.source = source;
-		this.sourceName = source.getName();
+			if ((source != null) && (source.getName() != null))
+				this.sourceName = source.getName();
+			else
+				this.sourceName = "NULL";
 		this.target = target;
-		this.targetName = target.getName();
+		if ((target != null) && (target.getName() != null))
+			this.targetName = target.getName();
+		else
+			this.targetName = "NULL";
 	}
 	public ExitData(String sourceName , String targetName) {
 		this(null,sourceName, null, targetName);

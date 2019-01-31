@@ -127,10 +127,10 @@ public class UmlrtParser {
 	 		//String fileName = "umlrtModels/SimpleCP.uml";
 	 		//String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
     		//String fileName = "umlrtModels/2Pinger1Ponger.uml";
-		 	String fileName = "umlrtModels/2Pinger1Ponger_threads.uml";
+		 	//String fileName = "umlrtModels/2Pinger1Ponger_threads.uml"; //Montreal Trip 
     		//String fileName = "umlrtModels/CausalMsgOrdering.uml";
     		//String fileName = "umlrtModels/BankATM.uml";
-
+			String fileName = "umlrtModels/Replication.uml";
     	
     		ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();
 	        File file = new File(classLoader.getResource(fileName).getFile());
