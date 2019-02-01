@@ -226,10 +226,7 @@ public class ParserEngine implements Runnable {
 
 				//List<Property> listPart = new ArrayList<Property>();
 				//------------
-				System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
-				System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
-
-
+				//System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
 
 				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts, listPortName_connectorName_PortName);
 
@@ -290,8 +287,9 @@ public class ParserEngine implements Runnable {
 			this.elementName = "";
 			//System.out.println("--------------> modelElement: "+ element )
 
-			if(element instanceof Class) {
-
+			if((element instanceof Class) && (((Class) element).getOwnedBehaviors().size() > 0)) {
+				//if (element.getOwnedBehaviors() != null && element.getOwnedBehaviors().size() > 0)
+				//((Class) element).getOwnedBehaviors().get(0);
 				//Get capsule connector
 				CapsuleConn capsuleConn = new CapsuleConn();
 				capsuleName = element.getName();

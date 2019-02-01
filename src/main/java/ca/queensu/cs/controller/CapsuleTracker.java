@@ -301,8 +301,8 @@ public class CapsuleTracker implements Runnable{
 					//check transition target with targetStateName, they have to be the same 
 					if ((targetStateName!= null)) {
 						//System.out.println("\n=={Debug}==["+ Thread.currentThread().getName() +"]+++>[getTransition().getSource()] : "+ entry.getValue().get(i).getTransition().getSource().getName());
-
-						if (entry.getValue().get(i).getTransition().getSource().getName() != null) {
+						if ((entry.getValue().get(i).getTransition().getSource().getName() != null)) {
+							//System.out.println("entry.getValue().get(i).getTransition():"+entry.getValue().get(i).getTransition().allDataToString());
 						if (entry.getValue().get(i).getTransition().getTransitonName().contentEquals(eventTransitionName) && 
 								(entry.getValue().get(i).getTransition().getSource().getName().contentEquals(targetStateName))) {
 							return entry.getValue().get(i);
@@ -317,6 +317,7 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 		}
+		//System.err.println("___The row in TableDataMember NOTFOUND__eventTransitionName:"+eventTransitionName+"____targetStateName"+targetStateName);
 		return null;
 	}
 	//==================================================================	
