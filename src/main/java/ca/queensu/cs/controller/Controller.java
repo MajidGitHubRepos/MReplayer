@@ -8,6 +8,7 @@ Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
  */
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -29,10 +30,12 @@ public class Controller {
 	public static Semaphore semServer;
 	public static Map<String, List<TableDataMember>> listTableData;
 	public static String args0;
+	public static HashMap<String, String> capInstIdxMap;
 	
 
 	public Controller(String args0) {
 		this.args0 = args0;
+		this.capInstIdxMap = new HashMap<String, String>();
 		viewer = new viewController();
 		this.semServer = new Semaphore(1); 
 		Event event = new Event();

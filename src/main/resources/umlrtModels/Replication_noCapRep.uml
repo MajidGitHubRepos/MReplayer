@@ -9,8 +9,8 @@
     </eAnnotations>
     <packagedElement xmi:type="uml:Class" xmi:id="_sMZ5EAgoEea_md0mpENoqg" name="ENV" visibility="public" classifierBehavior="_gU8CMAgwEea_md0mpENoqg" isActive="true">
       <ownedAttribute xmi:type="uml:Port" xmi:id="_GXsSgAgvEea_md0mpENoqg" name="ConfigComm" visibility="public" type="_v000cAgsEea_md0mpENoqg" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NBhGMAgvEea_md0mpENoqg" value="2"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NBssYAgvEea_md0mpENoqg" value="2"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NBhGMAgvEea_md0mpENoqg" value="7"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NBssYAgvEea_md0mpENoqg" value="7"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_b1NrIAjLEea_md0mpENoqg" name="FailureTimer" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
         <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
@@ -82,8 +82,7 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_Sw7kAAjHEea_md0mpENoqg" name="configCheckL">
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;ENV: The configuration is OK, the transition config-> Running was taken, sending signal to servers and clients \n&quot;;
-    ConfigComm.StartUp(this->systemConfig).sendAt(0);
-    ConfigComm.StartUp(this->systemConfig).sendAt(1);
+    ConfigComm.StartUp(this->systemConfig).send();
     std::cout&lt;&lt;&quot;ENV: ENV is in  Running State\n&quot;;
 </body>
             </effect>
@@ -204,7 +203,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_xCGHkAgmEea_md0mpENoqg" name="Server" classifierBehavior="_lT4V0AlLEea_md0mpENoqg" isActive="true">
       <generalization xmi:type="uml:Generalization" xmi:id="_6zESYAgmEea_md0mpENoqg" general="_4_oYIAghEea_md0mpENoqg"/>
-      <ownedAttribute xmi:type="uml:Port" xmi:id="_-3KD0AgvEea_md0mpENoqg" name="ConfigComm" visibility="public" type="_v000cAgsEea_md0mpENoqg" isOrdered="true" aggregation="composite" isBehavior="true" isService="true">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_-3KD0AgvEea_md0mpENoqg" name="ConfigComm" visibility="protected" type="_v000cAgsEea_md0mpENoqg" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xByucAlLEea_md0mpENoqg" value="1"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xB_iwAlLEea_md0mpENoqg" value="1"/>
       </ownedAttribute>
@@ -246,7 +245,7 @@
 </body>
             </effect>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_fhk4oAlOEea_md0mpENoqg" name="StartUp" source="_jLPjcAlNEea_md0mpENoqg" target="_Rrrc0AlvEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_fhk4oAlOEea_md0mpENoqg" source="_jLPjcAlNEea_md0mpENoqg" target="_Rrrc0AlvEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_jEMbEAlfEea_md0mpENoqg" name="StartupServer">
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: StartingUp\n&quot;;
@@ -409,7 +408,7 @@
           <transition xmi:type="uml:Transition" xmi:id="_QEtu0AsLEeaGqPUk-4V4qQ" name="purgeotherMessage" source="_hgSoEAlOEea_md0mpENoqg" target="_hgSoEAlOEea_md0mpENoqg">
             <trigger xmi:type="uml:Trigger" xmi:id="_WQkXoAsMEeaGqPUk-4V4qQ" name="purge" event="_f4LPUApBEeaGqPUk-4V4qQ" port="_pQ6HcAnMEeaGqPUk-4V4qQ _HIvrsApCEeaGqPUk-4V4qQ"/>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_bHEIAONOEeaTpaLNj-zYpw" source="_M8iZcONCEeaTpaLNj-zYpw" target="_kLngAAp5EeaGqPUk-4V4qQ"/>
+          <transition xmi:type="uml:Transition" xmi:id="_bHEIAONOEeaTpaLNj-zYpw" name="tmpTR" source="_M8iZcONCEeaTpaLNj-zYpw" target="_kLngAAp5EeaGqPUk-4V4qQ"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_hY-7oAlNEea_md0mpENoqg" name="Init"/>
           <subvertex xmi:type="uml:State" xmi:id="_jLPjcAlNEea_md0mpENoqg" name="StandBy"/>
           <subvertex xmi:type="uml:State" xmi:id="_UrcckAlOEea_md0mpENoqg" name="RunAsMaster">
@@ -490,7 +489,7 @@
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_mHBPcuNDEeaTpaLNj-zYpw" name="IAmlive" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
               </transition>
-              <transition xmi:type="uml:Transition" xmi:id="_-mdZ0ONDEeaTpaLNj-zYpw" name="initTr" source="_8WMAUONDEeaTpaLNj-zYpw" target="_ZaK1gAlOEea_md0mpENoqg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_-mdZ0ONDEeaTpaLNj-zYpw" source="_8WMAUONDEeaTpaLNj-zYpw" target="_ZaK1gAlOEea_md0mpENoqg"/>
               <transition xmi:type="uml:Transition" xmi:id="_CPd8UONOEeaTpaLNj-zYpw" name="CheckNoMaster" guard="_CPd8UeNOEeaTpaLNj-zYpw" source="_NU8OsAszEeaGqPUk-4V4qQ" target="_M8iZcONCEeaTpaLNj-zYpw">
                 <ownedRule xmi:type="uml:Constraint" xmi:id="_CPd8UeNOEeaTpaLNj-zYpw" name="CheckNoServer">
                   <specification xmi:type="uml:OpaqueExpression" xmi:id="_CPd8UuNOEeaTpaLNj-zYpw" name="checkNoServer">
@@ -578,7 +577,7 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_BKT8EAlKEea_md0mpENoqg" name="ClientStateMachine">
         <region xmi:type="uml:Region" xmi:id="_Bk0GwAlKEea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_UScqkAlKEea_md0mpENoqg" name="initTr" source="_Oll1cAlKEea_md0mpENoqg" target="_Q5-S4AlKEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_UScqkAlKEea_md0mpENoqg" name="inittrans" source="_Oll1cAlKEea_md0mpENoqg" target="_Q5-S4AlKEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ptLt0AlKEea_md0mpENoqg" name="InitLog">
               <language>C++</language>
               <body>      std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Intialization\n&quot;;
@@ -607,7 +606,7 @@
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
             </trigger>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_9CvEQAmtEea_md0mpENoqg" name="ReplayConfig" source="_aVMuMAmtEea_md0mpENoqg" target="_qr_J4AnCEeaGqPUk-4V4qQ">
+          <transition xmi:type="uml:Transition" xmi:id="_9CvEQAmtEea_md0mpENoqg" source="_aVMuMAmtEea_md0mpENoqg" target="_qr_J4AnCEeaGqPUk-4V4qQ">
             <trigger xmi:type="uml:Trigger" xmi:id="_fW6vEAnCEeaGqPUk-4V4qQ" name="ConfigReply" event="_Iv3CQAl4Eea_md0mpENoqg" port="_g3nG4AgvEea_md0mpENoqg"/>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_BanqgAmuEea_md0mpENoqg" name="ServiceResult" source="_fO-gkAmtEea_md0mpENoqg" target="_uScfwAmtEea_md0mpENoqg">
@@ -1126,8 +1125,8 @@ ts.getclock(ts);
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ljjVwQgoEea_md0mpENoqg" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_odv2AAgoEea_md0mpENoqg" name="client" visibility="protected" type="_zpdLYAgmEea_md0mpENoqg" isOrdered="true" aggregation="composite">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_odySQQgoEea_md0mpENoqg" value="5"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ody5UAgoEea_md0mpENoqg" value="5"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_sn2nICZMEemZwMpqfyE65A" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_soSE8CZMEemZwMpqfyE65A" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_trcC4AgoEea_md0mpENoqg" name="ENV" visibility="protected" type="_sMZ5EAgoEea_md0mpENoqg" isOrdered="true" aggregation="composite">
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_trfGMAgoEea_md0mpENoqg" value="1"/>
@@ -1152,14 +1151,6 @@ ts.getclock(ts);
       <ownedConnector xmi:type="uml:Connector" xmi:id="_0bs9YONAEeaTpaLNj-zYpw" name="RTConnector9">
         <end xmi:type="uml:ConnectorEnd" xmi:id="_0buLgONAEeaTpaLNj-zYpw" partWithPort="_6qCFoAg7Eea_md0mpENoqg" role="_HIvrsApCEeaGqPUk-4V4qQ"/>
         <end xmi:type="uml:ConnectorEnd" xmi:id="_0buLgeNAEeaTpaLNj-zYpw" partWithPort="_ljfrYAgoEea_md0mpENoqg" role="_rmnI0OM8EeaTpaLNj-zYpw"/>
-      </ownedConnector>
-      <ownedConnector xmi:type="uml:Connector" xmi:id="_XeEW4CaBEemRHqIdTQnNyA" name="RTConnector10">
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_XeM5wCaBEemRHqIdTQnNyA" partWithPort="_trcC4AgoEea_md0mpENoqg" role="_GXsSgAgvEea_md0mpENoqg"/>
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_XeNg0CaBEemRHqIdTQnNyA" partWithPort="_ljfrYAgoEea_md0mpENoqg" role="_-3KD0AgvEea_md0mpENoqg"/>
-      </ownedConnector>
-      <ownedConnector xmi:type="uml:Connector" xmi:id="_ZHhA8CaBEemRHqIdTQnNyA" name="RTConnector11">
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_ZHkrUCaBEemRHqIdTQnNyA" partWithPort="_6qCFoAg7Eea_md0mpENoqg" role="_-3KD0AgvEea_md0mpENoqg"/>
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_ZHkrUSaBEemRHqIdTQnNyA" partWithPort="_trcC4AgoEea_md0mpENoqg" role="_GXsSgAgvEea_md0mpENoqg"/>
       </ownedConnector>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_lcu1sAggEea_md0mpENoqg">
@@ -1207,9 +1198,9 @@ ts.getclock(ts);
   <UMLRealTime:RTMessageSet xmi:id="_v1KLoAgsEea_md0mpENoqg" base_Interface="_v1I9gAgsEea_md0mpENoqg" rtMsgKind="out"/>
   <UMLRealTime:RTMessageSet xmi:id="_v1Q5UAgsEea_md0mpENoqg" base_Interface="_v1PrMAgsEea_md0mpENoqg" rtMsgKind="inOut"/>
   <UMLRealTime:Protocol xmi:id="_v1T8oAgsEea_md0mpENoqg" base_Collaboration="_v000cAgsEea_md0mpENoqg"/>
-  <UMLRealTime:RTPort xmi:id="_GXxLAAgvEea_md0mpENoqg" isPublish="false" isWired="true" base_Port="_GXsSgAgvEea_md0mpENoqg"/>
+  <UMLRealTime:RTPort xmi:id="_GXxLAAgvEea_md0mpENoqg" isPublish="true" isWired="false" base_Port="_GXsSgAgvEea_md0mpENoqg"/>
   <UMLRealTime:RTPort xmi:id="_g3oVAAgvEea_md0mpENoqg" isWired="false" base_Port="_g3nG4AgvEea_md0mpENoqg"/>
-  <UMLRealTime:RTPort xmi:id="_-3NuMAgvEea_md0mpENoqg" isPublish="false" isWired="true" base_Port="_-3KD0AgvEea_md0mpENoqg"/>
+  <UMLRealTime:RTPort xmi:id="_-3NuMAgvEea_md0mpENoqg" isWired="false" base_Port="_-3KD0AgvEea_md0mpENoqg"/>
   <UMLRealTime:Capsule xmi:id="_RMf8EAgzEea_md0mpENoqg" base_Class="_RLyKYAgzEea_md0mpENoqg"/>
   <UMLRealTime:ProtocolContainer xmi:id="_nlCrYAgzEea_md0mpENoqg" base_Package="_nlBdQAgzEea_md0mpENoqg"/>
   <UMLRealTime:RTMessageSet xmi:id="_nlFHoAgzEea_md0mpENoqg" base_Interface="_nlD5gAgzEea_md0mpENoqg"/>
@@ -1297,6 +1288,4 @@ ts.getclock(ts);
   <UMLRTStateMachines:RTPseudostate xmi:id="_5uXY4KpiEeiNHY6qjNhZ4w" base_Pseudostate="_dWznsAgxEea_md0mpENoqg"/>
   <UMLRTStateMachines:RTRegion xmi:id="_8Lil8KpiEeiNHY6qjNhZ4w" base_Region="_jSIzIAgwEea_md0mpENoqg"/>
   <UMLRTStateMachines:RTStateMachine xmi:id="_BsmawKpjEeiNHY6qjNhZ4w" base_StateMachine="_gU8CMAgwEea_md0mpENoqg"/>
-  <UMLRealTime:RTConnector xmi:id="_XeOH4CaBEemRHqIdTQnNyA" base_Connector="_XeEW4CaBEemRHqIdTQnNyA"/>
-  <UMLRealTime:RTConnector xmi:id="_ZHlSYCaBEemRHqIdTQnNyA" base_Connector="_ZHhA8CaBEemRHqIdTQnNyA"/>
 </xmi:XMI>

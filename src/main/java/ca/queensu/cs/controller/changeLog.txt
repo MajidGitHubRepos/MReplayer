@@ -1,3 +1,5 @@
+[020219][Debug]: adding some line of code just to handel Replication.uml adding better log for checkPoints 
+[020219][Debug]: in  lookingForTargetCapsuleName() if srcCapFound or trgCapFound then break the loop
 [010219][Info]:  adding some checkPoint for  the new Replication.uml without capsule replication
 [310119][Info]:  adding some obj null checkPoints for the Replication.uml
 [301218][Info]:  [StableVersion]=====> tesing replay and variable sections for the PingPong model with WebServer

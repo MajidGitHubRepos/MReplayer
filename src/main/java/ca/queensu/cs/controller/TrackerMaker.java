@@ -43,7 +43,7 @@ public class TrackerMaker implements Runnable{
 
 	public static Data[] dataArray;
 	public static CapsuleTracker capsuleTrackers[];
-	public static HashMap<String, String> capInstIdxMap;
+	
 
 	public static int trackerCount;
 	public static int priorityEventCounter;
@@ -61,7 +61,6 @@ public class TrackerMaker implements Runnable{
 		this.MAX_NUM_POLICY = 2; //Maximum number of entities in the policy chain
 		this.capsulePathsMap =  new HashMap<String, String>();
 		this.MAX_NUM_CAPSULE = numberOfCapsules;
-		this.capInstIdxMap = new HashMap<String, String>();
 		this.semServer = semServer;
 		this.semCapsuleTracker = new Semaphore(1); 
 		this.capsuleTrackers = new CapsuleTracker[MAX_NUM_CAPSULE];
@@ -243,17 +242,18 @@ public class TrackerMaker implements Runnable{
 					
 					for (int i = 0; i<spiltCapsuleFullname.length;i++) {
 						String capsuleFullname = spiltCapsuleFullname[i]; //get FullName
-						capsuleFullname.replaceAll("\\s+",""); // remove spaces
+						capsuleFullname = capsuleFullname.replaceAll("\\s+",""); // remove spaces
 						
-						String tmpCapsuleInstances__capsuleIndex = capInstIdxMap.get(capsuleFullname);
+						String tmpCapsuleInstances__capsuleIndex = Controller.capInstIdxMap.get(capsuleFullname);
 						
 						if (tmpCapsuleInstances__capsuleIndex == null) { //does not exist!
 						    capsuleFullname = capsuleFullname.replaceAll("\\s+","");
-							capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
+						    Controller.capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
 							break;
 							
 						} else {
 						    // exists such key
+							//System.out.println("-->For "+capsuleFullname+" EXIST "+ tmpCapsuleInstances__capsuleIndex);
 						}
 					}
 				}else {
@@ -261,11 +261,11 @@ public class TrackerMaker implements Runnable{
 					String  capsuleFullname = entry.getKey();
 					capsuleFullname.replaceAll("\\s+",""); // remove spaces
 					
-					String tmpCapsuleInstances__capsuleIndex = capInstIdxMap.get(capsuleFullname);
+					String tmpCapsuleInstances__capsuleIndex = Controller.capInstIdxMap.get(capsuleFullname);
 					
 					if (tmpCapsuleInstances__capsuleIndex == null) { //does not exist!
 					    capsuleFullname = capsuleFullname.replaceAll("\\s+","");
-						capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
+					    Controller.capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
 						
 					} else {
 					    // exists such key
@@ -282,7 +282,7 @@ public class TrackerMaker implements Runnable{
 
 	public String findCapfullNameByCapInstanceIdx (String capsuleInstance__capsuleIndex)  
 	{
-		for (Map.Entry<String, String> entry  : capInstIdxMap.entrySet()) {
+		for (Map.Entry<String, String> entry  : Controller.capInstIdxMap.entrySet()) {
 			if(entry.getValue().contains(capsuleInstance__capsuleIndex)) {
 				String capfullName = entry.getKey().replaceAll("\\s+","");
 				return capfullName;
@@ -300,7 +300,7 @@ public class TrackerMaker implements Runnable{
 	public void showCapInstIdxMap()  
 	{
 		System.out.println("=======================[capInstIdxMap]==========================");
-		for (Map.Entry<String, String> entry  : capInstIdxMap.entrySet()) {
+		for (Map.Entry<String, String> entry  : Controller.capInstIdxMap.entrySet()) {
 			//if (entry.getKey().contains(event.getCapsuleInstance())) { 
 			System.out.println("["+ Thread.currentThread().getName() +"]+++>[entry.getKey()] : "+ entry.getKey()+" [entry.getValue()] : "+entry.getValue());
 			//}

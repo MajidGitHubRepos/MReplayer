@@ -60,9 +60,13 @@ public class CapsuleTracker implements Runnable{
 	private double stateExitTimer =0;
 	private static String senderCapInstanceName;
 	private static int WEBSERVER_PORT;
+	private String currentStateToChiceState;
+	private String currentTransitionToFromChiceState;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, String capsuleInstance, OutputStream outputFileStream, int[] logicalVectorTime) {
+		this.currentStateToChiceState ="";
+		this.currentTransitionToFromChiceState = "";
 		this.WEBSERVER_PORT = 8090;
 		this.senderCapInstanceName = "";
 		this.stateExitEvent = null;
@@ -244,7 +248,7 @@ public class CapsuleTracker implements Runnable{
 					
 						if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, sourceStateData.getStateName(),event.getVariableData())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 					
-
+				//TODO: init transitions must be named initTr
 				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, "initTr",event.getVariableData())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 				logicalVectorTime[TrackerMakerNumber]++; return true;};
 				break;
@@ -262,6 +266,17 @@ public class CapsuleTracker implements Runnable{
 					//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]-->[variables]"+ event.getVariableData() );
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentState);
 					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ transitionName);
+				}
+				if(this.targetChoiceState) { //Keep currentState and transitionName when we have choicePoint
+					this.currentTransitionToFromChiceState = transitionName;
+					this.currentStateToChiceState = currentState;
+				}
+				if(this.sourceChoiceState) {
+					this.currentTransitionToFromChiceState = this.currentTransitionToFromChiceState +", "+ transitionName;
+					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: STATEEXITEND received! for: "+ currentStateToChiceState);
+					System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTIONEND received! for: "+ this.currentTransitionToFromChiceState);
+					this.currentTransitionToFromChiceState = "";
+					this.currentStateToChiceState = "";
 				}
 				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, currentState, event.getVariableData())&&(Controller.args0 == "view"))   System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 				if (!callSendJsonToServer(TrackerMaker.priorityEventCounter,capsuleInstance, transitionName, event.getVariableData())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
@@ -359,6 +374,8 @@ public class CapsuleTracker implements Runnable{
 		String sourcePort = "";
 		String targetPort = "";
 		boolean portFound = false;
+		boolean srcCapFound = false;
+		boolean trgCapFound = false;
 
 		for (int i = 0; i< Controller.umlrtParser.getlistCapsuleConn().size(); i++) {
 			List<String> listCapsulePortName = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName();
@@ -421,12 +438,17 @@ public class CapsuleTracker implements Runnable{
 										if (capsuleInstance.contains(sourceCapsuleName__withoutInstanceName)) {
 											//sourceCapsuleName found!
 											sourceCapsuleName = splitSourceCapsuleName[q];
+											srcCapFound = true;
 											break;
 										}
 									}
+									if (srcCapFound) break;
 									if (sourceCapsuleName.contains(",")){ //sourceCapsuleName not found!
 										System.err.println("=================[sourceCapsuleName Not Found]================");
 									}
+								}else {
+									//TODO: Make sure the order in CapsuleConn does not affect this function 
+									break;
 								}
 							}
 
@@ -451,9 +473,11 @@ public class CapsuleTracker implements Runnable{
 										if (capsuleInstance.contains(targetCapsuleName__withoutInstanceName)) {
 											//targetCapsulName found!
 											targetCapsuleName = splitTargetCapsuleName[q];
+											trgCapFound = true;
 											break;
 										}
 									}
+									//if (trgCapFound) break;
 									if (targetCapsuleName.contains(",")){ //targetCapsulName not found!
 										System.err.println("=================[targetCapsulName Not Found]================");
 									}
@@ -732,7 +756,12 @@ public class CapsuleTracker implements Runnable{
 							if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("msg->sapIndex0_"))) { //TODO: only msg->sapIndex0_ handled 
 								//System.out.println("\n====================>["+ Thread.currentThread().getName() +"]"+ "--> senderCapInstanceName:" + senderCapInstanceName);
 								targetCapsuleName = senderCapInstanceName;
-							} else if ((actionParts[3].contains("sendAt")) && !(actionParts[4].contains("msg->sapIndex0_"))) {
+							}else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("0"))) { //TODO: REMOVE LATER -Replication.uml  
+								targetCapsuleName = "Simulator__server1";
+							}
+							else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("1"))) { //TODO: REMOVE LATER -Replication.uml  
+								targetCapsuleName = "Simulator__server2";
+							}else if ((actionParts[3].contains("sendAt")) && !(actionParts[4].contains("msg->sapIndex0_"))) {
 								System.err.println("__________ sendAt an unknown capsule __________");
 							} else {
 								targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);

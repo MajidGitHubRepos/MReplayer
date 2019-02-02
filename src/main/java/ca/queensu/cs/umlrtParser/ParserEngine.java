@@ -203,6 +203,7 @@ public class ParserEngine implements Runnable {
 	//==================================================================	
 	public void elementsExtractor() {
 		HashMap<String, StateMachine> smMap = new HashMap<String, StateMachine>();
+		HashMap<String, String> capsuleInstanceNameRepMap = new HashMap<String, String>();
 		String capsuleName = "";
 		String capsuleInstanceName = "";
 		List <String> listCapsuleName_InstanceName = new ArrayList<String>();
@@ -211,6 +212,7 @@ public class ParserEngine implements Runnable {
 		String protocolName = "";
 		String connEnd1PortName = "";
 		String connEnd2PortName = "";
+		String capsuleInstanceNameRep = "";
 	
 		int i=0;
 		do {
@@ -221,6 +223,21 @@ public class ParserEngine implements Runnable {
 			if ((elementTmp.getName() != null) && (elementTmp.getName().contentEquals(topCapsuleName))) {
 				System.out.println("--------------> [Found!] TopModelElement: "+ topCapsuleName);
 				
+				//check for capsule replication
+				List<Property> listParts = new ArrayList<Property>();
+				listParts = ((Class) elementTmp).getParts();
+				for (Property part: listParts) {
+					capsuleInstanceNameRep = "";
+					System.out.println(">>>>>>>>>>>>> PART: " +part.getName() +"___"+ part.lowerBound());
+					if (part.lowerBound()>1) {
+					for(int ii = 1; ii<=part.lowerBound(); ii++) {
+						capsuleInstanceNameRep =  capsuleInstanceNameRep + topCapsuleName+"__"+part.getName()+"__"+ii+", ";
+					}
+					capsuleInstanceNameRepMap.put(topCapsuleName+"__"+part.getName(), capsuleInstanceNameRep);
+				}
+				}
+				
+				//System.out.println(">>>>>>>>>>>>> PARTS: "+ ((Class) elementTmp).getParts());
 				listCapsuleName_InstanceName.add(topCapsuleName+"::"+"Top"); //TODO: top capusle must be named "Top"
 		        HashMap<String, Property> mapNameParts = new HashMap<>(); 
 
@@ -327,7 +344,15 @@ public class ParserEngine implements Runnable {
 				}
 				if (capsuleInstanceName == "")
 					capsuleInstanceName = "__NOT_FOUND__";
-
+				
+				//check for capsule replication
+				//System.out.println(">>>>>>>>>>>>> PARTS: "+ ((Class) element).getParts());
+				if (capsuleInstanceNameRepMap.get(capsuleInstanceName) != null) {
+					this.elementInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + ", " + this.elementInstanceName;
+					capsuleInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + capsuleInstanceName;
+					System.out.println("--------------> capsuleInstanceName: "+capsuleInstanceName);
+				}
+				
 				capsuleConn.setCapsuleName(capsuleName);
 				capsuleConn.setCapsuleInstanceName(capsuleInstanceName);
 				listCapsuleConn.add(capsuleConn);
