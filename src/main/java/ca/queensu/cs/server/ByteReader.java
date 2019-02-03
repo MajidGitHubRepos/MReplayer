@@ -160,6 +160,7 @@ public final class ByteReader implements Runnable {
 		String eventSource = "";
 		String eventStatus = "";
 		String eventTarget = "";
+		String vectorTime  = "";
 
 		int index = 0;
 		if (message.contains("[getEventId]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
@@ -180,6 +181,14 @@ public final class ByteReader implements Runnable {
 		}
 		if (message.contains("[getCapsuleInstance]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
 			eventCapsuleInstance = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(";", index+1));
+			//Extract vectorTime if exists
+			//TODO: if vector time sent separately this block of code should be modified according to that!
+			if (eventCapsuleInstance.contains(" ")) {//vt's come with the message
+				int indexOfSpace = eventCapsuleInstance.indexOf(" ");				
+				int tmpIdx = eventCapsuleInstance.lastIndexOf(" ");
+				vectorTime = eventCapsuleInstance.substring(indexOfSpace+1,tmpIdx+2);
+				eventCapsuleInstance = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(" ", index+1));
+			}
 			index = message.indexOf(";", index+1);
 		}
 		if (message.contains("[getCapsuleIndex]") && message.contains(";") && (message.indexOf("]", index+1) < message.indexOf(";", index+1))) {
@@ -227,7 +236,7 @@ public final class ByteReader implements Runnable {
 		}
 
 		Event event = new Event( eventId,  eventSourceKind, eventType, eventCapsuleName, eventCapsuleInstance, eventCapsuleIndex, 
-				eventSourceName, eventCpuTik, eventTimePointSecond, eventTimePointNano, eventVariableData, eventSignal, eventSource, eventStatus, eventTarget);
+				eventSourceName, eventCpuTik, eventTimePointSecond, eventTimePointNano, eventVariableData, eventSignal, eventSource, eventStatus, eventTarget,vectorTime);
 
 		return event;
 

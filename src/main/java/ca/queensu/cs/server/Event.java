@@ -16,6 +16,7 @@ public class Event {
 	private String eventSource;
 	private String eventStatus;
 	private String eventTarget;
+	private String vectorTime;
 	
 	
 	/*
@@ -44,7 +45,7 @@ public class Event {
 	
 	public Event(String eventId, String eventSourceKind,String eventType,String eventCapsuleName,String eventCapsuleInstance,
 			String eventCapsuleIndex,String eventSourceName,String eventCpuTik,String eventTimePointSecond,String eventTimePointNano,String eventVariableData,
-			String eventSignal,String eventSource,String eventStatus,String eventTarget) {
+			String eventSignal,String eventSource,String eventStatus,String eventTarget, String vectorTime) {
 		this.eventId=eventId;
 		this.eventSourceKind=eventSourceKind;
 		this.eventType=eventType; 
@@ -60,9 +61,10 @@ public class Event {
 		this.eventSource=eventSource;
 		this.eventStatus=eventStatus;
 		this.eventTarget=eventTarget; 
+		this.vectorTime = vectorTime;
 	}
 	public Event() {
-		this(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+		this(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 	}
 	
 	//--GETTERS
@@ -116,7 +118,7 @@ public class Event {
 	
 	public String allDataToString() {
 		return ", Event: [eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleInstance=" + eventCapsuleInstance
-				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + "]";
+				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + ", vectorTime=" + vectorTime +"]";
 	}
 	
 	public String allDataToString_originalFromMDebugger() {
@@ -124,7 +126,7 @@ public class Event {
 				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + ", eventCpuTik=" + eventCpuTik
 				+  ", eventTimePointSecond=" + eventTimePointSecond + ", eventTimePointNano=" + eventTimePointNano +
 				", eventVariableData=" + eventVariableData +", eventSignal=" + eventSignal +", eventSource=" + eventSource +
-				", eventStatus=" + eventStatus +", eventTarget=" + eventTarget +"]";
+				", eventStatus=" + eventStatus +", vectorTime=" + vectorTime + ", eventTarget=" + eventTarget +"]";
 	}
 	
 

@@ -1,3 +1,4 @@
+[030219][Info]:  extracting vector time from eventCapsuleName if " " exists in the eventCapsuleName
 [281218][Info]:  sending variables to the webserver
 [041218][Debug]: adding priorityEventCounter to the ServerBypassOrdering in order to preserve initial ordering of the recieved events  
 [041218][Info]:  Adding Bypass features including: ReadBypassOrdering.java and ServerBypassOrdering.java
