@@ -156,7 +156,6 @@ public class ParserEngine implements Runnable {
 		elementsExtractor();
 		showElements();
 		this.umlrtParsingDone = true;
-
 	}
 
 	//==================================================================	

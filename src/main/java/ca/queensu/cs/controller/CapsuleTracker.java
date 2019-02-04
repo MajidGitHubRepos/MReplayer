@@ -347,6 +347,7 @@ public class CapsuleTracker implements Runnable{
 
 		for (int i=0; i< TrackerMaker.trackerCount; i++) {
 			if(targetCapsuleName.contains(TrackerMaker.capsuleTrackers[i].capsuleInstance)){
+				//System.out.println(">>>>>>>>>>>>>>> TrackerMaker.capsuleTrackers[i].capsuleInstance: " +TrackerMaker.capsuleTrackers[i].capsuleInstance);
 
 				for (int j = 0; j<= TrackerMaker.capsuleTrackers[i].logicalVectorTime.length; j++) {
 					if (j == TrackerMakerNumber) {
@@ -367,7 +368,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[lookingForTargetCapsuleName]
 	//==================================================================
-	public String lookingForTargetCapsuleName(String port) {
+	public String lookingForTargetCapsuleName(String port,boolean sendToAll) {
 
 		String targetCapsuleName = "";
 		String sourceCapsuleName = "";
@@ -451,7 +452,6 @@ public class CapsuleTracker implements Runnable{
 									break;
 								}
 							}
-
 						}
 					}
 
@@ -478,8 +478,11 @@ public class CapsuleTracker implements Runnable{
 										}
 									}
 									//if (trgCapFound) break;
-									if (targetCapsuleName.contains(",")){ //targetCapsulName not found!
-										System.err.println("=================[targetCapsulName Not Found]================");
+									if (targetCapsuleName.contains(",")&& sendToAll){
+										return targetCapsuleName;
+									}
+									else if (targetCapsuleName.contains(",")){ //targetCapsulName not found!
+										System.err.println("sourceCapsuleName: "+sourceCapsuleName+"\n=================[targetCapsulName Not Found]================\ntargetCapsuleName"+targetCapsuleName);
 									}
 								}
 								
@@ -536,8 +539,12 @@ public class CapsuleTracker implements Runnable{
 								//All action codes
 
 								for (int j = 0; j < entry.getValue().get(i).getTransition().getActions().size(); j++) {
-									String[] actionParts = entry.getValue().get(i).getTransition().getActions().get(j).split("\\.|\\(");
-									String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
+									
+									if (!lookTrgCap_and_sendMSG(entry.getValue().get(i).getTransition().getActions().get(j)))
+										return false; //faild!
+									//Replaced by lookTrgCap_and_sendMSG
+									/*String[] actionParts = entry.getValue().get(i).getTransition().getActions().get(j).split("\\.|\\(");
+									String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],false);
 									
 									int send_to_msgQ_count = 0;
 									if (targetCapsuleName != "") {
@@ -548,7 +555,7 @@ public class CapsuleTracker implements Runnable{
 											if (send_to_msgQ_count++ == MAX_TRY_TO_SEND)
 												return false;
 										}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
-									}
+									}*/
 								}
 							}
 
@@ -586,10 +593,12 @@ public class CapsuleTracker implements Runnable{
 			//event would be consumed!
 			//looking into the targetStateData.getEntryActions() for sending messages into messageQueues
 			for (int j = 0; j < targetStateData.getEntryActions().size(); j++) {
-				//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[targetStateData.getEntryActions()] : "+ targetStateData.getEntryActions());
 
-				String[] actionParts = targetStateData.getEntryActions().get(j).split("\\."); //TODO: should be the same actions that we do at transition 
-				String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
+				if (!lookTrgCap_and_sendMSG(targetStateData.getEntryActions().get(j)))
+					return false; //faild!
+				//Replaced by lookTrgCap_and_sendMSG
+				/*String[] actionParts = targetStateData.getEntryActions().get(j).split("\\.");  
+				String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],false);
 
 				//semCapsuleTracker.acquire();
 				do {
@@ -598,7 +607,7 @@ public class CapsuleTracker implements Runnable{
 					Thread.currentThread().sleep(1);
 				}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
 				//semCapsuleTracker.release();
-
+				*/
 			}
 			//previous transition done
 			
@@ -752,35 +761,8 @@ public class CapsuleTracker implements Runnable{
 						//event would be consumed!
 						//looking into the targetStateData.getExitActions() for sending messages into messageQueues
 						for (int j = 0; j < targetTransitionData.getActions().size(); j++) {
-							String[] actionParts = targetTransitionData.getActions().get(j).split("\\.|\\(");
-							if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("msg->sapIndex0_"))) { //TODO: only msg->sapIndex0_ handled 
-								//System.out.println("\n====================>["+ Thread.currentThread().getName() +"]"+ "--> senderCapInstanceName:" + senderCapInstanceName);
-								targetCapsuleName = senderCapInstanceName;
-							}else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("0"))) { //TODO: REMOVE LATER -Replication.uml  
-								targetCapsuleName = "Simulator__server1";
-							}
-							else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("1"))) { //TODO: REMOVE LATER -Replication.uml  
-								targetCapsuleName = "Simulator__server2";
-							}else if ((actionParts[3].contains("sendAt")) && !(actionParts[4].contains("msg->sapIndex0_"))) {
-								System.err.println("__________ sendAt an unknown capsule __________");
-							} else {
-								targetCapsuleName = lookingForTargetCapsuleName(actionParts[0]);
-							}
-							
-							//}else {
-							//	targetCapsuleName = senderCapInstanceName;
-							//	senderCapInstanceName = "";
-							//}
-							//semCapsuleTracker.acquire();
-							int send_to_msgQ_count = 0;
-							do {
-								// Sleep current thread, if capsuleTracker for the target capsule has not been created!
-								System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
-								Thread.currentThread().sleep(1);
-								if (send_to_msgQ_count++ == MAX_TRY_TO_SEND)
-									return false;
-							}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
-							//semCapsuleTracker.release();
+							if (!lookTrgCap_and_sendMSG(targetTransitionData.getActions().get(j)))
+								return false; //faild!
 						}
 
 						//Check if the target state is a CHOICE point
@@ -807,7 +789,63 @@ public class CapsuleTracker implements Runnable{
 		}
 		return result;
 	}
+	//==================================================================	
+	//==============================================[lookTrgCap_and_sendMSG]
+	//==================================================================	
+	private boolean lookTrgCap_and_sendMSG(String action) throws InterruptedException {
+		String targetCapsuleName ="";
+		String[] actionParts = action.split("\\.|\\(");
+		if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("msg->sapIndex0_"))) { //TODO: only msg->sapIndex0_ handled 
+			//System.out.println("\n====================>["+ Thread.currentThread().getName() +"]"+ "--> senderCapInstanceName:" + senderCapInstanceName);
+			targetCapsuleName = senderCapInstanceName;
+		}else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("0"))) { //TODO: REMOVE LATER -Replication.uml  
+			targetCapsuleName = "Simulator__server1";
+		}
+		else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("1"))) { //TODO: REMOVE LATER -Replication.uml  
+			targetCapsuleName = "Simulator__server2";
+		}else if ((actionParts[3].contains("sendAt")) && !(actionParts[4].contains("msg->sapIndex0_"))) {
+			System.err.println("__________ sendAt an unknown capsule __________");
+		}else if ((actionParts[3].contentEquals("send")) && (!actionParts[4].contentEquals(");"))) {
+			//Sending to all capsules
+			targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],true); 
+		}else {
+			targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],false);
+		}
 
+		//}else {
+		//	targetCapsuleName = senderCapInstanceName;
+		//	senderCapInstanceName = "";
+		//}
+		//semCapsuleTracker.acquire();
+		if (targetCapsuleName.contains(",")) {
+			String [] splitTargetCapsuleName = targetCapsuleName.split("\\,");
+			for (int q = 0; q<splitTargetCapsuleName.length; q++) {
+				int send_to_msgQ_count = 0;
+				do {
+					// Sleep current thread, if capsuleTracker for the target capsule has not been created!
+					System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
+					Thread.currentThread().sleep(1);
+					sendToMessageQueue(splitTargetCapsuleName[q], actionParts[0], actionParts[1]);
+					if (send_to_msgQ_count++ == MAX_TRY_TO_SEND)
+						return false;
+				}while(!sendToMessageQueue(splitTargetCapsuleName[q], actionParts[0], actionParts[1]));
+			}
+		}else {
+			int send_to_msgQ_count = 0;
+			do {
+				// Sleep current thread, if capsuleTracker for the target capsule has not been created!
+				System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
+				Thread.currentThread().sleep(1);
+				if (send_to_msgQ_count++ == MAX_TRY_TO_SEND)
+					return false;
+			}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
+			//System.out.println("\n=====>  [action]:" + action);
+
+			//semCapsuleTracker.release();
+		}
+		return true;
+	}
+	
 	//==================================================================	
 	//==============================================[outputStreamToFile]
 	//==================================================================	

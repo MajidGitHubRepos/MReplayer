@@ -461,8 +461,8 @@ public class UmlrtUtils {
 					}
 				}
 			}
-			System.err.println("==================[The port is not match!]======================");
-			return false;
+			//System.err.println("==================[The port is not match!]======================");
+			return true;
 			
 		}
 		//==================================================================	

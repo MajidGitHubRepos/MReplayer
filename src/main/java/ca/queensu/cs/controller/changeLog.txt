@@ -1,3 +1,4 @@
+[040219][Info]:  Counter.uml and ParcelRouter.uml are added and roughly tested
 [020219][Debug]: adding some line of code just to handel Replication.uml adding better log for checkPoints 
 [020219][Debug]: in  lookingForTargetCapsuleName() if srcCapFound or trgCapFound then break the loop
 [010219][Info]:  adding some checkPoint for  the new Replication.uml without capsule replication

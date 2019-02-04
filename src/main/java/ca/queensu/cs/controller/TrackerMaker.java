@@ -117,6 +117,45 @@ public class TrackerMaker implements Runnable{
 		String name = Thread.currentThread().getName();
 		//System.out.println("Creating Executor Service with a thread pool of Size 2");
 		//ExecutorService executorService = Executors.newFixedThreadPool(1);
+		
+		//Make capsuleTrackers 
+		//TODO this block of code initiates set of CapsuleTrackers for the model [LATER CAN BE REPLACED WITH THE CURRENT METHOD]
+		//=================================================================================================================
+		/*
+		for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
+
+			if (!entry.getKey().isEmpty()) {
+				String capInstances = entry.getKey();
+				capInstances = capInstances.replaceAll("\\s+","");
+				String [] splitCapInstances = capInstances.split("\\,");
+				for (int q = 0; q<splitCapInstances.length; q++) {
+					this.logicalVectorTime = new int[MAX_NUM_CAPSULE]; 
+					
+					BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
+
+					List<TableDataMember> listTableDataMember =  new ArrayList<TableDataMember>();
+					//System.out.println("---> listTableData.size(): "+Controller.listTableData.size());
+					for (Map.Entry<String, List<TableDataMember>> entry2  : Controller.listTableData.entrySet()) {
+
+						if (entry.getKey().contains(splitCapInstances[q])) { // no need to change capsuleInstances__capsuleIndex because listTableDataMembers are identical 
+							listTableDataMember = entry2.getValue();
+							break;
+						}
+					}
+					
+					Data data = new Data(splitCapInstances[q], eventQueue, listTableDataMember);
+					dataArray[q] =  data;
+					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, splitCapInstances[q], outputFileStream, logicalVectorTime); 
+					Thread capsuleTrackerT = new Thread(capsuleTracker); 
+					capsuleTrackerT.start(); 
+					capsuleTrackers[q] = capsuleTracker;					
+				}
+				
+			}
+		
+		}
+		//=================================================================================================================
+		*/
 
 		while(true) {
 			System.out.print("");
@@ -167,11 +206,15 @@ public class TrackerMaker implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("***************************> event.getCapsuleInstance(): "+event.getCapsuleInstance());
+			System.out.println("***************************> capsuleInstance__capsuleIndex: "+capsuleInstance__capsuleIndex);
+
+
 			//Mapping
 			mappingCapInstanceIdxToCapfullName(event.getCapsuleInstance(),capsuleInstance__capsuleIndex);
 			
 			
-			//showCapInstIdxMap();
+			showCapInstIdxMap();
 			
 
 			capsuleInstances__indexes = capsuleInstances__indexes + ", " + capsuleInstance__capsuleIndex;
@@ -191,7 +234,7 @@ public class TrackerMaker implements Runnable{
 			//CapFullname
 			String capsuleFullname = findCapfullNameByCapInstanceIdx(capsuleInstance__capsuleIndex);
 			Data data = new Data(capsuleFullname, eventQueue, listTableDataMember);
-
+						
 			data.addToQueue(event);
 			eventCount++;
 			//	this.semCapsuleTraker.release(); 
