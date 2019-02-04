@@ -1,3 +1,4 @@
+[040219][Debug]: bug in reading vector time with size = 1 fixed
 [030219][Info]:  extracting vector time from eventCapsuleName if " " exists in the eventCapsuleName
 [281218][Info]:  sending variables to the webserver
 [041218][Debug]: adding priorityEventCounter to the ServerBypassOrdering in order to preserve initial ordering of the recieved events  

@@ -186,6 +186,8 @@ public final class ByteReader implements Runnable {
 			if (eventCapsuleInstance.contains(" ")) {//vt's come with the message
 				int indexOfSpace = eventCapsuleInstance.indexOf(" ");				
 				int tmpIdx = eventCapsuleInstance.lastIndexOf(" ");
+				if (indexOfSpace == tmpIdx)
+					tmpIdx = eventCapsuleInstance.length()-2;
 				vectorTime = eventCapsuleInstance.substring(indexOfSpace+1,tmpIdx+2);
 				eventCapsuleInstance = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(" ", index+1));
 			}
@@ -335,7 +337,7 @@ public final class ByteReader implements Runnable {
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
 			//if (Server.eventQueue.size()<100)
-				//System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
+				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
 
 			Server.eventQueue.put(event);
 

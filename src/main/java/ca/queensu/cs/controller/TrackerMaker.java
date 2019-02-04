@@ -214,7 +214,7 @@ public class TrackerMaker implements Runnable{
 			mappingCapInstanceIdxToCapfullName(event.getCapsuleInstance(),capsuleInstance__capsuleIndex);
 			
 			
-			showCapInstIdxMap();
+			//showCapInstIdxMap();
 			
 
 			capsuleInstances__indexes = capsuleInstances__indexes + ", " + capsuleInstance__capsuleIndex;
