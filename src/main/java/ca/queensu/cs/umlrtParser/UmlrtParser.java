@@ -129,10 +129,10 @@ public class UmlrtParser {
     		//String fileName = "umlrtModels/CausalMsgOrdering.uml";
 			//String fileName = "umlrtModels/CarDoorLock.uml";
     		
-			String fileName = "umlrtModels/Counter.uml";
+			//String fileName = "umlrtModels/Counter.uml";
 			//String fileName = "umlrtModels/ParcelRouter.uml";
 			//String fileName = "umlrtModels/Replication.uml";
-			//String fileName = "umlrtModels/BankATM.uml";
+			String fileName = "umlrtModels/BankATM.uml";
 			//String fileName = "umlrtModels/2Pinger1Ponger_threads.uml"; //Montreal Trip 
     	
     		ClassLoader classLoader = new RunnableImpl().getClass().getClassLoader();

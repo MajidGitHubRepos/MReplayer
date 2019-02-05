@@ -104,10 +104,10 @@ bankPort.approved().sendAt(msg->sapIndex0_);</body>
 	);</body>
             </effect>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_w1q5YN7lEei0INX0aX4iTw" name="onCashOut" kind="external" source="_pwAeQN7lEei0INX0aX4iTw" target="_pwAeQN7lEei0INX0aX4iTw">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_CgnRIN7mEei0INX0aX4iTw" name="Effect" isReentrant="false">
+          <transition xmi:type="uml:Transition" xmi:id="_3pG2oCjUEemoIZTppuXl2g" name="onCashOut" kind="external" source="_pwAeQN7lEei0INX0aX4iTw" target="_pwAeQN7lEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_GJfW4CjVEemoIZTppuXl2g" name="Effect" isReentrant="false">
               <language>C++</language>
-              <body>	log.show(&quot;[CashDispenser]---------------> CashOut request received from the controller in: %s:%s\n&quot;,
+              <body>	log.show(&quot;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[CashDispenser]---------------> CashOut request received from the controller in: %s:%s\n&quot;,
 	this->getTypeName(),	        // name of the capsule. 
 	this->getName()			// name of the capsule part.
 	);
@@ -119,13 +119,13 @@ bankPort.approved().sendAt(msg->sapIndex0_);</body>
 	this->getName()			// name of the capsule part.
 	);</body>
             </effect>
-            <trigger xmi:type="uml:Trigger" xmi:id="_-dRXgN7lEei0INX0aX4iTw" event="_6DTtoN7lEei0INX0aX4iTw" port="_3mdfcN7fEei0INX0aX4iTw"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_5b2moCjUEemoIZTppuXl2g" event="_6DTtoN7lEei0INX0aX4iTw" port="_3mdfcN7fEei0INX0aX4iTw"/>
           </transition>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_pv9a8N7lEei0INX0aX4iTw" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_pwAeQN7lEei0INX0aX4iTw" name="Idle">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_ugWAwN7lEei0INX0aX4iTw" name="Entry" isReentrant="false">
               <language>C++</language>
-              <body>	log.show(&quot;[CashDispenser] Idle sate in the cashDispenser in: %s:%s\n&quot;,
+              <body>	log.show(&quot;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[CashDispenser] Idle sate in the cashDispenser in: %s:%s\n&quot;,
 	this->getTypeName(),	        // name of the capsule. 
 	this->getName()			// name of the capsule part.
 	);</body>
@@ -173,7 +173,7 @@ bankPort.approved().sendAt(msg->sapIndex0_);</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_fWjegN7iEei0INX0aX4iTw" event="_HyzAoN7fEei0INX0aX4iTw" port="_AfVjoN7rEei0INX0aX4iTw"/>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_uoqWoN7iEei0INX0aX4iTw" name="withdrawToIdle" kind="external" source="_M1HjoN7iEei0INX0aX4iTw" target="_3JUlkN7hEei0INX0aX4iTw">
+          <transition xmi:type="uml:Transition" xmi:id="_uoqWoN7iEei0INX0aX4iTw" name="toPostProcess" kind="external" source="_M1HjoN7iEei0INX0aX4iTw" target="_IJSR8Ci1Eemkk625-PVYlg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_xHWmoN7iEei0INX0aX4iTw" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>	log.show(&quot;[Controller]---> approved/disapproved received from Bank, cashOut request sent to the cashDispenser, withdrawToIdle transition taken in the controller: %s:%s\n&quot;,
@@ -181,13 +181,13 @@ bankPort.approved().sendAt(msg->sapIndex0_);</body>
 	this->getName()			// name of the capsule part.
 	);
 
-controllerCashPort.cashOut(cashAmount).send();
-</body>
+
+controllerCashPort.cashOut(cashAmount).send();</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_BAvhMN7jEei0INX0aX4iTw" event="_vghvkN7eEei0INX0aX4iTw" port="_tdJGEN7fEei0INX0aX4iTw"/>
             <trigger xmi:type="uml:Trigger" xmi:id="__Yd70N7iEei0INX0aX4iTw" event="_uTxokN7eEei0INX0aX4iTw" port="_tdJGEN7fEei0INX0aX4iTw"/>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_RsmagN7jEei0INX0aX4iTw" name="onCashDispenserDone" kind="external" source="_3JUlkN7hEei0INX0aX4iTw" target="_3JUlkN7hEei0INX0aX4iTw">
+          <transition xmi:type="uml:Transition" xmi:id="_RsmagN7jEei0INX0aX4iTw" name="onCashDispenserDone" kind="external" source="_IJSR8Ci1Eemkk625-PVYlg" target="_WtQWECjTEemoIZTppuXl2g">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_UeBZQN7jEei0INX0aX4iTw" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>	log.show(&quot;[Controller]--> cashDispenserDone message received in the controller in: %s:%s\n&quot;,
@@ -195,10 +195,17 @@ controllerCashPort.cashOut(cashAmount).send();
 	this->getName()			// name of the capsule part.
 	);
 
-controllerPadPort.transactionDone().send();
+
 controllerPrintPort.printLog().send();</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_V6zgUN7jEei0INX0aX4iTw" event="_XgUCYN7fEei0INX0aX4iTw" port="_y9wO8N7fEei0INX0aX4iTw"/>
+          </transition>
+          <transition xmi:type="uml:Transition" xmi:id="_dZSwQCjTEemoIZTppuXl2g" name="PrintLogTr" kind="external" source="_WtQWECjTEemoIZTppuXl2g" target="_3JUlkN7hEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_pRBMMCjTEemoIZTppuXl2g" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>controllerPadPort.transactionDone().send();</body>
+            </effect>
+            <trigger xmi:type="uml:Trigger" xmi:id="_l8oqUCjTEemoIZTppuXl2g" event="_i1ZzoCjTEemoIZTppuXl2g" port="_6Ht6QN7qEei0INX0aX4iTw"/>
           </transition>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_3JSJUN7hEei0INX0aX4iTw" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_3JUlkN7hEei0INX0aX4iTw" name="Idle">
@@ -210,7 +217,7 @@ controllerPrintPort.printLog().send();</body>
 	);</body>
             </entry>
           </subvertex>
-          <subvertex xmi:type="uml:State" xmi:id="_M1HjoN7iEei0INX0aX4iTw" name="WithdrawCash">
+          <subvertex xmi:type="uml:State" xmi:id="_M1HjoN7iEei0INX0aX4iTw" name="BankProcess">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_N3PH8N7iEei0INX0aX4iTw" name="Entry" isReentrant="false">
               <language>C++</language>
               <body>	log.show(&quot;[Controller] In WithdrawCash state in the controller: %s:%s\n&quot;,
@@ -222,6 +229,8 @@ commandPort.transaction().send(); //TODO: sending cashAmount
 </body>
             </entry>
           </subvertex>
+          <subvertex xmi:type="uml:State" xmi:id="_IJSR8Ci1Eemkk625-PVYlg" name="postProcess"/>
+          <subvertex xmi:type="uml:State" xmi:id="_WtQWECjTEemoIZTppuXl2g" name="PrintLog"/>
         </region>
       </ownedBehavior>
     </packagedElement>
@@ -250,7 +259,9 @@ commandPort.transaction().send(); //TODO: sending cashAmount
               <body>	log.show(&quot;[JournalPrinter]---------------> Writing the log in: %s:%s\n&quot;,
 	this->getTypeName(),	        // name of the capsule. 
 	this->getName()			// name of the capsule part.
-	);</body>
+	);
+
+journalPrinterPort.journalPrinterDone().send();</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_A-GgEN7nEei0INX0aX4iTw" event="_93sCYN7eEei0INX0aX4iTw" port="_7zPo8N7fEei0INX0aX4iTw"/>
           </transition>
@@ -290,15 +301,15 @@ commandPort.transaction().send(); //TODO: sending cashAmount
 	);</body>
             </effect>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_b6KTUN7mEei0INX0aX4iTw" name="onTransactionDone" kind="external" source="_NTXCAN7mEei0INX0aX4iTw" target="_NTXCAN7mEei0INX0aX4iTw">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ckVRsN7mEei0INX0aX4iTw" name="Effect" isReentrant="false">
+          <transition xmi:type="uml:Transition" xmi:id="_OXU7ACjVEemoIZTppuXl2g" name="onTransactionDone" kind="external" source="_NTXCAN7mEei0INX0aX4iTw" target="_NTXCAN7mEei0INX0aX4iTw">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_Qh7KUCjVEemoIZTppuXl2g" name="Effect" isReentrant="false">
               <language>C++</language>
               <body>log.show(&quot;[PinPad] transactionDone message received: %s:%s\n&quot;,
 	this->getTypeName(),	        // name of the capsule. 
 	this->getName()			  	// name of the capsule part.
 	);</body>
             </effect>
-            <trigger xmi:type="uml:Trigger" xmi:id="_u-v-kN7mEei0INX0aX4iTw" event="_pgzIIN7mEei0INX0aX4iTw" port="_AiJBAN7gEei0INX0aX4iTw"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_V-xNgCjVEemoIZTppuXl2g" event="_pgzIIN7mEei0INX0aX4iTw" port="_AiJBAN7gEei0INX0aX4iTw"/>
           </transition>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_NTVM0N7mEei0INX0aX4iTw" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_NTXCAN7mEei0INX0aX4iTw" name="Idle">
@@ -333,6 +344,7 @@ commandPort.transaction().send(); //TODO: sending cashAmount
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_NJ0vsN7fEei0INX0aX4iTw" name="dipositCash"/>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_XgN7wN7fEei0INX0aX4iTw" name="cashDispenserDone"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_i1R30CjTEemoIZTppuXl2g" name="journalPrinterDone"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Interface" xmi:id="_hsCsAN7eEei0INX0aX4iTw" name="atmInternalProtocol~">
         <ownedOperation xmi:type="uml:Operation" xmi:id="_93lUsN7eEei0INX0aX4iTw" name="printLog"/>
@@ -353,6 +365,7 @@ commandPort.transaction().send(); //TODO: sending cashAmount
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_XgUCYN7fEei0INX0aX4iTw" operation="_XgN7wN7fEei0INX0aX4iTw"/>
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_6DTtoN7lEei0INX0aX4iTw" operation="_6DSfgN7lEei0INX0aX4iTw"/>
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_pgzIIN7mEei0INX0aX4iTw" operation="_pgm64N7mEei0INX0aX4iTw"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_i1ZzoCjTEemoIZTppuXl2g" operation="_i1R30CjTEemoIZTppuXl2g"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_mjx3AN7eEei0INX0aX4iTw" name="bankInternalProtocol">
       <packagedElement xmi:type="uml:Collaboration" xmi:id="_mjwo4N7eEei0INX0aX4iTw" name="bankInternalProtocol">
@@ -486,4 +499,6 @@ commandPort.transaction().send(); //TODO: sending cashAmount
   <UMLRealTime:RTPort xmi:id="_AfYm8N7rEei0INX0aX4iTw" isPublish="false" isWired="true" base_Port="_AfVjoN7rEei0INX0aX4iTw"/>
   <UMLRealTime:CapsulePart xmi:id="_4LTl4OB0Eeiu2bu5wy7VJw" base_Property="_4JAf0OB0Eeiu2bu5wy7VJw"/>
   <UMLRealTime:RTConnector xmi:id="_6J6AkOB0Eeiu2bu5wy7VJw" base_Connector="_6J1vIOB0Eeiu2bu5wy7VJw"/>
+  <UMLRTStateMachines:RTState xmi:id="_IJVVQCi1Eemkk625-PVYlg" base_State="_IJSR8Ci1Eemkk625-PVYlg"/>
+  <UMLRTStateMachines:RTState xmi:id="_WtTZYCjTEemoIZTppuXl2g" base_State="_WtQWECjTEemoIZTppuXl2g"/>
 </xmi:XMI>
