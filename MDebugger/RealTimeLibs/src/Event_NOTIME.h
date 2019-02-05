@@ -255,10 +255,10 @@ inline void Event::setSourceName(const std::string& sourceName) {
 
 
 inline void Event::setTimePointToNow() {
-	UMLRTTimespec ts;
+	/*UMLRTTimespec ts;
 	ts.getclock(ts);
     this->setTimePointNano(ts.tv_nsec);
-    this->setTimePointSecond(ts.tv_sec);
+    this->setTimePointSecond(ts.tv_sec);*/
 }
 
 inline long Event::getTimePointNano() const {
@@ -341,12 +341,13 @@ inline void Event::setPayloadField(std::string key, std::string value) {
 }
 
 inline void Event::generateEventID() {
-	UMLRTTimespec ts;
+	/*UMLRTTimespec ts;
 	ts.getclock(ts);
 	std::stringstream ss;
 	int r=random();
 	ss<<ts.tv_sec<<ts.tv_nsec<<r;
-	this->eventID=ss.str();
+	this->eventID=ss.str();*/
+	this->eventID="_NOID_";
 }
 
 

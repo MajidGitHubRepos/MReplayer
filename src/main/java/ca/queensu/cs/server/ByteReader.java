@@ -185,10 +185,7 @@ public final class ByteReader implements Runnable {
 			//TODO: if vector time sent separately this block of code should be modified according to that!
 			if (eventCapsuleInstance.contains(" ")) {//vt's come with the message
 				int indexOfSpace = eventCapsuleInstance.indexOf(" ");				
-				int tmpIdx = eventCapsuleInstance.lastIndexOf(" ");
-				if (indexOfSpace == tmpIdx)
-					tmpIdx = eventCapsuleInstance.length()-2;
-				vectorTime = eventCapsuleInstance.substring(indexOfSpace+1,tmpIdx+2);
+				vectorTime = eventCapsuleInstance.substring(indexOfSpace+1,eventCapsuleInstance.length());
 				eventCapsuleInstance = message.substring(message.indexOf("]", index+1) + 1, message.indexOf(" ", index+1));
 			}
 			index = message.indexOf(";", index+1);

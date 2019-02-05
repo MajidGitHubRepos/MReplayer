@@ -1,3 +1,4 @@
+[050219][Debug]: bug in reading vector for the last char fixed
 [040219][Debug]: bug in reading vector time with size = 1 fixed
 [030219][Info]:  extracting vector time from eventCapsuleName if " " exists in the eventCapsuleName
 [281218][Info]:  sending variables to the webserver
