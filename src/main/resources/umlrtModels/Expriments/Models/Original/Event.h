@@ -1,6 +1,5 @@
 /*
  * DebuggerEvent.hh
- *  [050219]: Generating physical timestamp removed
  *  [051118]v1.0: sending address of this as the capsuleIndex
  *	[021018]v1.0: Majid Babaei
  *  Created on: Nov 11, 2016
@@ -175,8 +174,8 @@ inline std::ostream & operator << (std::ostream & out, const Event  event )
 	 out<<event.getOwnerName()<<'|';
 	 out<<event.getEventSourceKindLabel()<<'|';
 	 out<<event.getEventTypeLabel()<<'|';
-	 out<<"_NOTIME_"<<':';//event.getTimePointSecond()<<':';
-	 out<<"_NOTIME_"<<"\n";//out<<event.getTimePointNano()<<"\n";
+	 out<<event.getTimePointSecond()<<':';
+	 out<<event.getTimePointNano()<<"\n";
 	 out<<event.getVariableData();
 	 /// message payload
 	 bool secondRec=false;
@@ -255,10 +254,10 @@ inline void Event::setSourceName(const std::string& sourceName) {
 
 
 inline void Event::setTimePointToNow() {
-	/*UMLRTTimespec ts;
+	UMLRTTimespec ts;
 	ts.getclock(ts);
     this->setTimePointNano(ts.tv_nsec);
-    this->setTimePointSecond(ts.tv_sec);*/
+    this->setTimePointSecond(ts.tv_sec);
 }
 
 inline long Event::getTimePointNano() const {
@@ -341,13 +340,12 @@ inline void Event::setPayloadField(std::string key, std::string value) {
 }
 
 inline void Event::generateEventID() {
-	/*UMLRTTimespec ts;
+	UMLRTTimespec ts;
 	ts.getclock(ts);
 	std::stringstream ss;
 	int r=random();
 	ss<<ts.tv_sec<<ts.tv_nsec<<r;
-	this->eventID=ss.str();*/
-	this->eventID="_NOID_";
+	this->eventID=ss.str();
 }
 
 
@@ -362,7 +360,7 @@ inline const std::string& Event::getEventId() const {
 
 inline void Event::setCpuTik() {
 
-    //this->cpuTik = currentCpuTik();
+    this->cpuTik = currentCpuTik();
 }
 
 inline double Event::currentCpuTik() {
@@ -449,7 +447,7 @@ inline std::string Event::dumpToString(std::string format, char seperator) {
 				ss1<<seperator;
 			else
 				needSeperator=true;
-			ss1<<"_NOTIME_";//this->getTimePointSecond();
+			ss1<<this->getTimePointSecond();
 			}
 			else if (tempS1=="timepointnano")
 			{
@@ -457,7 +455,7 @@ inline std::string Event::dumpToString(std::string format, char seperator) {
 				ss1<<seperator;
 			else
 				needSeperator=true;
-			ss1<<"_NOTIME_";this->getTimePointNano();
+			ss1<<this->getTimePointNano();
 
 			}
 			else if (tempS1=="eventid")
@@ -577,8 +575,8 @@ inline std::string Event::serialize() {
 	ss1 <<"[getCapsuleIndex]" <<this << ";";
 	ss1 <<"[getSourceName]" <<this->getSourceName() << ";";
 	ss1 <<"[getCpuTik]" <<this->getCpuTik() << ';';
-	ss1 <<"[getTimePointSecond]" <<"_NOTIME_"<<';';//this->getTimePointSecond() << ';';
-	ss1 <<"[getTimePointNano]" <<"_NOTIME_"<<';';//<<this->getTimePointNano()<<";";
+	ss1 <<"[getTimePointSecond]" <<this->getTimePointSecond() << ';';
+	ss1 <<"[getTimePointNano]" <<this->getTimePointNano()<<";";
 	ss1 <<"[getVariableData]"<< this->getVariableData();
 	if ((this->getEventPayload()).size()>0){
 		ss1<<';';

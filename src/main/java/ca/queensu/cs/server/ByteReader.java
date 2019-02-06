@@ -111,10 +111,13 @@ public final class ByteReader implements Runnable {
 	private Map<Integer, Command> commandStack;
 	private static int commandId = 0;
 	private String[] capsuleNames;
-	private Semaphore sem; 
+	private Semaphore sem;
+	private int eventCounter;
+	
 
 
 	public ByteReader(String[] caps, Semaphore sem ) {
+		this.eventCounter = 0;
 		capsuleNames = caps;
 		this.sem = sem; 
 	}
@@ -333,9 +336,14 @@ public final class ByteReader implements Runnable {
 			byteBuffer2 = null;
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
-			//if (Server.eventQueue.size()<100)
+			//if (Server.eventQueue.size()<100) 
+			/*if (this.eventCounter<200) {
+				this.eventCounter++;
 				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
-
+			}else {
+				System.err.println("=====================================[EXPRIMENT DONE]======================================");
+				System.exit(0);
+			}*/
 			Server.eventQueue.put(event);
 
 			int id = 0;
