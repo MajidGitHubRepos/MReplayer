@@ -37,8 +37,10 @@ public class ServerBypassOrdering {
 	static Semaphore sem;
 	public static UmlrtParser umlrtParser;
 	public static int priorityEventCounter;
-
-	public ServerBypassOrdering(final String ipAddress, final int portNumber, Semaphore sem) throws IOException {
+	public static String args0;
+	
+	public ServerBypassOrdering(final String ipAddress, final int portNumber, Semaphore sem, String args0) throws IOException {
+		this.args0 = args0;
 		this.priorityEventCounter = 0;
 		viewer = new viewController();
 		umlrtParser = new UmlrtParser();
@@ -60,11 +62,24 @@ public class ServerBypassOrdering {
 	}
 	public static void main(String[] args) throws IOException 
 	{ 
-		Thread t1 = new Thread(new ServerBypassOrdering("127.0.0.1",8001, ServerBypassOrdering.sem).new RunnableImpl()); 
+		try {
+			if (args.length > 0) {
+				if (args[0] != null) {
+					args0 = args[0];
+				}
+			}
+		
+		Thread t1 = new Thread(new ServerBypassOrdering("127.0.0.1",8001, ServerBypassOrdering.sem,args0).new RunnableImpl()); 
 		t1.start();
 		
 		Thread t2 = new Thread(new BypassOrdering()); 
-		t2.start(); 
+		t2.start();
+		
+		} catch (NumberFormatException e) {
+			System.err.println("Argument" + args[0] + " must be \"view\" to show the diagram.");
+			System.exit(1);
+		}
+
 	} 
 
 	public class RunnableImpl implements Runnable { 
@@ -81,8 +96,15 @@ public class ServerBypassOrdering {
 				viewer.setListTableData(umlrtParser.getlistTableData());
 				//Staring view thread to make a mxGraph for the given model
 				//--------------------------------------------------------------------------
-				Thread viewerT = new Thread(viewer.new RunnableImpl()); 
-				viewerT.start();
+				if (args0 != null)
+					if (args0.contentEquals("view")) {
+						//Staring view thread to make a mxGraph for the given model
+						//--------------------------------------------------------------------------
+						Thread viewerT = new Thread(viewer.new RunnableImpl()); 
+						viewerT.start();
+						//--------------------------------------------------------------------------
+					}
+
 				//--------------------------------------------------------------------------
 				
 				//sendInitJsonFile();

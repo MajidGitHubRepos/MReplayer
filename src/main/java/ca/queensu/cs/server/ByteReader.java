@@ -337,13 +337,13 @@ public final class ByteReader implements Runnable {
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
 			//if (Server.eventQueue.size()<100) 
-			/*if (this.eventCounter<200) {
+			if (this.eventCounter<5000) {
 				this.eventCounter++;
 				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
 			}else {
-				System.err.println("=====================================[EXPRIMENT DONE]======================================");
+				System.err.println("=====================================[EXPERIMENT DONE]======================================");
 				System.exit(0);
-			}*/
+			}
 			Server.eventQueue.put(event);
 
 			int id = 0;

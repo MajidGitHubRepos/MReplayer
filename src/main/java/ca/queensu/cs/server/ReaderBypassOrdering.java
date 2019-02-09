@@ -111,10 +111,12 @@ public final class ReaderBypassOrdering implements Runnable {
 	private Map<Integer, Command> commandStack;
 	private static int commandId = 0;
 	private String[] capsuleNames;
-	private Semaphore sem; 
+	private Semaphore sem;
+	private int eventCounter;
 
 
 	public ReaderBypassOrdering(String[] caps, Semaphore sem ) {
+		this.eventCounter = 0;
 		capsuleNames = caps;
 		this.sem = sem; 
 	}
@@ -340,9 +342,13 @@ public final class ReaderBypassOrdering implements Runnable {
 			byteBuffer2 = null;
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
-			//if (Server.eventQueue.size()<100)
-				//System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
-
+			if (this.eventCounter<5000) {
+				this.eventCounter++;
+				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
+			}else {
+				System.err.println("=====================================[EXPERIMENT DONE]======================================");
+				System.exit(0);
+			}
 			ServerBypassOrdering.eventQueue.put(event);
 
 			int id = 0;
