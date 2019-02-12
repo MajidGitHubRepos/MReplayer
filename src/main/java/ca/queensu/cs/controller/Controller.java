@@ -79,11 +79,15 @@ public class Controller {
 	public class RunnableImpl implements Runnable {
 
 		public void run() {
+			long t1 = System.currentTimeMillis();
 			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[Starting Data Process]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 			System.out.println("Waiting for the UmlrtParsing thread complete the process ....");
 			while (true) {if (umlrtParser.getUmlrtParsingDone()) break; else System.out.print(""); }
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n\n");
-
+			long t2 = System.currentTimeMillis();
+			 System.out.println("UmlrtParsingTime: "+ (t2-t1));
+			
+			
 			Controller.listTableData = umlrtParser.getlistTableData();
 			viewer.setListTableData(umlrtParser.getlistTableData());
 			int numberOfCapsules =  countCapsule();

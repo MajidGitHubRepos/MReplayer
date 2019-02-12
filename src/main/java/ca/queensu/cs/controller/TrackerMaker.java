@@ -158,6 +158,10 @@ public class TrackerMaker implements Runnable{
 		*/
 
 		while(true) {
+			/*if (TrackerMaker.priorityEventCounter>1000) {
+				System.err.println("=====================================[EXPERIMENT DONE]======================================");
+				 System.exit(0);
+			}*/
 			System.out.print("");
 			if (!Server.eventQueue.isEmpty()) {
 				//System.out.println("--->");

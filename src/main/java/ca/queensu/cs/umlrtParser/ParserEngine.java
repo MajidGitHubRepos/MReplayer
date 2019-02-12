@@ -349,7 +349,7 @@ public class ParserEngine implements Runnable {
 				if (capsuleInstanceNameRepMap.get(capsuleInstanceName) != null) {
 					this.elementInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + ", " + this.elementInstanceName;
 					capsuleInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + capsuleInstanceName;
-					System.out.println("--------------> capsuleInstanceName: "+capsuleInstanceName);
+					//System.out.println("--------------> capsuleInstanceName: "+capsuleInstanceName);
 				}
 				
 				capsuleConn.setCapsuleName(capsuleName);
@@ -563,7 +563,6 @@ public class ParserEngine implements Runnable {
 			// have trigger?
 			// anyway, we need to add entrys and exits to a model
 
-			//System.out.println("==>>> transiton: " + transition);
 
 			List<String> guards = new ArrayList<String>();
 			List<String> triggers = new ArrayList<String>();
@@ -591,11 +590,11 @@ public class ParserEngine implements Runnable {
 			//State s = (State)transition.getSource();
 			if (transition.getSource() instanceof Pseudostate) {
 				srcOrTrgPseudostate = true;
-				if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.ENTRY_POINT_LITERAL) {
+				if ((transition.getSource().getName()!= null)&&(transition.getTarget().getName()!= null)&&(((Pseudostate)transition.getSource()).getKind() == PseudostateKind.ENTRY_POINT_LITERAL)) {		
 					entrys.add(new EntryData(transition.getSource().getName(), transition.getTarget().getName()));
-				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
+				} else if ((transition.getSource().getName()!= null)&&(transition.getTarget().getName()!= null)&&(((Pseudostate)transition.getSource()).getKind() == PseudostateKind.EXIT_POINT_LITERAL)) {
 					exits.add(new ExitData(transition.getSource().getName(), transition.getTarget().getName()));
-				} else if (((Pseudostate)transition.getSource()).getKind() == PseudostateKind.CHOICE_LITERAL) {
+				} else if ((transition.getSource().getName()!= null)&&(transition.getTarget().getName()!= null)&&(((Pseudostate)transition.getSource()).getKind() == PseudostateKind.CHOICE_LITERAL)) {
 					LinkedList<ChoiceData> list = choices.get(transition.getSource().getName());
 					if (list == null) {
 						list = new LinkedList<ChoiceData>();
@@ -725,7 +724,7 @@ public class ParserEngine implements Runnable {
 		for (int i = 0; i<listTransitionData.size(); i++) {
 			TableDataMember tableDataMember = new TableDataMember();
 			trCapName = listTransitionData.get(i).getCapsuleInstanceName();
-
+			System.out.println("---------------------------> trCapName: "+ trCapName);
 			//System.out.println("listTransitionData.get ["+i+"]: " + trCapName);
 
 			if (((listTransitionData.get(i).getSourceName() != null ) || (listTransitionData.get(i).getIsInit()))  

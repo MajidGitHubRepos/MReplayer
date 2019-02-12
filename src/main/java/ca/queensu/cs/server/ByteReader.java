@@ -337,7 +337,7 @@ public final class ByteReader implements Runnable {
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
 			//if (Server.eventQueue.size()<100) 
-			if (this.eventCounter<5000) {
+			if (this.eventCounter<50000) {
 				this.eventCounter++;
 				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
 			}else {

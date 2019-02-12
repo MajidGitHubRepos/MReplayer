@@ -113,7 +113,9 @@ public class Event {
 	public String getTarget() {
 		return this.eventTarget;
 	}
-	
+	public String getVT() {
+		return this.vectorTime;
+	}
 	
 	
 	public String allDataToString() {

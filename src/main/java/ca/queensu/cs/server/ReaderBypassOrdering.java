@@ -342,13 +342,13 @@ public final class ReaderBypassOrdering implements Runnable {
 			byteBuffer2 = null;
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
-			if (this.eventCounter<5000) {
+			/*if (this.eventCounter<1000) {
 				this.eventCounter++;
 				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
 			}else {
 				System.err.println("=====================================[EXPERIMENT DONE]======================================");
 				System.exit(0);
-			}
+			}*/
 			ServerBypassOrdering.eventQueue.put(event);
 
 			int id = 0;

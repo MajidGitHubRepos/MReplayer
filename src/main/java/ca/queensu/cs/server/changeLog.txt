@@ -1,3 +1,4 @@
+[120219][Info]:  adding ServerVTOrdering.java and VTOrdering.java to evaluate ordering method based-on vector-time
 [090219][Info]:  check view args0 added to the ServerBypassOrdering.java 
 [050219][Debug]: bug in reading vector for the last char fixed
 [040219][Debug]: bug in reading vector time with size = 1 fixed

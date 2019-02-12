@@ -25,6 +25,7 @@ import org.json.simple.JSONObject;
 
 import ca.queensu.cs.graph.ViewEngine;
 import ca.queensu.cs.server.Event;
+import ca.queensu.cs.server.ServerVTOrdering;
 import ca.queensu.cs.umlrtParser.StateData;
 import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.TransitionData;

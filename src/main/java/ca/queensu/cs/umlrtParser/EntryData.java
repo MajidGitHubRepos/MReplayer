@@ -12,9 +12,15 @@ public class EntryData {
 	
 	public EntryData(State source, String sourceName , State target, String targetName) {
 		this.source = source;
-		this.sourceName = source.getName();
+		if (this.source != null)
+			this.sourceName = source.getName();
+		else
+			this.sourceName = sourceName;
 		this.target = target;
-		this.targetName = target.getName();
+		if (this.target != null)
+			this.targetName = target.getName();
+		else
+			this.targetName = targetName;
 	}
 	
 	public EntryData(String sourceName , String targetName) {

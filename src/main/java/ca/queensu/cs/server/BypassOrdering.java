@@ -15,7 +15,7 @@ public class BypassOrdering implements Runnable {
 	}
 
 	public final void run() {
-		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[BYPASS RUN]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[BYPASS SERVER IS RUNNING]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 
 		while(true) {
 			if (!ServerBypassOrdering.eventQueue.isEmpty()) {
