@@ -113,6 +113,7 @@ public final class ByteReader implements Runnable {
 	private String[] capsuleNames;
 	private Semaphore sem;
 	private int eventCounter;
+	private int totalSize = 0;
 	
 
 
@@ -336,14 +337,17 @@ public final class ByteReader implements Runnable {
 			byteBuffer2 = null;
 			//System.out.println("*****************> message: "+message);
 			Event event = eventMaker(message);
-			//if (Server.eventQueue.size()<100) 
-			if (this.eventCounter<50000) {
+			//if (Server.eventQueue.size()<100)
+			/*
+			if (this.eventCounter<10000) {
+				totalSize += event.eventSize("pt");
 				this.eventCounter++;
 				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
 			}else {
 				System.err.println("=====================================[EXPERIMENT DONE]======================================");
+				System.err.println("totalSize: " + totalSize);
 				System.exit(0);
-			}
+			}*/
 			Server.eventQueue.put(event);
 
 			int id = 0;

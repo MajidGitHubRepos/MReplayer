@@ -25,8 +25,19 @@ public class VTOrdering implements Runnable {
 	public final void run() {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[VECTOR-TIME ORDERING SERVER IS RUNNING]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 		long t1 = System.currentTimeMillis();
+		int totalSize = 0;
 		
 		while(true) {
+			
+			if (ServerVTOrdering.priorityEventCounter>50000)
+			{
+				System.err.println("=====================================[EXPERIMENT DONE]======================================");
+				long t2 = System.currentTimeMillis();
+				 System.err.println("VT_orderingTime: "+ (t2-t1));
+				 System.err.println("Total size: " + totalSize);
+				 System.exit(0);
+			}
+			
 			if (!ServerVTOrdering.eventQueue.isEmpty()) {
 				try {
 					event = ServerVTOrdering.eventQueue.take();
@@ -42,10 +53,9 @@ public class VTOrdering implements Runnable {
 						//System.out.println("[Event]: "+capsuleInstance+", " +sourceName + "\n\n");
 						if ((sourceName != "__NOT_FOUND__") && (capsuleInstance != "__NOT_FOUND__")) {
 							System.out.println("ServerVTOrdering.priorityEventCounter: " + ServerVTOrdering.priorityEventCounter);
-							if (ServerVTOrdering.priorityEventCounter>50000)
-								break;
 							
 							if (event.getVT().isEmpty()) {
+								totalSize += event.eventSize("vt");
 								CapsuleTracker.callSendJsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
 							}else if (vtIsRespected(event.getVT())) {
 								for (int i = 0; i < 4; i++){
@@ -55,6 +65,7 @@ public class VTOrdering implements Runnable {
 								System.out.println("CURRENT VT: " + event.getVT());
 								
 								CapsuleTracker.callSendJsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
+								totalSize += event.eventSize("vt");
 							}else {
 								eventQueueVT.put(event);
 								event = lookForTheNextEvent();
@@ -68,7 +79,7 @@ public class VTOrdering implements Runnable {
 											sourceName = event.getSourceName().substring(lastIndex+2);
 									}
 									CapsuleTracker.callSendJsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
-
+									totalSize += event.eventSize("vt");
 								}/*else {
 									System.err.println("=====[No event found in eventQueueVT!]=====");
 									System.exit(0);
@@ -92,10 +103,7 @@ public class VTOrdering implements Runnable {
 			}
 			
 		}
-		System.err.println("=====================================[EXPERIMENT DONE]======================================");
-		long t2 = System.currentTimeMillis();
-		 System.err.println("VT_orderingTime: "+ (t2-t1));
-		 System.exit(0);
+		
 	}
 	//==================================================================	
 	//==============================================[vtIsRespected]

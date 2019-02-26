@@ -117,6 +117,29 @@ public class Event {
 		return this.vectorTime;
 	}
 	
+	public int eventSize(String typ) {
+		int size =0;
+		if (typ.contentEquals("pt")) {
+			size =    eventCapsuleInstance.length() + eventSourceKind.length() + eventType.length() + eventCapsuleName.length()
+				    + eventCapsuleInstance.length() + eventCapsuleIndex.length() +eventSourceName.length() +eventTimePointSecond.length() 
+					+ eventVariableData.length() +eventSignal.length() + eventSource.length() + eventStatus.length() 
+					+ eventTarget.length();
+		}else if (typ.contentEquals("vt")) {
+			size = eventId.length() + eventCapsuleInstance.length() + eventSourceKind.length() + eventType.length() + eventCapsuleName.length()
+		    + eventCapsuleInstance.length() + eventCapsuleIndex.length() +eventSourceName.length()
+			+ eventVariableData.length() +eventSignal.length() + eventSource.length() + eventStatus.length() 
+			+ eventTarget.length() + vectorTime.length();
+		}else if (typ.contentEquals("model_based")) {
+			size = eventSourceKind.length() + eventType.length()
+					+ eventCapsuleInstance.length() + eventCapsuleIndex.length() +eventSourceName.length();
+		}else {
+			System.err.println("\n===================[BAD TYP]===================\n");
+			System.err.println("\n[TYP: ]1.pt 2.vt 3.model_based\n");
+			System.exit(0);
+			
+		}
+		return size;
+	}
 	
 	public String allDataToString() {
 		return ", Event: [eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleInstance=" + eventCapsuleInstance
@@ -130,6 +153,7 @@ public class Event {
 				", eventVariableData=" + eventVariableData +", eventSignal=" + eventSignal +", eventSource=" + eventSource +
 				", eventStatus=" + eventStatus +", vectorTime=" + vectorTime + ", eventTarget=" + eventTarget +"]";
 	}
+	
 	
 
 }
