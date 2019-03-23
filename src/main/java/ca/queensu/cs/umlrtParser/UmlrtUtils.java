@@ -49,6 +49,8 @@ import org.springframework.statemachine.transition.TransitionKind;
 import org.springframework.util.StringUtils;
 
 import ca.queensu.cs.controller.Controller;
+import ca.queensu.cs.umlrtParser.MyConnector;
+
 
 
 public class UmlrtUtils {
@@ -312,15 +314,16 @@ public class UmlrtUtils {
 	//==================================================================	
 	//==============================================[foundPortName_connectorName_PortName]
 	//==================================================================	
-			
+		/*	
 		public static boolean isConnected__PortName_connectorName_PortName__TocapsuleInstanceName(List<CapsuleConn> listCapsuleConn, String portName_connectorName_PortName , String capsuleInstanceName, String portName){
 			
 			String[] splitPortName_connectorName_PortName = portName_connectorName_PortName.split("\\::");
 			String[] splitCapsuleInstanceName = capsuleInstanceName.split("\\,");
 			
-			for (int i = 0 ; i< splitCapsuleInstanceName.length; i++) {
-				String CapsuleInstanceName__portName = splitCapsuleInstanceName[i]+"__"+portName;
-				for (int j = 0 ; j< splitPortName_connectorName_PortName.length; j++) {
+			for (int i = 0 ; i< listCapsuleConn.size(); i++) {
+				List <MyConnector> listMyConnectorLocal = listCapsuleConn.get(i).getListMyConnector();
+				String CapsuleInstanceName__portName = listCapsuleConn.get(i).getCapsuleInstanceName()+"__"+portName;
+				for (int j = 0 ; j< listMyConnectorLocal.size(); j++) {
 					if (CapsuleInstanceName__portName.contains(splitPortName_connectorName_PortName[j]))
 						return true;
 				}
@@ -329,16 +332,16 @@ public class UmlrtUtils {
 				
 			return false;
 		}
-	
+		*/
 		//==================================================================	
 		//==============================================[getCapsulePartsRecursive]
 		//==================================================================	
-		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts,  List<String> listPortName_connectorName_PortName) {
+		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts,  List<MyConnector> listMyConnectors) {
 			if (capsule == null)
 				return;
 			//			List<Property> tmpParts = new ArrayList<Property>();
 			
-		
+			
 			
 			for (Property part : capsule.getParts()) {
 				// TODO: why getAppliedStereotypes is always empty! [https://www.eclipse.org/forums/index.php/t/953534/]
@@ -365,37 +368,55 @@ public class UmlrtUtils {
 						if((element instanceof Class) && (capName.contains(element.getName()))) {
 							//extract connectors
 							for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {  // Not for top 
-								String connectorName = "";
-								String portName = "";
-								String protocolName = "";
-								String connEnd1PortName = "";
-								String connEnd2PortName = "";
-								String partWithPort1 = "";
-								String partWithPort2 = "";
+								
+								MyConnector myConnector = new MyConnector();
+								
+								//String connectorName = "";
+								//String portName = "";
+								//String protocolName = "";
+								//String connEnd1PortName = "";
+								//String connEnd2PortName = "";
+								//String partWithPort1 = "";
+								//String partWithPort2 = "";
 								
 
-								connectorName = connector.getName();
+								myConnector.connectorName = connector.getName();
 								ConnectorEnd connEnd1 = connector.getEnds().get(0);
 								ConnectorEnd connEnd2 = connector.getEnds().get(1);
 
 								if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
-									connEnd1PortName = connEnd1.getRole().getName();
-									if (connEnd1.getPartWithPort() != null)
-										partWithPort1 = connEnd1.getPartWithPort().getName();
-									else
-										partWithPort1 = getUpperCapsuleInstanceName(partName);
+									myConnector.portCap1 = connEnd1.getRole().getName();
+									if (connEnd1.getPartWithPort() != null) {
+										myConnector.capInstanceName1 = connEnd1.getPartWithPort().getName();
+										for (Port port : UmlrtUtils.getPorts(capsule)) {
+											if (port.getName().contentEquals(myConnector.portCap1)) {
+												myConnector.bhvPortCap1 = port.isBehavior();
+											}
+										}
+									}else {
+										myConnector.capInstanceName1 = getUpperCapsuleInstanceName(partName);
+										myConnector.bhvPortCap1 = false;
+									}
 								}
 								
 								if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
-									connEnd2PortName = connEnd2.getRole().getName();
-									if (connEnd2.getPartWithPort() != null)
-										partWithPort2 = connEnd2.getPartWithPort().getName();
-									else
-										partWithPort2 = getUpperCapsuleInstanceName(partName);
+									myConnector.portCap2 = connEnd2.getRole().getName();
+									if (connEnd2.getPartWithPort() != null) {
+										myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName();
+										for (Port port : UmlrtUtils.getPorts(capsule)) {
+											if (port.getName().contentEquals(myConnector.portCap2)) {
+												myConnector.bhvPortCap2 = port.isBehavior();
+											}
+										}
+									}else {
+										myConnector.capInstanceName2 = getUpperCapsuleInstanceName(partName);
+										myConnector.bhvPortCap2 = false;
+									}
 								}
-								String tmpPortName_connectorName_PortName = partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName;
-								if (!existsInListPortName_connectorName_PortName(listPortName_connectorName_PortName, tmpPortName_connectorName_PortName))
-									listPortName_connectorName_PortName.add(tmpPortName_connectorName_PortName);
+								
+								//String tmpPortName_connectorName_PortName = partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName;
+								if (!existsInListMyConnectors(listMyConnectors, myConnector.capInstanceName1, myConnector.capInstanceName2, myConnector.connectorName))
+									listMyConnectors.add(myConnector);
 								//break;
 							}
 						}
@@ -403,7 +424,7 @@ public class UmlrtUtils {
 					
 					
 					//parts.add(part);
-					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts, listPortName_connectorName_PortName);
+					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts, listMyConnectors);
 					if (partName.contains("_")) {
 						lastIndexOf_ = partName.lastIndexOf("__");
 						tmpStr = partName.substring(0, lastIndexOf_);
@@ -420,24 +441,26 @@ public class UmlrtUtils {
 		//==================================================================			
 		public static String lookingForTargetPort(List<CapsuleConn> listCapsuleConn, String srcPort, String trgPort) {
 			for (int i = 0; i< listCapsuleConn.size(); i++) {
-				List<String> listCapsulePortName = listCapsuleConn.get(i).getListPortName(); //TODO: when more than one relay port is required should be checked 
-				List<String> listCapsulePortConn = listCapsuleConn.get(i).getListPortName_connectorName_PortName_protocolName();
+				//List<String> listCapsulePortName = listCapsuleConn.get(i).getListPortName(); //TODO: when more than one relay port is required should be checked
+				List<Port> listCapsulePorts = listCapsuleConn.get(i).getListPorts();
+				List<MyConnector> listMyConnectorLocal = listCapsuleConn.get(i).getListMyConnector();
 				
-				for (int j = 0; j< listCapsulePortConn.size(); j++) {
+				for (int j = 0; j< listMyConnectorLocal.size(); j++) {
 					
-					String [] spiltCapsulePortConn = listCapsulePortConn.get(j).split("\\::");
-					if (spiltCapsulePortConn[0].contentEquals(trgPort)) {
+					//String [] spiltCapsulePortConn = listCapsulePortConn.get(j).split("\\::");
+					if (listMyConnectorLocal.get(j).portCap1.contentEquals(trgPort)) {
 						//TODO: should be checked whether this port is relay or not
 						//Only one relay port is supported for now!
-						if (!spiltCapsulePortConn[2].contentEquals(srcPort))
-							return spiltCapsulePortConn[2];
+						if (!listMyConnectorLocal.get(j).portCap2.contentEquals(srcPort))
+							return listMyConnectorLocal.get(j).portCap2;
 					}
-					if (spiltCapsulePortConn[2].contentEquals(trgPort)) {
+					if (listMyConnectorLocal.get(j).portCap2.contentEquals(trgPort)) {
 						//TODO: should be checked whether this port is relay or not
 						//Only one relay port is supported for now!
-						if (!spiltCapsulePortConn[0].contentEquals(srcPort))
-							return spiltCapsulePortConn[0];
+						if (!listMyConnectorLocal.get(j).portCap1.contentEquals(srcPort))
+							return listMyConnectorLocal.get(j).portCap1;
 					}
+					
 				}
 			}
 
@@ -450,11 +473,12 @@ public class UmlrtUtils {
 		public static boolean isRelayPort(List<CapsuleConn> listCapsulePortConn, String port) {
 			
 			for (int i = 0; i< listCapsulePortConn.size();i++) {
-				List<String> listCapsulePortName = listCapsulePortConn.get(i).getListPortName();
-				for (int j = 0; j< listCapsulePortName.size();j++) {
-					String [] spiltCapsulePortName = listCapsulePortName.get(j).split("\\::");
-					if (port.contains(spiltCapsulePortName[0])) {
-						if (spiltCapsulePortName[1].contentEquals("true")) //isBehavior
+				//List<String> listCapsulePortName = listCapsulePortConn.get(i).getListPortName();
+				List<Port> listCapsulePorts = listCapsulePortConn.get(i).getListPorts();
+				for (int j = 0; j< listCapsulePorts.size();j++) {
+					String capsulePortName = listCapsulePorts.get(j).getName();
+					if (port.contains(capsulePortName)) {
+						if (listCapsulePorts.get(j).isBehavior()) //isBehavior
 							return false;
 						else
 							return true; //it is a Relay port
@@ -466,12 +490,14 @@ public class UmlrtUtils {
 			
 		}
 		//==================================================================	
-		//==============================================[existsInListPortName_connectorName_PortName]
+		//==============================================[existsInListMyConnectors]
 		//==================================================================			
-		public static boolean existsInListPortName_connectorName_PortName(List<String> listPortName_connectorName_PortName, String tmpPortName_connectorName_PortName){
-			for (int i = 0; i<listPortName_connectorName_PortName.size(); i++) {
+		public static boolean existsInListMyConnectors(List<MyConnector> listMyConnectors, String capInstanceName1, String capInstanceName2, String connectorName){
+			for (int i = 0; i<listMyConnectors.size(); i++) {
 				
-				if(listPortName_connectorName_PortName.get(i).contentEquals(tmpPortName_connectorName_PortName))
+				if((listMyConnectors.get(i).connectorName.contentEquals(connectorName)) &&(
+						((listMyConnectors.get(i).capInstanceName1.contentEquals(capInstanceName1)) || (listMyConnectors.get(i).capInstanceName1.contentEquals(capInstanceName2))) &&
+						((listMyConnectors.get(i).capInstanceName2.contentEquals(capInstanceName1)) || (listMyConnectors.get(i).capInstanceName2.contentEquals(capInstanceName2))))) 
 					return true;
 			}
 			

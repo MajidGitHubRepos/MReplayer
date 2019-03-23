@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 import ca.queensu.cs.graph.ViewEngine;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.ServerVTOrdering;
+import ca.queensu.cs.umlrtParser.MyConnector;
 import ca.queensu.cs.umlrtParser.StateData;
 import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.TransitionData;
@@ -378,21 +379,22 @@ public class CapsuleTracker implements Runnable{
 		boolean portFound = false;
 		boolean srcCapFound = false;
 		boolean trgCapFound = false;
-
+				
 		for (int i = 0; i< Controller.umlrtParser.getlistCapsuleConn().size(); i++) {
-			List<String> listCapsulePortName = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName();
-			List<String> listCapsulePortConn = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName_connectorName_PortName_protocolName();
+			//List<String> listCapsulePortName = Controller.umlrtParser.getlistCapsuleConn().get(i).getListPortName();
+			List<MyConnector> listMyConnectorLocal = Controller.umlrtParser.getlistCapsuleConn().get(i).getListMyConnector();
 			String capsuleName = Controller.umlrtParser.getlistCapsuleConn().get(i).getCapsuleInstanceName();
-			for (int j = 0; j < listCapsulePortConn.size() ; j++) {
-				if (listCapsulePortConn.get(j).contains(port)) {
+			for (int j = 0; j < listMyConnectorLocal.size() ; j++) {
+
+				if ((listMyConnectorLocal.get(j).portCap1.contains(port)) || (listMyConnectorLocal.get(j).portCap2.contains(port))) {
 					//let's find the other side of this connector, which port ? then which capsule?
-					String [] listCapsulePortConnSplit = listCapsulePortConn.get(j).split("\\::");
+					//String [] listCapsulePortConnSplit = listMyConnectorLocal.get(j).split("\\::");
 					//connector
 
-					String port1 = listCapsulePortConnSplit[0];
-					String connector = listCapsulePortConnSplit[1];
-					String port2 = listCapsulePortConnSplit[2];
-					String protocol = listCapsulePortConnSplit[3];
+					String port1 = listMyConnectorLocal.get(j).portCap1;
+					String connector = listMyConnectorLocal.get(j).connectorName;
+					String port2 = listMyConnectorLocal.get(j).portCap2;
+					String protocol = listMyConnectorLocal.get(j).protocolName;
 
 					if (port1.contains(port)) {
 						//conn found, let's check for relay
@@ -423,8 +425,8 @@ public class CapsuleTracker implements Runnable{
 					}
 
 					if (sourcePort != "") {
+						
 						for (int p = 0; p< Controller.umlrtParser.getlistCapsuleConn().size(); p++) {
-
 							if (Controller.umlrtParser.getlistCapsuleConn().get(p).isListPortNameContainsPort(sourcePort)) {
 								sourceCapsuleName = Controller.umlrtParser.getlistCapsuleConn().get(p).getCapsuleInstanceName();
 								//System.out.println("["+ Thread.currentThread().getName() +"]*********[sourceCapsuleName]: " +sourceCapsuleName);
@@ -499,6 +501,7 @@ public class CapsuleTracker implements Runnable{
 		
 		if (targetCapsuleName == "")
 			System.err.println("==================[targetCapsuleName Not Found]======================");
+			//System.err.println("sourceCapsuleName: "+sourceCapsuleName+"\n=================[targetCapsulName Not Found]================\ntargetCapsuleName"+targetCapsuleName);
 		return targetCapsuleName;		
 	}
 

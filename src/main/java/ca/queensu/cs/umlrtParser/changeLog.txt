@@ -1,3 +1,4 @@
+[230319][Info]:  adding MyConnector class as a member of CapsuleConn class
 [310119][Info]:  adding Replication.uml to UmlrtParser
 [091118][Info]:  adding 2Pinger1Ponger_threads.uml to UmlrtParser
 [091118][Info]:  adding readListPolicies() in UmlrtUtils.java
