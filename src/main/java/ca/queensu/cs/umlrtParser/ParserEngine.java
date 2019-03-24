@@ -415,8 +415,6 @@ public class ParserEngine implements Runnable {
 				portName = port.getName();
 				if (port.getType() != null){
 					protocolName = port.getType().getName();
-					//System.out.println("--------------> portName: "+portName);
-					//System.out.println("--------------> listCapsuleConn.get(t).getCapsuleName(): "+listCapsuleConn.get(t).getCapsuleName());
 
 					if (protocolName != null) {
 						int k = 0;
@@ -541,6 +539,21 @@ public class ParserEngine implements Runnable {
 
 				// do recursive handling of regions
 				for (Region sub : state.getRegions()) {
+					System.out.println("--------------> state.getRegions(): "+ sub);
+					System.out.println("--------------> state.getRegions().name: "+ sub.getQualifiedName());
+					
+					
+					for (Vertex vertex1 : sub.getSubvertices()) {
+						//[Start]----------------------------------------------------------[State]
+						if (vertex1 instanceof State) {
+
+							State state1 = (State)vertex1;
+							String sName1 = state1.getName();
+							System.out.println("--------------> sName1: " + sName1);
+						}
+					}
+
+
 					handleRegion(sub);
 				}
 			}
@@ -744,6 +757,7 @@ public class ParserEngine implements Runnable {
 
 		}
 		//[End]----------------------------------------------------------[Transitions]
+		System.out.println("---------------------------> region: "+ region.getQualifiedName());
 		List<TableDataMember> listTableDataMember = tableMaker();
 		//elementInstanceName is equal to capsuleInstanceName
 		listTableData.put(this.elementInstanceName, listTableDataMember); // Table is made for the given state machine !
@@ -764,7 +778,7 @@ public class ParserEngine implements Runnable {
 		for (int i = 0; i<listTransitionData.size(); i++) {
 			TableDataMember tableDataMember = new TableDataMember();
 			trCapName = listTransitionData.get(i).getCapsuleInstanceName();
-			System.out.println("---------------------------> trCapName: "+ trCapName);
+			//System.out.println("---------------------------> trCapName: "+ trCapName);
 			//System.out.println("listTransitionData.get ["+i+"]: " + trCapName);
 
 			if (((listTransitionData.get(i).getSourceName() != null ) || (listTransitionData.get(i).getIsInit()))  
