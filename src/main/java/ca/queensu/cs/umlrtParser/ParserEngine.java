@@ -740,6 +740,7 @@ public class ParserEngine implements Runnable {
 						}	
 					}
 				}
+				
 				listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
 						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
