@@ -86,7 +86,9 @@ public class ParserEngine implements Runnable {
 	private static EList<PackageableElement> modelElements;
 	public HashMap<String, StateMachine> stateMachineMap;
 	public List<StateData> listStateData;
+	public Map<String, StateData> mapStateData = new HashMap<String, StateData>();
 	public List<TransitionData> listTransitionData;
+	public Map<String, TransitionData> mapTransitionData = new HashMap<String, TransitionData>();
 	public List<CapsuleConn> listCapsuleConn;
 	private final List<EntryData> entrys = new ArrayList<EntryData>();
 	private final List<ExitData> exits = new ArrayList<ExitData>();
@@ -513,11 +515,13 @@ public class ParserEngine implements Runnable {
 				//boolean isInitialState = UmlrtUtils.isInitialState(state);  // checked in psudoStates 
 				deferredList = UmlrtUtils.resolveDeferredEvents(state);
 				//boolean isFinalState = UmlrtUtils.isFinalState(state); // checked in psudoStates 
-				StateData stateDate = new StateData(this.elementName,this.elementInstanceName, state,sName, entryList, exitList, deferredList, parentName, regionName, false, false); //My Solution
+				StateData stateDate = new StateData(this.elementName,this.elementInstanceName, state,null,sName, entryList, exitList, deferredList, parentName, regionName, false, false); //My Solution
 				/*StateData stateData = handleActions(
 						new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState), state);*/
-
+				stateDate.setId(state);
+				stateDate.setState(state);
 				listStateData.add(stateDate);
+				mapStateData.put(stateDate.getId(), stateDate);
 
 				// add states via entry/exit reference points
 				for (ConnectionPointReference cpr : state.getConnections()) {
@@ -525,25 +529,31 @@ public class ParserEngine implements Runnable {
 						for (Pseudostate cp : cpr.getEntries()) {
 							StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, cp.getName(), parentName, regionName);
 							cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.ENTRY);
+							cpStateData.setId(state);
+							cpStateData.setState(state);
 							listStateData.add(cpStateData);
+							mapStateData.put(stateDate.getId(), stateDate);
 						}
 					}
 					if (cpr.getExits() != null) {
 						for (Pseudostate cp : cpr.getExits()) {
 							StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, cp.getName(), parentName, regionName);
 							cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.EXIT);
+							cpStateData.setId(state);
+							cpStateData.setState(state);
 							listStateData.add(cpStateData);
+							mapStateData.put(stateDate.getId(), stateDate);
 						}
 					}
 				}
 
 				// do recursive handling of regions
 				for (Region sub : state.getRegions()) {
-					System.out.println("--------------> state.getRegions(): "+ sub);
-					System.out.println("--------------> state.getRegions().name: "+ sub.getQualifiedName());
+					System.out.println(state.getName()+" --------------> state.getRegions(): "+ sub.getName());
+					//System.out.println("--------------> state.getRegions().name: "+ sub.getQualifiedName());
 					
 					
-					for (Vertex vertex1 : sub.getSubvertices()) {
+					/*for (Vertex vertex1 : sub.getSubvertices()) {
 						//[Start]----------------------------------------------------------[State]
 						if (vertex1 instanceof State) {
 
@@ -551,7 +561,7 @@ public class ParserEngine implements Runnable {
 							String sName1 = state1.getName();
 							System.out.println("--------------> sName1: " + sName1);
 						}
-					}
+					}*/
 
 
 					handleRegion(sub);
@@ -573,35 +583,59 @@ public class ParserEngine implements Runnable {
 				if (state.getKind() == PseudostateKind.CHOICE_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.CHOICE);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.JUNCTION_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.JUNCTION);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.FORK_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.FORK);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.JOIN_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.JOIN);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.SHALLOW_HISTORY_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.HISTORY_SHALLOW);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.DEEP_HISTORY_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.HISTORY_DEEP);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.INITIAL_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName, true, false);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.INITIAL);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				} else if (state.getKind() == PseudostateKind.EXIT_POINT_LITERAL) {
 					StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, state.getName(), parentName, regionName, false, true);
 					cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.EXIT);
+					cpStateData.setId(state);
+					cpStateData.setPseudostate(state);
 					listStateData.add(cpStateData);
+					mapStateData.put(cpStateData.getId(), cpStateData);
 				}
 
 			}
@@ -625,6 +659,7 @@ public class ParserEngine implements Runnable {
 			String transitonName = transition.getName();
 			boolean srcOrTrgPseudostate = false;
 			boolean trAdded = false;
+			String regionName = "";
 
 			if (transition.getSource() instanceof ConnectionPointReference) {
 				// support ref points if only one is defined as for some
@@ -740,35 +775,45 @@ public class ParserEngine implements Runnable {
 						}	
 					}
 				}
-				
-				
-				listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
+				if (transition.getOwner() instanceof Region) {
+					regionName = ((Region)transition.getOwner()).getName();
+
+				}
+				TransitionData tr = new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
 						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
-						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
+						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr, transition, regionName);
+				listTransitionData.add(tr);
+				mapTransitionData.put(tr.extractID(transition.toString()),tr);
 				trAdded = true;
 				break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
 
 			// create anonymous transition if needed
 			if ((shouldCreateAnonymousTransition(transition) || srcOrTrgPseudostate) && !trAdded) {
-				
-					listTransitionData.add(new TransitionData(this.elementName,this.elementInstanceName,transitonName, transition.getSource(),transition.getSource().getName(),
-							transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
-							guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr));
+				if (transition.getOwner() instanceof Region) {
+					regionName = ((Region)transition.getOwner()).getName();
+
+				}
+				TransitionData tr = new TransitionData(this.elementName,this.elementInstanceName,transitonName, transition.getSource(),transition.getSource().getName(),
+						transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
+						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr, transition, regionName);
+				listTransitionData.add(tr);
+				mapTransitionData.put(tr.extractID(transition.toString()),tr);
 			}
 
 		}
 		//[End]----------------------------------------------------------[Transitions]
-		System.out.println("---------------------------> region: "+ region.getQualifiedName());
-		List<TableDataMember> listTableDataMember = tableMaker();
+		//System.out.println("---------------------------> region: "+ region.getQualifiedName());
+		
+		
+		//List<TableDataMember> listTableDataMember = tableMaker();
 		//elementInstanceName is equal to capsuleInstanceName
-		listTableData.put(this.elementInstanceName, listTableDataMember); // Table is made for the given state machine !
+		//listTableData.put(this.elementInstanceName, listTableDataMember); // Table is made for the given state machine !
 	}//[End] Region
 
 	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	
 	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>[Functions]
 	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	//---------------[Functions]
 
 	//==================================================================	
 	//==============================================[tableMaker]
@@ -887,4 +932,15 @@ public class ParserEngine implements Runnable {
 		return true;
 	}
 
+	//==================================================================	
+	//=======================================================[extractID]
+	//==================================================================
+
+	public String extractID(String stateStr) {
+		int idx_1 = stateStr.indexOf("@");
+		int idx_2 = stateStr.indexOf(" ");
+		String id = stateStr.substring(idx_1+1, idx_2);
+		return id;
+	}
+	
 }

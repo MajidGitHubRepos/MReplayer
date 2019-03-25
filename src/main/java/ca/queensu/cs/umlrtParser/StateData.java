@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.uml2.uml.Event;
+import org.eclipse.uml2.uml.Pseudostate;
 import org.eclipse.uml2.uml.State;
+import org.eclipse.uml2.uml.Transition;
 
 import ca.queensu.cs.umlrtParser.UmlrtUtils.PseudoStateKind;
 
@@ -23,17 +25,20 @@ public class StateData {
 	private String regionName;
 	private String stateName;
 	private State state;
+	private Pseudostate pseudostate;
 	private List<String> deferred;
 	private List<String> entryActions;
 	private List<String> exitActions;
 	private boolean initial = false;
 	private boolean end = false;
 	private PseudoStateKind pseudoStateKind;
+	private String id;
 		
-	public StateData(String capsuleName, String capsuleInstanceName, State s, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
+	public StateData(String capsuleName, String capsuleInstanceName, State state, Pseudostate pseudostate, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
 		this.capsuleName = capsuleName;
 		this.capsuleInstanceName = capsuleInstanceName;
-		this.state = s;
+		this.state = state;
+		this.pseudostate = pseudostate;
 		this.stateName = sName;
 		this.deferred = defList;
 		this.entryActions = enList;
@@ -45,18 +50,30 @@ public class StateData {
 	}
 	
 	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName) {
-		this(capsuleName, capsuleInstanceName, null,sName, null, null, null, pName,rName, false, false);
+		this(capsuleName, capsuleInstanceName, null,null,sName, null, null, null, pName,rName, false, false);
 	}
 	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName , boolean initial, boolean end) {
-		this(capsuleName, capsuleInstanceName, null,sName, null, null, null, pName,rName, initial, end);
+		this(capsuleName, capsuleInstanceName, null,null,sName, null, null, null, pName,rName, initial, end);
 	}
 	public StateData() {
-		this(null, null, null,null, null, null, null, null,null, false,false);
+		this(null, null, null,null, null, null, null, null,null,null, false,false);
 	}
 	
 	
 	
 	//------------[GETERS]
+	public String extractID(State state) {
+		int idx_1 = state.toString().indexOf("@");
+		int idx_2 = state.toString().indexOf(" ");
+		String id = state.toString().substring(idx_1+1, idx_2);
+		return id;
+	}
+	public String extractID(Pseudostate state) {
+		int idx_1 = state.toString().indexOf("@");
+		int idx_2 = state.toString().indexOf(" ");
+		String id = state.toString().substring(idx_1+1, idx_2);
+		return id;
+	}
 	public String getCapsuleName() {
 		return capsuleName;
 	}
@@ -64,9 +81,14 @@ public class StateData {
 	public String getCapsuleInstanceName() {
 		return this.capsuleInstanceName;
 	}
-	
+	public String getId() {
+		return id;
+	}
 	public State getState() {
 		return state;
+	}
+	public Pseudostate getPseudostate() {
+		return pseudostate;
 	}
 	public String getStateName() {
 		return stateName;
@@ -140,12 +162,24 @@ public class StateData {
 	public void setExitActions(List<String> exitActions) {
 		this.exitActions = exitActions;
 	}
+	public void setId(State state) {
+		this.id = extractID(state);
+	}
+	public void setId(Pseudostate state) {
+		this.id = extractID(state);
+	}
 	
+	public void setPseudostate(Pseudostate pseudostate) {
+		this.pseudostate = pseudostate;
+	}
 	
+	public void setState(State state) {
+		this.state = state;
+	}
 	//----------
 	
 	public String allDataToString() {
-		return "StateData [CapsuleName="+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+", StateName=" + stateName + ", region=" + regionName + ", state=" + state + ", deferred=" + deferred
+		return "StateData [ ID= "+ id +" ,CapsuleName="+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+", StateName=" + stateName + ", region=" + regionName + ", state=" + state + ", PseudoState=" + pseudostate + ", deferred=" + deferred
 				+ ", entryActions=" + entryActions + ", exitActions=" + exitActions + ", initial=" + initial
 				+  ", end=" + end + ", pseudoStateKind=" + pseudoStateKind + "]";
 	}

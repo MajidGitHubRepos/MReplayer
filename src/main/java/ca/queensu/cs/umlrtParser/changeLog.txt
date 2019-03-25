@@ -1,3 +1,4 @@
+[250319][Info]:  adding mapState and mapTranstion to ParserEngine class and adding path and id values in SataData and TransitionData classes 
 [230319][Info]:  adding MyConnector class as a member of CapsuleConn class
 [310119][Info]:  adding Replication.uml to UmlrtParser
 [091118][Info]:  adding 2Pinger1Ponger_threads.uml to UmlrtParser
