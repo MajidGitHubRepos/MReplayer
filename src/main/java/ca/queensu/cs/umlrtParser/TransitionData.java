@@ -71,7 +71,7 @@ public class TransitionData {
 		this.transitonName = transitonName;
 		this.transition = transition;
 		this.id = extractID(transition.toString());
-		this.path = extractID(transition.getSource().toString())+"-"+this.id+"-"+extractID(transition.getSource().toString());
+		this.path = extractID(transition.getSource().toString())+"-"+this.id+"-"+extractID(transition.getTarget().toString());
 		this.regionName = regionName;
 		//this.event = event;
 	}
@@ -86,7 +86,11 @@ public class TransitionData {
 		String id = transitionStr.substring(idx_1+1, idx_2);
 		return id;
 	}
-
+	
+	public String getPath() {
+		return path;
+	}
+	
 	public String getReginName() {
 		return regionName;
 	}

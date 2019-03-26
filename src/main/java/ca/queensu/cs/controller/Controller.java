@@ -17,6 +17,7 @@ import ca.queensu.cs.graph.viewController;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.server.Server.RunnableImpl;
+import ca.queensu.cs.umlrtParser.PES;
 import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.UmlrtParser;
 
@@ -31,9 +32,11 @@ public class Controller {
 	public static Map<String, List<TableDataMember>> listTableData;
 	public static String args0;
 	public static HashMap<String, String> capInstIdxMap;
+	public PES pes;
 	
 
 	public Controller(String args0) {
+		this.pes = new PES();
 		this.args0 = args0;
 		this.capInstIdxMap = new HashMap<String, String>();
 		viewer = new viewController();
@@ -83,6 +86,7 @@ public class Controller {
 			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<[Starting Data Process]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 			System.out.println("Waiting for the UmlrtParsing thread complete the process ....");
 			while (true) {if (umlrtParser.getUmlrtParsingDone()) break; else System.out.print(""); }
+			pes.makeMapRegionPaths();
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n\n");
 			long t2 = System.currentTimeMillis();
 			 System.out.println("UmlrtParsingTime: "+ (t2-t1));

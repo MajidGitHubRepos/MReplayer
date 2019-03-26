@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -82,13 +83,14 @@ import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.OpaqueExpression;
 
 public class ParserEngine implements Runnable {
+	public PES pes;
 	private String topCapsuleName;
 	private static EList<PackageableElement> modelElements;
 	public HashMap<String, StateMachine> stateMachineMap;
 	public List<StateData> listStateData;
-	public Map<String, StateData> mapStateData = new HashMap<String, StateData>();
-	public List<TransitionData> listTransitionData;
-	public Map<String, TransitionData> mapTransitionData = new HashMap<String, TransitionData>();
+	public static Map<String, StateData> mapStateData = new HashMap<String, StateData>();
+	public static List<TransitionData> listTransitionData;
+	public static Map<String, TransitionData> mapTransitionData = new HashMap<String, TransitionData>();
 	public List<CapsuleConn> listCapsuleConn;
 	private final List<EntryData> entrys = new ArrayList<EntryData>();
 	private final List<ExitData> exits = new ArrayList<ExitData>();
@@ -109,6 +111,7 @@ public class ParserEngine implements Runnable {
 	boolean umlrtParsingDone;
 
 	public ParserEngine(EList<PackageableElement> me, String topCapsuleName) {
+		this.pes = new PES();
 		this.modelElements = me;
 		//HashMap<String, StateMachine> stateMachineMap = new HashMap<String, StateMachine>();
 		this.listStateData = new ArrayList<StateData>();
@@ -524,26 +527,33 @@ public class ParserEngine implements Runnable {
 				mapStateData.put(stateDate.getId(), stateDate);
 
 				// add states via entry/exit reference points
-				for (ConnectionPointReference cpr : state.getConnections()) {
-					if (cpr.getEntries() != null) {
-						for (Pseudostate cp : cpr.getEntries()) {
-							StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, cp.getName(), parentName, regionName);
-							cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.ENTRY);
-							cpStateData.setId(state);
-							cpStateData.setState(state);
-							listStateData.add(cpStateData);
-							mapStateData.put(stateDate.getId(), stateDate);
-						}
-					}
-					if (cpr.getExits() != null) {
-						for (Pseudostate cp : cpr.getExits()) {
-							StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, cp.getName(), parentName, regionName);
-							cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.EXIT);
-							cpStateData.setId(state);
-							cpStateData.setState(state);
-							listStateData.add(cpStateData);
-							mapStateData.put(stateDate.getId(), stateDate);
-						}
+				System.out.println("--------------> State.name: "+state.getName());
+				System.out.println("--------------> state.getConnections(): "+state.getConnectionPoints());
+				for (Pseudostate cpr : state.getConnectionPoints()) {
+					String cprName = "";
+					
+					if (cpr.getKind().toString() == "entryPoint") {
+						if (cpr.getName() != null)
+							cprName = cpr.getName();
+						else
+							cprName = "ENTRY";
+						StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, cprName, parentName, regionName);
+						cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.ENTRY);
+						cpStateData.setId(cpr);
+						cpStateData.setPseudostate(cpr);
+						listStateData.add(cpStateData);
+						mapStateData.put(cpStateData.getId(), cpStateData);
+					}else if (cpr.getKind().toString() == "exitPoint") {
+						if (cpr.getName() != null)
+							cprName = cpr.getName();
+						else
+							cprName = "EXIT";
+						StateData cpStateData = new StateData(this.elementName,this.elementInstanceName, cprName, parentName, regionName);
+						cpStateData.setPseudoStateKind(UmlrtUtils.PseudoStateKind.EXIT);
+						cpStateData.setId(cpr);
+						cpStateData.setPseudostate(cpr);
+						listStateData.add(cpStateData);
+						mapStateData.put(cpStateData.getId(), cpStateData);
 					}
 				}
 
@@ -804,6 +814,7 @@ public class ParserEngine implements Runnable {
 		}
 		//[End]----------------------------------------------------------[Transitions]
 		//System.out.println("---------------------------> region: "+ region.getQualifiedName());
+		
 		
 		
 		//List<TableDataMember> listTableDataMember = tableMaker();
