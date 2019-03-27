@@ -527,8 +527,8 @@ public class ParserEngine implements Runnable {
 				mapStateData.put(stateDate.getId(), stateDate);
 
 				// add states via entry/exit reference points
-				System.out.println("--------------> State.name: "+state.getName());
-				System.out.println("--------------> state.getConnections(): "+state.getConnectionPoints());
+				//System.out.println("--------------> State.name: "+state.getName());
+				//System.out.println("--------------> state.getConnections(): "+state.getConnectionPoints());
 				for (Pseudostate cpr : state.getConnectionPoints()) {
 					String cprName = "";
 					
@@ -559,7 +559,7 @@ public class ParserEngine implements Runnable {
 
 				// do recursive handling of regions
 				for (Region sub : state.getRegions()) {
-					System.out.println(state.getName()+" --------------> state.getRegions(): "+ sub.getName());
+					//System.out.println(state.getName()+" --------------> state.getRegions(): "+ sub.getName());
 					//System.out.println("--------------> state.getRegions().name: "+ sub.getQualifiedName());
 					
 					
@@ -817,9 +817,9 @@ public class ParserEngine implements Runnable {
 		
 		
 		
-		//List<TableDataMember> listTableDataMember = tableMaker();
+		List<TableDataMember> listTableDataMember = tableMaker();
 		//elementInstanceName is equal to capsuleInstanceName
-		//listTableData.put(this.elementInstanceName, listTableDataMember); // Table is made for the given state machine !
+		listTableData.put(this.elementInstanceName, listTableDataMember); // Table is made for the given state machine !
 	}//[End] Region
 
 	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	

@@ -21,7 +21,7 @@ public class PES {
 			
 			String nxtTransitionID = "";
 			//transitionData<StateID_src, transitionID, StateID_trg>
-			if (checkStateBasic(transitionData[2])) {
+			if (checkStateBasic(transitionData[2]) && !listPaths.contains(transitionData[1])) {
 				if (path.contentEquals("") && (!path.contains(transitionData[1])))
 					path=transitionData[1];
 				else if (!path.contains(transitionData[1]))
@@ -30,6 +30,7 @@ public class PES {
 					listNxtIds = findNxtTransitionIDs(transitionData, path);
 					for (String id : listNxtIds) {
 						String transitionHashCodeNxt = ParserEngine.mapTransitionData.get(id).getPath();
+						//System.out.println("==========[transitionHashCodeNxt] " + transitionHashCodeNxt);
 						pathMaker("",transitionHashCodeNxt);
 					}
 			}else {

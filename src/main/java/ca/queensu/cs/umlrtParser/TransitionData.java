@@ -3,6 +3,8 @@ package ca.queensu.cs.umlrtParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.State;
@@ -70,8 +72,10 @@ public class TransitionData {
 		this.isInit = isInit;
 		this.transitonName = transitonName;
 		this.transition = transition;
-		this.id = extractID(transition.toString());
-		this.path = extractID(transition.getSource().toString())+"-"+this.id+"-"+extractID(transition.getTarget().toString());
+		if (transition  != null) {
+			this.id = extractID(transition.toString());
+			this.path = extractID(transition.getSource().toString())+"-"+this.id+"-"+extractID(transition.getTarget().toString());
+		}
 		this.regionName = regionName;
 		//this.event = event;
 	}
@@ -84,6 +88,45 @@ public class TransitionData {
 		int idx_1 = transitionStr.indexOf("@");
 		int idx_2 = transitionStr.indexOf(" ");
 		String id = transitionStr.substring(idx_1+1, idx_2);
+		
+		boolean S_trg_ENTRY = false; 
+		boolean S_src_EXIT = false; 
+		
+		//Entry
+		if ( (ParserEngine.mapStateData.get(id) != null) && 
+				((ParserEngine.mapStateData.get(id).getPseudoStateKind() != null)) &&
+				ParserEngine.mapStateData.get(id).getPseudoStateKind().toString().contentEquals("ENTRY"))
+			S_trg_ENTRY = true;
+		//Exit
+		if ( (ParserEngine.mapStateData.get(id) != null) &&
+				((ParserEngine.mapStateData.get(id).getPseudoStateKind() != null)) &&
+				ParserEngine.mapStateData.get(id).getPseudoStateKind().toString().contentEquals("EXIT"))
+			S_src_EXIT = true;
+		
+		if (S_trg_ENTRY) {
+		// change trg
+			String nameSpace = ParserEngine.mapStateData.get(id).getPseudostate().getNamespace().getName();
+			//System.out.println("=======================[Enter to ] "+ nameSpace);
+			// find the entry state
+			for (Entry<String, StateData> entry : ParserEngine.mapStateData.entrySet()) {
+				StateData stateData = entry.getValue();
+				if((stateData.getStateName() != null) && stateData.getStateName().contentEquals(nameSpace)) {
+					return stateData.getId();
+				}
+			}
+		}
+		if (S_src_EXIT) {
+		//chage src
+			String nameSpace = ParserEngine.mapStateData.get(id).getPseudostate().getNamespace().getName();
+			//System.out.println("=======================[Enter to ] "+ nameSpace);
+			// find the exit state
+			for (Entry<String, StateData> entry : ParserEngine.mapStateData.entrySet()) {
+				StateData stateData = entry.getValue();
+				if((stateData.getStateName() != null) && stateData.getStateName().contentEquals(nameSpace)) {
+					return stateData.getId();
+				}
+			}
+		}
 		return id;
 	}
 	
@@ -105,7 +148,6 @@ public class TransitionData {
 	public void setCapsuleInstanceName(String capsuleInstanceName) {
 		this.capsuleInstanceName = capsuleInstanceName;
 	}
-	
 	
 	public String getTransitonName() {
 		return transitonName;
