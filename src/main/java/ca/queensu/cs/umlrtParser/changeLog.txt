@@ -1,3 +1,4 @@
+[280319][Debug]: findNxtTransitionIDs only retures transition in the same capsule in PES class
 [280319][Debug]: findNxtTransitionIDs only retures transition in the same region in PES class
 [280319][info]:  adding mapIdQname in PES class
 [270319][Debug]: listPaths fixed for loop and for exit/entry states in PES class

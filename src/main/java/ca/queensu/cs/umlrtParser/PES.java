@@ -57,7 +57,7 @@ public class PES {
 	//==============================================[showElements]
 	//==================================================================	
 	public void showElements() {
-		System.out.println("=======================[listPaths]==========================");
+		System.out.println("=======================[mapRegionPaths]==========================");
 
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
 			System.out.println("[KEY]= "+entry.getKey());
@@ -82,8 +82,9 @@ public class PES {
 		for (TransitionData tr :  ParserEngine.listTransitionData){
 			String [] pathSplit = tr.getPath().split("\\-");
 			if (pathSplit[0].contentEquals(transitionData[2]) && 
-					(!path.contains(pathSplit[1])) &&
-					(tr.getReginName().contentEquals(ParserEngine.mapTransitionData.get(transitionData[1]).getReginName()))) {
+					(!path.contains(pathSplit[1])) &&	//No redundant path
+					(tr.getCapsuleInstanceName().contentEquals(ParserEngine.mapTransitionData.get(transitionData[1]).getCapsuleInstanceName())) && //The same capsule
+					(tr.getReginName().contentEquals(ParserEngine.mapTransitionData.get(transitionData[1]).getReginName()))) { //The same region 
 				listNxtIds.add(pathSplit[1]);
 			}
 		}
