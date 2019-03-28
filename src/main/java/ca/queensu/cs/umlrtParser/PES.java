@@ -26,7 +26,7 @@ public class PES {
 		//Make sure no redundant path is in listPath
 		if (!listPaths.contains(transitionData[1])) {
 			if (checkStateBasic(transitionData[2])) {
-				if (path.contentEquals("") && (!path.contains(transitionData[1])))
+				if (path.contentEquals(""))
 					path=transitionData[1];
 				else if (!path.contains(transitionData[1]))
 					path=path+","+transitionData[1];
@@ -81,7 +81,9 @@ public class PES {
 		List<String> listNxtIds = new ArrayList<String>();
 		for (TransitionData tr :  ParserEngine.listTransitionData){
 			String [] pathSplit = tr.getPath().split("\\-");
-			if (pathSplit[0].contentEquals(transitionData[2]) && (!path.contains(pathSplit[1]))) {
+			if (pathSplit[0].contentEquals(transitionData[2]) && 
+					(!path.contains(pathSplit[1])) &&
+					(tr.getReginName().contentEquals(ParserEngine.mapTransitionData.get(transitionData[1]).getReginName()))) {
 				listNxtIds.add(pathSplit[1]);
 			}
 		}
