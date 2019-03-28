@@ -128,7 +128,9 @@ public class UmlrtParser {
     		//String fileName = "umlrtModels/2Pinger1Ponger.uml";
     		//String fileName = "umlrtModels/CausalMsgOrdering.uml";
 			//String fileName = "umlrtModels/CarDoorLock.uml";
-			String fileName = "umlrtModels/SimpleCS.uml";
+			//String fileName = "umlrtModels/SimpleCS.uml";
+			String fileName = "umlrtModels/SimpleCS_compound.uml";
+			
     		
 			//String fileName = "umlrtModels/Counter.uml";
 			//String fileName = "umlrtModels/ParcelRouter.uml";

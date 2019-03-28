@@ -1,3 +1,4 @@
+[280319][Debug]: pathMaker in PES class fixed, SimpleCS_compound.uml added
 [280319][Debug]: findNxtTransitionIDs only retures transition in the same capsule in PES class
 [280319][Debug]: findNxtTransitionIDs only retures transition in the same region in PES class
 [280319][info]:  adding mapIdQname in PES class

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.StateMachine;
@@ -13,46 +14,76 @@ public class PES {
 	public List<String> listPaths = new ArrayList<String>();
 	public static Map<String, List<String>> mapRegionPaths = new HashMap<String, List<String>>();
 	public static Map<String, String> mapIdQname     = new HashMap<String, String>();
+	
+
 
 	//==================================================================	
 	//==============================================[pathMaker]
 	//==================================================================	
-	void pathMaker(String path, String transitionHashCode) {
+	 public void pathMaker(String transitionHashCode) {
+		Stack<String> stack = new Stack<String>();
 		String [] transitionData = transitionHashCode.split("\\-");
 		List<String> listNxtIds = new ArrayList<String>();
+		List<String> listStateMet = new ArrayList<String>();
 
+		String path = "";
+		String stateTrgID = transitionData[2];
 		String nxtTransitionID = "";
+		String transitionHashCodeNxt = "";
+		String lastIdInPath = "";
+		String state = transitionData[2];
 		//transitionData<StateID_src, transitionID, StateID_trg>
 		//Make sure no redundant path is in listPath
-		if (!listPaths.contains(transitionData[1])) {
-			if (checkStateBasic(transitionData[2])) {
-				if (path.contentEquals(""))
-					path=transitionData[1];
-				else if (!path.contains(transitionData[1]))
-					path=path+","+transitionData[1];
-				listPaths.add(path);
-				listNxtIds = findNxtTransitionIDs(transitionData, path);
+		stack.push(transitionData[1]);
+		
+		while (!stack.isEmpty()) {
+			
+			path = stack.pop();
+			
+			if (path.contains(",")) {
+				int lastIndex = path.lastIndexOf(",");
+				lastIdInPath = path.substring(lastIndex+1);
+			}else { lastIdInPath = path;}
+			
+			transitionHashCodeNxt = ParserEngine.mapTransitionData.get(lastIdInPath).getPath();
+			String [] hashCodeNxtSplit = transitionHashCodeNxt.split("\\-");
+			
+			
+			
+			//state = hashCodeNxtSplit[2];
+			
+			if (checkStateBasic(hashCodeNxtSplit[2])) {
+				if (!listStateMet.contains(hashCodeNxtSplit[2])) {
+				listNxtIds = findNxtTransitionIDs(hashCodeNxtSplit, "");
 				for (String id : listNxtIds) {
-					String transitionHashCodeNxt = ParserEngine.mapTransitionData.get(id).getPath();
-					//System.out.println("==========[transitionHashCodeNxt] " + transitionHashCodeNxt);
-					pathMaker("",transitionHashCodeNxt);
+					if (!stack.contains(id)) {
+						//stack.pop();
+						stack.push(id);
+					}
 				}
+				}
+				if (!listPaths.contains(path)) {
+					listPaths.add(path);
+					listStateMet.add(hashCodeNxtSplit[2]);
+				}
+				//if (listNxtIds.size() == 0) stack.pop();
 			}else {
-				listNxtIds = findNxtTransitionIDs(transitionData, path);
-
-				if (path.contentEquals("") && (!path.contains(transitionData[1])))
-					path=transitionData[1];
-				else if (!path.contains(transitionData[1]))
-					path=path+","+transitionData[1];
-
-				for (String id : listNxtIds) {
-					path=path+","+id;
-					String transitionHashCodeNxt = ParserEngine.mapTransitionData.get(id).getPath();
-					pathMaker(path,transitionHashCodeNxt);
+				if (!listStateMet.contains(hashCodeNxtSplit[2])) {
+				listNxtIds = findNxtTransitionIDs(hashCodeNxtSplit, path);
+				for (String id : listNxtIds) { 
+					if (!stack.contains(path+","+id)) {
+						//stack.pop(); 
+						stack.push(path+","+id); 
+						}
+					}
 				}
+				//if (listNxtIds.size() == 0) stack.pop();
 			}
+			
+			
 		}
 	}
+	
 	//==================================================================	
 	//==============================================[showElements]
 	//==================================================================	
@@ -140,7 +171,7 @@ public class PES {
 			if(ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind() != null) {
 				if(ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind().toString().contentEquals("INITIAL")) {
 					listPaths = new ArrayList<String>();
-					pathMaker("", tr.getPath());
+					pathMaker(tr.getPath());
 					mapRegionPaths.put(tr.getCapsuleInstanceName()+"__"+tr.getReginName(), listPaths);
 				}
 			}

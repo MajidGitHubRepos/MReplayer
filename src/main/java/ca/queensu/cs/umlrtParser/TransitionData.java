@@ -76,7 +76,10 @@ public class TransitionData {
 			this.id = extractID(transition.toString());
 			this.path = extractID(transition.getSource().toString())+"-"+this.id+"-"+extractID(transition.getTarget().toString());
 		}
-		this.regionName = regionName;
+		if (transition  != null) {
+			this.regionName = extractAllRegions(transition.getQualifiedName());
+		}else
+			this.regionName = regionName;
 		//this.event = event;
 	}
 
@@ -84,6 +87,20 @@ public class TransitionData {
 	//public String getName() {
 	//	return name;
 	//}
+	public String extractAllRegions(String qName) {
+		String allRegions = "";
+		String [] qNameSplit = qName.split("\\::");
+		for (String str : qNameSplit) {
+			if(str.contains("Region")) {
+				if (allRegions.isEmpty())
+					allRegions = str;
+				else
+					allRegions = allRegions + "_" +str;
+			}
+		}
+		
+		return allRegions;
+	}
 	public String extractID(String transitionStr) {
 		int idx_1 = transitionStr.indexOf("@");
 		int idx_2 = transitionStr.indexOf(" ");
