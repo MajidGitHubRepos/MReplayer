@@ -130,6 +130,10 @@ public class TransitionData {
 		return id;
 	}
 	
+	public String getId() {
+		return id;
+	}
+	
 	public String getPath() {
 		return path;
 	}

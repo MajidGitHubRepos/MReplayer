@@ -87,7 +87,7 @@ public class ParserEngine implements Runnable {
 	private String topCapsuleName;
 	private static EList<PackageableElement> modelElements;
 	public HashMap<String, StateMachine> stateMachineMap;
-	public List<StateData> listStateData;
+	public static List<StateData> listStateData;
 	public static Map<String, StateData> mapStateData = new HashMap<String, StateData>();
 	public static List<TransitionData> listTransitionData;
 	public static Map<String, TransitionData> mapTransitionData = new HashMap<String, TransitionData>();
