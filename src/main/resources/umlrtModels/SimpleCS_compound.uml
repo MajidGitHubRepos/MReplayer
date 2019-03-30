@@ -114,6 +114,8 @@ log.show(&quot;m1 is sent to C1.\n&quot;);
               <transition xmi:type="uml:Transition" xmi:id="_G6BJ4FFvEemEn6R2tNn0ow" name="T11" kind="external" source="_SYRV4FFvEemEn6R2tNn0ow" target="_LHrdIFFvEemEn6R2tNn0ow"/>
               <transition xmi:type="uml:Transition" xmi:id="_NkAVoFFvEemEn6R2tNn0ow" name="T12" kind="external" source="_LHrdIFFvEemEn6R2tNn0ow" target="_9D8coFFuEemEn6R2tNn0ow"/>
               <transition xmi:type="uml:Transition" xmi:id="_QEJ-MFFvEemEn6R2tNn0ow" name="T13" kind="external" source="_9D8coFFuEemEn6R2tNn0ow" target="_QEBbUFFvEemEn6R2tNn0ow"/>
+              <transition xmi:type="uml:Transition" xmi:id="_85BJoFMcEemyr855stHClQ" name="T14" kind="local" source="_LvhDwFFwEemEn6R2tNn0ow" target="_-arwsFMcEemyr855stHClQ"/>
+              <transition xmi:type="uml:Transition" xmi:id="_gvlkUFMdEemyr855stHClQ" name="T15" kind="external" source="_gvhS4FMdEemyr855stHClQ" target="_LHrdIFFvEemEn6R2tNn0ow"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_4TygUFFuEemEn6R2tNn0ow" name="initS10" kind="initial"/>
               <subvertex xmi:type="uml:State" xmi:id="_6YY1UFFuEemEn6R2tNn0ow" name="S11">
                 <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_SYLPQFFvEemEn6R2tNn0ow" kind="entryPoint"/>
@@ -156,6 +158,18 @@ log.show(&quot;m1 is sent to C1.\n&quot;);
               </subvertex>
               <subvertex xmi:type="uml:State" xmi:id="_9D8coFFuEemEn6R2tNn0ow" name="S12"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_LHrdIFFvEemEn6R2tNn0ow" kind="choice"/>
+              <subvertex xmi:type="uml:State" xmi:id="_632jIFMcEemyr855stHClQ" name="S13">
+                <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_-arwsFMcEemyr855stHClQ" kind="entryPoint"/>
+                <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_gvhS4FMdEemyr855stHClQ" kind="exitPoint"/>
+                <region xmi:type="uml:Region" xmi:id="_-ajN0FMcEemyr855stHClQ" name="Region1">
+                  <transition xmi:type="uml:Transition" xmi:id="_FZR6gFMdEemyr855stHClQ" name="T131" kind="local" source="_-arwsFMcEemyr855stHClQ" target="_MiVA0FMdEemyr855stHClQ"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_HRNsgFMdEemyr855stHClQ" name="T132" kind="external" source="_MiVA0FMdEemyr855stHClQ" target="__oJCUFMcEemyr855stHClQ"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_IcGLQFMdEemyr855stHClQ" name="T133" kind="external" source="__oJCUFMcEemyr855stHClQ" target="_D4OXcFMdEemyr855stHClQ"/>
+                  <subvertex xmi:type="uml:State" xmi:id="__oJCUFMcEemyr855stHClQ" name="S131"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_D4OXcFMdEemyr855stHClQ" name="S132"/>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_MiVA0FMdEemyr855stHClQ" name="ch5" kind="choice"/>
+                </region>
+              </subvertex>
             </region>
           </subvertex>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_IHFkgFFwEemEn6R2tNn0ow" kind="choice"/>
@@ -348,4 +362,11 @@ log.show(&quot;m1 is sent to C0.\n&quot;);</body>
   <UMLRTStateMachines:RTState xmi:id="_pWj2gFIzEemmGcgFhr4i4w" base_State="_pWgzMFIzEemmGcgFhr4i4w"/>
   <UMLRTStateMachines:RTPseudostate xmi:id="_rKIs8FIzEemmGcgFhr4i4w" base_Pseudostate="_rKEbgFIzEemmGcgFhr4i4w"/>
   <UMLRTStateMachines:RTState xmi:id="_tW77sFIzEemmGcgFhr4i4w" base_State="_tW44YFIzEemmGcgFhr4i4w"/>
+  <UMLRTStateMachines:RTState xmi:id="_65wAkFMcEemyr855stHClQ" base_State="_632jIFMcEemyr855stHClQ"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_-anfQFMcEemyr855stHClQ" base_Region="_-ajN0FMcEemyr855stHClQ"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_-awCIFMcEemyr855stHClQ" base_Pseudostate="_-arwsFMcEemyr855stHClQ"/>
+  <UMLRTStateMachines:RTState xmi:id="__oLekFMcEemyr855stHClQ" base_State="__oJCUFMcEemyr855stHClQ"/>
+  <UMLRTStateMachines:RTState xmi:id="_D4QMoFMdEemyr855stHClQ" base_State="_D4OXcFMdEemyr855stHClQ"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_MiXdEFMdEemyr855stHClQ" base_Pseudostate="_MiVA0FMdEemyr855stHClQ"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_gvkWMFMdEemyr855stHClQ" base_Pseudostate="_gvhS4FMdEemyr855stHClQ"/>
 </xmi:XMI>

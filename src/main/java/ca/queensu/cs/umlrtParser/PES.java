@@ -17,6 +17,7 @@ public class PES {
 	public static Map<String, List<String>> mapRegionPaths = new HashMap<String, List<String>>();
 	public static Map<String, List<String>> mapModelRegionPaths = new HashMap<String, List<String>>();
 	public static Map<String, String> mapQnameId     = new HashMap<String, String>();
+	public static List<Map<String, List<String>>> listMapModelRegionPaths =  new ArrayList<Map<String, List<String>>>();
 	
 
 
@@ -217,66 +218,115 @@ public class PES {
 				}
 			}
 		}
-		makeListCompletePaths();
+		updateMapRegionPaths();
 		showElements();
+	}
+	//==================================================================	
+	//==============================================[findPathInUpperRegion]
+	//==================================================================	
+	void findPathInUpperRegion(String region, String id, List<String> listMatchPaths) {
+		//List<String> listOutPaths = new ArrayList<String>();
+		List<String>ownerPaths = mapRegionPaths.get(region);
+		for (String path : ownerPaths) {
+			//getFirstTr in ownerPaths
+			String [] pathSplit = path.split("\\,");
+			String tr_1st = pathSplit[0];
+			if((ParserEngine.mapTransitionData.get(tr_1st).getSrcId() != null) && 
+					id.contentEquals(ParserEngine.mapTransitionData.get(tr_1st).getSrcId())) {
+				    listMatchPaths.add(path);
+					if(ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(tr_1st).getTrgId()).getPseudoStateKind() != null) {
+						//find the upper region
+						String upperRegion = extractOwnerRegion(region);
+						//find id
+						String newId = ParserEngine.mapTransitionData.get(tr_1st).getTrgId();
+						if((upperRegion != null) && (newId != null))
+						findPathInUpperRegion(upperRegion, newId, listMatchPaths);
+					}else
+						break;
+			}
+		}
+		
 	}
 
 	//==================================================================	
-	//==============================================[makeListCompletePaths]
+	//==============================================[updateMapRegionPaths]
 	//==================================================================	
-	public void makeListCompletePaths() {
-		List<String> _listPath = new ArrayList<String>();
+	public void updateMapRegionPaths() {
+		List<String> listCurrentPath = new ArrayList<String>();
+		boolean foundStableState = true;
 		String lastTr = "";
 		String ownerRegion = "";
 		String orgPath = "";
 
 		String exitPointId_inner = "";
 		String exitPointId_outer = "";
+		String entryPointId_inner = "";
+		String entryPointId_outer = "";
 
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
+			
+			
+			String currentRegion = entry.getKey();
 			//Find the border transitions
-			_listPath = entry.getValue();
-			for (int i = 0; i<_listPath.size(); i++) {
+			listCurrentPath = entry.getValue();
+			for (int i = 0; i<listCurrentPath.size(); i++) {
+				List<String> listMatchPaths = new ArrayList<String>();
 				exitPointId_inner = "";
+				exitPointId_outer = "";
+				entryPointId_inner = "";
+				entryPointId_outer = "";
+				
+				
 				//get the last trID
-				orgPath = _listPath.get(i);
-				lastTr = extractLastPathID(_listPath.get(i));
-				if(ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) {
-					String in_id = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
-//(START)  Tr1->[x]->Tr2 -------------------------------------------------------------------------------------------------------------
-					if (ParserEngine.mapStateData.get(in_id).getPseudoStateKind().toString().contentEquals("EXIT")) { 
-						exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
-
-						exitPointId_outer = "";
-						//findTheOwner
-						ownerRegion = extractOwnerRegion(entry.getKey());
-						System.out.println("ownerRegion: " + ownerRegion);
-						if(ownerRegion != null) {
-							List<String>ownerPaths = mapRegionPaths.get(ownerRegion);
-
-							List<String> _listTmp = new ArrayList<String>();
-							for (String path : ownerPaths) {
-								//getFirstTr in ownerPaths
-								String [] pathSplit = path.split("\\,");
-								if(ParserEngine.mapTransitionData.get(pathSplit[0]).getSrcId() != null) {
-
-									String out_id = ParserEngine.mapTransitionData.get(pathSplit[0]).getSrcId();
-
-									if (ParserEngine.mapStateData.get(out_id).getPseudoStateKind().toString().contentEquals("EXIT"))
-										exitPointId_outer = ParserEngine.mapTransitionData.get(pathSplit[0]).getSrcId();
-
-									if(exitPointId_outer.contentEquals(exitPointId_inner)) {
-										_listTmp.add(orgPath+","+path);
-										listModelPaths.add(orgPath+","+path);
-									}
-								}
-							}
-							if(exitPointId_outer.contentEquals(exitPointId_inner)) 
-								mapModelRegionPaths.put(entry.getKey(),_listTmp);
-						}
-					}
-//(END)  Tr1->[x]->Tr2 -------------------------------------------------------------------------------------------------------------
+				orgPath = listCurrentPath.get(i);
+				lastTr = extractLastPathID(orgPath);
+				
+				
+				//lastTr->[x]  EXIT
+				if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
+						ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT"))
+					exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+				
+				//lastTr->[]   ENTRY
+				if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
+						ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY"))
+					entryPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+				
+				
+				if (!entryPointId_inner.isEmpty() || !exitPointId_inner.isEmpty()) {
+					foundStableState = false;
 				}
+					
+				while(!foundStableState) {
+					//lookfor the follower in the upper Region
+					ownerRegion = extractOwnerRegion(currentRegion);
+					if(ownerRegion != null) {
+						if (!exitPointId_inner.isEmpty()) 
+							findPathInUpperRegion(ownerRegion,exitPointId_inner,listMatchPaths);
+						else if (!entryPointId_inner.isEmpty())
+							findPathInUpperRegion(ownerRegion,entryPointId_inner,listMatchPaths);
+					
+						if(listMatchPaths.size()>0) {
+							for(String newPath : listMatchPaths) {
+								orgPath = orgPath+","+newPath;
+							}
+							listCurrentPath.set(i, orgPath);
+							mapModelRegionPaths.put(entry.getKey(),listCurrentPath);
+							foundStableState =  true;
+						}
+						if (listMatchPaths.size()==0)
+							foundStableState =  true;
+					
+					}else {
+						foundStableState =  true;
+					}
+						
+					if (foundStableState) {
+						break;
+					}
+					
+				}
+					
 			}
 		}
 
