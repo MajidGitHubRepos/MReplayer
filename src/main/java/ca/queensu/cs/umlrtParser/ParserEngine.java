@@ -793,7 +793,7 @@ public class ParserEngine implements Runnable {
 						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr, transition, regionName);
 				listTransitionData.add(tr);
-				mapTransitionData.put(tr.extractID(transition.toString()),tr);
+				mapTransitionData.put(tr.extractID(1,transition.toString()),tr);
 				trAdded = true;
 				break; // all triggers will be got from getTriggers function in umlrtUtils
 			}//for
@@ -808,7 +808,7 @@ public class ParserEngine implements Runnable {
 						transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr, transition, regionName);
 				listTransitionData.add(tr);
-				mapTransitionData.put(tr.extractID(transition.toString()),tr);
+				mapTransitionData.put(tr.extractID(1,transition.toString()),tr);
 			}
 
 		}

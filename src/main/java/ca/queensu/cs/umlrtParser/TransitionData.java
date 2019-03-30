@@ -31,7 +31,11 @@ public class TransitionData {
 	private Transition transition;
 	private String id;
 	private String path;
-	private String regionName; 
+	private String regionName;
+	private boolean fromExitPoint;
+	private boolean toEntryPoint;
+	private String srcId;
+	private String trgId;
 	//private List<Vector<String, String>> triggers = new ArrayList<HashMap<String, String>>();
 	//private final SecurityRule securityRule;
 
@@ -72,9 +76,13 @@ public class TransitionData {
 		this.isInit = isInit;
 		this.transitonName = transitonName;
 		this.transition = transition;
+		this.fromExitPoint = false;
+		this.toEntryPoint = false;
+		this.srcId = null;
+		this.trgId = null;
 		if (transition  != null) {
-			this.id = extractID(transition.toString());
-			this.path = extractID(transition.getSource().toString())+"-"+this.id+"-"+extractID(transition.getTarget().toString());
+			this.id = extractID(1,transition.toString());
+			this.path = extractID(0, transition.getSource().toString())+"-"+this.id+"-"+extractID(2,transition.getTarget().toString());
 		}
 		if (transition  != null) {
 			this.regionName = extractAllRegions(transition.getQualifiedName());
@@ -87,6 +95,18 @@ public class TransitionData {
 	//public String getName() {
 	//	return name;
 	//}
+	public String getTrgId() {
+		return trgId;
+	}
+	public String getSrcId() {
+		return srcId;
+	}
+	public boolean getFromExitPoint() {
+		return fromExitPoint;
+	}
+	public boolean getToEntryPoint() {
+		return toEntryPoint;
+	}
 	public String extractAllRegions(String qName) {
 		String allRegions = "";
 		String [] qNameSplit = qName.split("\\::");
@@ -101,7 +121,9 @@ public class TransitionData {
 		
 		return allRegions;
 	}
-	public String extractID(String transitionStr) {
+	public String extractID(int opt, String transitionStr) {
+		//opt [0,1,2]: 0=>State_src 1=>Transition 2=>State_trg
+		
 		int idx_1 = transitionStr.indexOf("@");
 		int idx_2 = transitionStr.indexOf(" ");
 		String id = transitionStr.substring(idx_1+1, idx_2);
@@ -109,19 +131,30 @@ public class TransitionData {
 		boolean S_trg_ENTRY = false; 
 		boolean S_src_EXIT = false; 
 		
+		if ( (ParserEngine.mapStateData.get(id) != null) && 
+				((ParserEngine.mapStateData.get(id).getPseudoStateKind() != null))) {
+				
+			if(opt == 0) {
+				srcId = id;
+			} else if(opt == 2) {
+				trgId = id;
+			}
+		}
+						
 		//Entry
 		if ( (ParserEngine.mapStateData.get(id) != null) && 
 				((ParserEngine.mapStateData.get(id).getPseudoStateKind() != null)) &&
-				ParserEngine.mapStateData.get(id).getPseudoStateKind().toString().contentEquals("ENTRY"))
-			S_trg_ENTRY = true;
+				ParserEngine.mapStateData.get(id).getPseudoStateKind().toString().contentEquals("ENTRY")) {
+			S_trg_ENTRY = true;}
 		//Exit
 		if ( (ParserEngine.mapStateData.get(id) != null) &&
 				((ParserEngine.mapStateData.get(id).getPseudoStateKind() != null)) &&
-				ParserEngine.mapStateData.get(id).getPseudoStateKind().toString().contentEquals("EXIT"))
-			S_src_EXIT = true;
+				ParserEngine.mapStateData.get(id).getPseudoStateKind().toString().contentEquals("EXIT")) {
+			S_src_EXIT = true;}
 		
 		if (S_trg_ENTRY) {
 		// change trg
+			this.toEntryPoint = true;
 			String nameSpace = ParserEngine.mapStateData.get(id).getPseudostate().getNamespace().getName();
 			//System.out.println("=======================[Enter to ] "+ nameSpace);
 			// find the entry state
@@ -134,6 +167,7 @@ public class TransitionData {
 		}
 		if (S_src_EXIT) {
 		//chage src
+			this.fromExitPoint = true;
 			String nameSpace = ParserEngine.mapStateData.get(id).getPseudostate().getNamespace().getName();
 			//System.out.println("=======================[Enter to ] "+ nameSpace);
 			// find the exit state
@@ -266,7 +300,7 @@ public class TransitionData {
 	
 	public String allDataToString() {
 		return "TransitionData [ ID= "+ id + ", path= "+path+", CapsuleName= "+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+ ", region= "+regionName +", transitonName= " + transitonName +", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
-				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + ", transition= "+ transition+ "]";
+				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + ", transition= "+ transition+ ", srcID= "+srcId + ", trgID= " + trgId+"]";
 	}
 
 }

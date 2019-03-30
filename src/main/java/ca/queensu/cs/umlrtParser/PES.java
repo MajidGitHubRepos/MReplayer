@@ -1,5 +1,6 @@
 package ca.queensu.cs.umlrtParser;
 
+import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +12,11 @@ import org.eclipse.uml2.uml.StateMachine;
 
 public class PES {
 
-	public List<String> listPaths = new ArrayList<String>();
+	public List<String> listRegionalPaths = new ArrayList<String>();
+	public List<String> listModelPaths = new ArrayList<String>();
 	public static Map<String, List<String>> mapRegionPaths = new HashMap<String, List<String>>();
-	public static Map<String, String> mapIdQname     = new HashMap<String, String>();
+	public static Map<String, List<String>> mapModelRegionPaths = new HashMap<String, List<String>>();
+	public static Map<String, String> mapQnameId     = new HashMap<String, String>();
 	
 
 
@@ -40,10 +43,7 @@ public class PES {
 			
 			path = stack.pop();
 			
-			if (path.contains(",")) {
-				int lastIndex = path.lastIndexOf(",");
-				lastIdInPath = path.substring(lastIndex+1);
-			}else { lastIdInPath = path;}
+			lastIdInPath = extractLastPathID(path);
 			
 			transitionHashCodeNxt = ParserEngine.mapTransitionData.get(lastIdInPath).getPath();
 			String [] hashCodeNxtSplit = transitionHashCodeNxt.split("\\-");
@@ -62,8 +62,8 @@ public class PES {
 					}
 				}
 				}
-				if (!listPaths.contains(path)) {
-					listPaths.add(path);
+				if (!listRegionalPaths.contains(path)) {
+					listRegionalPaths.add(path);
 					listStateMet.add(hashCodeNxtSplit[2]);
 				}
 				//if (listNxtIds.size() == 0) stack.pop();
@@ -85,6 +85,33 @@ public class PES {
 	}
 	
 	//==================================================================	
+	//==============================================[extractLastPathID]
+	//==================================================================	
+	public String extractLastPathID(String path) {
+		
+		if (path.contains(",")) {
+			int lastIndex = path.lastIndexOf(",");
+			return path.substring(lastIndex+1);
+		}else {  
+			return path;
+		}
+	}
+	
+	//==================================================================	
+	//==============================================[extractLastPathID]
+	//==================================================================	
+	public String extractOwnerRegion(String region) {
+			int i = region.lastIndexOf("_");
+			int j = region.lastIndexOf("::");
+			if (region.contains("::") && i>j) {
+				int lastIndex = region.lastIndexOf("_");
+				return region.substring(0,lastIndex);
+			}else {  
+				return null;
+			}
+		}
+	 
+	//==================================================================	
 	//==============================================[showElements]
 	//==================================================================	
 	public void showElements() {
@@ -92,19 +119,26 @@ public class PES {
 
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
 			System.out.println("[KEY]= "+entry.getKey());
-			listPaths = entry.getValue();
-			for (int i = 0; i<listPaths.size(); i++) {
-				System.out.println("["+i+"]:" +listPaths.get(i));
+			listRegionalPaths = entry.getValue();
+			for (int i = 0; i<listRegionalPaths.size(); i++) {
+				System.out.println("["+i+"]:" +listRegionalPaths.get(i));
 			}
 		}
-		System.out.println("=======================[MapIdQName]==========================");
+		System.out.println("=======================[MapQNameId]==========================");
 
-		for (Map.Entry<String, String> entry : mapIdQname.entrySet()) {
+		for (Map.Entry<String, String> entry : mapQnameId.entrySet()) {
 			System.out.println("[KEY]= "+entry.getKey() + " [VALUE]= "+entry.getValue());
 		}
-		
+		System.out.println("=======================[mapModelRegionPaths]==========================");
+
+		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+			System.out.println("[KEY]= "+entry.getKey());
+			List<String>paths = entry.getValue();
+			for (int i = 0; i<paths.size(); i++) {
+				System.out.println("["+i+"]:" +paths.get(i));
+			}
+		}
 	}
-	//-------
 	//==================================================================	
 	//==============================================[findNxtTransitionID]
 	//==================================================================	
@@ -142,22 +176,29 @@ public class PES {
 	}
 
 	//==================================================================	
-	//==============================================[makeMapIdQname]
+	//==============================================[makeMapQnameId]
 	//==================================================================	
-	public void makeMapIdQname() {
+	public void makeMapQnameId() {
+		int nullCounter = 1; 
 		for (TransitionData tr :  ParserEngine.listTransitionData){
 			if (tr.getTransition() != null)
-				mapIdQname.put(tr.getId(), tr.getTransition().getQualifiedName());
-			else
-				mapIdQname.put(tr.getId(), "__NULL__");
+				if (tr.getTransition().getQualifiedName() != null)
+					mapQnameId.put(tr.getTransition().getQualifiedName(), tr.getId());
+				else
+					mapQnameId.put("__NULL__"+nullCounter++,tr.getId());
 		}
 		for (StateData st :  ParserEngine.listStateData){
-			if (st.getState() != null)
-				mapIdQname.put(st.getId(), st.getState().getQualifiedName());
-			else if (st.getPseudostate() != null)
-				mapIdQname.put(st.getId(), st.getPseudostate().getQualifiedName());
-			else
-				mapIdQname.put(st.getId(), "__NULL__");
+			if ((st.getPseudostate() == null) && (st.getState() != null)) {
+				if (st.getState().getQualifiedName() != null)
+					mapQnameId.put(st.getState().getQualifiedName(), st.getId());
+				else
+					mapQnameId.put("__NULL__"+nullCounter++,st.getId());
+			}else if ((st.getPseudostate() != null) && (st.getState() == null)) {
+				if (st.getPseudostate().getQualifiedName() != null)
+					mapQnameId.put(st.getPseudostate().getQualifiedName(), st.getId());
+				else
+					mapQnameId.put("__NULL__"+nullCounter++,st.getId());
+			}
 		}
 	}
 
@@ -165,20 +206,81 @@ public class PES {
 	//==============================================[makeMapRegionPaths]
 	//==================================================================	
 	public void makeMapRegionPaths() {
-		makeMapIdQname();
+		makeMapQnameId();
 		for (TransitionData tr :  ParserEngine.listTransitionData){
 			String [] pathSplit = tr.getPath().split("\\-");
 			if(ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind() != null) {
 				if(ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind().toString().contentEquals("INITIAL")) {
-					listPaths = new ArrayList<String>();
+					listRegionalPaths = new ArrayList<String>();
 					pathMaker(tr.getPath());
-					mapRegionPaths.put(tr.getCapsuleInstanceName()+"__"+tr.getReginName(), listPaths);
+					mapRegionPaths.put(tr.getCapsuleInstanceName()+"::"+tr.getReginName(), listRegionalPaths);
 				}
 			}
 		}
+		makeListCompletePaths();
 		showElements();
 	}
 
+	//==================================================================	
+	//==============================================[makeListCompletePaths]
+	//==================================================================	
+	public void makeListCompletePaths() {
+		List<String> _listPath = new ArrayList<String>();
+		String lastTr = "";
+		String ownerRegion = "";
+		String orgPath = "";
+
+		String exitPointId_inner = "";
+		String exitPointId_outer = "";
+
+		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
+			//Find the border transitions
+			_listPath = entry.getValue();
+			for (int i = 0; i<_listPath.size(); i++) {
+				exitPointId_inner = "";
+				//get the last trID
+				orgPath = _listPath.get(i);
+				lastTr = extractLastPathID(_listPath.get(i));
+				if(ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) {
+					String in_id = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+//(START)  Tr1->[x]->Tr2 -------------------------------------------------------------------------------------------------------------
+					if (ParserEngine.mapStateData.get(in_id).getPseudoStateKind().toString().contentEquals("EXIT")) { 
+						exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+
+						exitPointId_outer = "";
+						//findTheOwner
+						ownerRegion = extractOwnerRegion(entry.getKey());
+						System.out.println("ownerRegion: " + ownerRegion);
+						if(ownerRegion != null) {
+							List<String>ownerPaths = mapRegionPaths.get(ownerRegion);
+
+							List<String> _listTmp = new ArrayList<String>();
+							for (String path : ownerPaths) {
+								//getFirstTr in ownerPaths
+								String [] pathSplit = path.split("\\,");
+								if(ParserEngine.mapTransitionData.get(pathSplit[0]).getSrcId() != null) {
+
+									String out_id = ParserEngine.mapTransitionData.get(pathSplit[0]).getSrcId();
+
+									if (ParserEngine.mapStateData.get(out_id).getPseudoStateKind().toString().contentEquals("EXIT"))
+										exitPointId_outer = ParserEngine.mapTransitionData.get(pathSplit[0]).getSrcId();
+
+									if(exitPointId_outer.contentEquals(exitPointId_inner)) {
+										_listTmp.add(orgPath+","+path);
+										listModelPaths.add(orgPath+","+path);
+									}
+								}
+							}
+							if(exitPointId_outer.contentEquals(exitPointId_inner)) 
+								mapModelRegionPaths.put(entry.getKey(),_listTmp);
+						}
+					}
+//(END)  Tr1->[x]->Tr2 -------------------------------------------------------------------------------------------------------------
+				}
+			}
+		}
+
+	}
 
 
 
