@@ -18,13 +18,13 @@ public class PES {
 	public static Map<String, List<String>> mapModelRegionPaths = new HashMap<String, List<String>>();
 	public static Map<String, String> mapQnameId     = new HashMap<String, String>();
 	public static List<Map<String, List<String>>> listMapModelRegionPaths =  new ArrayList<Map<String, List<String>>>();
-	
+
 
 
 	//==================================================================	
 	//==============================================[pathMaker]
 	//==================================================================	
-	 public void pathMaker(String transitionHashCode) {
+	public void pathMaker(String transitionHashCode) {
 		Stack<String> stack = new Stack<String>();
 		String [] transitionData = transitionHashCode.split("\\-");
 		List<String> listNxtIds = new ArrayList<String>();
@@ -39,29 +39,29 @@ public class PES {
 		//transitionData<StateID_src, transitionID, StateID_trg>
 		//Make sure no redundant path is in listPath
 		stack.push(transitionData[1]);
-		
+
 		while (!stack.isEmpty()) {
-			
+
 			path = stack.pop();
-			
+
 			lastIdInPath = extractLastPathID(path);
-			
+
 			transitionHashCodeNxt = ParserEngine.mapTransitionData.get(lastIdInPath).getPath();
 			String [] hashCodeNxtSplit = transitionHashCodeNxt.split("\\-");
-			
-			
-			
+
+
+
 			//state = hashCodeNxtSplit[2];
-			
+
 			if (checkStateBasic(hashCodeNxtSplit[2])) {
 				if (!listStateMet.contains(hashCodeNxtSplit[2])) {
-				listNxtIds = findNxtTransitionIDs(hashCodeNxtSplit, "");
-				for (String id : listNxtIds) {
-					if (!stack.contains(id)) {
-						//stack.pop();
-						stack.push(id);
+					listNxtIds = findNxtTransitionIDs(hashCodeNxtSplit, "");
+					for (String id : listNxtIds) {
+						if (!stack.contains(id)) {
+							//stack.pop();
+							stack.push(id);
+						}
 					}
-				}
 				}
 				if (!listRegionalPaths.contains(path)) {
 					listRegionalPaths.add(path);
@@ -70,26 +70,26 @@ public class PES {
 				//if (listNxtIds.size() == 0) stack.pop();
 			}else {
 				if (!listStateMet.contains(hashCodeNxtSplit[2])) {
-				listNxtIds = findNxtTransitionIDs(hashCodeNxtSplit, path);
-				for (String id : listNxtIds) { 
-					if (!stack.contains(path+","+id)) {
-						//stack.pop(); 
-						stack.push(path+","+id); 
+					listNxtIds = findNxtTransitionIDs(hashCodeNxtSplit, path);
+					for (String id : listNxtIds) { 
+						if (!stack.contains(path+","+id)) {
+							//stack.pop(); 
+							stack.push(path+","+id); 
 						}
 					}
 				}
 				//if (listNxtIds.size() == 0) stack.pop();
 			}
-			
-			
+
+
 		}
 	}
-	
+
 	//==================================================================	
 	//==============================================[extractLastPathID]
 	//==================================================================	
 	public String extractLastPathID(String path) {
-		
+
 		if (path.contains(",")) {
 			int lastIndex = path.lastIndexOf(",");
 			return path.substring(lastIndex+1);
@@ -97,20 +97,20 @@ public class PES {
 			return path;
 		}
 	}
-	
+
 	//==================================================================	
 	//==============================================[extractUpperRegion]
 	//==================================================================	
 	public String extractUpperRegion(String region) {
-			int i = region.lastIndexOf("_");
-			int j = region.lastIndexOf("::");
-			if (region.contains("::") && i>j) {
-				int lastIndex = region.lastIndexOf("_");
-				return region.substring(0,lastIndex);
-			}else {  
-				return null;
-			}
+		int i = region.lastIndexOf("_");
+		int j = region.lastIndexOf("::");
+		if (region.contains("::") && i>j) {
+			int lastIndex = region.lastIndexOf("_");
+			return region.substring(0,lastIndex);
+		}else {  
+			return null;
 		}
+	}
 	//==================================================================	
 	//==============================================[extractLowerRegion]
 	//==================================================================	
@@ -119,12 +119,20 @@ public class PES {
 		String instanceName = "";
 
 		String stateName = ParserEngine.mapStateData.get(id).getPseudostate().getNamespace().getName();
-		if (stateName != null) {
-			instanceName = ParserEngine.mapStateData.get(id).getCapsuleInstanceName();
-			//find StateData
+		String nameSpace = "";
+
+		for (StateData sd :  ParserEngine.listStateData){
+			if((sd.getStateName()!=null) && (sd.getStateName().contentEquals(stateName))) {
+				nameSpace = sd.getState().getQualifiedName()+"::";
+				break;
+			}
+		}
+
+		if ( (nameSpace != null) && (stateName != null)) {
 			for (StateData sd :  ParserEngine.listStateData){
-				if ( (sd.getStateName() != null)&& (sd.getStateName().contentEquals(stateName))) {
-					
+
+				if((sd.getState()!=null) && (sd.getState().getQualifiedName().contains(nameSpace))) {
+					instanceName = sd.getCapsuleInstanceName();
 					String [] qNameSplit = sd.getState().getQualifiedName().split("\\::");
 
 					for (String str : qNameSplit) {
@@ -136,11 +144,11 @@ public class PES {
 								lowerRegion = lowerRegion + "_" +str;
 
 						}
-						
 					}
-					return instanceName+"::"+lowerRegion;
+					break;
 				}
-			}			
+			}
+			return instanceName+"::"+lowerRegion; 
 		}
 		return "";
 	}
@@ -253,7 +261,7 @@ public class PES {
 		updateMapRegionPaths();
 		showElements();
 	}
-	
+
 	//==================================================================	
 	//==============================================[findPathInUpperLowerRegion]
 	//==================================================================	
@@ -276,19 +284,19 @@ public class PES {
 				noMatchPath = false;
 				listMatchPaths.add(path);
 				if(ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(tr_1st).getTrgId()).getPseudoStateKind() != null) {
-					
+
 					String PseudoStateKind = ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(tr_1st).getTrgId()).getPseudoStateKind().toString();
 					//find id
 					String newId = ParserEngine.mapTransitionData.get(tr_1st).getTrgId();
-					
+
 					if (PseudoStateKind.contentEquals("ENTRY")) {
 						String lowerRegion = extractLowerRegion(newId);
 						findPathInUpperLowerRegion(lowerRegion, newId, listMatchPaths);
-						
+
 					}else if (PseudoStateKind.contentEquals("EXIT")) {
 						String upperRegion = extractUpperRegion(region);
 						findPathInUpperLowerRegion(upperRegion, newId, listMatchPaths);
-						
+
 					}else if(PseudoStateKind.contentEquals("CHOICE")) {
 						//add all paths from the choice point to the list
 						List<String> allRegionPaths = mapRegionPaths.get(region);
@@ -311,6 +319,7 @@ public class PES {
 			}
 		}
 		if (noMatchPath == true) { //history => only the init tr is added to the listMatchPaths
+			listMatchPaths.add("itself");
 			listMatchPaths.add(initPath);
 		}
 	}
@@ -320,6 +329,7 @@ public class PES {
 	//==================================================================	
 	public void updateMapRegionPaths() {
 		List<String> listCurrentPath = new ArrayList<String>();
+		List<String> listPathsDone = new ArrayList<String>();
 		boolean foundStableState = true;
 		String lastTr = "";
 		String upperRegion = "";
@@ -332,70 +342,81 @@ public class PES {
 		String entryPointId_outer = "";
 
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
-			
-			
+
+
 			String currentRegion = entry.getKey();
 			//Find the border transitions
 			listCurrentPath = entry.getValue();
 			for (int i = 0; i<listCurrentPath.size(); i++) {
-				List<String> listMatchPaths = new ArrayList<String>();
-				exitPointId_inner = "";
-				exitPointId_outer = "";
-				entryPointId_inner = "";
-				entryPointId_outer = "";
-				upperRegion = "";
-				lowerRegion = "";
-				
-				
-				//get the last trID
-				orgPath = listCurrentPath.get(i);
-				lastTr = extractLastPathID(orgPath);
-				
-				
-				//lastTr->[x]  EXIT
-				if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
-						ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT")) {
-					exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
-					upperRegion = extractUpperRegion(currentRegion);
-					System.out.println("=======================> [upperRegion]"+ upperRegion);
+				String dPath = listCurrentPath.get(i);
+				if (!listPathsDone.contains(dPath)) {
+					List<String> listMatchPaths = new ArrayList<String>();
+					exitPointId_inner = "";
+					exitPointId_outer = "";
+					entryPointId_inner = "";
+					entryPointId_outer = "";
+					upperRegion = "";
+					lowerRegion = "";
 
-				}
-				
-				//lastTr->[]   ENTRY
-				if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
-						ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY")) {
-					entryPointId_outer = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
-					lowerRegion = extractLowerRegion(entryPointId_outer);
-					System.out.println("=======================> [lowerRegion]"+ lowerRegion);
 
-				}
-				
-				
-				if (!entryPointId_inner.isEmpty() || !exitPointId_inner.isEmpty()) {
-					foundStableState = false;
-				}
-					
-				//while(!foundStableState) {
-					//lookfor the follower in the upper Region
-					
+					//get the last trID
+					orgPath = listCurrentPath.get(i);
+					lastTr = extractLastPathID(orgPath);
+
+
+					//lastTr->[x]  EXIT
+					if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
+							ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT")) {
+						exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+						upperRegion = extractUpperRegion(currentRegion);
+						System.out.println("=======================> [upperRegion]"+ upperRegion);
+
+					}
+
+					//lastTr->[]   ENTRY
+					else if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
+							ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY")) {
+						entryPointId_outer = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+						lowerRegion = extractLowerRegion(entryPointId_outer);
+						System.out.println("=======================> [lowerRegion]"+ lowerRegion);
+
+					}
+
+
+					if (!entryPointId_inner.isEmpty() || !exitPointId_inner.isEmpty()) {
+						foundStableState = false;
+					}
+
 					if((!upperRegion.contentEquals("")) || (!lowerRegion.contentEquals(""))) {
-						
+
 						if (!exitPointId_inner.isEmpty()) 
 							findPathInUpperLowerRegion(upperRegion,exitPointId_inner,listMatchPaths);
 						else if (!entryPointId_outer.isEmpty())
 							findPathInUpperLowerRegion(lowerRegion,entryPointId_outer,listMatchPaths);
-					
+						boolean itself = false;
 						if(listMatchPaths.size()>0) {
 							for(String newPath : listMatchPaths) {
-								orgPath = orgPath+","+newPath;
+								if(newPath.contentEquals("itself"))
+									itself = true;
+								else 
+									orgPath = orgPath+","+newPath;
 							}
-							listCurrentPath.set(i, orgPath);
-							//mapModelRegionPaths.put(entry.getKey(),listCurrentPath);
+
+							if (itself) {
+								String oPath = listCurrentPath.get(i);
+								listCurrentPath.set(i, orgPath);
+								listCurrentPath.add(oPath);
+								itself = false;
+							}else {
+								listCurrentPath.set(i, orgPath);
+							}
+
 						}
 					}
-					
-				//}
-					
+
+
+				}
+				listPathsDone.add(dPath);
 			}
 		}
 
