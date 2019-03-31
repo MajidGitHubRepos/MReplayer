@@ -1,3 +1,4 @@
+[010419][Debug]: fix some buges in findPathInUpperLowerRegion() and adding findPathInUpperLowerRegion() in PES
 [290319][Debug]: adding updateMapRegionPaths in PES class to update mapRegionPaths with inter-Regional transitions
 [290319][Debug]: adding makeListCompletePaths in PES class
 [280319][Debug]: pathMaker in PES class fixed, SimpleCS_compound.uml added
