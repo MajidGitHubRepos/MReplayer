@@ -787,7 +787,6 @@ public class ParserEngine implements Runnable {
 				}
 				if (transition.getOwner() instanceof Region) {
 					regionName = ((Region)transition.getOwner()).getName();
-
 				}
 				TransitionData tr = new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
 						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
