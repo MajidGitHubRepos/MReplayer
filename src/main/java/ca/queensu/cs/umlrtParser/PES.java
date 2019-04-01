@@ -89,14 +89,18 @@ public class PES {
 	}
 
 	//==================================================================	
-	//==============================================[existInMapRegionPaths]
+	//==============================================[countPathInMapRegionPaths]
 	//==================================================================	
 	public int countPathInMapRegionPaths(String path) {
 		int count = 0;
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
+			
 			for(String str : entry.getValue()) {
-				if(str.contains(path))
-					count++;
+				if(str.contains(path)) {
+					String [] strSplit = str.split("\\,");
+					if (!ParserEngine.mapTransitionData.get(strSplit[strSplit.length-1]).getIsInit()) //path ends at initTr
+						count++;
+				}
 			}
 		}
 		//System.out.println("=======================path[count]: "+path+"["+count+"]");
@@ -344,9 +348,8 @@ public class PES {
 				if((ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind().toString().contentEquals("INITIAL")) || isInit) {
 					listRegionalPaths = new ArrayList<String>();
 					pathMaker(tr.getPath());
-					List<String> tmpList = mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName());
-					if (tmpList != null)
-						listRegionalPaths.addAll(tmpList);
+					if (mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()) != null)
+						listRegionalPaths.addAll(mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()));
 					
 					mapRegionPaths.put(tr.getCapsuleInstanceName()+"::"+tr.getReginName(), listRegionalPaths);
 				}
@@ -354,9 +357,9 @@ public class PES {
 					(ParserEngine.mapStateData.get(pathSplit[0]).getStateName().contentEquals(stateName)))) {
 				listRegionalPaths = new ArrayList<String>();
 				pathMaker(tr.getPath());
-				List<String> tmpList = mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName());
-				if (tmpList != null)
-					listRegionalPaths.addAll(tmpList);
+				if (mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()) != null)
+					listRegionalPaths.addAll(mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()));
+				
 				mapRegionPaths.put(tr.getCapsuleInstanceName()+"::"+tr.getReginName(), listRegionalPaths);
 				
 			}
@@ -387,7 +390,7 @@ public class PES {
 				noMatchPath = false;
 				
 				String trgStateId = ""; 
-				if (ParserEngine.mapTransitionData.get(tr_1st).getTarget() != null) { //is basic State
+				if (ParserEngine.mapTransitionData.get(tr_1st).getTarget() != null) { //is exit/entry point
 					trgStateId = ParserEngine.mapTransitionData.get(tr_1st).getPath();
 					String [] tmpStrSplit = trgStateId.split("\\-");
 					trgStateId = tmpStrSplit[2];
@@ -414,7 +417,7 @@ public class PES {
 						//add all paths from the choice point to the list
 						List<String> allRegionPaths = mapRegionPaths.get(region);
 						for(String cPath: allRegionPaths) {
-							String [] pathSplitTmp = path.split("\\,");
+							String [] pathSplitTmp = cPath.split("\\,");
 							//check wheather choice point in the cPath
 							for(String p : pathSplitTmp) {
 								if (ParserEngine.mapTransitionData.get(p).getPath().contains(newId)) {
@@ -436,11 +439,10 @@ public class PES {
 						}
 					}else {
 						System.err.println("=================[Bad Type!]================");
-						System.err.println("=================[Type]================: "+PseudoStateKind);
 					}
 				}else {
 					listMatchPaths.add(path);
-					break;
+					//break;
 				}
 			}
 		}
@@ -521,7 +523,7 @@ public class PES {
 						boolean setChoice = false;
 						boolean choice = false;
 						String basePath = "";
-						if (listMatchPaths.contains("choice"))
+						if (listMatchPaths.contains("choice") || (listMatchPaths.size()>1))
 							basePath = listCurrentPath.get(i);
 						
 						List<String> listChoicePaths = new ArrayList<String>();
@@ -542,7 +544,10 @@ public class PES {
 										else {listCurrentPath.add(orgPath); orgPath = basePath;}
 									}
 								}else 
-									orgPath = orgPath+","+newPath;}
+									if (!updated) { listCurrentPath.set(i, basePath+","+newPath); updated = true;}
+									else {listCurrentPath.add(basePath+","+newPath); orgPath = basePath;}
+								
+								}
 							}
 
 							if (itself) {
@@ -557,7 +562,7 @@ public class PES {
 									else {listCurrentPath.add(orgPath); orgPath = listCurrentPath.get(i);}
 								}
 							}else {
-								listCurrentPath.set(i, orgPath);
+							//	listCurrentPath.set(i, orgPath);
 							}
 
 						}

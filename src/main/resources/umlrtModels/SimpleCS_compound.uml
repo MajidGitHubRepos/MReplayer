@@ -9,6 +9,10 @@
     </eAnnotations>
     <packagedElement xmi:type="uml:Class" xmi:id="_DGHeIMKbEeiR-e-fvzqChQ" name="Top" isActive="true">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_jK5CMMKbEeiR-e-fvzqChQ" name="c0" visibility="protected" type="_FcPA8MKbEeiR-e-fvzqChQ" isOrdered="true" aggregation="composite"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_lqtTkMKbEeiR-e-fvzqChQ" name="c1" visibility="protected" isOrdered="true" aggregation="composite">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_irjsgMM4EeiNurcJA2v9Sg" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ir2ncMM4EeiNurcJA2v9Sg" value="1"/>
+      </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_FcPA8MKbEeiR-e-fvzqChQ" name="C0" classifierBehavior="_LwxEoMKcEeiR-e-fvzqChQ" isActive="true">
       <ownedAttribute xmi:type="uml:Port" xmi:id="_4XamIMKiEeiR-e-fvzqChQ" name="log" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
@@ -24,32 +28,33 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_LwxEoMKcEeiR-e-fvzqChQ" name="StateMachine" isReentrant="false">
         <region xmi:type="uml:Region" xmi:id="_LxBjUMKcEeiR-e-fvzqChQ" name="Region">
-          <transition xmi:type="uml:Transition" xmi:id="_RQJ5cFPvEemjyO8JNi0WCA" name="T0" kind="external" source="_LxIRAMKcEeiR-e-fvzqChQ" target="_UoS58FPvEemjyO8JNi0WCA"/>
+          <transition xmi:type="uml:Transition" xmi:id="_6nCBUFS7Eem7lObb6TrxAg" name="T1" kind="external" source="_LxIRAMKcEeiR-e-fvzqChQ" target="_8Kq-UFS7Eem7lObb6TrxAg"/>
+          <transition xmi:type="uml:Transition" xmi:id="_CMkPUFS8Eem7lObb6TrxAg" name="T2" kind="external" source="__Wdk4FS7Eem7lObb6TrxAg" target="_kOPk8FS8Eem7lObb6TrxAg"/>
+          <transition xmi:type="uml:Transition" xmi:id="_pmVD8FS8Eem7lObb6TrxAg" name="T3" kind="external" source="_kOPk8FS8Eem7lObb6TrxAg" target="_oeAJ8FS8Eem7lObb6TrxAg"/>
+          <transition xmi:type="uml:Transition" xmi:id="_TopPMFS9Eem7lObb6TrxAg" name="T4" kind="external" source="_kOPk8FS8Eem7lObb6TrxAg" target="_Sj3YcFS9Eem7lObb6TrxAg"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_LxIRAMKcEeiR-e-fvzqChQ" kind="initial"/>
-          <subvertex xmi:type="uml:State" xmi:id="_QDnN0FPvEemjyO8JNi0WCA" name="S0">
-            <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_UoS58FPvEemjyO8JNi0WCA" kind="entryPoint"/>
-            <region xmi:type="uml:Region" xmi:id="_UoP2oFPvEemjyO8JNi0WCA" name="Region1">
-              <transition xmi:type="uml:Transition" xmi:id="_nWY7UFPwEemjyO8JNi0WCA" name="T01" kind="local" source="_UoS58FPvEemjyO8JNi0WCA" target="_htv30FPwEemjyO8JNi0WCA"/>
-              <transition xmi:type="uml:Transition" xmi:id="_mLZkEFSOEem7lObb6TrxAg" name="T02" kind="external" source="_htv30FPwEemjyO8JNi0WCA" target="_mK-GQFSOEem7lObb6TrxAg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_NREGEFSREem7lObb6TrxAg" name="T03" kind="external" source="_htv30FPwEemjyO8JNi0WCA" target="_QlaCkFQLEemjyO8JNi0WCA"/>
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_htv30FPwEemjyO8JNi0WCA" name="ch1" kind="choice"/>
-              <subvertex xmi:type="uml:State" xmi:id="_1aL5UFQIEemjyO8JNi0WCA" name="S01">
-                <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_mK-GQFSOEem7lObb6TrxAg" kind="entryPoint"/>
-                <region xmi:type="uml:Region" xmi:id="_SBBE8FQLEemjyO8JNi0WCA" name="Region1">
-                  <transition xmi:type="uml:Transition" xmi:id="_SAZjAFSREem7lObb6TrxAg" name="T011" kind="external" source="_PFiUYFSREem7lObb6TrxAg" target="_QburQFSREem7lObb6TrxAg"/>
-                  <transition xmi:type="uml:Transition" xmi:id="_YRREIFSREem7lObb6TrxAg" name="T012" kind="external" source="_QburQFSREem7lObb6TrxAg" target="_WqbpMFSREem7lObb6TrxAg"/>
-                  <transition xmi:type="uml:Transition" xmi:id="_ZktpAFSREem7lObb6TrxAg" name="T013" kind="external" source="_WqbpMFSREem7lObb6TrxAg" target="_UVX2UFSREem7lObb6TrxAg"/>
-                  <transition xmi:type="uml:Transition" xmi:id="_d9EJUFSREem7lObb6TrxAg" name="T014" kind="external" source="_WqbpMFSREem7lObb6TrxAg" target="_btU7UFSREem7lObb6TrxAg"/>
-                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_PFiUYFSREem7lObb6TrxAg" name="initS01" kind="initial"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_QburQFSREem7lObb6TrxAg" name="S011"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_UVX2UFSREem7lObb6TrxAg" name="S012"/>
-                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_WqbpMFSREem7lObb6TrxAg" name="Ch2" kind="choice"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_btU7UFSREem7lObb6TrxAg" name="S013"/>
+          <subvertex xmi:type="uml:State" xmi:id="_5Yg_wFS7Eem7lObb6TrxAg" name="S1">
+            <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_8Kq-UFS7Eem7lObb6TrxAg" kind="entryPoint"/>
+            <connectionPoint xmi:type="uml:Pseudostate" xmi:id="__Wdk4FS7Eem7lObb6TrxAg" kind="exitPoint"/>
+            <region xmi:type="uml:Region" xmi:id="_8KpJIFS7Eem7lObb6TrxAg" name="Region1">
+              <transition xmi:type="uml:Transition" xmi:id="_-EwscFS7Eem7lObb6TrxAg" name="T11" kind="local" source="_Kj6p4FS-Eem7lObb6TrxAg" target="_Sc4cIFS8Eem7lObb6TrxAg"/>
+              <transition xmi:type="uml:Transition" xmi:id="__WgBIFS7Eem7lObb6TrxAg" name="T12" kind="external" source="_Sc64ZFS8Eem7lObb6TrxAg" target="__Wdk4FS7Eem7lObb6TrxAg"/>
+              <subvertex xmi:type="uml:State" xmi:id="_8rBSUFS7Eem7lObb6TrxAg" name="S11">
+                <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_Sc4cIFS8Eem7lObb6TrxAg" kind="entryPoint"/>
+                <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_Sc64ZFS8Eem7lObb6TrxAg" kind="exitPoint"/>
+                <region xmi:type="uml:Region" xmi:id="_Sc2m8FS8Eem7lObb6TrxAg" name="Region1">
+                  <transition xmi:type="uml:Transition" xmi:id="_VlZFMFS8Eem7lObb6TrxAg" name="T111" kind="external" source="_UaUZMFS8Eem7lObb6TrxAg" target="_TEUPkFS8Eem7lObb6TrxAg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_X3UEgFS8Eem7lObb6TrxAg" name="T112" kind="external" source="_TEUPkFS8Eem7lObb6TrxAg" target="_Sc64ZFS8Eem7lObb6TrxAg"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_TEUPkFS8Eem7lObb6TrxAg" name="S111"/>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_UaUZMFS8Eem7lObb6TrxAg" name="initS111" kind="initial"/>
                 </region>
               </subvertex>
-              <subvertex xmi:type="uml:State" xmi:id="_QlaCkFQLEemjyO8JNi0WCA" name="S02"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_Kj6p4FS-Eem7lObb6TrxAg" name="initS1" kind="initial"/>
             </region>
           </subvertex>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_kOPk8FS8Eem7lObb6TrxAg" kind="choice"/>
+          <subvertex xmi:type="uml:State" xmi:id="_oeAJ8FS8Eem7lObb6TrxAg" name="Done1"/>
+          <subvertex xmi:type="uml:State" xmi:id="_Sj3YcFS9Eem7lObb6TrxAg" name="Done2"/>
         </region>
       </ownedBehavior>
     </packagedElement>
@@ -101,24 +106,27 @@
   <UMLRealTime:RTMessageSet xmi:id="_R5QiUMKbEeiR-e-fvzqChQ" base_Interface="_R5NfAMKbEeiR-e-fvzqChQ" rtMsgKind="inOut"/>
   <UMLRealTime:Protocol xmi:id="_R5WB4MKbEeiR-e-fvzqChQ" base_Collaboration="_R4lz8MKbEeiR-e-fvzqChQ"/>
   <UMLRealTime:CapsulePart xmi:id="_jLDaQMKbEeiR-e-fvzqChQ" base_Property="_jK5CMMKbEeiR-e-fvzqChQ"/>
+  <UMLRealTime:CapsulePart xmi:id="_lqw98MKbEeiR-e-fvzqChQ" base_Property="_lqtTkMKbEeiR-e-fvzqChQ"/>
   <UMLRTStateMachines:RTPseudostate xmi:id="_LxOXoMKcEeiR-e-fvzqChQ" base_Pseudostate="_LxIRAMKcEeiR-e-fvzqChQ"/>
   <UMLRTStateMachines:RTRegion xmi:id="_LxZWwMKcEeiR-e-fvzqChQ" base_Region="_LxBjUMKcEeiR-e-fvzqChQ"/>
   <UMLRTStateMachines:RTStateMachine xmi:id="_Lxk88MKcEeiR-e-fvzqChQ" base_StateMachine="_LwxEoMKcEeiR-e-fvzqChQ"/>
   <UMLRealTime:RTPort xmi:id="_4XdCYMKiEeiR-e-fvzqChQ" isPublish="false" isWired="false" base_Port="_4XamIMKiEeiR-e-fvzqChQ"/>
   <RTCppProperties:CapsuleProperties xmi:id="_Gn1AMMMxEeiNurcJA2v9Sg" headerPreface="#include &lt;iostream>&#xA;#include &lt;cstdlib>" base_Class="_FcPA8MKbEeiR-e-fvzqChQ"/>
   <RTCppProperties:CapsuleProperties xmi:id="_tJxcAMMxEeiNurcJA2v9Sg" headerPreface="#include &lt;iostream>&#xA;#include &lt;cstdlib>" base_Class="_DGHeIMKbEeiR-e-fvzqChQ"/>
+  <RTCppProperties:AttributeProperties xmi:id="_46YF0MM9EeiNurcJA2v9Sg" base_Property="_lqtTkMKbEeiR-e-fvzqChQ"/>
   <UMLRealTime:RTPort xmi:id="_LA2tkMM_EeiNurcJA2v9Sg" isPublish="false" isWired="true" base_Port="_LA0RUMM_EeiNurcJA2v9Sg"/>
-  <UMLRTStateMachines:RTState xmi:id="_QDrfQFPvEemjyO8JNi0WCA" base_State="_QDnN0FPvEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTRegion xmi:id="_UoREwFPvEemjyO8JNi0WCA" base_Region="_UoP2oFPvEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_UoWkUFPvEemjyO8JNi0WCA" base_Pseudostate="_UoS58FPvEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_htyUEFPwEemjyO8JNi0WCA" base_Pseudostate="_htv30FPwEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTState xmi:id="_1aPjsFQIEemjyO8JNi0WCA" base_State="_1aL5UFQIEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTState xmi:id="_Qlds8FQLEemjyO8JNi0WCA" base_State="_QlaCkFQLEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTRegion xmi:id="_SBCTEFQLEemjyO8JNi0WCA" base_Region="_SBBE8FQLEemjyO8JNi0WCA"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_mLMIsFSOEem7lObb6TrxAg" base_Pseudostate="_mK-GQFSOEem7lObb6TrxAg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_PFnz8FSREem7lObb6TrxAg" base_Pseudostate="_PFiUYFSREem7lObb6TrxAg"/>
-  <UMLRTStateMachines:RTState xmi:id="_Qb0K0FSREem7lObb6TrxAg" base_State="_QburQFSREem7lObb6TrxAg"/>
-  <UMLRTStateMachines:RTState xmi:id="_UVZrgFSREem7lObb6TrxAg" base_State="_UVX2UFSREem7lObb6TrxAg"/>
-  <UMLRTStateMachines:RTPseudostate xmi:id="_Wqhv0FSREem7lObb6TrxAg" base_Pseudostate="_WqbpMFSREem7lObb6TrxAg"/>
-  <UMLRTStateMachines:RTState xmi:id="_btWwgFSREem7lObb6TrxAg" base_State="_btU7UFSREem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTState xmi:id="_5Yi08FS7Eem7lObb6TrxAg" base_State="_5Yg_wFS7Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_8KpwQlS7Eem7lObb6TrxAg" base_Region="_8KpJIFS7Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_8KsMcFS7Eem7lObb6TrxAg" base_Pseudostate="_8Kq-UFS7Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTState xmi:id="_8rCgcFS7Eem7lObb6TrxAg" base_State="_8rBSUFS7Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="__WfaEFS7Eem7lObb6TrxAg" base_Pseudostate="__Wdk4FS7Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTRegion xmi:id="_Sc31EFS8Eem7lObb6TrxAg" base_Region="_Sc2m8FS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_Sc5qQFS8Eem7lObb6TrxAg" base_Pseudostate="_Sc4cIFS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_Sc8tkFS8Eem7lObb6TrxAg" base_Pseudostate="_Sc64ZFS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTState xmi:id="_TEWEwFS8Eem7lObb6TrxAg" base_State="_TEUPkFS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_UaWOYFS8Eem7lObb6TrxAg" base_Pseudostate="_UaUZMFS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_kOQzEFS8Eem7lObb6TrxAg" base_Pseudostate="_kOPk8FS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTState xmi:id="_oeBYEFS8Eem7lObb6TrxAg" base_State="_oeAJ8FS8Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTState xmi:id="_Sj4mkFS9Eem7lObb6TrxAg" base_State="_Sj3YcFS9Eem7lObb6TrxAg"/>
+  <UMLRTStateMachines:RTPseudostate xmi:id="_Kj74AFS-Eem7lObb6TrxAg" base_Pseudostate="_Kj6p4FS-Eem7lObb6TrxAg"/>
 </xmi:XMI>
