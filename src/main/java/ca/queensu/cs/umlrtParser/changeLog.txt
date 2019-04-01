@@ -1,3 +1,4 @@
+[010419][Debug]: adding some helper function and fixing buges in makeMapRegionPaths()
 [010419][Debug]: choice points managed in PES
 [010419][Debug]: updateMapRegionPaths() in PES fixed
 [010419][Debug]: fix some buges in findPathInUpperLowerRegion() and adding findPathInUpperLowerRegion() in PES

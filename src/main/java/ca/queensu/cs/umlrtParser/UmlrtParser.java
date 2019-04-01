@@ -129,13 +129,13 @@ public class UmlrtParser {
     		//String fileName = "umlrtModels/CausalMsgOrdering.uml";
 			//String fileName = "umlrtModels/CarDoorLock.uml";
 			//String fileName = "umlrtModels/SimpleCS.uml";
-			String fileName = "umlrtModels/SimpleCS_compound.uml";
+			//String fileName = "umlrtModels/SimpleCS_compound.uml";
 			
     		
 			//String fileName = "umlrtModels/Counter.uml";
 			//String fileName = "umlrtModels/ParcelRouter.uml";
 			//String fileName = "umlrtModels/ParcelRouter_basic.uml";
-			//String fileName = "umlrtModels/Replication.uml";
+			String fileName = "umlrtModels/Replication.uml";
 			//String fileName = "umlrtModels/BankATM.uml";
 			//String fileName = "umlrtModels/2Pinger1Ponger_threads.uml"; //Montreal Trip 
 			//String fileName = "umlrtModels/Replication_Refined.uml";
