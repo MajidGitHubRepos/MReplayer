@@ -549,7 +549,7 @@ public class PES {
 		
 		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
 			
-			Collections.reverse(entry.getValue()); //reverse the list to process the most inner regions first 
+			//Collections.reverse(entry.getValue()); //reverse the list to process the most inner regions first 
 			for (String region: entry.getValue()) {
 				String currentRegion =  entry.getKey()+"::"+region;
 				

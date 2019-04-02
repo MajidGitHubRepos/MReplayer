@@ -1,3 +1,4 @@
+[020419][Debug]: remove the reverse collection code, it dosen't work for -->[x]-->[x]-->
 [020419][Debug]: adding mapModelRegionPaths to handel hierarchy in the Regions 
 [010419][Debug]: adding some helper function and fixing buges in makeMapRegionPaths()
 [010419][Debug]: choice points managed in PES
