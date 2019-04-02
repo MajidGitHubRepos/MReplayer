@@ -1,3 +1,4 @@
+[020419][Debug]: adding mapModelRegionPaths to handel hierarchy in the Regions 
 [010419][Debug]: adding some helper function and fixing buges in makeMapRegionPaths()
 [010419][Debug]: choice points managed in PES
 [010419][Debug]: updateMapRegionPaths() in PES fixed

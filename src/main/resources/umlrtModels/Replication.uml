@@ -238,7 +238,7 @@
       <ownedAttribute xmi:type="uml:Port" xmi:id="_rmnI0OM8EeaTpaLNj-zYpw" name="Slave" visibility="public" type="_f2ud0ApBEeaGqPUk-4V4qQ" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true"/>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_lT4V0AlLEea_md0mpENoqg" name="ServerStateMachine">
         <region xmi:type="uml:Region" xmi:id="_lvCAwAlLEea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_myR7kAlNEea_md0mpENoqg" name="initTR" source="_hY-7oAlNEea_md0mpENoqg" target="_jLPjcAlNEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_myR7kAlNEea_md0mpENoqg" name="initTrServer" source="_hY-7oAlNEea_md0mpENoqg" target="_jLPjcAlNEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_vR0TsAlNEea_md0mpENoqg" name="InitLog">
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Intialization\n&quot;;
@@ -489,7 +489,7 @@
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_mHBPcuNDEeaTpaLNj-zYpw" name="IAmlive" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
               </transition>
-              <transition xmi:type="uml:Transition" xmi:id="_-mdZ0ONDEeaTpaLNj-zYpw" name="initTR" source="_8WMAUONDEeaTpaLNj-zYpw" target="_ZaK1gAlOEea_md0mpENoqg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_-mdZ0ONDEeaTpaLNj-zYpw" name="initTrBackup" source="_8WMAUONDEeaTpaLNj-zYpw" target="_ZaK1gAlOEea_md0mpENoqg"/>
               <transition xmi:type="uml:Transition" xmi:id="_CPd8UONOEeaTpaLNj-zYpw" name="CheckNoMaster" guard="_CPd8UeNOEeaTpaLNj-zYpw" source="_NU8OsAszEeaGqPUk-4V4qQ" target="_M8iZcONCEeaTpaLNj-zYpw">
                 <ownedRule xmi:type="uml:Constraint" xmi:id="_CPd8UeNOEeaTpaLNj-zYpw" name="CheckNoServer">
                   <specification xmi:type="uml:OpaqueExpression" xmi:id="_CPd8UuNOEeaTpaLNj-zYpw" name="checkNoServer">
@@ -577,7 +577,7 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_BKT8EAlKEea_md0mpENoqg" name="ClientStateMachine">
         <region xmi:type="uml:Region" xmi:id="_Bk0GwAlKEea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_UScqkAlKEea_md0mpENoqg" name="inittrans" source="_Oll1cAlKEea_md0mpENoqg" target="_Q5-S4AlKEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_UScqkAlKEea_md0mpENoqg" name="initTrClient" source="_Oll1cAlKEea_md0mpENoqg" target="_Q5-S4AlKEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_ptLt0AlKEea_md0mpENoqg" name="InitLog">
               <language>C++</language>
               <body>      std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Intialization\n&quot;;

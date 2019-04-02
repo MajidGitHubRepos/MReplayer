@@ -89,6 +89,10 @@ public class UmlrtParser {
 		this.policyFile = policyFile;
 	}
 	
+	public void setParserEngine(ParserEngine pe) {
+		parserEngine = pe;
+	}
+	
 	public File getOutputFile() {
 		return this.outputFile;
 	}
@@ -108,6 +112,10 @@ public class UmlrtParser {
 	
 	public boolean getUmlrtParsingDone() {
 		return this.umlrtParsingDone;
+	}
+	
+	public ParserEngine getParserEngine() {
+		return parserEngine;
 	}
 	   
 	public static void main(String[] args) throws IOException 

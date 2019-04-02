@@ -2,15 +2,20 @@ package ca.queensu.cs.umlrtParser;
 
 import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import org.eclipse.uml2.uml.Region;
 import org.eclipse.uml2.uml.StateMachine;
+import org.springframework.util.StringUtils;
 
 public class PES {
 
@@ -233,6 +238,15 @@ public class PES {
 				System.out.println("["+i+"]:" +pathCurr);
 			}
 		}
+		System.out.println("=======================[mapModelRegionPaths]==========================");
+
+		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+			System.out.println("[KEY]= "+entry.getKey());
+			List<String>paths = entry.getValue();
+			for (int i = 0; i<paths.size(); i++) {
+				System.out.println("["+i+"]:" +paths.get(i));
+			}
+		}
 		/*System.out.println("=======================[MapQNameId]==========================");
 
 		for (Map.Entry<String, String> entry : mapQnameId.entrySet()) {
@@ -243,15 +257,7 @@ public class PES {
 		for (Map.Entry<String, String> entry : mapIdQname.entrySet()) {
 			System.out.println("[KEY]= "+entry.getKey() + " [VALUE]= "+entry.getValue());
 		}
-		System.out.println("=======================[mapModelRegionPaths]==========================");
-
-		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
-			System.out.println("[KEY]= "+entry.getKey());
-			List<String>paths = entry.getValue();
-			for (int i = 0; i<paths.size(); i++) {
-				System.out.println("["+i+"]:" +paths.get(i));
-			}
-		}*/
+		*/
 	}
 	//==================================================================	
 	//==============================================[findNxtTransitionID]
@@ -288,7 +294,60 @@ public class PES {
 		}else 	
 			return true;
 	}
+	
+	//==================================================================	
+	//==============================================[makeMapModelRegionPaths]
+	//==================================================================
+	public void makeMapModelRegionPaths() {
+		Set<String> set = new LinkedHashSet<>(); 
+		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
+			String [] keySplit = entry.getKey().split("\\::");
+			String capInstances = keySplit[0];
+			String region = keySplit[1];
+			List<String> currentRegionList = new ArrayList<String>();
+			
+			currentRegionList = mapModelRegionPaths.get(capInstances);
+			if((currentRegionList != null) && (currentRegionList.size()>0)) {
+				currentRegionList.add(region);
+				set.addAll(currentRegionList);
+				currentRegionList.clear();
+				currentRegionList.addAll(set);
+				set.clear();
+				mapModelRegionPaths.put(capInstances, currentRegionList);
+			}else {
+				List<String> newRegionList = new ArrayList<String>();
+				newRegionList.add(region);
+				mapModelRegionPaths.put(capInstances, newRegionList);
+			}
+		}
 
+		//Sorting region in each capsule based on "_"
+
+		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+			int count_ = 0;
+			String sameLeveRegions = "";
+			List<String> currentRegionList = new ArrayList<String>();
+			do {
+				sameLeveRegions = "";
+				for(String region : entry.getValue()) {
+					if (StringUtils.countOccurrencesOf(region, "_")==count_) {
+						if (sameLeveRegions.isEmpty())
+							sameLeveRegions = region;
+						else
+							sameLeveRegions = sameLeveRegions + "," + region;
+					}
+				}
+				currentRegionList.add(sameLeveRegions);
+				count_++;
+			}while(!sameLeveRegions.isEmpty());
+			if (!sameLeveRegions.isEmpty()) {				
+				mapModelRegionPaths.put(entry.getKey(), currentRegionList);
+			}
+		}
+	}
+
+
+	
 	//==================================================================	
 	//==============================================[makeMapQnameId]
 	//==================================================================	
@@ -332,6 +391,8 @@ public class PES {
 	public void makeMapRegionPaths() {
 		makeMapQnameId();
 		String stateName = "";
+		String capInstance = "";
+		int counter = 0;
 		boolean isInit = false;
 		for (TransitionData tr :  ParserEngine.listTransitionData){
 			isInit = tr.getIsInit();
@@ -344,26 +405,35 @@ public class PES {
 				idx = tmpStr.lastIndexOf("::");
 				stateName= tmpStr.substring(idx+2);
 			}
+			
+			if (!tr.getCapsuleInstanceName().isEmpty())
+				capInstance = tr.getCapsuleInstanceName();
+			else if (!tr.getCapsuleName().isEmpty())
+				capInstance = tr.getCapsuleName();
+			else 
+				capInstance = "__NoCapsuleName__"+counter++;
+			
 			if(ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind() != null) {
 				if((ParserEngine.mapStateData.get(pathSplit[0]).getPseudoStateKind().toString().contentEquals("INITIAL")) || isInit) {
 					listRegionalPaths = new ArrayList<String>();
 					pathMaker(tr.getPath());
 					if (mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()) != null)
-						listRegionalPaths.addAll(mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()));
+						listRegionalPaths.addAll(mapRegionPaths.get(capInstance+"::"+tr.getReginName()));
 					
-					mapRegionPaths.put(tr.getCapsuleInstanceName()+"::"+tr.getReginName(), listRegionalPaths);
+					mapRegionPaths.put(capInstance+"::"+tr.getReginName(), listRegionalPaths);
 				}
 			}else if (((ParserEngine.mapStateData.get(pathSplit[0]).getStateName() != null) &&
 					(ParserEngine.mapStateData.get(pathSplit[0]).getStateName().contentEquals(stateName)))) {
 				listRegionalPaths = new ArrayList<String>();
 				pathMaker(tr.getPath());
-				if (mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()) != null)
-					listRegionalPaths.addAll(mapRegionPaths.get(tr.getCapsuleInstanceName()+"::"+tr.getReginName()));
+				if (mapRegionPaths.get(capInstance+"::"+tr.getReginName()) != null)
+					listRegionalPaths.addAll(mapRegionPaths.get(capInstance+"::"+tr.getReginName()));
 				
-				mapRegionPaths.put(tr.getCapsuleInstanceName()+"::"+tr.getReginName(), listRegionalPaths);
+				mapRegionPaths.put(capInstance+"::"+tr.getReginName(), listRegionalPaths);
 				
 			}
 		}
+		makeMapModelRegionPaths();
 		updateMapRegionPaths();
 		showElements();
 	}
@@ -380,8 +450,13 @@ public class PES {
 		for (String path : lowerPaths) {
 
 			//getFirstTr in ownerPaths
-			String [] pathSplit = path.split("\\,");
-			String tr_1st = pathSplit[0];
+			String tr_1st;
+			if(path.contains(",")) {
+				String [] pathSplit = path.split("\\,");
+				tr_1st = pathSplit[0];
+			}else
+				tr_1st = path;
+					
 			if(ParserEngine.mapTransitionData.get(tr_1st).getIsInit()) {
 				initPath = path;
 			}
@@ -431,12 +506,13 @@ public class PES {
 					}else if(PseudoStateKind.contentEquals("JUNCTION")) {
 						List<String> allRegionPaths = mapRegionPaths.get(region);
 						for(String jPath: allRegionPaths) {
-							String [] pathSplitTmp = path.split("\\,");
-							if(pathSplitTmp[0].contentEquals(newId)) {
+							//String [] pathSplitTmp = jPath.split("\\,");
+							if(jPath.contains(tr_1st)) {
 								listMatchPaths.add(jPath);
 								break; // Junction has only one output
 							}
 						}
+						//break;
 					}else {
 						System.err.println("=================[Bad Type!]================");
 					}
@@ -468,106 +544,108 @@ public class PES {
 		String exitPointId_outer = "";
 		String entryPointId_inner = "";
 		String entryPointId_outer = "";
-
-		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
-
-
-			String currentRegion = entry.getKey();
-			//Find the border transitions
-			listCurrentPath = entry.getValue();
-			for (int i = 0; i<listCurrentPath.size(); i++) {
-				boolean updated = false;
-				String dPath = listCurrentPath.get(i);
-				if (!listPathsDone.contains(dPath)) {
-					List<String> listMatchPaths = new ArrayList<String>();
-					exitPointId_inner = "";
-					exitPointId_outer = "";
-					entryPointId_inner = "";
-					entryPointId_outer = "";
-					upperRegion = "";
-					lowerRegion = "";
-
-
-					//get the last trID
-					orgPath = listCurrentPath.get(i);
-					lastTr = extractLastPathID(orgPath);
+		
+		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+			
+			Collections.reverse(entry.getValue());
+			for (String region: entry.getValue()) {
+				String currentRegion =  entry.getKey()+"::"+region;
+				
+				listCurrentPath = mapRegionPaths.get(currentRegion);
+				for (int i = 0; i<listCurrentPath.size(); i++) {
+					boolean updated = false;
+					String dPath = listCurrentPath.get(i);
+					if (!listPathsDone.contains(dPath)) {
+						List<String> listMatchPaths = new ArrayList<String>();
+						exitPointId_inner = "";
+						exitPointId_outer = "";
+						entryPointId_inner = "";
+						entryPointId_outer = "";
+						upperRegion = "";
+						lowerRegion = "";
 
 
-					//lastTr->[x]  EXIT
-					if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
-							ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT")) {
-						exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
-						upperRegion = extractUpperRegion(currentRegion);
-						//System.out.println("=======================> [upperRegion]"+ upperRegion);
-
-					}
-
-					//lastTr->[]   ENTRY
-					else if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
-							ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY")) {
-						entryPointId_outer = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
-						lowerRegion = extractLowerRegion(entryPointId_outer);
-						//System.out.println("=======================> [lowerRegion]"+ lowerRegion);
-
-					}
+						//get the last trID
+						orgPath = listCurrentPath.get(i);
+						lastTr = extractLastPathID(orgPath);
 
 
-					if((!upperRegion.contentEquals("")) || (!lowerRegion.contentEquals(""))) {
-
-						if (!exitPointId_inner.isEmpty()) 
-							findPathInUpperLowerRegion(upperRegion,exitPointId_inner,listMatchPaths);
-						else if (!entryPointId_outer.isEmpty())
-							findPathInUpperLowerRegion(lowerRegion,entryPointId_outer,listMatchPaths);
-						boolean itself = false;
-						boolean pChoiceAdded = false;
-						boolean setChoice = false;
-						boolean choice = false;
-						String basePath = "";
-						if (listMatchPaths.contains("choice") || (listMatchPaths.size()>1))
-							basePath = listCurrentPath.get(i);
-						
-						List<String> listChoicePaths = new ArrayList<String>();
-						if(listMatchPaths.size()>0) {
-							for(String newPath : listMatchPaths) {
-								if(setChoice) {
-									orgPath = orgPath +","+newPath;
-									setChoice = !setChoice;
-									pChoiceAdded = true;
-							    }else if(newPath.contentEquals("itself")) {
-									itself = true;
-								}else if(newPath.contentEquals("choice")) {
-									choice = true;
-									setChoice = !setChoice;
-									if(pChoiceAdded) {
-										pChoiceAdded = false;
-										if (!updated) { listCurrentPath.set(i, orgPath); updated = true; orgPath = basePath;}
-										else {listCurrentPath.add(orgPath); orgPath = basePath;}
-									}
-								}else 
-									if (!updated) { listCurrentPath.set(i, basePath+","+newPath); updated = true;}
-									else {listCurrentPath.add(basePath+","+newPath); orgPath = basePath;}
-								
-								}
-							}
-
-							if (itself) {
-								String oPath = listCurrentPath.get(i);
-								listCurrentPath.set(i, orgPath);
-								listCurrentPath.add(oPath);
-								itself = false;
-							}else if(choice) {//nothing
-								if(pChoiceAdded) {
-									pChoiceAdded = false;
-									if (!updated) { String orgPathTmp = listCurrentPath.get(i); listCurrentPath.set(i, orgPath); updated = true; orgPath = orgPathTmp;}
-									else {listCurrentPath.add(orgPath); orgPath = listCurrentPath.get(i);}
-								}
-							}else {
-							//	listCurrentPath.set(i, orgPath);
-							}
+						//lastTr->[x]  EXIT
+						if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
+								ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT")) {
+							exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+							upperRegion = extractUpperRegion(currentRegion);
+							//System.out.println("=======================> [upperRegion]"+ upperRegion);
 
 						}
+
+						//lastTr->[]   ENTRY
+						else if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
+								ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY")) {
+							entryPointId_outer = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
+							lowerRegion = extractLowerRegion(entryPointId_outer);
+							//System.out.println("=======================> [lowerRegion]"+ lowerRegion);
+
+						}
+
+
+						if((!upperRegion.contentEquals("")) || (!lowerRegion.contentEquals(""))) {
+
+							if (!exitPointId_inner.isEmpty()) 
+								findPathInUpperLowerRegion(upperRegion,exitPointId_inner,listMatchPaths);
+							else if (!entryPointId_outer.isEmpty())
+								findPathInUpperLowerRegion(lowerRegion,entryPointId_outer,listMatchPaths);
+							boolean itself = false;
+							boolean pChoiceAdded = false;
+							boolean setChoice = false;
+							boolean choice = false;
+							String basePath = "";
+							//if (listMatchPaths.contains("choice") || (listMatchPaths.size()>1))
+							basePath = listCurrentPath.get(i);
+							
+							List<String> listChoicePaths = new ArrayList<String>();
+							if(listMatchPaths.size()>0) {
+								for(String newPath : listMatchPaths) {
+									if(setChoice) {
+										orgPath = orgPath +","+newPath;
+										setChoice = !setChoice;
+										pChoiceAdded = true;
+								    }else if(newPath.contentEquals("itself")) {
+										itself = true;
+									}else if(newPath.contentEquals("choice")) {
+										choice = true;
+										setChoice = !setChoice;
+										if(pChoiceAdded) {
+											pChoiceAdded = false;
+											if (!updated) { listCurrentPath.set(i, orgPath); updated = true; orgPath = basePath;}
+											else {listCurrentPath.add(orgPath); orgPath = basePath;}
+										}
+									}else 
+										if (!updated) { listCurrentPath.set(i, basePath+","+newPath); updated = true;}
+										else {listCurrentPath.add(basePath+","+newPath); orgPath = basePath;}
+									
+									}
+								}
+
+								if (itself) {
+									String oPath = listCurrentPath.get(i);
+									listCurrentPath.set(i, orgPath);
+									listCurrentPath.add(oPath);
+									itself = false;
+								}else if(choice) {//nothing
+									if(pChoiceAdded) {
+										pChoiceAdded = false;
+										if (!updated) { String orgPathTmp = listCurrentPath.get(i); listCurrentPath.set(i, orgPath); updated = true; orgPath = orgPathTmp;}
+										else {listCurrentPath.add(orgPath); orgPath = listCurrentPath.get(i);}
+									}
+								}else {
+								//	listCurrentPath.set(i, orgPath);
+								}
+
+							}
+					}
+					listPathsDone.add(dPath);
 				}
-				listPathsDone.add(dPath);
 			}
 		}
 		removeDuplicates();
