@@ -512,6 +512,8 @@ public class PES {
 								break; // Junction has only one output
 							}
 						}
+						if (listMatchPaths.size()==0)
+							System.err.println("=================[No MatchPath found for the Junction state]================");
 						//break;
 					}else {
 						System.err.println("=================[Bad Type!]================");
@@ -547,7 +549,7 @@ public class PES {
 		
 		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
 			
-			Collections.reverse(entry.getValue());
+			Collections.reverse(entry.getValue()); //reverse the list to process the most inner regions first 
 			for (String region: entry.getValue()) {
 				String currentRegion =  entry.getKey()+"::"+region;
 				
