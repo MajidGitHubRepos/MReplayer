@@ -1,3 +1,4 @@
+[040419][Info]:  ---> Start working on new version of CapsuleTraker
 [230319][Info]:  Using MyConnector class in lookingForTargetCapsuleName
 [050219][Debug]: Event_NOTIME.h fixed
 [050219][Info]:  Event_NOTIME.h added to the realtimelib

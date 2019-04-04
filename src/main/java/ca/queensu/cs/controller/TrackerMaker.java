@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -25,12 +26,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import ca.queensu.cs.controller.Controller.RunnableImpl;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
+import ca.queensu.cs.umlrtParser.PES;
 import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.UmlrtUtils;
 
@@ -41,30 +44,30 @@ public class TrackerMaker implements Runnable{
 	private Semaphore semServer;
 	private Semaphore semCapsuleTracker;
 
-	public static Data[] dataArray;
-	public static CapsuleTracker capsuleTrackers[];
+	//public static CapsuleTracker capsuleTrackers[];
 	
 
 	public static int trackerCount;
 	public static int priorityEventCounter;
 	public static int eventCount;
 	public static OutputStream outputFileStream;
-	public static int[] logicalVectorTime;
+	
 	private int MAX_NUM_CAPSULE;
 	private static int MAX_NUM_POLICY;
 	private static List<String[]> listPolicies;
 	public static boolean checkPolicy;
 	public static HashMap<String, String> capsulePathsMap;
+	public static HashMap<String, CapsuleTracker> mapCapsuleTracker;
 
 	
 	public TrackerMaker(Semaphore semServer, int numberOfCapsules){
+		this.capsulePathsMap   =  new HashMap<String, String>();
+		this.mapCapsuleTracker =  new HashMap<String, CapsuleTracker>();
 		this.MAX_NUM_POLICY = 2; //Maximum number of entities in the policy chain
-		this.capsulePathsMap =  new HashMap<String, String>();
 		this.MAX_NUM_CAPSULE = numberOfCapsules;
 		this.semServer = semServer;
 		this.semCapsuleTracker = new Semaphore(1); 
-		this.capsuleTrackers = new CapsuleTracker[MAX_NUM_CAPSULE];
-		this.dataArray = new Data[MAX_NUM_CAPSULE];
+		//this.capsuleTrackers = new CapsuleTracker[MAX_NUM_CAPSULE];
 		this.trackerCount = 0;
 		this.priorityEventCounter = 0;
 		this.eventCount = 0;
@@ -115,47 +118,7 @@ public class TrackerMaker implements Runnable{
 
 	public void run() {
 		String name = Thread.currentThread().getName();
-		//System.out.println("Creating Executor Service with a thread pool of Size 2");
-		//ExecutorService executorService = Executors.newFixedThreadPool(1);
-		
-		//Make capsuleTrackers 
-		//TODO this block of code initiates set of CapsuleTrackers for the model [LATER CAN BE REPLACED WITH THE CURRENT METHOD]
-		//=================================================================================================================
-		/*
-		for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
-
-			if (!entry.getKey().isEmpty()) {
-				String capInstances = entry.getKey();
-				capInstances = capInstances.replaceAll("\\s+","");
-				String [] splitCapInstances = capInstances.split("\\,");
-				for (int q = 0; q<splitCapInstances.length; q++) {
-					this.logicalVectorTime = new int[MAX_NUM_CAPSULE]; 
-					
-					BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
-
-					List<TableDataMember> listTableDataMember =  new ArrayList<TableDataMember>();
-					//System.out.println("---> listTableData.size(): "+Controller.listTableData.size());
-					for (Map.Entry<String, List<TableDataMember>> entry2  : Controller.listTableData.entrySet()) {
-
-						if (entry.getKey().contains(splitCapInstances[q])) { // no need to change capsuleInstances__capsuleIndex because listTableDataMembers are identical 
-							listTableDataMember = entry2.getValue();
-							break;
-						}
-					}
-					
-					Data data = new Data(splitCapInstances[q], eventQueue, listTableDataMember);
-					dataArray[q] =  data;
-					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, splitCapInstances[q], outputFileStream, logicalVectorTime); 
-					Thread capsuleTrackerT = new Thread(capsuleTracker); 
-					capsuleTrackerT.start(); 
-					capsuleTrackers[q] = capsuleTracker;					
-				}
-				
-			}
-		
-		}
-		//=================================================================================================================
-		*/
+		makeCapsuleTrakers();
 
 		while(true) {
 			/*if (TrackerMaker.priorityEventCounter>1000) {
@@ -163,32 +126,21 @@ public class TrackerMaker implements Runnable{
 				 System.exit(0);
 			}*/
 			System.out.print("");
+
 			if (!Server.eventQueue.isEmpty()) {
-				//System.out.println("--->");
+
 				Event eventTmp;
 				try {
 					eventTmp = getEventFromServerQueue();
 					enqueue(eventTmp);
-					//Thread.currentThread().sleep(1);
 
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				//if (eventCount > 300) { for (int i = 0; i<trackerCount;i++) {capsuleTrackers[i].shutdown();} break;} // only first 100 events are considered! [for testing propose] 
-
-				//--
-				//Sample Runnable task1 is in [https://www.callicoder.com/java-executor-service-and-thread-pool-tutorial/]
-
-				//System.out.println("Submitting the tasks for execution...");
-				//executorService.submit(task0);
 			}
-			//executorService.submit(task1);
-
-		}//while(true)
-		//showdatas();
-
+		}
 	}//run()
 
 	public Event getEventFromServerQueue() throws InterruptedException {
@@ -199,10 +151,9 @@ public class TrackerMaker implements Runnable{
 	}
 
 	public void enqueue(Event event) throws InterruptedException {
+
 		//System.out.println("\n\n\n["+ Thread.currentThread().getName() +"]+++>[event] : "+ event.allDataToString());
 		String capsuleInstance__capsuleIndex = event.getCapsuleInstance() + "__" + event.getCapsuleIndex();
-		//System.out.println("["+ Thread.currentThread().getName() +"]+++>[capsuleInstance__capsuleIndex] : "+ capsuleInstance__capsuleIndex+" [capsuleInstances__indexes] : "+capsuleInstances__indexes);
-
 		if (!capsuleInstances__indexes.contains(capsuleInstance__capsuleIndex)) {
 			try {
 				this.semCapsuleTracker.acquire();
@@ -210,117 +161,82 @@ public class TrackerMaker implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("***************************> event.getCapsuleInstance(): "+event.getCapsuleInstance());
-			System.out.println("***************************> capsuleInstance__capsuleIndex: "+capsuleInstance__capsuleIndex);
+			
+			String chosenInstance = mappingIdxToInstance(event.getCapsuleInstance(), event.getCapsuleIndex());
+			
+			//Mapping TODO: we assume that all StartUp messagres received first 
+			if (chosenInstance == null) {
+				//System.err.println("=====================================[Not enough Instance Found]======================================");
+			 	System.exit(0);
+			}			
+			
+			Controller.mapIdxCapInst.put(capsuleInstance__capsuleIndex,chosenInstance);
 
-
-			//Mapping
-			mappingCapInstanceIdxToCapfullName(event.getCapsuleInstance(),capsuleInstance__capsuleIndex);
-			
-			
-			//showCapInstIdxMap();
-			
+			mapCapsuleTracker.get(chosenInstance).dataContainer.eventQueue.add(event);
 
 			capsuleInstances__indexes = capsuleInstances__indexes + ", " + capsuleInstance__capsuleIndex;
-			//System.out.println("\n\n\n["+ Thread.currentThread().getName() +"]====>[capsuleInstances__capsuleIndex] : "+ event.getCapsuleInstance() + "__" + event.getCapsuleIndex());
-			
-			BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
-
-			List<TableDataMember> listTableDataMember =  new ArrayList<TableDataMember>();
-			//System.out.println("---> listTableData.size(): "+Controller.listTableData.size());
-			for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
-
-				if (entry.getKey().contains(event.getCapsuleInstance())) { // no need to change capsuleInstances__capsuleIndex because listTableDataMembers are identical 
-					listTableDataMember = entry.getValue();
-				}
-			}
-			//System.out.println("Controller.datas.length: " +event.getEvent().getCapsuleInstance());
-			//CapFullname
-			String capsuleFullname = findCapfullNameByCapInstanceIdx(capsuleInstance__capsuleIndex);
-			Data data = new Data(capsuleFullname, eventQueue, listTableDataMember);
-						
-			data.addToQueue(event);
 			eventCount++;
-			//	this.semCapsuleTraker.release(); 
-			dataArray[trackerCount] =  data;
-			System.out.println("- data is created and first event added into the Queue successfully!" );
-			//System.out.println("[First]-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
-			this.logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
-			// listPolicies given to the capsuleTracker to check consumable event with the policy
-			CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, capsuleFullname, outputFileStream, logicalVectorTime); 
-			Thread capsuleTrackerT = new Thread(capsuleTracker); 
-			capsuleTrackerT.start(); 
-			capsuleTrackers[trackerCount++] = capsuleTracker;
-			this.semCapsuleTracker.release(); 
+			this.semCapsuleTracker.release();
+			//showElements();
 
 		}else {
-			for (int i = 0; i<trackerCount;i++) {
-				if ((dataArray[i].getCapsuleInstance().contains(findCapfullNameByCapInstanceIdx(capsuleInstance__capsuleIndex)))) {
-					dataArray[i].addToQueue(event);
-					eventCount++;
-					//System.out.println("-->["+ event.getCapsuleInstance()+ "]: " + event.allDataToString());
-					break;
-				}
-			}
+			//System.out.println("2 ============> [Controller.mapIdxCapInst.get(capsuleInstance__capsuleIndex)]: "+ Controller.mapIdxCapInst.get(capsuleInstance__capsuleIndex));
+			mapCapsuleTracker.get(Controller.mapIdxCapInst.get(capsuleInstance__capsuleIndex)).dataContainer.eventQueue.add(event);
+			eventCount++;
 		}
+		
 	}//enqueue
+	
 	//==================================================================	
-	//==============================================[showdatas]
+	//==============================================[makeCapsuleTrakers]
 	//==================================================================			
+	public void makeCapsuleTrakers(){
+		for (Map.Entry<String, List<String>> entry : PES.mapModelRegionPaths.entrySet()) {
+			String regionKey = entry.getKey().replaceAll("\\s","");
+			String [] regionKeySplit = regionKey.split("\\,");
+			for (String capsuleFullname: regionKeySplit) {
+				if (!capsuleFullname.isEmpty()) {
+					
+					BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
+					BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+					//CapFullname
+					DataContainer dataContainer = new DataContainer(capsuleFullname, eventQueue, messageQueue);					
+					
+					int[] logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
+					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, outputFileStream, logicalVectorTime, dataContainer); 
+					Thread capsuleTrackerT = new Thread(capsuleTracker); 
+					capsuleTrackerT.start();
+					System.out.println("-->[capsuleTracker]: " + capsuleTracker.currentState);
+					System.out.println("-->[capsuleFullname]: " + capsuleFullname);
 
-	public void showdatas() {
-		for (int i = 0; i< trackerCount; i++) {
-			System.out.println("--> dataArray["+i+"]: " + dataArray[i].allDataToString());
+					
+					mapCapsuleTracker.put(capsuleFullname, capsuleTracker);
+					trackerCount++;
+				}
+			}			
 		}
+		
 	}
 	
 	//==================================================================	
-	//==============================================[mappingCapInstanceIdxToCapfullName]
+	//==============================================[mappingIdxToInstance]
 	//==================================================================			
-
-	public void mappingCapInstanceIdxToCapfullName(String capsuleInstance, String capsuleInstance__capsuleIndex)  
-	{
-		for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
-
-			if (entry.getKey().contains(capsuleInstance)) {
-				if (entry.getKey().contains(",")) {
-					
-					String [] spiltCapsuleFullname = entry.getKey().split("\\,");
-					
-					for (int i = 0; i<spiltCapsuleFullname.length;i++) {
-						String capsuleFullname = spiltCapsuleFullname[i]; //get FullName
-						capsuleFullname = capsuleFullname.replaceAll("\\s+",""); // remove spaces
-						
-						String tmpCapsuleInstances__capsuleIndex = Controller.capInstIdxMap.get(capsuleFullname);
-						
-						if (tmpCapsuleInstances__capsuleIndex == null) { //does not exist!
-						    capsuleFullname = capsuleFullname.replaceAll("\\s+","");
-						    Controller.capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
-							break;
-							
-						} else {
-						    // exists such key
-							//System.out.println("-->For "+capsuleFullname+" EXIST "+ tmpCapsuleInstances__capsuleIndex);
-						}
+	public String mappingIdxToInstance(String capsuleInstance ,String capsuleIndex){
+		String capsuleInstance__capsuleIndex = capsuleInstance + "__" + capsuleIndex;
+		
+		for (Map.Entry<String, List<String>> entry : PES.mapModelRegionPaths.entrySet()) {
+			String regionKey = entry.getKey().replaceAll("\\s","");
+			if (!regionKey.isEmpty() && regionKey.contains(capsuleInstance)) {
+				String [] regionKeySplit = regionKey.split("\\,");
+				for (String key: regionKeySplit) {
+					if (!Controller.mapCapInstIdx.containsKey(key)) {
+						Controller.mapCapInstIdx.put(key, capsuleInstance__capsuleIndex);
+						return key;
 					}
-				}else {
-					//NoLoop
-					String  capsuleFullname = entry.getKey();
-					capsuleFullname.replaceAll("\\s+",""); // remove spaces
-					
-					String tmpCapsuleInstances__capsuleIndex = Controller.capInstIdxMap.get(capsuleFullname);
-					
-					if (tmpCapsuleInstances__capsuleIndex == null) { //does not exist!
-					    capsuleFullname = capsuleFullname.replaceAll("\\s+","");
-					    Controller.capInstIdxMap.put(capsuleFullname, capsuleInstance__capsuleIndex);
-						
-					} else {
-					    // exists such key
-					}			
 				}
-				break;
 			}
 		}
+		return null;
 	}
 	
 	//==================================================================	
@@ -329,7 +245,7 @@ public class TrackerMaker implements Runnable{
 
 	public String findCapfullNameByCapInstanceIdx (String capsuleInstance__capsuleIndex)  
 	{
-		for (Map.Entry<String, String> entry  : Controller.capInstIdxMap.entrySet()) {
+		for (Map.Entry<String, String> entry  : Controller.mapCapInstIdx.entrySet()) {
 			if(entry.getValue().contains(capsuleInstance__capsuleIndex)) {
 				String capfullName = entry.getKey().replaceAll("\\s+","");
 				return capfullName;
@@ -341,19 +257,23 @@ public class TrackerMaker implements Runnable{
 	}
 
 	//==================================================================	
-	//==============================================[showCapInstIdxMap]
+	//==============================================[showElements]
 	//==================================================================			
 
-	public void showCapInstIdxMap()  
+	public void showElements()  
 	{
-		System.out.println("=======================[capInstIdxMap]==========================");
-		for (Map.Entry<String, String> entry  : Controller.capInstIdxMap.entrySet()) {
+		System.out.println("=======================[mapCapInstIdx]==========================");
+		for (Map.Entry<String, String> entry  : Controller.mapCapInstIdx.entrySet()) {
 			//if (entry.getKey().contains(event.getCapsuleInstance())) { 
 			System.out.println("["+ Thread.currentThread().getName() +"]+++>[entry.getKey()] : "+ entry.getKey()+" [entry.getValue()] : "+entry.getValue());
 			//}
 		}
-		System.out.println("====================================================================");
-
+		System.out.println("=======================[mapCapsuleTracker]==========================");
+		for (Entry<String, CapsuleTracker> entry  : mapCapsuleTracker.entrySet()) {
+			//if (entry.getKey().contains(event.getCapsuleInstance())) { 
+			System.out.println("["+ Thread.currentThread().getName() +"]+++>[entry.getKey()] : "+ entry.getKey()+" [entry.getValue()] : "+entry.getValue());
+			//}
+		}
 	}
 
 	//==================================================================	

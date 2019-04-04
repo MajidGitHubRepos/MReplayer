@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 
 import ca.queensu.cs.graph.viewController;
@@ -18,12 +19,12 @@ import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.server.Server.RunnableImpl;
 import ca.queensu.cs.umlrtParser.PES;
+import ca.queensu.cs.umlrtParser.ParserEngine;
 import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.UmlrtParser;
 
 public class Controller {
 
-	private OrderingEngine orderingEngine;
 	public static UmlrtParser umlrtParser;
 	public static viewController viewer;
 	public static Server server;
@@ -31,14 +32,22 @@ public class Controller {
 	public static Semaphore semServer;
 	public static Map<String, List<TableDataMember>> listTableData;
 	public static String args0;
-	public static HashMap<String, String> capInstIdxMap;
+	public static HashMap<String, String> mapCapInstIdx, mapIdxCapInst;
 	public PES pes;
+	public static int WEBSERVER_PORT;
+	public static int MAX_TRY_TO_SEND;
+
+
+	
 	
 
 	public Controller(String args0) {
+		this.MAX_TRY_TO_SEND = 2;
+		this.WEBSERVER_PORT = 8090;
 		this.pes = new PES();
 		this.args0 = args0;
-		this.capInstIdxMap = new HashMap<String, String>();
+		this.mapCapInstIdx = new HashMap<String, String>();
+		this.mapIdxCapInst = new HashMap<String, String>();
 		viewer = new viewController();
 		this.semServer = new Semaphore(1); 
 		Event event = new Event();
@@ -94,9 +103,15 @@ public class Controller {
 			
 			Controller.listTableData = umlrtParser.getlistTableData();
 			viewer.setListTableData(umlrtParser.getlistTableData());
-			int numberOfCapsules =  countCapsule();
+			int numberOfRegions =  countRegions();
+			
+			
+			//REGIONS
+			System.out.println("\n\n<<<<<<<<<<<<<<<[numberOfCapsules]>>>>>>>>>>>>>>>>>\n\n"+numberOfRegions);
+
+			
 			//Message msg = new Message("process it", event);
-			TrackerMaker trackerMaker = new TrackerMaker(semServer, numberOfCapsules);
+			TrackerMaker trackerMaker = new TrackerMaker(semServer, numberOfRegions);
 			new Thread(trackerMaker,"waiter").start();
 			//Notifier notifier = new Notifier(msg, Controller.sem);
 			//new Thread(notifier, "notifier").start();
@@ -110,21 +125,28 @@ public class Controller {
 					viewerT.start();
 					//--------------------------------------------------------------------------
 				}
-
-			orderingEngine = new OrderingEngine(umlrtParser.getlistTableData());
-			Thread orderingEngineT = new Thread(orderingEngine);
-
-			orderingEngineT.start();
-			orderingEngineT.interrupt();
-			try {
-				orderingEngineT.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
 		}
 	}
+	
+	//==================================================================	
+		//==============================================[countRegions]
+		//==================================================================			
+
+		public int countRegions()  
+		{
+			int countRegions = 0;
+			for (Entry<String, List<String>> entry  : pes.mapRegionPaths.entrySet()) {
+
+				if (entry.getKey().contains(",")) {
+
+					String [] spiltCapsuleFullname = entry.getKey().split("\\,");
+					countRegions = countRegions + spiltCapsuleFullname.length;
+				}else {
+					countRegions++;
+				}
+			}
+			return countRegions;
+		}
 
 	//==================================================================	
 	//==============================================[countCapsule]
@@ -138,7 +160,9 @@ public class Controller {
 			if (entry.getKey().contains(",")) {
 
 				String [] spiltCapsuleFullname = entry.getKey().split("\\,");
-				numberOfCapsules = numberOfCapsules + spiltCapsuleFullname.length;
+				for (String str: spiltCapsuleFullname)
+					if (!str.isEmpty()) numberOfCapsules++;
+				//numberOfCapsules = numberOfCapsules + spiltCapsuleFullname.length;
 			}else {
 				numberOfCapsules++;
 			}

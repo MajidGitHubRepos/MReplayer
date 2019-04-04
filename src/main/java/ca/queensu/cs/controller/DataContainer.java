@@ -18,24 +18,24 @@ Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
 
 
 
-public class Data {
+public class DataContainer {
 	
 	private String capsuleInstance;
-	private BlockingQueue <Event> eventQueue;
+	public BlockingQueue <Event> eventQueue;
+	public BlockingQueue <Message> messageQueue;
 	private String currentStatus;
-	private List<TableDataMember> tableData;
 	private Thread thread;
 	private Event currentEvent;
 	//private String threadName;
 	//--
-	public Data(String capsuleInstance, BlockingQueue <Event> eventQueue, List<TableDataMember> tableData) {
+	public DataContainer(String capsuleInstance, BlockingQueue <Event> eventQueue, BlockingQueue <Message> messageQueue) {
 		this.capsuleInstance = capsuleInstance;
 		this.eventQueue = eventQueue;
-		this.tableData = tableData;
+		this.messageQueue = messageQueue;
 		this.currentStatus = null;
 	}
 	//--
-	public Data() {
+	public DataContainer() {
 		this(null, null, null);
 	}
 	
@@ -50,12 +50,7 @@ public class Data {
 	public String getCurrentStatus() {
 		return this.currentStatus;
 	}
-	public List<TableDataMember> getTableData() {
-		return this.tableData;
-	}
-	public Event getFromQueue() throws InterruptedException {
-		return this.eventQueue.take();
-	}
+
 	//--SETTERS
 	public void setCapsuleInstance(String capsuleInstance ) {
 		this.capsuleInstance = capsuleInstance;
@@ -69,16 +64,9 @@ public class Data {
 	public void getCurrentStatus(String currentStatus ) {
 		this.currentStatus = currentStatus;
 	}
-	public void getTableData(List<TableDataMember> tableData) {
-		this.tableData = tableData;
-	}
-	
-	public void addToQueue(Event event) throws InterruptedException {
-		this.eventQueue.put(event);
-	}
 	
 	public String allDataToString() {
-		return "TableDataMember [capsuleInstance=" + capsuleInstance + ", eventQueue=" + eventQueue + ", currentStatus= "+ currentStatus + ", tableData=" + tableData +"]";
+		return "TableDataMember [capsuleInstance=" + capsuleInstance + ", eventQueue=" + eventQueue + ", currentStatus= "+ currentStatus  +"]";
 	}
 	
 
