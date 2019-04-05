@@ -348,8 +348,10 @@ public final class ByteReader implements Runnable {
 				System.err.println("totalSize: " + totalSize);
 				System.exit(0);
 			}*/
-			Server.eventQueue.put(event);
-
+			if((event.getSourceKind().contentEquals("3") || event.getSourceKind().contentEquals("10")) && 
+					(event.getType().contentEquals("36") || event.getType().contentEquals("14")))
+				Server.eventQueue.put(event);
+			event = null;
 			int id = 0;
 
 			if (message.indexOf('|') >= 0) {

@@ -43,7 +43,8 @@ public class CapsuleTracker implements Runnable{
 	private Event currentEvent;
 	private BlockingQueue <Event> eventQueueTmp;
 	private String currentStatus; //{StartUp, INIT, TRANSITIONEND}
-	public String currentState;
+	//public String currentStateName;
+	//public String currentStateId;
 	public String previousState;
 	public String transitionName;
 	public DataContainer dataContainer;
@@ -63,9 +64,11 @@ public class CapsuleTracker implements Runnable{
 	private static String senderCapInstanceName;
 	private String currentStateToChiceState;
 	private String currentTransitionToFromChiceState;
+	private List<String> listPaths;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
+		this.listPaths =  new ArrayList<String>();
 		this.currentStateToChiceState ="";
 		this.currentTransitionToFromChiceState = "";
 		this.dataContainer = dataContainer;
@@ -78,7 +81,8 @@ public class CapsuleTracker implements Runnable{
 		this.logicalVectorTime = logicalVectorTime;
 		this.eventQueueTmp = new LinkedBlockingQueue<Event>(); // read but not consume!
 		this.currentStatus = "StartUp";
-		this.currentState = "INIT";
+		//this.currentStateName = "INIT";
+		//this.currentStateId = "";
 		this.targetStateData = new StateData();
 		this.sourceStateData = new StateData();
 		this.targetChoiceState = false;
@@ -92,30 +96,50 @@ public class CapsuleTracker implements Runnable{
 	public void run() {
 		//Go to the initial state and wait for the right event
 		System.out.println("============> Running : "+ dataContainer.getCapsuleInstance());
+		String region = "";
 
 		while(true) {
 			try {
+				semCapsuleTracker.acquire();
 				//System.out.println(dataContainer.getCapsuleInstance() + "============> eventQueueSize : "+ dataContainer.getEventQueue().size());
 
 				if (!eventQueueTmp.isEmpty()) {
 					int eventQueueTmpSize = eventQueueTmp.size();
 					for (int j = 0; j < eventQueueTmpSize;  j++) {
 						Event currentEventTmp = eventQueueTmp.take();
+						String id = PES.mapQnameId.get(currentEventTmp.getSourceName());
+						if (id != null)
+							region = ParserEngine.mapTransitionData.get(id).getReginName();
 						//checking its validity based on the state machine
-						if (isConsumable(currentEventTmp)) {
+						if (isConsumable(currentEventTmp) || currentStatus.contentEquals("CHOICE")) {
 							//vTimeHandler(currentEventTmp);
+							if (currentStatus.contentEquals("TRANISTIONEND")) {
+								if (updateCurrentState(region))
+									listPaths.clear();
+								else
+									throw new IllegalAccessException("updateCurrentState Faild!");
+							}
 							break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
 						}else {eventQueueTmp.put(currentEventTmp);}
 					}
 				}
 				if(!dataContainer.getEventQueue().isEmpty()) {
 					currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
-					if (isConsumable(currentEvent)) {
+					String id = PES.mapQnameId.get(currentEvent.getSourceName());
+					if (id != null)
+						region = ParserEngine.mapTransitionData.get(id).getReginName();
+					if (isConsumable(currentEvent) || currentStatus.contentEquals("CHOICE")) {
+						if (currentStatus.contentEquals("TRANISTIONEND")) {
+							if (updateCurrentState(region))
+								listPaths.clear();
+							else
+								throw new IllegalAccessException("updateCurrentState Faild!");
+						}
 						//vTimeHandler(currentEvent);
 					}else {eventQueueTmp.put(currentEvent);}
 				}
 				semCapsuleTracker.release();
-			} catch (InterruptedException e1) {
+			} catch (InterruptedException | IllegalAccessException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
@@ -171,22 +195,24 @@ public class CapsuleTracker implements Runnable{
 		try {
 			String capsuleInstance = dataContainer.getCapsuleInstance();
 		switch (currentStatus) {
-			case "StartUp":          if (registerChecking(event))       {
+			case "StartUp":          	if (registerChecking(event))       {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: StartUp received!");
 				logicalVectorTime[TrackerMakerNumber]++; TrackerMaker.priorityEventCounter++; return true;};
 				break;
-				
-			case "INIT":  	      if (initChecking(event))           {
+			
+			case "INIT":  	      		if (initChecking(event))           {
 				System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: Init received!");
 				return true;};
 				break;
 			
-			case "TRANISTIONEND":     if (transitionChecking(event))    {
+			case "CHOICE":				if (transitionChecking(event))     {
 				return true;};
 				break;
 				
+			case "TRANISTIONEND":     	if (transitionChecking(event))     {
+				return true;};
+				break;
 		}
-
 
 		return false;
 		} catch (Exception e) {
@@ -195,6 +221,86 @@ public class CapsuleTracker implements Runnable{
 			return false;
 			
 		}
+	}
+	
+	//==================================================================	
+	//==============================================[updateCurrentState]
+	//==================================================================		
+	public boolean updateCurrentState (String region) {
+		String [] pathSplit;
+		String lastId = "";
+		
+		if (!listPaths.isEmpty()) {
+			String path = listPaths.get(0);
+
+			if(path.contains(",")) {
+				pathSplit = path.split("\\,");
+				lastId = pathSplit[pathSplit.length -1];
+			}else {
+				lastId = path;}
+
+			pathSplit = ParserEngine.mapTransitionData.get(lastId).getPath().split("\\-");
+			dataContainer.mapRegionCurrentState.put(region, pathSplit[pathSplit.length -1]);
+			//if(currentStateId != null) {
+			//	currentStateName = ParserEngine.mapStateData.get(currentStateId).getStateName();
+			return true;
+			//}
+		}
+		return false;
+	}
+
+	//==================================================================	
+	//======================================================[checkPathConsistency]
+	//==================================================================		
+	public boolean checkPathConsistency (String region, String path) {
+		String firstId = "";
+		if (path.contains(",")) {
+			String [] pathSplit = path.split("\\,");
+			firstId = pathSplit[0];
+		}else {
+			firstId = path;}
+		String [] stateIds = ParserEngine.mapTransitionData.get(firstId).getPath().split("\\-");
+		
+		
+		//System.out.println(dataContainer.getCapsuleInstance() + "-> "+ currentStateId + "============> [stateIds[0]]:> "+ stateIds[0]);
+
+		if (dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0]))
+			return true;
+		else 
+			return false;
+	}
+
+	//==================================================================	
+	//======================================================[pathFinder]
+	//==================================================================		
+	public List<String> pathFinder (String qName) {
+		
+		//System.out.println(dataContainer.getCapsuleInstance() + "============> [listPaths.size()]:> "+ listPaths.size());
+
+		String id = PES.mapQnameId.get(qName);
+		String region = ParserEngine.mapTransitionData.get(id).getReginName();
+		if (listPaths.isEmpty()) {
+			for (Map.Entry<String, List<String>> entry : PES.mapRegionPaths.entrySet()) {
+				if (entry.getKey().contains(dataContainer.getCapsuleInstance())) {
+					for (String path : entry.getValue()) {
+						if (path.contains(id) && checkPathConsistency(region, path)) {
+							listPaths.add(path);
+						}
+					}
+					break;
+				}
+			}
+		}else {
+			List <String> listPathsTmp =  new ArrayList<String>();
+			for (String path : listPaths) {
+				if (path.contains(id)) {
+					listPathsTmp.add(path);
+				}
+			}
+			listPaths.clear();
+			listPaths.addAll(listPathsTmp);
+		}
+		return listPaths;
 	}
 
 	//==================================================================	
@@ -382,10 +488,10 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[registerChecking]
 	//==================================================================
 	public boolean registerChecking(Event event) {
-		System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : registerChecking]:> "+ event.allDataToString());
 
 		//Check transitionKind = 10 and eventType = 36 [For REGISTER] 
 		if (event.getSourceKind().contentEquals("10") && event.getType().contentEquals("36")) {
+			//System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : registerChecking]:> "+ event.allDataToString());
 			currentStatus = "INIT";
 			return true;
 		}
@@ -396,145 +502,54 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[initChecking]
 	//==================================================================	
 	public boolean initChecking(Event event) throws InterruptedException {
-		System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : initChecking]:> "+ event.allDataToString());
-
-		//System.out.println("\n["+ Thread.currentThread().getName() +"]*********[initChecking] [event]: "+ event.allDataToString());
 		boolean result = false;
 		String id = PES.mapQnameId.get(event.getSourceName());
 		
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		//String[] eventSourceNameSplit = event.getSourceName().split("\\::");
 
-		//Check transitionKind = 3 and eventType = 14 [For Init] 
-		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14") && ParserEngine.mapTransitionData.get(id).getIsInit()) { 
-			//No need to check for trigger because it is init transition!
+		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14") && ParserEngine.mapTransitionData.get(id).getIsInit()) {
+			//System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : initChecking]:> "+ event.allDataToString());
 			
-			System.out.println("------------> InitTr:["+event.allDataToString()+"]!");
-			/*
+			String [] pathSplit = ParserEngine.mapTransitionData.get(id).getPath().split("\\-");
+			dataContainer.mapRegionCurrentState.put(ParserEngine.mapTransitionData.get(id).getReginName(),pathSplit[0]);
 			
-			//Extracting init transition action code(s) from listTableData
-			for (Map.Entry<String, List<TableDataMember>> entry  : Controller.listTableData.entrySet()) {
-
-				if (entry.getKey().contains(capsuleInstance)) {
-					for (int i = 0; i < entry.getValue().size(); i++) {
-						if ((entry.getValue().get(i).getSource().isInitial() && entry.getValue().get(i).getTransition().getIsInit())) {//isInit
-							//Transition found in the tabalData
-
-							if ((entry.getValue().get(i).getTransition().getActions().size()>0)) {
-								//All action codes
-
-								for (int j = 0; j < entry.getValue().get(i).getTransition().getActions().size(); j++) {
-									
-									if (!lookTrgCap_and_sendMSG(entry.getValue().get(i).getTransition().getActions().get(j)))
-										return false; //faild!
-								}
-							}
-
-							result = true;
-						}//isInit
-					}
-				}
-			}*/
+			pathFinder(event.getSourceName());
+			if (listPaths.size() == 1) {
+				result =  true;
+				currentStatus = "TRANISTIONEND";
+			}else 
+				result =  false;
 		}
 		return result;
 	}
-
-	//==================================================================	
-	//==============================================[entryStateChecking]
-	//==================================================================	
-	public boolean entryStateChecking(Event event) throws InterruptedException {
-
-		boolean result = false;
-		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
-
-		//Check eventSourceKind = 4 and eventType = 16 [For STATEENTRYEND] 
-		if (event.getSourceKind().contentEquals("4") && event.getType().contentEquals("16") && 
-				(eventSourceNameSplit[4].contentEquals(targetStateData.getStateName()) || ((targetStateData.getStateName() == null) && (targetStateData.getPseudoStateKind() != null)))) {
-			//event would be consumed!
-			//looking into the targetStateData.getEntryActions() for sending messages into messageQueues
-			for (int j = 0; j < targetStateData.getEntryActions().size(); j++) {
-
-				if (!lookTrgCap_and_sendMSG(targetStateData.getEntryActions().get(j)))
-					return false; //faild!
-				//Replaced by lookTrgCap_and_sendMSG
-				/*String[] actionParts = targetStateData.getEntryActions().get(j).split("\\.");  
-				String targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],false);
-
-				//semCapsuleTracker.acquire();
-				do {
-					// Sleep current thread, if capsuleTracker for the target capsule has not been created!
-					System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
-					Thread.currentThread().sleep(1);
-				}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
-				//semCapsuleTracker.release();
-				*/
-			}
-			//previous transition done
-			
-			if ((sourceStateData.getStateName() != null) && (targetStateData.getStateName()!= null)) {
-				this.previousState = sourceStateData.getStateName();
-				this.currentState = targetStateData.getStateName();
-			} else if ((sourceStateData.getStateName() != null) && (targetStateData.getStateName()== null)) {
-				this.previousState = sourceStateData.getStateName();
-				this.currentState = targetStateData.getPseudoStateKind().toString();
-				
-			} else if((sourceStateData.getStateName() == null) && (targetStateData.getStateName()!= null)) {
-				this.previousState = sourceStateData.getPseudoStateKind().toString();
-				this.currentState = targetStateData.getStateName();
-			}
-			
-			//become ready for the next transition 
-			currentStatus = "PREtr";
-			result = true;
-		}
-
-		return result;
-	}
-
-	//==================================================================	
-	//==============================================[exitStateChecking]
-	//==================================================================	
-	public boolean exitStateChecking(Event event) throws InterruptedException {
-
-		boolean result = false;
-		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-		String[] eventSourceNameSplit = event.getSourceName().split("\\::");
-
-		//checking trigger requirement will be done in the  following transition
-
-		//Check eventSourceKind = 4 and eventType = 18 [For STATEEXITEND] 
-		if (event.getSourceKind().contentEquals("4") && event.getType().contentEquals("18") && 
-				(eventSourceNameSplit[4].contentEquals(targetStateData.getStateName()) || ((targetStateData.getStateName() == null) && (targetStateData.getPseudoStateKind() != null)))) {
-
-			//checking for guards will be done in the following transition
-
-			//targetStateData.getExitActions() will be processed in the transition after checking the requirements
-
-			//event would be consumed!
-			currentStatus = "TRANISTIONEND";
-			result = true;
-		}
-		return result;
-	}
-
-	//==================================================================	
-	//==============================================[preTransitionChecking]
-	//==================================================================	
-	public boolean preTransitionChecking(Event event) throws InterruptedException {
-
-		if (event.getSourceKind().contentEquals("4") && event.getType().contentEquals("18")) {
-			if (exitStateChecking(event))
-				return true;
-		}
-		return false;
-	}
-
 	//==================================================================	
 	//==============================================[transitionChecking]
 	//==================================================================	
 	public boolean transitionChecking(Event event) throws InterruptedException {
-		System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : transitionChecking]:> "+ event.allDataToString());
+		
+		boolean result = false;
+		String id = PES.mapQnameId.get(event.getSourceName());
+		String currentSateId = dataContainer.mapRegionCurrentState.get(ParserEngine.mapTransitionData.get(id).getReginName());
+		
+		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
+
+		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14")) {
+			System.out.println(dataContainer.getCapsuleInstance() +", id: "+ id+ ", listPaths.size(): "+ listPaths.size() +" => [Status : transitionChecking]currentStatus:> "+ currentStatus +" ,StateId: "+currentSateId);
+			pathFinder(event.getSourceName());
+			if (listPaths.size() == 1) {
+				result =  true;
+				currentStatus = "TRANISTIONEND";
+			}else if (listPaths.size() > 1){
+				currentStatus = "CHOICE";
+				result =  false;
+			} else {
+				System.err.println("__________ No Path Found! __________");
+				System.exit(1);
+			}
+		}
+		return result;
+	/*	
+		//System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : transitionChecking]:> "+ event.allDataToString());
 
 		//System.out.println("\n1["+ Thread.currentThread().getName() +"]*********[in transitionChecking] event: " + event.allDataToString());
 		this.targetChoiceState = false;
@@ -652,6 +667,7 @@ public class CapsuleTracker implements Runnable{
 			}
 		}
 		return result;
+		*/
 	}
 	//==================================================================	
 	//==============================================[lookTrgCap_and_sendMSG]

@@ -194,6 +194,12 @@ public class TrackerMaker implements Runnable{
 		for (Map.Entry<String, List<String>> entry : PES.mapModelRegionPaths.entrySet()) {
 			String regionKey = entry.getKey().replaceAll("\\s","");
 			String [] regionKeySplit = regionKey.split("\\,");
+			List<String> listRegions = entry.getValue();
+			Map<String, String> mapRegionCurrentState   =  new HashMap<String, String>();
+			for(String regionName: listRegions) {
+				mapRegionCurrentState.put(regionName, "INIT");
+			}
+			
 			for (String capsuleFullname: regionKeySplit) {
 				if (!capsuleFullname.isEmpty()) {
 					
@@ -206,9 +212,6 @@ public class TrackerMaker implements Runnable{
 					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, outputFileStream, logicalVectorTime, dataContainer); 
 					Thread capsuleTrackerT = new Thread(capsuleTracker); 
 					capsuleTrackerT.start();
-					System.out.println("-->[capsuleTracker]: " + capsuleTracker.currentState);
-					System.out.println("-->[capsuleFullname]: " + capsuleFullname);
-
 					
 					mapCapsuleTracker.put(capsuleFullname, capsuleTracker);
 					trackerCount++;

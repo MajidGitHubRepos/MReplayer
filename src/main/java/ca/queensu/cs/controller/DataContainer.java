@@ -1,6 +1,8 @@
 package ca.queensu.cs.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -23,16 +25,17 @@ public class DataContainer {
 	private String capsuleInstance;
 	public BlockingQueue <Event> eventQueue;
 	public BlockingQueue <Message> messageQueue;
-	private String currentStatus;
+	public Map<String, String> mapRegionCurrentState;
 	private Thread thread;
 	private Event currentEvent;
+	
 	//private String threadName;
 	//--
 	public DataContainer(String capsuleInstance, BlockingQueue <Event> eventQueue, BlockingQueue <Message> messageQueue) {
+		this.mapRegionCurrentState =  new HashMap<String, String>();
 		this.capsuleInstance = capsuleInstance;
 		this.eventQueue = eventQueue;
 		this.messageQueue = messageQueue;
-		this.currentStatus = null;
 	}
 	//--
 	public DataContainer() {
@@ -47,9 +50,6 @@ public class DataContainer {
 	public Queue getEventQueue() {
 		return this.eventQueue;
 	}
-	public String getCurrentStatus() {
-		return this.currentStatus;
-	}
 
 	//--SETTERS
 	public void setCapsuleInstance(String capsuleInstance ) {
@@ -61,12 +61,9 @@ public class DataContainer {
 	public void setEventQueue(BlockingQueue <Event> eventQueue) {
 		this.eventQueue = eventQueue;
 	}
-	public void getCurrentStatus(String currentStatus ) {
-		this.currentStatus = currentStatus;
-	}
 	
 	public String allDataToString() {
-		return "TableDataMember [capsuleInstance=" + capsuleInstance + ", eventQueue=" + eventQueue + ", currentStatus= "+ currentStatus  +"]";
+		return "TableDataMember [capsuleInstance=" + capsuleInstance + ", eventQueue=" + eventQueue +"]";
 	}
 	
 
