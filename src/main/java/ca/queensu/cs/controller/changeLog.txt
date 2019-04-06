@@ -1,3 +1,4 @@
+[060419][Debug]: adding toHistory() in countPathInMapRegionPaths() in order to check transition to history and keep them 
 [050419][Info]:  adding currentState for each region
 [040419][Info]:  ---> Start working on new version of CapsuleTraker
 [230319][Info]:  Using MyConnector class in lookingForTargetCapsuleName

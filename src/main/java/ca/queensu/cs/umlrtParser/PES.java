@@ -96,17 +96,36 @@ public class PES {
 	//==================================================================	
 	//==============================================[countPathInMapRegionPaths]
 	//==================================================================	
-	public int countPathInMapRegionPaths(String path) {
+	public boolean toHistory(String path, String pathRegion) {
+		List <String> listRegionPaths = mapRegionPaths.get(pathRegion);
+		
+		for(String regionPath : listRegionPaths) {
+				if(regionPath.contains(path) && regionPath.contains(",")) {
+					String [] regionPathSplit = regionPath.split("\\,");
+					if(ParserEngine.mapTransitionData.get(regionPathSplit[regionPathSplit.length-1]).getIsInit())
+						return true;
+				}
+		}
+		return false;
+	}
+
+	//==================================================================	
+	//==============================================[countPathInMapRegionPaths]
+	//==================================================================	
+	public int countPathInMapRegionPaths(String path, String pathRegion) {
 		int count = 0;
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
-			
-			for(String str : entry.getValue()) {
-				if(str.contains(path)) {
-					String [] strSplit = str.split("\\,");
-					if (!ParserEngine.mapTransitionData.get(strSplit[strSplit.length-1]).getIsInit()) //path ends at initTr
-						count++;
+			String region = entry.getKey();
+				for(String str : entry.getValue()) {
+					if(str.contains(path)) {
+						if (str.contains(",")) {
+							String [] strSplit = str.split("\\,");
+							if (!ParserEngine.mapTransitionData.get(strSplit[strSplit.length-1]).getIsInit() && !toHistory(path,pathRegion)) //path ends at initTr
+								count++;
+						}else
+							count++;
+					}
 				}
-			}
 		}
 		//System.out.println("=======================path[count]: "+path+"["+count+"]");
 		return count;
@@ -121,9 +140,10 @@ public class PES {
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
 			List<String> listNewPaths = new ArrayList<String>();			
 			listLocalPaths = entry.getValue();
+			String pathRegion = entry.getKey();
 			for(String p : listLocalPaths) {
 
-				if ((countPathInMapRegionPaths(p)<=1) || 
+				if ((countPathInMapRegionPaths(p,pathRegion)<=1) || 
 						(ParserEngine.mapTransitionData.get(p)!=null && ParserEngine.mapTransitionData.get(p).getIsInit()))
 					listNewPaths.add(p);
 			}
