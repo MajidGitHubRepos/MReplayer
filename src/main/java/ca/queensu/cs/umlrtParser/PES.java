@@ -341,7 +341,7 @@ public class PES {
 			}
 		}
 
-		//Sorting region in each capsule based on "_"
+		//Sorting region in each capsule based on "_" //upper Region must be processed first!
 
 		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
 			int count_ = 0;
@@ -357,10 +357,11 @@ public class PES {
 							sameLeveRegions = sameLeveRegions + "," + region;
 					}
 				}
-				currentRegionList.add(sameLeveRegions);
+				if (!sameLeveRegions.isEmpty())
+					currentRegionList.add(sameLeveRegions);
 				count_++;
 			}while(!sameLeveRegions.isEmpty());
-			if (!sameLeveRegions.isEmpty()) {				
+			if (!currentRegionList.isEmpty()) {				
 				mapModelRegionPaths.put(entry.getKey(), currentRegionList);
 			}
 		}
@@ -598,7 +599,6 @@ public class PES {
 							exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
 							upperRegion = extractUpperRegion(currentRegion);
 							//System.out.println("=======================> [upperRegion]"+ upperRegion);
-
 						}
 
 						//lastTr->[]   ENTRY
@@ -607,7 +607,6 @@ public class PES {
 							entryPointId_outer = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
 							lowerRegion = extractLowerRegion(entryPointId_outer);
 							//System.out.println("=======================> [lowerRegion]"+ lowerRegion);
-
 						}
 
 
