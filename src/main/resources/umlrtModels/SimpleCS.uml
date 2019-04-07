@@ -44,7 +44,7 @@
               <body>log.show(&quot;LOOP: T1 taken transition in C0.\n&quot;);</body>
             </effect>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_LxIRAMKcEeiR-e-fvzqChQ" kind="initial"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_LxIRAMKcEeiR-e-fvzqChQ" name="initState" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_LxSpEMKcEeiR-e-fvzqChQ" name="S0">
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_nacjwE2AEemilZnuIo1axw" kind="entryPoint"/>
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_naws0E2AEemilZnuIo1axw" kind="exitPoint"/>
@@ -125,7 +125,7 @@ log.show(&quot;m1 is sent to C1.\n&quot;);
 </body>
             </effect>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_A32vcMKeEeiR-e-fvzqChQ" kind="initial"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_A32vcMKeEeiR-e-fvzqChQ" name="initState" kind="initial"/>
           <subvertex xmi:type="uml:State" xmi:id="_A35LsMKeEeiR-e-fvzqChQ" name="S0">
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_45i7EE2EEemilZnuIo1axw" kind="entryPoint"/>
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_45powE2EEemilZnuIo1axw" kind="entryPoint"/>

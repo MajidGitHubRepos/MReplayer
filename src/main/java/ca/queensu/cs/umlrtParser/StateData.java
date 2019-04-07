@@ -44,7 +44,10 @@ public class StateData {
 		this.entryActions = enList;
 		this.exitActions = exList;
 		this.parentName = pName;
-		this.regionName = rName;
+		if (state  != null) {
+			this.regionName = extractAllRegions(state.getQualifiedName());
+		}else
+			this.regionName = rName;
 		this.initial = isInitialState;
 		this.end = isFinalState;
 	}
@@ -177,6 +180,20 @@ public class StateData {
 		this.state = state;
 	}
 	//----------
+	public String extractAllRegions(String qName) {
+		String allRegions = "";
+		String [] qNameSplit = qName.split("\\::");
+		for (String str : qNameSplit) {
+			if(str.contains("Region")) {
+				if (allRegions.isEmpty())
+					allRegions = str;
+				else
+					allRegions = allRegions + "_" +str;
+			}
+		}
+		
+		return allRegions;
+	}
 	
 	public String allDataToString() {
 		return "StateData [ ID= "+ id +" ,CapsuleName="+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+", StateName=" + stateName + ", region=" + regionName + ", state=" + state + ", PseudoState=" + pseudostate + ", deferred=" + deferred

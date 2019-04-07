@@ -136,10 +136,12 @@ public class TransitionData {
 				
 			if(opt == 0) {
 				srcId = id;
-			} else if(opt == 2) {
+			}else if(opt == 2) {
 				trgId = id;
 			}
 		}
+		
+		
 						
 		//Entry
 		if ( (ParserEngine.mapStateData.get(id) != null) && 
@@ -160,7 +162,7 @@ public class TransitionData {
 			// find the entry state
 			for (Entry<String, StateData> entry : ParserEngine.mapStateData.entrySet()) {
 				StateData stateData = entry.getValue();
-				if((stateData.getStateName() != null) && stateData.getStateName().contentEquals(nameSpace)) {
+				if((stateData.getCapsuleInstanceName().contentEquals(capsuleInstanceName)) && (stateData.getStateName() != null) && stateData.getStateName().contentEquals(nameSpace)) {
 					return stateData.getId();
 				}
 			}

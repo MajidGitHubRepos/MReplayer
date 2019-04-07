@@ -94,7 +94,7 @@ public class PES {
 	}
 
 	//==================================================================	
-	//==============================================[countPathInMapRegionPaths]
+	//==============================================[toHistory]
 	//==================================================================	
 	public boolean toHistory(String path, String pathRegion) {
 		List <String> listRegionPaths = mapRegionPaths.get(pathRegion);
@@ -199,10 +199,11 @@ public class PES {
 		String instanceName = "";
 
 		String stateName = ParserEngine.mapStateData.get(id).getPseudostate().getNamespace().getName();
+		String capInstance = ParserEngine.mapStateData.get(id).getCapsuleInstanceName();
 		String nameSpace = "";
 
 		for (StateData sd :  ParserEngine.listStateData){
-			if((sd.getStateName()!=null) && (sd.getStateName().contentEquals(stateName))) {
+			if((sd.getStateName()!=null) && (sd.getStateName().contentEquals(stateName)) && (sd.getCapsuleInstanceName().contentEquals(capInstance))) {
 				nameSpace = sd.getState().getQualifiedName()+"::";
 				break;
 			}
@@ -247,13 +248,17 @@ public class PES {
 					String [] pathsSplit = listRegionalPaths.get(i).split("\\,");
 					pathCurr = "";
 					for (String str : pathsSplit) {
-						if (pathCurr.isEmpty())
-							pathCurr = mapIdQname.get(str);
-						else	
-						pathCurr = pathCurr+ "-->" + mapIdQname.get(str);
+						if (pathCurr.isEmpty()) {
+							//pathCurr = mapIdQname.get(str);
+							pathCurr = str;
+						}else {	
+							//pathCurr = pathCurr+ "-->" + mapIdQname.get(str);
+							pathCurr = pathCurr+ "-->" + str;
+						}
 					}
 				}else {
-					pathCurr = mapIdQname.get(listRegionalPaths.get(i));
+					//pathCurr = mapIdQname.get(listRegionalPaths.get(i));
+					pathCurr = listRegionalPaths.get(i);
 				}
 				System.out.println("["+i+"]:" +pathCurr);
 			}
