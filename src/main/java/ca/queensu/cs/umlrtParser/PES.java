@@ -173,9 +173,9 @@ public class PES {
 		if (path.contains(",")) {
 			int lastIndex = path.lastIndexOf(",");
 			return path.substring(lastIndex+1);
-		}else {  
-			return path;
 		}
+		
+		return path;
 	}
 
 	//==================================================================	
@@ -249,16 +249,16 @@ public class PES {
 					pathCurr = "";
 					for (String str : pathsSplit) {
 						if (pathCurr.isEmpty()) {
-							//pathCurr = mapIdQname.get(str);
-							pathCurr = str;
+							pathCurr = mapIdQname.get(str);
+							//pathCurr = str;
 						}else {	
-							//pathCurr = pathCurr+ "-->" + mapIdQname.get(str);
-							pathCurr = pathCurr+ "-->" + str;
+							pathCurr = pathCurr+ "-->" + mapIdQname.get(str);
+							//pathCurr = pathCurr+ "-->" + str;
 						}
 					}
 				}else {
-					//pathCurr = mapIdQname.get(listRegionalPaths.get(i));
-					pathCurr = listRegionalPaths.get(i);
+					pathCurr = mapIdQname.get(listRegionalPaths.get(i));
+					//pathCurr = listRegionalPaths.get(i);
 				}
 				System.out.println("["+i+"]:" +pathCurr);
 			}
@@ -596,11 +596,10 @@ public class PES {
 						//get the last trID
 						orgPath = listCurrentPath.get(i);
 						lastTr = extractLastPathID(orgPath);
-
-
 						//lastTr->[x]  EXIT
 						if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
-								ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT")) {
+								(ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind() != null) &&
+								(ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("EXIT"))) {
 							exitPointId_inner = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
 							upperRegion = extractUpperRegion(currentRegion);
 							//System.out.println("=======================> [upperRegion]"+ upperRegion);
@@ -608,7 +607,8 @@ public class PES {
 
 						//lastTr->[]   ENTRY
 						else if((ParserEngine.mapTransitionData.get(lastTr).getTrgId() != null) &&
-								ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY")) {
+								(ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind() != null) &&
+								(ParserEngine.mapStateData.get(ParserEngine.mapTransitionData.get(lastTr).getTrgId()).getPseudoStateKind().toString().contentEquals("ENTRY"))) {
 							entryPointId_outer = ParserEngine.mapTransitionData.get(lastTr).getTrgId();
 							lowerRegion = extractLowerRegion(entryPointId_outer);
 							//System.out.println("=======================> [lowerRegion]"+ lowerRegion);
