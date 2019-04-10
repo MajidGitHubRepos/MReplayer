@@ -21,9 +21,9 @@ public class SendMessage {
 	
 	public String allDataToString() {
 		if (dest != null)
-			return "[Port=" + port + ", mag=" + msg + ", data=" + data.toString()+ ", dest=" + dest.toString() +"]";
+			return "[PORT=" + port + ", MSG=" + msg + ", DATA=" + data.toString()+ ", DEST=" + dest.toString() +"]";
 		else
-			return "[Port=" + port + ", mag=" + msg + ", data=" + data.toString() + "]";
+			return "[PORT=" + port + ", MSG=" + msg + ", DATA=" + data.toString() + "]";
 	}
 	
 }

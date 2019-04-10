@@ -21,9 +21,10 @@ stat
  ;
 
 assignment
- : ID ASSIGN expr SCOL      #normalAssignment
- | ID MINUSMINUS SCOL     #minusminusAssignment
- | ID PLUSPLUS SCOL		#plusplusAssignment
+ : ID ASSIGN expr SCOL     										 #normalAssignment
+ | op=(INTVAR | DOUBLEVAR | STRINGVAR) ID ASSIGN? expr? SCOL	 #basicAssignment
+ | ID MINUSMINUS SCOL       									 #minusminusAssignment
+ | ID PLUSPLUS SCOL	    										 #plusplusAssignment
  ;
 
 if_stat
@@ -44,9 +45,9 @@ while_stat
  ;
  
 loop_stat
-   : WHILE '(' expr ')' stat_block                     #whileLoop
-   | Do stat_block While '(' expr ')' ';'			   #doWhileLoop
-   | FOR '(' ID ASSIGN expr ';' expr ';' expr ')' stat_block     #forLoop
+   : WHILE '(' expr ')' stat_block                     			#whileLoop
+   | DO stat_block WHILE '(' expr ')' ';'			   			#doWhileLoop
+   | FOR '(' ID ASSIGN expr ';' expr ';' expr ')' stat_block    #forLoop
    ;
  
 sendat_stat
@@ -67,18 +68,18 @@ log
  ;
 
 expr
- : expr POW<assoc=right> expr           #powExpr
- | MINUS expr                           #unaryMinusExpr
- | NOT expr                             #notExpr
+ : expr POW<assoc=right> expr           						#powExpr
+ | MINUS expr                          							#unaryMinusExpr
+ | NOT expr                             						#notExpr
  | expr op=(MULT | DIV | MOD | MINUSMINUS | PLUSPLUS) expr      #multiplicationExpr
- | expr op=(PLUS | MINUS) expr          #additiveExpr
- | expr op=(LTEQ | GTEQ | LT | GT) expr #relationalExpr
- | expr op=(EQ | NEQ) expr              #equalityExpr
- | expr AND expr                        #andExpr
- | expr OR expr                         #orExpr
- | expr MINUSMINUS					    #minusminusExpr
- | expr PLUSPLUS					    #plusplusExpr
- | atom                                 #atomExpr
+ | expr op=(PLUS | MINUS) expr          						#additiveExpr
+ | expr op=(LTEQ | GTEQ | LT | GT) expr 						#relationalExpr
+ | expr op=(EQ | NEQ) expr              						#equalityExpr
+ | expr AND expr                        						#andExpr
+ | expr OR expr                         						#orExpr
+ | expr MINUSMINUS					    						#minusminusExpr
+ | expr PLUSPLUS					    						#plusplusExpr
+ | atom                                 						#atomExpr
  ;
 
 atom
@@ -89,6 +90,10 @@ atom
  | STRING         #stringAtom
  | NIL            #nilAtom
  ;
+
+INTVAR : 'int';
+DOUBLEVAR : 'double';
+STRINGVAR : 'String';
 
 OR : '||';
 AND : '&&';
@@ -123,6 +128,7 @@ ELSE : 'else';
 WHILE : 'while';
 LOG : 'log';
 FOR : 'for';
+DO  : 'do' ;
 
 SEND : 'send';
 SENDAT : 'sendAt';
@@ -147,12 +153,22 @@ FLOAT
 STRING
  : '"' (~["\r\n] | '""')* '"'
  ;
+
 COMMENT
- : '#' ~[\r\n]* -> skip
+ : '//' ~[\r\n]* -> skip
  ;
+BLOCKCOMMENT
+ : '/*' .*? '*/' -> skip
+ ;
+
 SPACE
  : [ \t\r\n] -> skip
  ;
+
+NEWLINE
+ : ('\r' '\n'? | '\n') -> skip
+ ;
+
 OTHER
  : . 
  ;

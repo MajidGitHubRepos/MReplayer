@@ -1,1 +1,2 @@
-[100419][Info]: Adding Initial Version of ca.queensu.cs.antler4AC
+[100419][Debug]: Adding INT, DOUBLE and STRING assignment to AC.g4
+[100419][Info]:  Adding Initial Version of ca.queensu.cs.antler4AC

@@ -1,5 +1,4 @@
-package ca.queensu.cs.antler4AC;
-// Generated from AC.g4 by ANTLR 4.7.2
+package ca.queensu.cs.antler4AC; // Generated from AC.g4 by ANTLR 4.7.2
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -39,6 +38,13 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitNormalAssignment(ACParser.NormalAssignmentContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitBasicAssignment(ACParser.BasicAssignmentContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

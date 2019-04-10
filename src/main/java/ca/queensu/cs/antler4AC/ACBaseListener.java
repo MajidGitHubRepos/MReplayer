@@ -1,5 +1,4 @@
-package ca.queensu.cs.antler4AC;
- // Generated from AC.g4 by ANTLR 4.7.2
+package ca.queensu.cs.antler4AC; // Generated from AC.g4 by ANTLR 4.7.2
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -59,6 +58,18 @@ public class ACBaseListener implements ACListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNormalAssignment(ACParser.NormalAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBasicAssignment(ACParser.BasicAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBasicAssignment(ACParser.BasicAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

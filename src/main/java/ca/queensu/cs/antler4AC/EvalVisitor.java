@@ -33,6 +33,15 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     }
     
     @Override
+    public Value visitBasicAssignment(ACParser.BasicAssignmentContext ctx) {
+        String id = ctx.ID().getText();
+        if (ctx.expr() == null)
+        	return HeapMem.put(id, new Value (0));
+        else 
+        	return HeapMem.put(id, new Value (this.visit(ctx.expr())));
+    }
+    
+    @Override
     public Value visitMinusminusAssignment(ACParser.MinusminusAssignmentContext ctx) {
     	String id = ctx.ID().getText();
         Value value = HeapMem.get(id);

@@ -21,7 +21,8 @@ public class Main {
 				"\n" + 
 				"}";
 		*/
-		String expression = "count = 6; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else { log \" ODD\"; }  } showHeap; showListSendMsg;";
+		//String expression = "String count ;";
+		String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
 		
 		
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(expression));
