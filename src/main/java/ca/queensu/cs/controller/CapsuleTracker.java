@@ -117,7 +117,7 @@ public class CapsuleTracker implements Runnable{
 					int eventQueueTmpSize = eventQueueTmp.size();
 					for (int j = 0; j < eventQueueTmpSize;  j++) {
 						Event currentEventTmp = eventQueueTmp.take();
-						if(!isPassedEvent(currentEventTmp)) {
+						//if(!isPassedEvent(currentEventTmp)) {
 							//checking its validity based on the state machine
 							if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
 								//vTimeHandler(currentEventTmp);
@@ -129,12 +129,12 @@ public class CapsuleTracker implements Runnable{
 								}
 								break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
 							}else {eventQueueTmp.put(currentEventTmp);}
-						}
+						//}
 					}
 				}
 				if(!dataContainer.getEventQueue().isEmpty()) {
 					currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
-					if(!isPassedEvent(currentEvent)) {
+					//if(!isPassedEvent(currentEvent)) {
 
 						if (isConsumable(currentEvent) || (listPaths.size()>1)) {
 							if (currentStatus.contentEquals("TRANISTIONEND")) {
@@ -146,7 +146,7 @@ public class CapsuleTracker implements Runnable{
 							//vTimeHandler(currentEvent);
 						}else {eventQueueTmp.put(currentEvent);}
 					}
-				}
+				//}
 				semCapsuleTracker.release();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block

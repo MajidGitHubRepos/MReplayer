@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 
 /* 
+ * java -jar antlr-4.7.2-complete.jar -visitor AC.g4
  * sed -i '1s/^/package ca.queensu.cs.antler4AC; /' ACBaseListener.java ACBaseVisitor.java ACListener.java ACParser.java ACLexer.java ACVisitor.java
  */
 
@@ -139,7 +140,6 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
     @Override
     public Value visitMultiplicationExpr(@NotNull ACParser.MultiplicationExprContext ctx) {
-
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
 

@@ -129,7 +129,7 @@ public class UmlrtParser {
 
 	public void run() {
     			   		 	
-		 	//String fileName = "umlrtModels/PingPong.uml";
+		 	String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/SimpleCP.uml";
 	 		//String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
@@ -144,7 +144,7 @@ public class UmlrtParser {
 			//String fileName = "umlrtModels/Counter.uml";
 			//String fileName = "umlrtModels/ParcelRouter.uml";
 			//String fileName = "umlrtModels/ParcelRouter_basic.uml";
-			String fileName = "umlrtModels/Replication.uml";
+			//String fileName = "umlrtModels/Replication.uml";
 			//String fileName = "umlrtModels/BankATM.uml";
 			//String fileName = "umlrtModels/2Pinger1Ponger_threads.uml"; //Montreal Trip 
 			//String fileName = "umlrtModels/Replication_Refined.uml";
