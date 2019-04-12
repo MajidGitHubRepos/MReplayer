@@ -36,31 +36,33 @@ public class TransitionData {
 	private boolean toEntryPoint;
 	private String srcId;
 	private String trgId;
+	private String actionCode;
 	//private List<Vector<String, String>> triggers = new ArrayList<HashMap<String, String>>();
 	//private final SecurityRule securityRule;
 
 	//public TransitionData() {}
-	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit, Transition transition, String regionName ) {
-		this(capsuleName,capsuleInstanceName,transitonName,null,sourceName, null, targetName, triggers, actions, guards, kind, period, count, isInit, transition, regionName);
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, String actionCode, List<String> guards, TransitionKind kind, Long period, Integer count,boolean isInit, Transition transition, String regionName ) {
+		this(capsuleName,capsuleInstanceName,transitonName,null,sourceName, null, targetName, triggers, actions , actionCode, guards, kind, period, count, isInit, transition, regionName);
 	}
 	
-	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, List<String> guard, TransitionKind kind, Transition transition, String regionName) {
-		this(capsuleName,capsuleInstanceName,transitonName,null,sourceName, null, targetName, triggers, actions, guard, kind, null, null, false, transition, regionName);
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> triggers, List<String> actions, String actionCode, List<String> guard, TransitionKind kind, Transition transition, String regionName) {
+		this(capsuleName,capsuleInstanceName,transitonName,null,sourceName, null, targetName, triggers, actions, actionCode, guard, kind, null, null, false, transition, regionName);
 	}
 	
-	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> actions, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit, Transition transition, String regionName ) {
-		this(capsuleName,capsuleInstanceName,transitonName, null,sourceName, null, targetName, null, actions, guard, kind, period, count, isInit, transition, regionName);
+	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, String sourceName, String targetName, List<String> actions, String actionCode, List<String> guard, TransitionKind kind, Long period, Integer count,boolean isInit, Transition transition, String regionName ) {
+		this(capsuleName,capsuleInstanceName,transitonName, null,sourceName, null, targetName, null, actions, actionCode, guard, kind, period, count, isInit, transition, regionName);
 	}
 	
 	public TransitionData() {
-		this(null,null,null,null,null,null,null,null,null,null,false, null, null);
+		this(null,null,null,null,null,null,null,null,null,null,null,false, null, null);
 	}
 	
 
 	
 	public TransitionData(String capsuleName, String capsuleInstanceName, String transitonName, Vertex source, 
-			String sourceName, Vertex target, String targetName, List<String> triggers, List<String> actions, List<String> guards, 
+			String sourceName, Vertex target, String targetName, List<String> triggers, List<String> actions, String actionCode, List<String> guards, 
 			TransitionKind kind, Long period, Integer count, boolean isInit, Transition transition, String regionName) {
+		this.actionCode = actionCode;
 		this.capsuleName = capsuleName;
 		this.capsuleInstanceName = capsuleInstanceName;
 		this.source = source;
@@ -95,6 +97,9 @@ public class TransitionData {
 	//public String getName() {
 	//	return name;
 	//}
+	public String getActionCode() {
+		return actionCode;
+	}
 	public String getTrgId() {
 		return trgId;
 	}

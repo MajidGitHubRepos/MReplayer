@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,15 +20,23 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.uml2.uml.State;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.util.StringUtils;
 
+import ca.queensu.cs.antler4AC.ACLexer;
+import ca.queensu.cs.antler4AC.ACParser;
+import ca.queensu.cs.antler4AC.EvalVisitor;
+import ca.queensu.cs.antler4AC.SendMessage;
+import ca.queensu.cs.antler4AC.Value;
 import ca.queensu.cs.graph.ViewEngine;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.ServerVTOrdering;
+import ca.queensu.cs.umlrtParser.CapsuleConn;
 import ca.queensu.cs.umlrtParser.MyConnector;
 import ca.queensu.cs.umlrtParser.PES;
 import ca.queensu.cs.umlrtParser.ParserEngine;
@@ -71,9 +80,17 @@ public class CapsuleTracker implements Runnable{
 	private String prvTookPath;
 	private boolean startUpDone;
 	private boolean initDone;
+	private Map<String,List<String>> mapPathTrigger;
+	private Map<String,List<String>> mapPathActionCode;
+	private Map<String, Value> maplocalHeap;
+    private List<SendMessage> listPortMsg;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
+		this.maplocalHeap = new HashMap<String, Value>();
+		this.listPortMsg = new ArrayList<SendMessage>();
+		this.mapPathTrigger =  new HashMap<String,List<String>>();
+		this.mapPathActionCode =  new HashMap<String,List<String>>();
 		this.listPaths =  new ArrayList<String>();
 		this.currentStateToChiceState ="";
 		this.currentTransitionToFromChiceState = "";
@@ -104,10 +121,35 @@ public class CapsuleTracker implements Runnable{
 
 
 	public void run() {
+		try {
+			semCapsuleTracker.acquire();
 		//Go to the initial state and wait for the right event
-		System.out.println("============> Running : "+ dataContainer.getCapsuleInstance());
-
-
+		System.out.println("============> Running : "+ dataContainer.getCapsuleName() );
+		
+		List<String> listAttributes = ParserEngine.mapCapAttributes.get(dataContainer.getCapsuleName());
+		
+		if (listAttributes != null) {
+			for (String att : listAttributes) {
+				//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> att: "+ att);
+				String [] attSplit = att.split(":");
+				if (attSplit[1].contentEquals("String"))
+					maplocalHeap.put(attSplit[0], new Value("", "String"));
+				else if (attSplit[1].contentEquals("Integer"))
+					maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Double"));
+				else if (attSplit[1].contentEquals("Real"))
+					maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Double"));
+				else {
+					System.err.println("__________ The Tyep of Attribute Not supported! __________");
+					System.exit(1);
+				}
+			}
+		}
+		semCapsuleTracker.release();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		while(true) {
 			try {
 				semCapsuleTracker.acquire();
@@ -252,6 +294,10 @@ public class CapsuleTracker implements Runnable{
 		System.out.println("=====================[currentState]=================");
 		for (Entry<String, String> entry : dataContainer.mapRegionCurrentState.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ ParserEngine.mapStateData.get(entry.getValue()).getStateName());
+		}
+		System.out.println("=====================[mapLocalHeap]=================");
+		for (Entry<String, Value> entry : maplocalHeap.entrySet()) {
+			System.out.println("key: " + entry.getKey() + ", value: "+ entry.getValue());
 		}
 	}
 	//==================================================================	
@@ -666,6 +712,202 @@ public class CapsuleTracker implements Runnable{
 		}
 		return result;
 	}
+	
+	
+	//==================================================================	
+	//==============================================[interpretActionCode]
+	//==================================================================	
+	public void sendMessages() throws InterruptedException {
+		
+		//System.out.println("=============================  in sendMessages =========================================");
+		for (SendMessage sendMessage : listPortMsg) {
+			List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
+			String trgCapsule = "";
+			for ( CapsuleConn capConn : ParserEngine.listCapsuleConn) {
+				if (capConn.getCapsuleInstanceName().contentEquals(dataContainer.getCapsuleInstance())) {
+					
+					listMyConnectors = capConn.getListMyConnector();
+					for (MyConnector connector : listMyConnectors) { //TODO: port mulitipilicity dose not work! 
+						
+						if (connector.portCap1.contentEquals(sendMessage.port)) {
+							trgCapsule = connector.capInstanceName2;
+							break;
+						}else if (connector.portCap2.contentEquals(sendMessage.port)) {
+							trgCapsule = connector.capInstanceName1;
+							break;
+						}
+					}
+					break;
+				}
+			}
+			//System.out.println("trgCapsule::> " + trgCapsule);
+			Iterator<Entry<String, CapsuleTracker>> itr = TrackerMaker.mapCapsuleTracker.entrySet().iterator();  
+			while(itr.hasNext()) 
+	        { 
+				Entry<String, CapsuleTracker> entry = itr.next();
+				if (entry.getKey().contains(trgCapsule)) {
+					entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
+					break;
+				}
+	        }
+			
+			listMyConnectors = null;
+		}
+		
+	}
+	
+	//==================================================================	
+	//==============================================[interpretActionCode]
+	//==================================================================	
+	public void interpretActionCode(String actionCode) throws InterruptedException {
+        //System.out.println("[actionCode]: "+actionCode);
+
+		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
+		ACParser parser = new ACParser(new CommonTokenStream(lexer));
+		EvalVisitor visitor = new EvalVisitor(maplocalHeap);
+		visitor.visit(parser.parse());
+		listPortMsg = visitor.getListPortMsg();
+		
+		sendMessages();
+		
+		Iterator<Entry<String, Value>> itr = visitor.getHeapMem().entrySet().iterator(); 
+        
+        while(itr.hasNext()) 
+        { 
+             Map.Entry<String, Value> entry = itr.next();
+             maplocalHeap.put(entry.getKey(), entry.getValue());
+        }
+		
+		lexer = null;
+		parser = null;
+		visitor = null;
+		
+	}
+	
+	//==================================================================	
+	//==============================================[updateLocalHeap]
+	//==================================================================	
+	public void updateLocalHeap(String path) throws InterruptedException {
+		List<String> listTrigger = new ArrayList<String>();
+		List<String> listActionCode = new ArrayList<String>();
+		listActionCode = mapPathActionCode.get(path);
+			
+		for(String ac : listActionCode) {
+			interpretActionCode(ac);
+		}
+		
+		listTrigger = mapPathTrigger.get(path);
+		if (listTrigger != null) {
+			
+			for(String msg : listTrigger) {
+				SendMessage sendMessage = dataContainer.mapSendMessages.get(msg);
+				if ((sendMessage != null) && (sendMessage.dataName != null)) 
+					maplocalHeap.put(sendMessage.dataName, sendMessage.data);
+			}
+			
+			
+		}else {
+			System.err.println("__________ listTrigger is empty! __________"); //TODO: make it clean!
+		}
+	}
+	//==================================================================	
+	//==============================================[makeListTrigger]
+	//==================================================================	
+		public List<String> makeListTrigger(String path) throws InterruptedException {
+			List<String> listTrigger = new ArrayList<String>();
+			List<String> listActionCode = new ArrayList<String>();
+			
+			if (path.contains(",")) {
+				String [] pathSplit = path.split("\\,");
+				for (String pathID : pathSplit) {
+					listTrigger.addAll(ParserEngine.mapTransitionData.get(pathID).getTriggers());
+					listActionCode.add(ParserEngine.mapTransitionData.get(pathID).getActionCode());
+				}
+			}else {
+				listTrigger.addAll(ParserEngine.mapTransitionData.get(path).getTriggers());
+				listActionCode.add(ParserEngine.mapTransitionData.get(path).getActionCode());
+			}
+			if (listTrigger != null) {
+				mapPathTrigger.put(path, listTrigger);
+				mapPathActionCode.put(path, listActionCode);
+				
+			}else {
+				System.err.println("__________ No Trigger Found! __________"); //TODO: make it clean!
+				System.exit(1);
+			}
+				
+			return listTrigger;
+		}
+	
+	//==================================================================	
+	//==============================================[isRequirementMet]
+	//==================================================================	
+	public boolean isRequirementMet(String path) throws InterruptedException {
+
+		boolean result = true;
+		List<String> listTrigger = new ArrayList<String>();
+		
+		listTrigger = mapPathTrigger.get(path);
+		if (listTrigger == null) {
+			listTrigger = makeListTrigger(path);
+		}
+
+		for(String msg : listTrigger) {
+			if ((dataContainer.mapSendMessages.get(msg) != null) && (!msg.contentEquals("__TIMER__")))
+				result = false;
+			else
+				dataContainer.mapSendMessages.remove(msg);
+		}
+		
+		if (result)
+			updateLocalHeap(path);
+
+		/*
+		List <String> listTriggers = targetTransitionData.getTriggers();
+
+					//How many trigger does it have?
+					int triggerSize = listTriggers.size();
+					int triggerCount = 0;
+
+					for (int j =0; j < listTriggers.size(); j++) {
+
+						String trigger = listTriggers.get(j);
+						String [] triggerSplit = trigger.split("\\.|\\(");
+						//System.out.println("trigger: "+trigger);
+
+						String triggerPort = triggerSplit[0];
+						String triggerMsg = triggerSplit[1];
+
+						if (triggerPort.contentEquals("__TIMER__") && triggerMsg.contentEquals("__TIME__")) {
+							requirementMet = true;
+							senderCapInstanceName = "";
+							break;
+						}else {
+							for (int t = 0; t<dataContainer.messageQueue.size(); t++) {
+								if (!dataContainer.messageQueue.isEmpty()) {
+									Message tmpMessage = dataContainer.messageQueue.take();
+
+									if (tmpMessage.getMsg().contains(triggerMsg)) { 
+										senderCapInstanceName = tmpMessage.getCapsuleInstance(); 
+										setLogicalVectorTime(tmpMessage.getLogicalVectorTime());
+										requirementMet = true;
+										break;}
+									else {dataContainer.messageQueue.put(tmpMessage);} //back to the messageQueue
+								}else { //isEmpty
+									requirementMet = false;
+								}
+							}
+							if (requirementMet)
+								break;
+						}
+						//semCapsuleTracker.release();
+					}
+		*/		
+		
+		return result;
+			
+	}
+	
 	//==================================================================	
 	//==============================================[transitionChecking]
 	//==================================================================	
@@ -673,16 +915,16 @@ public class CapsuleTracker implements Runnable{
 		
 		boolean result = false;
 		String id = PES.mapQnameId.get(event.getSourceName());
-		System.out.println("event.getSourceName(): " + event.allDataToString());
+		//System.out.println("event.getSourceName(): " + event.allDataToString());
 		String currentSateId = dataContainer.mapRegionCurrentState.get(ParserEngine.mapTransitionData.get(id).getReginName());
 		
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
 
 		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14")) {
 			showInfo();
-			System.out.println(event.getSourceName() +", "+ dataContainer.getCapsuleInstance() +", id: "+ id+ ", listPaths.size(): "+ listPaths.size() +" => [Status : transitionChecking]currentStatus:> "+ currentStatus +" ,StateId: "+currentSateId);
+			//System.out.println(event.getSourceName() +", "+ dataContainer.getCapsuleInstance() +", id: "+ id+ ", listPaths.size(): "+ listPaths.size() +" => [Status : transitionChecking]currentStatus:> "+ currentStatus +" ,StateId: "+currentSateId);
 			pathFinder(event.getSourceName());
-			if (listPaths.size() == 1) {
+			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
 			}/*else if ((listPaths.size() > 1) && toHistory(listPaths)) {

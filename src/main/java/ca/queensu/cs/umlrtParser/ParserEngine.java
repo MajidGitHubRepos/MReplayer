@@ -88,10 +88,11 @@ public class ParserEngine implements Runnable {
 	private static EList<PackageableElement> modelElements;
 	public HashMap<String, StateMachine> stateMachineMap;
 	public static List<StateData> listStateData;
+	public static Map<String, List<String>> mapCapAttributes = new HashMap<String, List<String>>();	
 	public static Map<String, StateData> mapStateData = new HashMap<String, StateData>();
 	public static List<TransitionData> listTransitionData;
 	public static Map<String, TransitionData> mapTransitionData = new HashMap<String, TransitionData>();
-	public List<CapsuleConn> listCapsuleConn;
+	public static List<CapsuleConn> listCapsuleConn;
 	private final List<EntryData> entrys = new ArrayList<EntryData>();
 	private final List<ExitData> exits = new ArrayList<ExitData>();
 	private final Map<String, LinkedList<ChoiceData>> choices = new HashMap<String, LinkedList<ChoiceData>>();
@@ -101,7 +102,7 @@ public class ParserEngine implements Runnable {
 	private final List<HistoryData> historys = new ArrayList<HistoryData>();
 	private final Map<String, List<TableDataMember>> listTableData = new HashMap<String, List<TableDataMember>>();
 	private List<String> listPortName_connectorName_PortName = new ArrayList<String>();
-	private List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
+	public static List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
 
 
 	public String elementInstanceName;
@@ -346,6 +347,21 @@ public class ParserEngine implements Runnable {
 
 			//if((element instanceof Class) && (((Class) element).getOwnedBehaviors().size() > 0)) {
 			if((element instanceof Class)) {
+				
+				//EXTRACT ALL GLOBAL VARIABLES INTO THE mapCapAttributes
+				EList<Property> listOwnedAtt =  ((Class) element).getOwnedAttributes();
+				List<String> listAttributes = new ArrayList<String>();
+				for (Property attribute : listOwnedAtt) {
+					
+					if ((attribute.getType() != null) && (attribute.getType().getName() != null) && 
+							( (attribute.getType().getName().contentEquals("Real") || (attribute.getType().getName().contentEquals("Integer")) || attribute.getType().getName().contentEquals("String")))) { //TODO: we support only Real, String and Integer type
+						listAttributes.add(attribute.getName()+":"+attribute.getType().getName());
+						//System.out.println(element.getName() +" --------------> attribute Name: "+ attribute.getName() + ", -----------> getDatatype: " + attribute.getType().getName());
+						
+					}
+					
+				}
+				mapCapAttributes.put(element.getName(), listAttributes);
 
 				//if (element.getOwnedBehaviors() != null && element.getOwnedBehaviors().size() > 0)
 				//((Class) element).getOwnedBehaviors().get(0);
@@ -480,7 +496,9 @@ public class ParserEngine implements Runnable {
 
 				State state = (State)vertex;
 				List<String> entryList = new ArrayList();
+				String entryAC = "";
 				List<String> exitList = new ArrayList();
+				String exitAC = "";
 				List<String> deferredList = new ArrayList();
 				String parentName = "";
 				String regionName = "";
@@ -508,17 +526,19 @@ public class ParserEngine implements Runnable {
 					String stateBody = UmlrtUtils.resolveBodyByLanguage("C++", (OpaqueBehavior)state.getEntry());
 					//System.out.println("--------------> Body[getEntry]: "+ stateBody);
 					entryList = UmlrtUtils.actionCodeProcessing(stateBody);
+					entryAC = stateBody;
 				}
 
 				if (state.getExit() instanceof OpaqueBehavior) {
 					String stateBody = UmlrtUtils.resolveBodyByLanguage("C++", (OpaqueBehavior)state.getExit());
 					//System.out.println("--------------> Body[getExit]: "+ stateBody);
 					exitList = UmlrtUtils.actionCodeProcessing(stateBody);
+					exitAC = stateBody;
 				}
 				//boolean isInitialState = UmlrtUtils.isInitialState(state);  // checked in psudoStates 
 				deferredList = UmlrtUtils.resolveDeferredEvents(state);
 				//boolean isFinalState = UmlrtUtils.isFinalState(state); // checked in psudoStates 
-				StateData stateDate = new StateData(this.elementName,this.elementInstanceName, state,null,sName, entryList, exitList, deferredList, parentName, regionName, false, false); //My Solution
+				StateData stateDate = new StateData(this.elementName,this.elementInstanceName, state,null,sName, entryList, entryAC, exitList, exitAC, deferredList, parentName, regionName, false, false); //My Solution
 				/*StateData stateData = handleActions(
 						new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState), state);*/
 				stateDate.setId(state);
@@ -788,8 +808,11 @@ public class ParserEngine implements Runnable {
 				if (transition.getOwner() instanceof Region) {
 					regionName = ((Region)transition.getOwner()).getName();
 				}
+				
+				String actionCode = UmlrtUtils.resolveTransitionAction(transition);
+				
 				TransitionData tr = new TransitionData(this.elementName,this.elementInstanceName,transitonName,transition.getSource(),transition.getSource().getName()
-						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition),
+						, transition.getTarget(), transition.getTarget().getName(), triggers, UmlrtUtils.resolveTransitionActions(transition), actionCode,
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr, transition, regionName);
 				listTransitionData.add(tr);
 				mapTransitionData.put(tr.extractID(1,transition.toString()),tr);
@@ -803,8 +826,10 @@ public class ParserEngine implements Runnable {
 					regionName = ((Region)transition.getOwner()).getName();
 
 				}
+				String actionCode = UmlrtUtils.resolveTransitionAction(transition);
+				
 				TransitionData tr = new TransitionData(this.elementName,this.elementInstanceName,transitonName, transition.getSource(),transition.getSource().getName(),
-						transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition),
+						transition.getTarget(), transition.getTarget().getName(),triggers, UmlrtUtils.resolveTransitionActions(transition), actionCode,
 						guards, UmlrtUtils.mapUmlTransitionType(transition), period, count, isInitTr, transition, regionName);
 				listTransitionData.add(tr);
 				mapTransitionData.put(tr.extractID(1,transition.toString()),tr);

@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import ca.queensu.cs.antler4AC.SendMessage;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.umlrtParser.TableDataMember;
@@ -23,19 +24,19 @@ Majid Babaei (babaei@cs.queensu.ca): Initial development - 120918
 public class DataContainer {
 	
 	private String capsuleInstance;
+	private String capsuleName;
 	public BlockingQueue <Event> eventQueue;
-	public BlockingQueue <Message> messageQueue;
+	public Map<String,SendMessage> mapSendMessages;
 	public Map<String, String> mapRegionCurrentState;
-	private Thread thread;
-	private Event currentEvent;
 	
 	//private String threadName;
 	//--
-	public DataContainer(String capsuleInstance, BlockingQueue <Event> eventQueue, BlockingQueue <Message> messageQueue) {
+	public DataContainer(String capsuleName, String capsuleInstance, BlockingQueue <Event> eventQueue) {
+		this.capsuleName = capsuleName;
 		this.mapRegionCurrentState =  new HashMap<String, String>();
 		this.capsuleInstance = capsuleInstance;
 		this.eventQueue = eventQueue;
-		this.messageQueue = messageQueue;
+		this.mapSendMessages = new HashMap<String, SendMessage>();;
 	}
 	//--
 	public DataContainer() {
@@ -44,6 +45,9 @@ public class DataContainer {
 	
 	  
 	//--GETTERS
+	public String getCapsuleName() {
+		return capsuleName;
+	}
 	public String getCapsuleInstance() {
 		return this.capsuleInstance;
 	}

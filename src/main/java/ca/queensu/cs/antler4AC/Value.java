@@ -3,12 +3,14 @@ package ca.queensu.cs.antler4AC;
 
 public class Value {
 
-    public static Value VOID = new Value(new Object());
+    public static Value VOID = new Value(new Object(),"");
 
     final Object value;
+    final String type;
     
-    public Value(Object value) {
+    public Value(Object value, String type) {
         this.value = value;
+        this.type = type;
     }
 
     public Boolean asBoolean() {
@@ -21,6 +23,14 @@ public class Value {
 
     public String asString() {
         return String.valueOf(value);
+    }
+    
+    public Integer asInteger() {
+        return (Integer) value;
+    }
+    
+    public boolean isInteger() {
+        return value instanceof Integer;
     }
 
     public boolean isDouble() {

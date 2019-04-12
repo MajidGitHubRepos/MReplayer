@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 /* 
  * java -jar antlr-4.7.2-complete.jar -visitor AC.g4
- * sed -i '1s/^/package ca.queensu.cs.antler4AC; /' ACBaseListener.java ACBaseVisitor.java ACListener.java ACParser.java ACLexer.java ACVisitor.java
+ * 
  */
 
 
@@ -25,6 +25,25 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     private Map<String, Value> HeapMem = new HashMap<String, Value>();
     private List<SendMessage> listPortMsg = new ArrayList<SendMessage>();
 
+    public EvalVisitor(Map<String, Value> mapLocalHeap) {
+    	if (mapLocalHeap != null)
+    	for (Entry<String, Value> entry : mapLocalHeap.entrySet()) {
+			HeapMem.put(entry.getKey(), entry.getValue());
+		}
+    }
+    public EvalVisitor() {
+    	this(null);
+    }
+    
+    
+    public List<SendMessage> getListPortMsg() {
+		return listPortMsg;
+	}
+    
+    public Map<String, Value> getHeapMem() {
+		return HeapMem;
+	}
+    
     // assignment/id overrides
     @Override
     public Value visitNormalAssignment(ACParser.NormalAssignmentContext ctx) {
@@ -37,9 +56,9 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     public Value visitBasicAssignment(ACParser.BasicAssignmentContext ctx) {
         String id = ctx.ID().getText();
         if (ctx.expr() == null)
-        	return HeapMem.put(id, new Value (0));
+        	return HeapMem.put(id, new Value (0, ""));
         else 
-        	return HeapMem.put(id, new Value (this.visit(ctx.expr())));
+        	return HeapMem.put(id, new Value (this.visit(ctx.expr()),""));
     }
     
     @Override
@@ -50,9 +69,9 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
             throw new RuntimeException("no such variable: " + id);
         }
     	//Value value = this.visit(ctx .expr());
-        Value newValue = new Value(value.asDouble()-1);
+        Value newValue = new Value(value.asDouble()-1, "Double");
         HeapMem.put(id, newValue);
-        return new Value(value.asDouble()-1);
+        return new Value(value.asDouble()-1, "Double");
     }
     
     @Override
@@ -62,26 +81,28 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
         if(value == null) {
             throw new RuntimeException("no such variable: " + id);
         }
-        Value newValue = new Value(value.asDouble()+1);
+        Value newValue = new Value(value.asDouble()+1, "Double");
         HeapMem.put(id, newValue);
-        return new Value(value.asDouble()+1);
+        return new Value(value.asDouble()+1, "Double");
     }
     
     @Override
     public Value visitPlusplusExpr(ACParser.PlusplusExprContext ctx) {
     	Value value = this.visit(ctx .expr());
-        return new Value(value.asDouble()+1);
+        return new Value(value.asDouble()+1, "Double");
     }
     
     @Override
     public Value visitMinusminusExpr(ACParser.MinusminusExprContext ctx) {
     	Value value = this.visit(ctx .expr());
-        return new Value(value.asDouble()-1);
+        return new Value(value.asDouble()-1, "Double");
     }
 
     @Override
     public Value visitIdAtom(ACParser.IdAtomContext ctx) {
         String id = ctx.getText();
+      
+        
         Value value = HeapMem.get(id);
         if(value == null) {
             throw new RuntimeException("no such variable: " + id);
@@ -95,22 +116,22 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
         String str = ctx.getText();
         // strip quotes
         str = str.substring(1, str.length() - 1).replace("\"\"", "\"");
-        return new Value(str);
+        return new Value(str, "String");
     }
 
     @Override
     public Value visitNumberAtom(ACParser.NumberAtomContext ctx) {
-        return new Value(Double.valueOf(ctx.getText()));
+        return new Value(Double.valueOf(ctx.getText()), "Double");
     }
 
     @Override
     public Value visitBooleanAtom(ACParser.BooleanAtomContext ctx) {
-        return new Value(Boolean.valueOf(ctx.getText()));
+        return new Value(Boolean.valueOf(ctx.getText()), "Boolean");
     }
 
     @Override
     public Value visitNilAtom(ACParser.NilAtomContext ctx) {
-        return new Value(null);
+        return new Value(null, "");
     }
 
     // expr overrides
@@ -123,19 +144,19 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     public Value visitPowExpr(ACParser.PowExprContext ctx) {
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
-        return new Value(Math.pow(left.asDouble(), right.asDouble()));
+        return new Value(Math.pow(left.asDouble(), right.asDouble()), "Double");
     }
 
     @Override
     public Value visitUnaryMinusExpr(ACParser.UnaryMinusExprContext ctx) {
         Value value = this.visit(ctx.expr());
-        return new Value(-value.asDouble());
+        return new Value(-value.asDouble(), "Double");
     }
 
     @Override
     public Value visitNotExpr(ACParser.NotExprContext ctx) {
         Value value = this.visit(ctx.expr());
-        return new Value(!value.asBoolean());
+        return new Value(!value.asBoolean(), "Boolean");
     }
 
     @Override
@@ -145,11 +166,11 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
         switch (ctx.op.getType()) {
             case ACParser.MULT:
-                return new Value(left.asDouble() * right.asDouble());
+                return new Value(left.asDouble() * right.asDouble(), "Double");
             case ACParser.DIV:
-                return new Value(left.asDouble() / right.asDouble());
+                return new Value(left.asDouble() / right.asDouble(), "Double");
             case ACParser.MOD:
-                return new Value(left.asDouble() % right.asDouble());
+                return new Value(left.asDouble() % right.asDouble(), "Double");
             default:
                 throw new RuntimeException("unknown operator: " + ACParser.tokenNames[ctx.op.getType()]);
         }
@@ -162,16 +183,16 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
         switch (ctx.op.getType()) {
             case ACParser.PLUS:
-                return left.isDouble() && right.isDouble() ?
-                        new Value(left.asDouble() + right.asDouble()) :
-                        new Value(left.asString() + right.asString());
+                return left.type.contentEquals("Double") && right.type.contentEquals("Double") ?
+                        new Value(left.asDouble() + right.asDouble(), "Double") :
+                        new Value(left.asString() + right.asString(), "String");
             case ACParser.PLUSPLUS:
-                return new Value(left.asDouble() + 1);
+                return new Value(left.asDouble() + 1, "Double");
 
             case ACParser.MINUS:
-                return new Value(left.asDouble() - right.asDouble());
+                return new Value(left.asDouble() - right.asDouble(), "Double");
             case ACParser.MINUSMINUS:
-                return new Value(left.asDouble() - 1);
+                return new Value(left.asDouble() - 1, "Double");
 
             default:
                 throw new RuntimeException("unknown operator: " + ACParser.tokenNames[ctx.op.getType()]);
@@ -186,13 +207,13 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
         switch (ctx.op.getType()) {
             case ACParser.LT:
-                return new Value(left.asDouble() < right.asDouble());
+                return new Value(left.asDouble() < right.asDouble(), "");
             case ACParser.LTEQ:
-                return new Value(left.asDouble() <= right.asDouble());
+                return new Value(left.asDouble() <= right.asDouble(),"");
             case ACParser.GT:
-                return new Value(left.asDouble() > right.asDouble());
+                return new Value(left.asDouble() > right.asDouble(),"");
             case ACParser.GTEQ:
-                return new Value(left.asDouble() >= right.asDouble());
+                return new Value(left.asDouble() >= right.asDouble(),"");
             default:
                 throw new RuntimeException("unknown operator: " + ACParser.tokenNames[ctx.op.getType()]);
         }
@@ -207,12 +228,12 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
         switch (ctx.op.getType()) {
             case ACParser.EQ:
                 return left.isDouble() && right.isDouble() ?
-                        new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE) :
-                        new Value(left.equals(right));
+                        new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE, "") :
+                        new Value(left.equals(right),"");
             case ACParser.NEQ:
                 return left.isDouble() && right.isDouble() ?
-                        new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE) :
-                        new Value(!left.equals(right));
+                        new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE, "") :
+                        new Value(!left.equals(right),"");
             default:
                 throw new RuntimeException("unknown operator: " + ACParser.tokenNames[ctx.op.getType()]);
         }
@@ -222,14 +243,14 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     public Value visitAndExpr(ACParser.AndExprContext ctx) {
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
-        return new Value(left.asBoolean() && right.asBoolean());
+        return new Value(left.asBoolean() && right.asBoolean(), "Boolean");
     }
 
     @Override
     public Value visitOrExpr(ACParser.OrExprContext ctx) {
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
-        return new Value(left.asBoolean() || right.asBoolean());
+        return new Value(left.asBoolean() || right.asBoolean(), "Boolean");
     }
 
     // log override
@@ -320,7 +341,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
             //valueStart = this.visit(ctx.assignment());
             valueEnd = this.visit(ctx.expr(2));
             valueStart = valueEnd;
-            Value newValue = new Value(valueStart.asDouble());
+            Value newValue = new Value(valueStart.asDouble(), "Double");
             HeapMem.put(id, newValue);
             valueCondition = this.visit(ctx.expr(1));
             newValue = null;
@@ -332,9 +353,17 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     public Value visitSend_stat(ACParser.Send_statContext ctx) {
     	String port = ctx.ID(0).getText();
     	String msg = ctx.ID(1).getText();
-    	Value data = this.visit(ctx.expr());
+    	String dataName = "";
+    	Value data;
+    	if (ctx.expr() != null) {
+    		dataName = ctx.expr().getText();
+    		data = this.visit(ctx.expr());
+    	}else {
+    		dataName = "";
+    		data = null;
+    	}
     	
-    	SendMessage sendMsg = new SendMessage(port,msg, data, null);
+    	SendMessage sendMsg = new SendMessage(port,msg, dataName, data, null);
     	listPortMsg.add(sendMsg);
     	
     	return data;
@@ -344,15 +373,16 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     public Value visitSendat_stat(ACParser.Sendat_statContext ctx) {
     	String port = ctx.ID(0).getText();
     	String msg = ctx.ID(1).getText();
+    	String dataName = ctx.expr(0).getText();
     	Value data = this.visit(ctx.expr(0));
-    	Value dest = new Value(0);
+    	Value dest = new Value(0,"");
 
     	if (ctx.getText().contains("msg->sapIndex0_")){
-    		dest = new Value("msg->sapIndex0_");
+    		dest = new Value("msg->sapIndex0_","String");
     	}else	
     		dest = this.visit(ctx.expr(1));
     	
-    	SendMessage sendMsg = new SendMessage(port,msg, data, dest);
+    	SendMessage sendMsg = new SendMessage(port,msg, dataName, data, dest);
     	listPortMsg.add(sendMsg);
     	
     	return data;
@@ -366,7 +396,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		for (Entry<String, Value> entry : HeapMem.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ entry.getValue().toString());
 		}
-		return new Value(0);
+		return new Value(0,"");
     	
     }
     
@@ -376,7 +406,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		for (SendMessage portMsg : listPortMsg) {
 			System.out.println(portMsg.allDataToString());
 		}
-		return new Value(0);
+		return new Value(0,"");
     	
     }
     

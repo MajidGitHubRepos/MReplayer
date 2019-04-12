@@ -34,7 +34,9 @@ import ca.queensu.cs.controller.Controller.RunnableImpl;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.umlrtParser.PES;
+import ca.queensu.cs.umlrtParser.ParserEngine;
 import ca.queensu.cs.umlrtParser.TableDataMember;
+import ca.queensu.cs.umlrtParser.TransitionData;
 import ca.queensu.cs.umlrtParser.UmlrtUtils;
 
 public class TrackerMaker implements Runnable{
@@ -204,10 +206,19 @@ public class TrackerMaker implements Runnable{
 				if (!capsuleFullname.isEmpty()) {
 					
 					BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
-					BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+					//BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 					//CapFullname
-					DataContainer dataContainer = new DataContainer(capsuleFullname, eventQueue, messageQueue);					
+					int idx = capsuleFullname.indexOf("__");
+					String capsuleName = ""; 
+					for (TransitionData td : ParserEngine.listTransitionData) {
+						if (capsuleFullname.contains(td.getCapsuleInstanceName())) {
+							capsuleName = td.capsuleName;
+							break;
+						}
+					}
 					
+					DataContainer dataContainer = new DataContainer(capsuleName,capsuleFullname, eventQueue);
+										
 					int[] logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
 					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, outputFileStream, logicalVectorTime, dataContainer); 
 					Thread capsuleTrackerT = new Thread(capsuleTracker); 

@@ -17,7 +17,8 @@ stat
  | sendat_stat
  | send_stat
  | showContent_stat
- | OTHER {System.err.println("unknown char: " + $OTHER.text);}
+ | SHOW
+ | OTHER
  ;
 
 assignment
@@ -52,10 +53,12 @@ loop_stat
  
 sendat_stat
    : ID '.' ID '(' expr ')' '.' SENDAT '(' (expr | BACKMSG) ')' SCOL
+   | ID '.' ID '()' '.' SENDAT '(' (expr | BACKMSG) ')' SCOL
    ;
 
 send_stat
    : ID '.' ID '(' expr ')' '.' SEND '()' SCOL
+   | ID '.' ID '()' '.' SEND '()' SCOL
    ;
 
 showContent_stat
@@ -169,6 +172,7 @@ NEWLINE
  : ('\r' '\n'? | '\n') -> skip
  ;
 
+
 OTHER
- : . 
+ : .*? ';' -> skip
  ;

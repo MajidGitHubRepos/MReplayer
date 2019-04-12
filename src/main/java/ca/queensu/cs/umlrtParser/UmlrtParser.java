@@ -21,20 +21,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
-
-/*import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.CapsulePart;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Protocol;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.ProtocolContainer;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.RTConnector;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.RTMessageSet;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.RTPort;
-import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.UMLRealTimePackage;
-import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.RTPseudostate;
-import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.RTRegion;
-import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.RTState;
-import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.RTStateMachine;
-import org.eclipse.papyrusrt.umlrt.profile.statemachine.UMLRTStateMachines.UMLRTStateMachinesPackage;*/
 import org.eclipse.uml2.uml.BehavioredClassifier;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Collaboration;
@@ -129,7 +115,7 @@ public class UmlrtParser {
 
 	public void run() {
     			   		 	
-		 	String fileName = "umlrtModels/PingPong.uml";
+		 	//String fileName = "umlrtModels/PingPong.uml";
     		//String fileName = "umlrtModels/NonDeterministic.uml";
 	 		//String fileName = "umlrtModels/SimpleCP.uml";
 	 		//String fileName = "umlrtModels/SimpleCapsuleHierarchy.uml";
@@ -144,7 +130,7 @@ public class UmlrtParser {
 			//String fileName = "umlrtModels/Counter.uml";
 			//String fileName = "umlrtModels/ParcelRouter.uml";
 			//String fileName = "umlrtModels/ParcelRouter_basic.uml";
-			//String fileName = "umlrtModels/Replication.uml";
+			String fileName = "umlrtModels/Replication.uml";
 			//String fileName = "umlrtModels/BankATM.uml";
 			//String fileName = "umlrtModels/2Pinger1Ponger_threads.uml"; //Montreal Trip 
 			//String fileName = "umlrtModels/Replication_Refined.uml";

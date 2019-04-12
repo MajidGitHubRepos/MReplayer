@@ -33,8 +33,12 @@ public class StateData {
 	private boolean end = false;
 	private PseudoStateKind pseudoStateKind;
 	private String id;
+	private String entryAC;
+	private String exitAC;
 		
-	public StateData(String capsuleName, String capsuleInstanceName, State state, Pseudostate pseudostate, String sName, List<String> enList, List<String> exList, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
+	public StateData(String capsuleName, String capsuleInstanceName, State state, Pseudostate pseudostate, String sName, List<String> enList, String enAC, List<String> exList, String exAC, List<String> defList, String pName, String rName, boolean isInitialState, boolean isFinalState) {
+		this.entryAC = enAC;
+		this.exitAC = exAC;
 		this.capsuleName = capsuleName;
 		this.capsuleInstanceName = capsuleInstanceName;
 		this.state = state;
@@ -53,13 +57,13 @@ public class StateData {
 	}
 	
 	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName) {
-		this(capsuleName, capsuleInstanceName, null,null,sName, null, null, null, pName,rName, false, false);
+		this(capsuleName, capsuleInstanceName, null, null , null,null,sName, null, null, null, pName,rName, false, false);
 	}
 	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName , boolean initial, boolean end) {
-		this(capsuleName, capsuleInstanceName, null,null,sName, null, null, null, pName,rName, initial, end);
+		this(capsuleName, capsuleInstanceName, null, null , null,null,sName, null, null, null, pName,rName, initial, end);
 	}
 	public StateData() {
-		this(null, null, null,null, null, null, null, null,null,null, false,false);
+		this(null, null, null,null, null, null,null, null, null, null,null,null, false,false);
 	}
 	
 	
@@ -77,6 +81,15 @@ public class StateData {
 		String id = state.toString().substring(idx_1+1, idx_2);
 		return id;
 	}
+	
+	public String getEntrAC() {
+		return entryAC;
+	}
+	
+	public String getExitAC() {
+		return exitAC;
+	}
+	
 	public String getCapsuleName() {
 		return capsuleName;
 	}

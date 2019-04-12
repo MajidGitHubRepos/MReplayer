@@ -1,5 +1,8 @@
 package ca.queensu.cs.antler4AC;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -21,15 +24,18 @@ public class Main {
 				"\n" + 
 				"}";
 		*/
-		//String expression = "String count ;";
-		String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
+		//String expression = "int count = 1;";
+		//String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
 		
 		
+		String expression = "logfile.open(this->getName()); showHeap; showListSendMsg;";
+		Map<String, Value> maplocalHeap = new HashMap<String, Value>();
+		maplocalHeap.put("pingCount", new Value(1.0,"Double"));
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(expression));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
-		new EvalVisitor().visit(parser.parse());
-		ParseTree tree = parser.parse();
-		EvalVisitor visitor = new EvalVisitor();
+		new EvalVisitor(maplocalHeap).visit(parser.parse());
+		//ParseTree tree = parser.parse();
+		EvalVisitor visitor = new EvalVisitor(maplocalHeap);
 	}
 
 }
