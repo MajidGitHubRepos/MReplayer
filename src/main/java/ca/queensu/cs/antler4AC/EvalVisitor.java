@@ -105,7 +105,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
         
         Value value = HeapMem.get(id);
         if(value == null) {
-            throw new RuntimeException("no such variable: " + id);
+           // throw new RuntimeException("no such variable: " + id); //TODO: all varibale should be given properly later like: this->hostConfig=config;
         }
         return value;
     }
@@ -386,6 +386,14 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     	listPortMsg.add(sendMsg);
     	
     	return data;
+    }
+    
+    @Override
+    public Value visitUnknowns(ACParser.UnknownsContext ctx) {
+		//System.out.println("in [visitUnknowns]");
+
+    	//Do nothing
+    	return new Value(0, "");
     }
     
     @Override

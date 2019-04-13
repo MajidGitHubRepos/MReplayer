@@ -430,4 +430,14 @@ public interface ACListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNilAtom(ACParser.NilAtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ACParser#unknowns}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnknowns(ACParser.UnknownsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ACParser#unknowns}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnknowns(ACParser.UnknownsContext ctx);
 }

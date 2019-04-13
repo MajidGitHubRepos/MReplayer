@@ -258,4 +258,10 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNilAtom(ACParser.NilAtomContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ACParser#unknowns}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnknowns(ACParser.UnknownsContext ctx);
 }

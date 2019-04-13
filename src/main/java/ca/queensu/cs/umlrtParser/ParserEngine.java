@@ -538,6 +538,8 @@ public class ParserEngine implements Runnable {
 				//boolean isInitialState = UmlrtUtils.isInitialState(state);  // checked in psudoStates 
 				deferredList = UmlrtUtils.resolveDeferredEvents(state);
 				//boolean isFinalState = UmlrtUtils.isFinalState(state); // checked in psudoStates 
+				
+				//System.out.println("\n\n\n--------------> exitAC: "+exitAC + ", entryAC: "+ entryAC +"\n\n\n");
 				StateData stateDate = new StateData(this.elementName,this.elementInstanceName, state,null,sName, entryList, entryAC, exitList, exitAC, deferredList, parentName, regionName, false, false); //My Solution
 				/*StateData stateData = handleActions(
 						new StateData(state,sName, entryList, exitList, deferredList, parentName, regionName, isInitialState, isFinalState), state);*/

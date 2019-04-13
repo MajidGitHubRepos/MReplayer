@@ -57,10 +57,10 @@ public class StateData {
 	}
 	
 	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName) {
-		this(capsuleName, capsuleInstanceName, null, null , null,null,sName, null, null, null, pName,rName, false, false);
+		this(capsuleName, capsuleInstanceName, null, null ,sName, null,null, null, null, null, pName,rName, false, false);
 	}
 	public StateData(String capsuleName,String capsuleInstanceName, String sName, String pName, String rName , boolean initial, boolean end) {
-		this(capsuleName, capsuleInstanceName, null, null , null,null,sName, null, null, null, pName,rName, initial, end);
+		this(capsuleName, capsuleInstanceName, null, null ,sName, null,null, null, null, null, pName,rName, initial, end);
 	}
 	public StateData() {
 		this(null, null, null,null, null, null,null, null, null, null,null,null, false,false);

@@ -17,8 +17,7 @@ stat
  | sendat_stat
  | send_stat
  | showContent_stat
- | SHOW
- | OTHER
+ | unknowns
  ;
 
 assignment
@@ -116,12 +115,16 @@ MOD : '%';
 POW : '^';
 NOT : '!';
 
+COMMA : ',';
+COLON : ':' ;
 SCOL : ';';
 ASSIGN : '=';
 OPAR : '(';
 CPAR : ')';
 OBRACE : '{';
 CBRACE : '}';
+LBRACKET : '[' ;
+RBRACKET : ']' ;
 
 TRUE : 'true';
 FALSE : 'false';
@@ -172,7 +175,5 @@ NEWLINE
  : ('\r' '\n'? | '\n') -> skip
  ;
 
+unknowns : . ; 
 
-OTHER
- : .*? ';' -> skip
- ;

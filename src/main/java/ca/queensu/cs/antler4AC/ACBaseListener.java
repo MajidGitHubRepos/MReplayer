@@ -454,6 +454,18 @@ public class ACBaseListener implements ACListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNilAtom(ACParser.NilAtomContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUnknowns(ACParser.UnknownsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnknowns(ACParser.UnknownsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

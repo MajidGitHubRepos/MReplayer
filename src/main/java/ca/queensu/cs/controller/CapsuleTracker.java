@@ -286,20 +286,28 @@ public class CapsuleTracker implements Runnable{
 			
 		}
 	}
+	
+	
+	//==================================================================	
+	//==============================================[showInfo]
+	//==================================================================
 	public void showInfo() {
-		System.out.println("=====================[listPaths]=================");
+		System.out.println("=====================[listPaths]");
 		for (String path : listPaths) {
 			System.out.println("Path: " + path);
 		}
-		System.out.println("=====================[currentState]=================");
+		System.out.println("=====================[currentState]");
 		for (Entry<String, String> entry : dataContainer.mapRegionCurrentState.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ ParserEngine.mapStateData.get(entry.getValue()).getStateName());
 		}
-		System.out.println("=====================[mapLocalHeap]=================");
+		System.out.println("=====================[mapLocalHeap]");
 		for (Entry<String, Value> entry : maplocalHeap.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ entry.getValue());
 		}
+		
+		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<[DONE]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 	}
+	
 	//==================================================================	
 	//==============================================[updateCurrentState]
 	//==================================================================		
@@ -307,7 +315,6 @@ public class CapsuleTracker implements Runnable{
 		String [] pathSplit;
 		String lastId = "";
 		String region = "";
-		//List<String> listRegions = new ArrayList<String>();
 		
 		if (listPaths.size()==1) {
 			String path = listPaths.get(0);
@@ -327,10 +334,8 @@ public class CapsuleTracker implements Runnable{
 				String [] trSplit = ParserEngine.mapTransitionData.get(lastId).getPath().split("\\-");
 				dataContainer.mapRegionCurrentState.put(region, trSplit[trSplit.length -1]);	
 				}
-			//if(currentStateId != null) {
-			//	currentStateName = ParserEngine.mapStateData.get(currentStateId).getStateName();
+			
 			return true;
-			//}
 		}else {
 			showInfo();
 			//System.err.println("__________ There are too much path in the listPaths __________ size: " + listPaths.size());
@@ -351,8 +356,6 @@ public class CapsuleTracker implements Runnable{
 			firstId = path;}
 		String [] stateIds = ParserEngine.mapTransitionData.get(firstId).getPath().split("\\-");		
 		
-		//System.out.println(dataContainer.getCapsuleInstance() + "-> "+ currentStateId + "============> [stateIds[0]]:> "+ stateIds[0]);
-
 		if (dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0]) || 
 				((ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind() != null) && (ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind().toString().contentEquals("INITIAL"))))
 			return true;
@@ -364,8 +367,6 @@ public class CapsuleTracker implements Runnable{
 	//======================================================[pathFinder]
 	//==================================================================		
 	public List<String> pathFinder (String qName) {
-
-		//System.out.println(dataContainer.getCapsuleInstance() + "============> [listPaths.size()]:> "+ listPaths.size());
 
 		String id = PES.mapQnameId.get(qName);
 		String region = ParserEngine.mapTransitionData.get(id).getReginName();
@@ -380,7 +381,6 @@ public class CapsuleTracker implements Runnable{
 							listPaths.add(path);
 						}
 					}
-					//break;
 				}
 			}
 		}else {
@@ -471,38 +471,6 @@ public class CapsuleTracker implements Runnable{
 		if (logicalVectorTime[i]< logicalVT[i]) {
 			logicalVectorTime[i] = logicalVT[i];
 		}
-	}
-	
-	//==================================================================	
-	//==============================================[sendToMessageQueue]
-	//==================================================================
-	public boolean sendToMessageQueue(String targetCapsuleName, String port, String msg) throws InterruptedException {
-
-		boolean sentSuccessfully = false;
-		int [] tmpLogicalVectorTime = this.logicalVectorTime;
-		String capsuleInstance = dataContainer.getCapsuleInstance();
-
-		Message sentMsg = new Message(port,msg, capsuleInstance,this.logicalVectorTime);
-/*
-		for (int i=0; i< TrackerMaker.trackerCount; i++) {
-			if(targetCapsuleName.contains(TrackerMaker.capsuleTrackers[i].capsuleInstance)){
-				//System.out.println(">>>>>>>>>>>>>>> TrackerMaker.capsuleTrackers[i].capsuleInstance: " +TrackerMaker.capsuleTrackers[i].capsuleInstance);
-
-				for (int j = 0; j<= TrackerMaker.capsuleTrackers[i].logicalVectorTime.length; j++) {
-					if (j == TrackerMakerNumber) {
-						tmpLogicalVectorTime[j]=this.logicalVectorTime[j]; // because it gonna be incremented by 1 later but at this point it didn't
-						break;
-					}
-				}
-				sentMsg.setLogicalVectorTime(tmpLogicalVectorTime);
-				TrackerMaker.capsuleTrackers[i].dataContainer.messageQueue.put(sentMsg);
-
-				sentSuccessfully = true;
-				return sentSuccessfully;
-			}
-		}
-*/
-		return sentSuccessfully;	
 	}
 
 	//==================================================================	
@@ -666,7 +634,6 @@ public class CapsuleTracker implements Runnable{
 
 		//Check transitionKind = 10 and eventType = 36 [For REGISTER] 
 		if (event.getSourceKind().contentEquals("10") && event.getType().contentEquals("36")) {
-			//System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : registerChecking]:> "+ event.allDataToString());
 			currentStatus = "INIT";
 			return true;
 		}
@@ -694,15 +661,7 @@ public class CapsuleTracker implements Runnable{
 			if (listPaths.size() == 1) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
-			}/*if ((listPaths.size() > 1) && toHistory(listPaths)) {
-				System.out.println(dataContainer.getCapsuleInstance() +", before refineListPaths: "+ listPaths.size());
-
-				refineListPaths(id);
-				System.out.println(dataContainer.getCapsuleInstance() +", after refineListPaths: "+ listPaths.size());
-
-				result =  true;
-				currentStatus = "TRANISTIONEND";
-			}*/else if ((listPaths.size() > 1)){
+			}else if ((listPaths.size() > 1)){
 				result = false;
 			
 			}else {
@@ -719,7 +678,6 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	public void sendMessages() throws InterruptedException {
 		
-		//System.out.println("=============================  in sendMessages =========================================");
 		for (SendMessage sendMessage : listPortMsg) {
 			List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
 			String trgCapsule = "";
@@ -740,7 +698,6 @@ public class CapsuleTracker implements Runnable{
 					break;
 				}
 			}
-			//System.out.println("trgCapsule::> " + trgCapsule);
 			Iterator<Entry<String, CapsuleTracker>> itr = TrackerMaker.mapCapsuleTracker.entrySet().iterator();  
 			while(itr.hasNext()) 
 	        { 
@@ -760,7 +717,7 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[interpretActionCode]
 	//==================================================================	
 	public void interpretActionCode(String actionCode) throws InterruptedException {
-        //System.out.println("[actionCode]: "+actionCode);
+        System.out.println("[actionCode]: "+actionCode);
 
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
@@ -801,7 +758,7 @@ public class CapsuleTracker implements Runnable{
 			
 			for(String msg : listTrigger) {
 				SendMessage sendMessage = dataContainer.mapSendMessages.get(msg);
-				if ((sendMessage != null) && (sendMessage.dataName != null)) 
+				if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) 
 					maplocalHeap.put(sendMessage.dataName, sendMessage.data);
 			}
 			
@@ -822,10 +779,24 @@ public class CapsuleTracker implements Runnable{
 				for (String pathID : pathSplit) {
 					listTrigger.addAll(ParserEngine.mapTransitionData.get(pathID).getTriggers());
 					listActionCode.add(ParserEngine.mapTransitionData.get(pathID).getActionCode());
+					
+					String [] trPartsID = ParserEngine.mapTransitionData.get(pathID).getPath().split("\\-");
+					if (ParserEngine.mapStateData.get(trPartsID[0]).getExitAC() != null)
+						listActionCode.add(ParserEngine.mapStateData.get(trPartsID[0]).getExitAC());
+					if (ParserEngine.mapStateData.get(trPartsID[2]).getEntrAC() != null)
+						listActionCode.add(ParserEngine.mapStateData.get(trPartsID[2]).getEntrAC());
+					
 				}
 			}else {
 				listTrigger.addAll(ParserEngine.mapTransitionData.get(path).getTriggers());
 				listActionCode.add(ParserEngine.mapTransitionData.get(path).getActionCode());
+				
+				
+				String [] trPartsID = ParserEngine.mapTransitionData.get(path).getPath().split("\\-");
+				if (ParserEngine.mapStateData.get(trPartsID[0]).getExitAC() != null)
+					listActionCode.add(ParserEngine.mapStateData.get(trPartsID[0]).getExitAC());
+				if (ParserEngine.mapStateData.get(trPartsID[2]).getEntrAC() != null)
+					listActionCode.add(ParserEngine.mapStateData.get(trPartsID[2]).getEntrAC());
 			}
 			if (listTrigger != null) {
 				mapPathTrigger.put(path, listTrigger);
@@ -862,47 +833,6 @@ public class CapsuleTracker implements Runnable{
 		if (result)
 			updateLocalHeap(path);
 
-		/*
-		List <String> listTriggers = targetTransitionData.getTriggers();
-
-					//How many trigger does it have?
-					int triggerSize = listTriggers.size();
-					int triggerCount = 0;
-
-					for (int j =0; j < listTriggers.size(); j++) {
-
-						String trigger = listTriggers.get(j);
-						String [] triggerSplit = trigger.split("\\.|\\(");
-						//System.out.println("trigger: "+trigger);
-
-						String triggerPort = triggerSplit[0];
-						String triggerMsg = triggerSplit[1];
-
-						if (triggerPort.contentEquals("__TIMER__") && triggerMsg.contentEquals("__TIME__")) {
-							requirementMet = true;
-							senderCapInstanceName = "";
-							break;
-						}else {
-							for (int t = 0; t<dataContainer.messageQueue.size(); t++) {
-								if (!dataContainer.messageQueue.isEmpty()) {
-									Message tmpMessage = dataContainer.messageQueue.take();
-
-									if (tmpMessage.getMsg().contains(triggerMsg)) { 
-										senderCapInstanceName = tmpMessage.getCapsuleInstance(); 
-										setLogicalVectorTime(tmpMessage.getLogicalVectorTime());
-										requirementMet = true;
-										break;}
-									else {dataContainer.messageQueue.put(tmpMessage);} //back to the messageQueue
-								}else { //isEmpty
-									requirementMet = false;
-								}
-							}
-							if (requirementMet)
-								break;
-						}
-						//semCapsuleTracker.release();
-					}
-		*/		
 		
 		return result;
 			
@@ -927,18 +857,7 @@ public class CapsuleTracker implements Runnable{
 			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
-			}/*else if ((listPaths.size() > 1) && toHistory(listPaths)) {
-				System.out.println(dataContainer.getCapsuleInstance() +", before refineListPaths: "+ listPaths.size());
-
-				refineListPaths(id);
-				System.out.println(dataContainer.getCapsuleInstance() +", after refineListPaths: "+ listPaths.size());
-
-				result =  true;
-				currentStatus = "TRANISTIONEND";
-			} else if (listPaths.size() > 1 && !toHistory(listPaths)){
-				currentStatus = "CHOICE";
-				result =  false;
-			} */else if ((listPaths.size() > 1)){
+			}else if ((listPaths.size() > 1)){
 				result = false;
 			
 			}else {
@@ -947,184 +866,7 @@ public class CapsuleTracker implements Runnable{
 			}
 		}
 		return result;
-	/*	
-		//System.out.println(dataContainer.getCapsuleInstance() + "============> [Status : transitionChecking]:> "+ event.allDataToString());
-
-		//System.out.println("\n1["+ Thread.currentThread().getName() +"]*********[in transitionChecking] event: " + event.allDataToString());
-		this.targetChoiceState = false;
-		this.sourceChoiceState = false;
-		boolean result = false;
-		boolean requirementMet = false; //TODO: trigger by time!
-		TransitionData targetTransitionData = new TransitionData();
-		TableDataMember tableDataMember = new TableDataMember();
-
-		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
-
-		if (currentStatus.contains("TRANISTIONEND")) {
-
-			//Check eventSourceKind = 3 and eventType = 14 [For TRANISTIONEND]
-
-
-			if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14")){
-				String[] eventSourceNameSplit = event.getSourceName().split("\\::");
-				String eventTransitionName = eventSourceNameSplit[4];
-
-				//tableDataMember = rowInTableDataMemberLeadsToTargetState(eventSourceNameSplit[4], targetStateData.getStateName());
-				tableDataMember = null;
-				if (tableDataMember != null) {
-					//Transition found in the tabalData
-					targetTransitionData = tableDataMember.getTransition();
-				}
-				if (targetTransitionData.getCapsuleName() != null) { 
-					if (tableDataMember.getTarget().getPseudoStateKind() == UmlrtUtils.PseudoStateKind.CHOICE ) {
-						this.targetChoiceState = true;
-					} else if (tableDataMember.getSource().getPseudoStateKind() == UmlrtUtils.PseudoStateKind.CHOICE) {
-						this.sourceChoiceState = true;
-					}
-
-					List <String> listTriggers = targetTransitionData.getTriggers();
-
-					//How many trigger does it have?
-					int triggerSize = listTriggers.size();
-					int triggerCount = 0;
-
-					for (int j =0; j < listTriggers.size(); j++) {
-
-						String trigger = listTriggers.get(j);
-						String [] triggerSplit = trigger.split("\\.|\\(");
-						//System.out.println("trigger: "+trigger);
-
-						String triggerPort = triggerSplit[0];
-						String triggerMsg = triggerSplit[1];
-
-						if (triggerPort.contentEquals("__TIMER__") && triggerMsg.contentEquals("__TIME__")) {
-							requirementMet = true;
-							senderCapInstanceName = "";
-							break;
-						}else {
-							for (int t = 0; t<dataContainer.messageQueue.size(); t++) {
-								if (!dataContainer.messageQueue.isEmpty()) {
-									Message tmpMessage = dataContainer.messageQueue.take();
-
-									if (tmpMessage.getMsg().contains(triggerMsg)) { 
-										senderCapInstanceName = tmpMessage.getCapsuleInstance(); 
-										setLogicalVectorTime(tmpMessage.getLogicalVectorTime());
-										requirementMet = true;
-										break;}
-									else {dataContainer.messageQueue.put(tmpMessage);} //back to the messageQueue
-								}else { //isEmpty
-									requirementMet = false;
-								}
-							}
-							if (requirementMet)
-								break;
-						}
-						//semCapsuleTracker.release();
-					}
-					if (listTriggers.size() == 0) {
-						//this.currentState = targetTransitionData.getTarget().getName();
-						requirementMet = true;
-						senderCapInstanceName = "";
-					}
-
-					//--
-
-					//Check requirementMet!
-					if ((eventSourceNameSplit[4].contains(targetTransitionData.getTransitonName()) || (targetTransitionData.getTransitonName() == null)) &&
-							requirementMet) {
-						String targetCapsuleName = "";
-
-						//TODO:checking for guards will be done later
-
-						//event would be consumed!
-						//looking into the targetStateData.getExitActions() for sending messages into messageQueues
-						for (int j = 0; j < targetTransitionData.getActions().size(); j++) {
-							if (!lookTrgCap_and_sendMSG(targetTransitionData.getActions().get(j)))
-								return false; //faild!
-						}
-
-						//Check if the target state is a CHOICE point
-						if (this.targetChoiceState) {
-							// we should wait for an other transition
-							//TODO: guard can be checked!
-							currentStatus = "TRANISTIONEND";
-							//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTION from: " + targetTransitionData.getSourceName() + " to :" + targetTransitionData.getTargetName());
-
-						}else if (this.sourceChoiceState) {
-							//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]--> ["+capsuleInstance+"]: TRANISTION from: " + targetTransitionData.getSourceName() + " to :" + targetTransitionData.getTargetName());
-
-						} else {
-							currentStatus = "STATEENTRYEND";
-						}
-						sourceStateData = tableDataMember.getSource();
-						targetStateData = tableDataMember.getTarget();
-						transitionName = targetTransitionData.getTransitonName();
-						result = true;
-
-					}
-				}
-			}
-		}
-		return result;
-		*/
 	}
-	//==================================================================	
-	//==============================================[lookTrgCap_and_sendMSG]
-	//==================================================================	
-	private boolean lookTrgCap_and_sendMSG(String action) throws InterruptedException {
-		String targetCapsuleName ="";
-		String[] actionParts = action.split("\\.|\\(");
-		if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("msg->sapIndex0_"))) { //TODO: only msg->sapIndex0_ handled 
-			//System.out.println("\n====================>["+ Thread.currentThread().getName() +"]"+ "--> senderCapInstanceName:" + senderCapInstanceName);
-			targetCapsuleName = senderCapInstanceName;
-		}else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("0"))) { //TODO: REMOVE LATER -Replication.uml  
-			targetCapsuleName = "Simulator__server1";
-		}
-		else if ((actionParts[3].contains("sendAt")) && (actionParts[4].contains("1"))) { //TODO: REMOVE LATER -Replication.uml  
-			targetCapsuleName = "Simulator__server2";
-		}else if ((actionParts[3].contains("sendAt")) && !(actionParts[4].contains("msg->sapIndex0_"))) {
-			System.err.println("__________ sendAt an unknown capsule __________");
-		}else if ((actionParts[3].contentEquals("send")) && (!actionParts[4].contentEquals(");"))) {
-			//Sending to all capsules
-			targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],true); 
-		}else {
-			targetCapsuleName = lookingForTargetCapsuleName(actionParts[0],false);
-		}
-
-		//}else {
-		//	targetCapsuleName = senderCapInstanceName;
-		//	senderCapInstanceName = "";
-		//}
-		//semCapsuleTracker.acquire();
-		if (targetCapsuleName.contains(",")) {
-			String [] splitTargetCapsuleName = targetCapsuleName.split("\\,");
-			for (int q = 0; q<splitTargetCapsuleName.length; q++) {
-				int send_to_msgQ_count = 0;
-				do {
-					// Sleep current thread, if capsuleTracker for the target capsule has not been created!
-					System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
-					Thread.currentThread().sleep(1);
-					sendToMessageQueue(splitTargetCapsuleName[q], actionParts[0], actionParts[1]);
-					if (send_to_msgQ_count++ == Controller.MAX_TRY_TO_SEND)
-						return false;
-				}while(!sendToMessageQueue(splitTargetCapsuleName[q], actionParts[0], actionParts[1]));
-			}
-		}else {
-			int send_to_msgQ_count = 0;
-			do {
-				// Sleep current thread, if capsuleTracker for the target capsule has not been created!
-				System.out.println("\n["+ Thread.currentThread().getName() +"]"+ "--> [!] Trying to send the message to the target capsule messageQueue!");
-				Thread.currentThread().sleep(1);
-				if (send_to_msgQ_count++ == Controller.MAX_TRY_TO_SEND)
-					return false;
-			}while(!sendToMessageQueue(targetCapsuleName, actionParts[0], actionParts[1]));
-			//System.out.println("\n=====>  [action]:" + action);
-
-			//semCapsuleTracker.release();
-		}
-		return true;
-	}
-	
 	//==================================================================	
 	//==============================================[outputStreamToFile]
 	//==================================================================	

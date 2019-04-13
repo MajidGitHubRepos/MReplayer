@@ -269,4 +269,11 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitNilAtom(ACParser.NilAtomContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitUnknowns(ACParser.UnknownsContext ctx) { return visitChildren(ctx); }
 }
