@@ -177,3 +177,6 @@ NEWLINE
 
 unknowns : . ; 
 
+IGNORE
+ : ('this->hostConfig' .*? ';') -> skip
+ ;

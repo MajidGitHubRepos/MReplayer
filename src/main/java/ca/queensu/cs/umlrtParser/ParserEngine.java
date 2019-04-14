@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.emf.common.util.EList;
@@ -56,6 +57,7 @@ import org.eclipse.uml2.uml.Constraint;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.Event;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Interface;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
@@ -208,6 +210,12 @@ public class ParserEngine implements Runnable {
 		for (int i = 0; i<listMyConnectors.size(); i++) {
 			System.out.println("["+i+"]:" +listMyConnectors.get(i).allDataToString());
 		}
+		
+		System.out.println("=======================[mapCapAttributes]==========================");
+		for (Entry<String, List<String>> entry : mapCapAttributes.entrySet()) {
+		    System.out.println(entry.getKey()+" : "+entry.getValue());
+		}
+		
 	}
 
 	//==================================================================	
@@ -347,7 +355,11 @@ public class ParserEngine implements Runnable {
 
 			//if((element instanceof Class) && (((Class) element).getOwnedBehaviors().size() > 0)) {
 			if((element instanceof Class)) {
-				
+				EList<Generalization> listGens = ((Class) element).getGeneralizations();
+				for (Generalization gen : listGens) {
+					System.out.println(element.getName() +" --------------> gen: "+ gen.getGeneral().getName());
+
+				}
 				//EXTRACT ALL GLOBAL VARIABLES INTO THE mapCapAttributes
 				EList<Property> listOwnedAtt =  ((Class) element).getOwnedAttributes();
 				List<String> listAttributes = new ArrayList<String>();
@@ -356,7 +368,7 @@ public class ParserEngine implements Runnable {
 					if ((attribute.getType() != null) && (attribute.getType().getName() != null) && 
 							( (attribute.getType().getName().contentEquals("Real") || (attribute.getType().getName().contentEquals("Integer")) || attribute.getType().getName().contentEquals("String")))) { //TODO: we support only Real, String and Integer type
 						listAttributes.add(attribute.getName()+":"+attribute.getType().getName());
-						//System.out.println(element.getName() +" --------------> attribute Name: "+ attribute.getName() + ", -----------> getDatatype: " + attribute.getType().getName());
+						System.out.println(element.getName() +" --------------> attribute Name: "+ attribute.getName() + ", -----------> getDatatype: " + attribute.getType().getName());
 						
 					}
 					
@@ -428,7 +440,27 @@ public class ParserEngine implements Runnable {
 			}
 			i++;
 		}
-				
+		for(int ii =0; ii < modelElements.size(); ii++) {
+
+			PackageableElement element = modelElements.get(ii);
+			if((element instanceof Class)) {
+				EList<Generalization> listGens = ((Class) element).getGeneralizations();
+				if (listGens.size()>0) {
+					List<String> listAttributes = new ArrayList<String>();
+					listAttributes = mapCapAttributes.get(element.getName());
+					for (Generalization gen : listGens) {
+						List<String> listAttributesGen = new ArrayList<String>();
+						listAttributesGen = mapCapAttributes.get(gen.getGeneral().getName());
+						//System.out.println(element.getName() +" --------------> gen: "+ gen.getGeneral().getName());
+						listAttributes.addAll(listAttributesGen);
+					}
+
+					mapCapAttributes.put(element.getName(), listAttributes);
+				}
+
+			}
+		}
+
 		for(int t=0; t<listCapsuleConn.size();t++) {
 			List<Port> listPorts = listCapsuleConn.get(t).getListPorts();
 			for (int r=0; r<listPorts.size(); r++) {

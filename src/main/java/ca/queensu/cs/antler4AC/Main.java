@@ -15,24 +15,24 @@ import ca.queensu.cs.antler4AC.EvalVisitor;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		/*String expression = "n= 5; "
-				+ "for (n=5;  n  >  0 ;n--) {\n" + 
+		/*String expression = "int n= 50; "
+				+ "for (n=5;  n  <  10 ;n++) {\n" + 
 				"\n" + 
-				"  # expressions can be surrounded by parenthesis, of course\n" + 
+				" // expressions can be surrounded by parenthesis, of course\n" + 
  
-				"  n--;  log n;\n" + 
+				"  log n;\n" + 
  
 				"\n" + 
 				"}";
 		*/
 		//String expression = "int count = 1;";
-		//String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
+		String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
 		
-		//String expression = "pingCount++; showHeap; showListSendMsg;";
+		//String expression = "pingCount--; showHeap; showListSendMsg;";
 		
-		String expression = "int j=1; j++; showHeap; showListSendMsg;";
+		//String expression = "int j=1; j++; showHeap; showListSendMsg;";
 		Map<String, Value> maplocalHeap = new HashMap<String, Value>();
-		maplocalHeap.put("pingCount", new Value(1.0,"Double"));
+		maplocalHeap.put("pingCount", new Value(1,"Integer"));
 		
 		/*ACLexer lexer = new ACLexer(new ANTLRInputStream(expression));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));

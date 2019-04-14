@@ -18,7 +18,7 @@ public class Value {
     }
 
     public Double asDouble() {
-        return (Double)value;
+    	return Double.valueOf(value.toString()); 
     }
 
     public String asString() {
@@ -26,7 +26,7 @@ public class Value {
     }
     
     public Integer asInteger() {
-        return (Integer) value;
+    	return Integer.valueOf(value.toString()); 
     }
     
     public boolean isInteger() {
@@ -35,6 +35,10 @@ public class Value {
 
     public boolean isDouble() {
         return value instanceof Double;
+    }
+    
+    public boolean isBoolean() {
+        return value instanceof Boolean;
     }
 
     @Override

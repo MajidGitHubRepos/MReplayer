@@ -23,7 +23,7 @@ public class ACParser extends Parser {
 		RBRACKET=32, TRUE=33, FALSE=34, NIL=35, IF=36, ELSE=37, WHILE=38, LOG=39, 
 		FOR=40, DO=41, SEND=42, SENDAT=43, BACKMSG=44, SHOWHEAP=45, SHOWLISTSEND=46, 
 		ID=47, INT=48, FLOAT=49, STRING=50, COMMENT=51, BLOCKCOMMENT=52, SPACE=53, 
-		NEWLINE=54;
+		NEWLINE=54, IGNORE=55;
 	public static final int
 		RULE_parse = 0, RULE_block = 1, RULE_stat = 2, RULE_assignment = 3, RULE_if_stat = 4, 
 		RULE_condition_block = 5, RULE_stat_block = 6, RULE_while_stat = 7, RULE_loop_stat = 8, 
@@ -57,7 +57,7 @@ public class ACParser extends Parser {
 			"OPAR", "CPAR", "OBRACE", "CBRACE", "LBRACKET", "RBRACKET", "TRUE", "FALSE", 
 			"NIL", "IF", "ELSE", "WHILE", "LOG", "FOR", "DO", "SEND", "SENDAT", "BACKMSG", 
 			"SHOWHEAP", "SHOWLISTSEND", "ID", "INT", "FLOAT", "STRING", "COMMENT", 
-			"BLOCKCOMMENT", "SPACE", "NEWLINE"
+			"BLOCKCOMMENT", "SPACE", "NEWLINE", "IGNORE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -2204,7 +2204,7 @@ public class ACParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\38\u00f8\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\39\u00f8\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\3\2\3\2\3"+
 		"\2\3\3\7\3\'\n\3\f\3\16\3*\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5"+

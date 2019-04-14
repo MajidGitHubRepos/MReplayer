@@ -48,17 +48,35 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     @Override
     public Value visitNormalAssignment(ACParser.NormalAssignmentContext ctx) {
         String id = ctx.ID().getText();
-        Value value = this.visit(ctx.expr());
+        Value value = HeapMem.get(id);
+        System.out.println("in visitNormalAssignment: "+value);
+        if(value == null) {
+            throw new RuntimeException("no such variable: " + id);
+        }
+        value = this.visit(ctx.expr());
         return HeapMem.put(id, value);
     }
     
     @Override
     public Value visitBasicAssignment(ACParser.BasicAssignmentContext ctx) {
+    	
         String id = ctx.ID().getText();
         if (ctx.expr() == null)
         	return HeapMem.put(id, new Value (0, ""));
-        else 
-        	return HeapMem.put(id, new Value (this.visit(ctx.expr()),""));
+        else {
+        	switch (ctx.op.getType()) {
+        		case ACParser.INTVAR:
+        			return HeapMem.put(id, new Value (this.visit(ctx.expr()).asDouble().intValue(),"Integer"));
+        		case ACParser.DOUBLEVAR:
+        			return HeapMem.put(id, new Value (this.visit(ctx.expr()),"Double"));
+        		case ACParser.STRINGVAR:
+        			return HeapMem.put(id, new Value (this.visit(ctx.expr()),"String"));
+        		default:
+        			return HeapMem.put(id, new Value (this.visit(ctx.expr()),""));
+        	}
+        }
+        
+        
     }
     
     @Override
@@ -68,22 +86,38 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
         if(value == null) {
             throw new RuntimeException("no such variable: " + id);
         }
-    	//Value value = this.visit(ctx .expr());
-        Value newValue = new Value(value.asDouble()-1, "Double");
-        HeapMem.put(id, newValue);
-        return new Value(value.asDouble()-1, "Double");
+        switch (value.type) {
+	        case "Double":
+	        	return HeapMem.put(id, new Value(value.asDouble()-1, "Double"));
+	        case "Integer":
+	        	return HeapMem.put(id, new Value(value.asInteger()-1, "Integer"));
+	        case "Real":
+	        	return HeapMem.put(id, new Value(value.asDouble()-1, "Double"));
+	        default:
+	        	throw new RuntimeException("no such type: " + id);
+        }
     }
     
     @Override
     public Value visitPlusplusAssignment(ACParser.PlusplusAssignmentContext ctx) {
     	String id = ctx.ID().getText();
         Value value = HeapMem.get(id);
+        
         if(value == null) {
             throw new RuntimeException("no such variable: " + id);
         }
-        Value newValue = new Value(value.asDouble()+1, "Double");
-        HeapMem.put(id, newValue);
-        return new Value(value.asDouble()+1, "Double");
+        
+        switch (value.type) {
+	        case "Double":
+	        	return HeapMem.put(id, new Value(value.asDouble()+1, "Double"));
+	        case "Integer":
+	        	return HeapMem.put(id, new Value(value.asInteger()+1, "Integer"));
+	        case "Real":
+	        	return HeapMem.put(id, new Value(value.asDouble()+1, "Double"));
+	        default:
+	        	throw new RuntimeException("no such type: " + id);
+        
+        }
     }
     
     @Override
@@ -327,8 +361,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
     public Value visitForLoop(ACParser.ForLoopContext ctx) {
     	
     	String id = ctx.ID().getText();
-    	Value valueStart = this.visit(ctx.expr(0));
-    	HeapMem.put(id, valueStart);
+    	HeapMem.put(id, new Value (this.visit(ctx.expr(0)).asDouble().intValue(),"Integer"));
         
     	
         Value valueCondition = this.visit(ctx.expr(1));
@@ -336,15 +369,9 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
         while (valueCondition.asBoolean()) {
         	// evaluate the code block
-            this.visit(ctx.stat_block());
-           
-            //valueStart = this.visit(ctx.assignment());
-            valueEnd = this.visit(ctx.expr(2));
-            valueStart = valueEnd;
-            Value newValue = new Value(valueStart.asDouble(), "Double");
-            HeapMem.put(id, newValue);
+            this.visit(ctx.stat_block());            
+            HeapMem.put(id, new Value (this.visit(ctx.expr(2)).asDouble().intValue(),"Integer"));
             valueCondition = this.visit(ctx.expr(1));
-            newValue = null;
         }
         return Value.VOID;
     }

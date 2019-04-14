@@ -208,10 +208,13 @@ public class TrackerMaker implements Runnable{
 					BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
 					//BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 					//CapFullname
+					//System.out.println("[in makeCapsuleTrakers] capsuleFullname: " + capsuleFullname);
 					int idx = capsuleFullname.indexOf("__");
+					
 					String capsuleName = ""; 
 					for (TransitionData td : ParserEngine.listTransitionData) {
-						if (capsuleFullname.contains(td.getCapsuleInstanceName())) {
+						//System.out.println("[in makeCapsuleTrakers] td.getCapsuleInstanceName(): " + td.getCapsuleInstanceName());
+						if (td.getCapsuleInstanceName().contains(capsuleFullname)) {
 							capsuleName = td.capsuleName;
 							break;
 						}
