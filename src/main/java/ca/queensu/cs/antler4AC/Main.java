@@ -26,11 +26,14 @@ public class Main {
 				"}";
 		*/
 		//String expression = "int count = 1;";
-		String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
+		//String expression = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else if(count == 5) {port.msg(count).sendAt(count);}else { log \" ODD\"; }  } showHeap; showListSendMsg;";
 		
 		//String expression = "pingCount--; showHeap; showListSendMsg;";
 		
-		//String expression = "int j=1; j++; showHeap; showListSendMsg;";
+		String expression = "int j=1;\n" + 
+				"    for (int i=0;i<10;i++)\n" + 
+				"	j=j+1;  showHeap; showListSendMsg;";
+		
 		Map<String, Value> maplocalHeap = new HashMap<String, Value>();
 		maplocalHeap.put("pingCount", new Value(1,"Integer"));
 		

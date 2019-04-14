@@ -357,7 +357,7 @@ public class ParserEngine implements Runnable {
 			if((element instanceof Class)) {
 				EList<Generalization> listGens = ((Class) element).getGeneralizations();
 				for (Generalization gen : listGens) {
-					System.out.println(element.getName() +" --------------> gen: "+ gen.getGeneral().getName());
+					//System.out.println(element.getName() +" --------------> gen: "+ gen.getGeneral().getName());
 
 				}
 				//EXTRACT ALL GLOBAL VARIABLES INTO THE mapCapAttributes
@@ -368,7 +368,7 @@ public class ParserEngine implements Runnable {
 					if ((attribute.getType() != null) && (attribute.getType().getName() != null) && 
 							( (attribute.getType().getName().contentEquals("Real") || (attribute.getType().getName().contentEquals("Integer")) || attribute.getType().getName().contentEquals("String")))) { //TODO: we support only Real, String and Integer type
 						listAttributes.add(attribute.getName()+":"+attribute.getType().getName());
-						System.out.println(element.getName() +" --------------> attribute Name: "+ attribute.getName() + ", -----------> getDatatype: " + attribute.getType().getName());
+						//System.out.println(element.getName() +" --------------> attribute Name: "+ attribute.getName() + ", -----------> getDatatype: " + attribute.getType().getName());
 						
 					}
 					

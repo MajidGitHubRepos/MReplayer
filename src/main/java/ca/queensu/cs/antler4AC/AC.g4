@@ -47,7 +47,7 @@ while_stat
 loop_stat
    : WHILE '(' expr ')' stat_block                     			#whileLoop
    | DO stat_block WHILE '(' expr ')' ';'			   			#doWhileLoop
-   | FOR '(' ID ASSIGN expr ';' expr ';' expr ')' stat_block    #forLoop
+   | FOR '(' op=(INTVAR | DOUBLEVAR)? ID ASSIGN expr ';' expr ';' expr ')' stat_block    #forLoop
    ;
  
 sendat_stat
@@ -71,6 +71,8 @@ log
 
 expr
  : expr POW<assoc=right> expr           						#powExpr
+ | expr MINUSMINUS					    						#minusminusExpr
+ | expr PLUSPLUS					    						#plusplusExpr
  | MINUS expr                          							#unaryMinusExpr
  | NOT expr                             						#notExpr
  | expr op=(MULT | DIV | MOD | MINUSMINUS | PLUSPLUS) expr      #multiplicationExpr
@@ -79,8 +81,6 @@ expr
  | expr op=(EQ | NEQ) expr              						#equalityExpr
  | expr AND expr                        						#andExpr
  | expr OR expr                         						#orExpr
- | expr MINUSMINUS					    						#minusminusExpr
- | expr PLUSPLUS					    						#plusplusExpr
  | atom                                 						#atomExpr
  ;
 
