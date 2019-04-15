@@ -51,7 +51,6 @@ public class CapsuleTracker implements Runnable{
 
 	private Semaphore semCapsuleTracker;
 	//private String capsuleInstance;
-	private Event currentEvent;
 	private BlockingQueue <Event> eventQueueTmp;
 	private String currentStatus; //{StartUp, INIT, TRANSITIONEND}
 	//public String currentStateName;
@@ -84,6 +83,8 @@ public class CapsuleTracker implements Runnable{
 	private Map<String,List<String>> mapPathActionCode;
 	private Map<String, Value> maplocalHeap;
     private List<SendMessage> listPortMsg;
+    private List<String> listAllPathTaken;
+    private String lastTookPath;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
@@ -91,6 +92,7 @@ public class CapsuleTracker implements Runnable{
 		this.listPortMsg = new ArrayList<SendMessage>();
 		this.mapPathTrigger =  new HashMap<String,List<String>>();
 		this.mapPathActionCode =  new HashMap<String,List<String>>();
+		this.listAllPathTaken =  new ArrayList<String>();
 		this.listPaths =  new ArrayList<String>();
 		this.currentStateToChiceState ="";
 		this.currentTransitionToFromChiceState = "";
@@ -117,78 +119,97 @@ public class CapsuleTracker implements Runnable{
 		this.prvTookPath = "";
 		this.initDone = false;
 		this.startUpDone = false;
+		this.lastTookPath = "";
 	}
 
 
 	public void run() {
 		try {
 			semCapsuleTracker.acquire();
-		//Go to the initial state and wait for the right event
-		System.out.println("============> Running : "+ dataContainer.getCapsuleName() );
-		
-		List<String> listAttributes = ParserEngine.mapCapAttributes.get(dataContainer.getCapsuleName());
-		
-		if (listAttributes != null) {
-			for (String att : listAttributes) {
-				//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> att: "+ att);
-				String [] attSplit = att.split(":");
-				if (attSplit[1].contentEquals("String"))
-					maplocalHeap.put(attSplit[0], new Value("", "String"));
-				else if (attSplit[1].contentEquals("Integer"))
-					maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Double"));
-				else if (attSplit[1].contentEquals("Real"))
-					maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Double"));
-				else {
-					System.err.println("__________ The Tyep of Attribute Not supported! __________");
-					System.exit(1);
+			//Go to the initial state and wait for the right event
+			System.out.println("============> Running : "+ dataContainer.getCapsuleName() );
+
+			List<String> listAttributes = ParserEngine.mapCapAttributes.get(dataContainer.getCapsuleName());
+
+			if (listAttributes != null) {
+				for (String att : listAttributes) {
+					//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> att: "+ att);
+					String [] attSplit = att.split(":");
+					if (attSplit[1].contentEquals("String"))
+						maplocalHeap.put(attSplit[0], new Value("", "String"));
+					else if (attSplit[1].contentEquals("Integer"))
+						maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Integer"));
+					else if (attSplit[1].contentEquals("Real"))
+						maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Double"));
+					else {
+						System.err.println("__________ The Tyep of Attribute Not supported! __________");
+						System.exit(1);
+					}
 				}
 			}
-		}
-		semCapsuleTracker.release();
+			semCapsuleTracker.release();
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		while(true) {
 			try {
 				semCapsuleTracker.acquire();
 				//System.out.println(dataContainer.getCapsuleInstance() + "============> eventQueueSize : "+ dataContainer.getEventQueue().size());
 
-				if (!eventQueueTmp.isEmpty()) {
-					int eventQueueTmpSize = eventQueueTmp.size();
-					for (int j = 0; j < eventQueueTmpSize;  j++) {
-						Event currentEventTmp = eventQueueTmp.take();
-						//if(!isPassedEvent(currentEventTmp)) {
+				if (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) {
+					Event currentEventTmp = new Event();
+					Event currentEvent = new Event();
+					if (!eventQueueTmp.isEmpty()) {
+						int eventQueueTmpSize = eventQueueTmp.size();
+						for (int j = 0; j < eventQueueTmpSize;  j++) {
+							currentEventTmp = eventQueueTmp.take();
+							if(!isPassedEvent(currentEventTmp)) {
 							//checking its validity based on the state machine
 							if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
 								//vTimeHandler(currentEventTmp);
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
-									if ((listPaths.size() == 1) && updateCurrentState())
+									if ((listPaths.size() == 1) && updateCurrentState()) {
+										listAllPathTaken.add(listPaths.get(0));
 										listPaths.clear();
+										break;
+									}
 									//else
-										//throw new IllegalAccessException("updateCurrentState Faild!");
+									//throw new IllegalAccessException("updateCurrentState Faild!");
 								}
 								break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
 							}else {eventQueueTmp.put(currentEventTmp);}
-						//}
+						}
+						}
 					}
-				}
-				if(!dataContainer.getEventQueue().isEmpty()) {
-					currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
-					//if(!isPassedEvent(currentEvent)) {
+					if(!dataContainer.getEventQueue().isEmpty()) {
+						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
+						if(!isPassedEvent(currentEvent)) {
 
 						if (isConsumable(currentEvent) || (listPaths.size()>1)) {
 							if (currentStatus.contentEquals("TRANISTIONEND")) {
-								if ((listPaths.size() == 1) && updateCurrentState())
+								if ((listPaths.size() == 1) && updateCurrentState()) {
+									listAllPathTaken.add(listPaths.get(0));
 									listPaths.clear();
+								}
 								//else
-									//throw new IllegalAccessException("updateCurrentState Faild!");
+								//throw new IllegalAccessException("updateCurrentState Faild!");
 							}
 							//vTimeHandler(currentEvent);
 						}else {eventQueueTmp.put(currentEvent);}
+
 					}
-				//}
+					if (currentEventTmp.getSourceName() != null) {
+						showInfo(currentEventTmp);
+						currentEventTmp = null;
+					}if (currentEvent.getSourceName() !=null) {
+						showInfo(currentEvent);
+						currentEvent = null;}
+
+				}
+
+				}
 				semCapsuleTracker.release();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
@@ -202,11 +223,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	public boolean isPassedEvent(Event event) {
 		String id = PES.mapQnameId.get(event.getSourceName());
-		if(startUpDone && (event.getSourceKind().contentEquals("10") && event.getType().contentEquals("36"))) {
-			return true;
-		}else if(startUpDone && initDone && ParserEngine.mapTransitionData.get(id).getIsInit()) {
-				return true;
-		}else if(!prvTookPath.isEmpty() && prvTookPath.contains(id)) {
+		if(!prvTookPath.isEmpty() && prvTookPath.contains(",") && prvTookPath.contains(id)) {
 			return true;
 		}
 		return false;
@@ -291,10 +308,57 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[showInfo]
 	//==================================================================
-	public void showInfo() {
+	public void showInfo(Event event) {
+		System.out.println("=====================[CapsuleInstance]: " + dataContainer.getCapsuleInstance() +", [eventQueueTmp.size()]: "+eventQueueTmp.size() + ", [dataContainer.eventQueue.size():]: "+ dataContainer.eventQueue.size());
+		if (event !=null)
+			System.out.println("=====================[event]: " + event.allDataToString());
+		else
+			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<[No Event Selected]>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		System.out.println("=====================[listAllPathTaken]");
+		int i = 0;
+		
+		for (String path : listAllPathTaken) {
+			String pathCurr = "";
+			if(path.contains(",")) {
+				String [] pathsSplit = path.split("\\,");
+				pathCurr = "";
+				for (String str : pathsSplit) {
+					if (pathCurr.isEmpty()) {
+						pathCurr = PES.mapIdQname.get(str);
+						//pathCurr = str;
+					}else {	
+						pathCurr = pathCurr+ "-->" + PES.mapIdQname.get(str);
+						//pathCurr = pathCurr+ "-->" + str;
+					}
+				}
+			}else {
+				pathCurr = PES.mapIdQname.get(path);
+				//pathCurr = listRegionalPaths.get(i);
+			}
+			System.out.println("["+i+++"]:" +pathCurr);
+		}
+
 		System.out.println("=====================[listPaths]");
+		i = 0;
 		for (String path : listPaths) {
-			System.out.println("Path: " + path);
+			String pathCurr = "";
+			if(path.contains(",")) {
+				String [] pathsSplit = path.split("\\,");
+				pathCurr = "";
+				for (String str : pathsSplit) {
+					if (pathCurr.isEmpty()) {
+						pathCurr = PES.mapIdQname.get(str);
+						//pathCurr = str;
+					}else {	
+						pathCurr = pathCurr+ "-->" + PES.mapIdQname.get(str);
+						//pathCurr = pathCurr+ "-->" + str;
+					}
+				}
+			}else {
+				pathCurr = PES.mapIdQname.get(path);
+				//pathCurr = listRegionalPaths.get(i);
+			}
+			System.out.println("["+i+++"]:" +pathCurr);
 		}
 		System.out.println("=====================[currentState]");
 		for (Entry<String, String> entry : dataContainer.mapRegionCurrentState.entrySet()) {
@@ -337,7 +401,7 @@ public class CapsuleTracker implements Runnable{
 			
 			return true;
 		}else {
-			showInfo();
+			showInfo(null);
 			//System.err.println("__________ There are too much path in the listPaths __________ size: " + listPaths.size());
 			//System.exit(1);
 		}
@@ -717,7 +781,7 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[interpretActionCode]
 	//==================================================================	
 	public void interpretActionCode(String actionCode) throws InterruptedException {
-        System.out.println("[actionCode]: "+actionCode);
+        //System.out.println("[actionCode]: "+actionCode);
 
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
@@ -851,7 +915,7 @@ public class CapsuleTracker implements Runnable{
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
 
 		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14")) {
-			showInfo();
+			//showInfo();
 			//System.out.println(event.getSourceName() +", "+ dataContainer.getCapsuleInstance() +", id: "+ id+ ", listPaths.size(): "+ listPaths.size() +" => [Status : transitionChecking]currentStatus:> "+ currentStatus +" ,StateId: "+currentSateId);
 			pathFinder(event.getSourceName());
 			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
