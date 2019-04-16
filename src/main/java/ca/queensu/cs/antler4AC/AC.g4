@@ -21,10 +21,11 @@ stat
  ;
 
 assignment
- : ID ASSIGN expr SCOL     										 #normalAssignment
+ : ID ASSIGN expr SCOL     											 #normalAssignment
  | op=(INTVAR | DOUBLEVAR | STRINGVAR) ID ASSIGN? expr? SCOL	 #basicAssignment
- | ID MINUSMINUS SCOL       									 #minusminusAssignment
- | ID PLUSPLUS SCOL	    										 #plusplusAssignment
+ | ID MINUSMINUS SCOL       										 #minusminusAssignment
+ | ID PLUSPLUS SCOL													 #plusplusAssignment
+ | STRINGVAR? ID ASSIGN GETNAME SCOL 								 #getNameAssignment   							 			 
  ;
 
 if_stat
@@ -56,7 +57,7 @@ sendat_stat
    ;
 
 send_stat
-   : ID '.' ID '(' expr ')' '.' SEND '()' SCOL
+   : ID '.' ID '(' (expr | GETNAME) ')' '.' SEND '()' SCOL
    | ID '.' ID '()' '.' SEND '()' SCOL
    ;
 
@@ -81,6 +82,8 @@ expr
  | expr op=(EQ | NEQ) expr              						#equalityExpr
  | expr AND expr                        						#andExpr
  | expr OR expr                         						#orExpr
+ | RANDFUNC														#randFuncExpr
+ | GETNAME														#getNameExpr
  | atom                                 						#atomExpr
  ;
 
@@ -93,9 +96,7 @@ atom
  | NIL            #nilAtom
  ;
 
-INTVAR : 'int';
-DOUBLEVAR : 'double';
-STRINGVAR : 'String';
+
 
 OR : '||';
 AND : '&&';
@@ -139,9 +140,21 @@ DO  : 'do' ;
 SEND : 'send';
 SENDAT : 'sendAt';
 BACKMSG: 'msg->sapIndex0_';
+GETNAME:  '(' SPACE? STRINGVAR SPACE? ')' SPACE? 'this->getName()'
+	;
+RANDFUNC: 'rand()';
 
 SHOWHEAP : 'showHeap';
 SHOWLISTSEND : 'showListSendMsg';
+
+INTVAR : 'int';
+DOUBLEVAR : 'double';
+CHARVAR : 'char';
+STRINGVAR 
+ : 'String'
+ | CHARVAR SPACE? MULT
+ ;
+
 
 ID
  : [a-zA-Z_] [a-zA-Z_0-9]*
@@ -168,7 +181,7 @@ BLOCKCOMMENT
  ;
 
 SPACE
- : [ \t\r\n] -> skip
+ :  (' ' | '\t' | '\n' | 'r')+ -> skip
  ;
 
 NEWLINE
@@ -176,6 +189,10 @@ NEWLINE
  ;
 
 unknowns : . ; 
+
+Space
+  :  (' ' | '\t' | '\n' | 'r')+ {skip();}
+  ; 
 
 IGNORE
  : ('this->hostConfig' .*? ';') -> skip

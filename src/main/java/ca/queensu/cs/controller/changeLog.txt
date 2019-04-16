@@ -1,3 +1,4 @@
+[160419][Info]:  interpretActionCode when the value is identical to "__CapInstanceName__"
 [120419][Debug]: sending the maplocalHeap to the EvalVisitor.java in order to keep track of all defined variables
 [110419][Debug]: removing isPassedEvent() form capsuleTracker class, it was faulty in self transition, the list should be clean when a stabel state is met
 [060419][Debug]: removing refineListPahts() and handel listPahts.size > 1 via the next event

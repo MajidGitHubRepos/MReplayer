@@ -85,6 +85,18 @@ public interface ACListener extends ParseTreeListener {
 	 */
 	void exitPlusplusAssignment(ACParser.PlusplusAssignmentContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code getNameAssignment}
+	 * labeled alternative in {@link ACParser#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterGetNameAssignment(ACParser.GetNameAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code getNameAssignment}
+	 * labeled alternative in {@link ACParser#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitGetNameAssignment(ACParser.GetNameAssignmentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ACParser#if_stat}.
 	 * @param ctx the parse tree
 	 */
@@ -215,54 +227,6 @@ public interface ACListener extends ParseTreeListener {
 	 */
 	void exitLog(ACParser.LogContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code notExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterNotExpr(ACParser.NotExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code notExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitNotExpr(ACParser.NotExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code unaryMinusExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterUnaryMinusExpr(ACParser.UnaryMinusExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code unaryMinusExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitUnaryMinusExpr(ACParser.UnaryMinusExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code multiplicationExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiplicationExpr(ACParser.MultiplicationExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code multiplicationExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiplicationExpr(ACParser.MultiplicationExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code minusminusExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterMinusminusExpr(ACParser.MinusminusExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code minusminusExpr}
-	 * labeled alternative in {@link ACParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitMinusminusExpr(ACParser.MinusminusExprContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code atomExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree
@@ -311,6 +275,78 @@ public interface ACListener extends ParseTreeListener {
 	 */
 	void exitAdditiveExpr(ACParser.AdditiveExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code relationalExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterRelationalExpr(ACParser.RelationalExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code relationalExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitRelationalExpr(ACParser.RelationalExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code notExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotExpr(ACParser.NotExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code notExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotExpr(ACParser.NotExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code unaryMinusExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnaryMinusExpr(ACParser.UnaryMinusExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code unaryMinusExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnaryMinusExpr(ACParser.UnaryMinusExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code multiplicationExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiplicationExpr(ACParser.MultiplicationExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code multiplicationExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiplicationExpr(ACParser.MultiplicationExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code minusminusExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMinusminusExpr(ACParser.MinusminusExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code minusminusExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMinusminusExpr(ACParser.MinusminusExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code randFuncExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterRandFuncExpr(ACParser.RandFuncExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code randFuncExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitRandFuncExpr(ACParser.RandFuncExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code powExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree
@@ -323,17 +359,17 @@ public interface ACListener extends ParseTreeListener {
 	 */
 	void exitPowExpr(ACParser.PowExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code relationalExpr}
+	 * Enter a parse tree produced by the {@code getNameExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterRelationalExpr(ACParser.RelationalExprContext ctx);
+	void enterGetNameExpr(ACParser.GetNameExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code relationalExpr}
+	 * Exit a parse tree produced by the {@code getNameExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitRelationalExpr(ACParser.RelationalExprContext ctx);
+	void exitGetNameExpr(ACParser.GetNameExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code equalityExpr}
 	 * labeled alternative in {@link ACParser#expr}.

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -66,8 +67,10 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		//System.out.println("in visitNormalAssignment: "+value);
 		if(value == null) {
 			throw new RuntimeException("no such variable: " + id);
-		}
-		value = this.visit(ctx.expr());
+		}else if (value.toString().contains("this->getName()"))
+			return HeapMem.put(id, new Value ("__CapInstanceName__", "String"));
+		else 
+			value = this.visit(ctx.expr());
 		return HeapMem.put(id, value);
 	}
 
@@ -75,6 +78,8 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	public Value visitBasicAssignment(ACParser.BasicAssignmentContext ctx) {
 
 		String id = ctx.ID().getText();
+		if (ctx.expr().getText().contains("this->getName()"))
+			return HeapMem.put(id, new Value ("__CapInstanceName__", "String"));
 		if (ctx.expr() == null)
 			return HeapMem.put(id, new Value (0, ""));
 		else {
@@ -144,6 +149,12 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	public Value visitMinusminusExpr(ACParser.MinusminusExprContext ctx) {
 		Value value = this.visit(ctx .expr());
 		return new Value(value.asDouble()-1, "Double");
+	}
+	
+	@Override
+	public Value visitGetNameAssignment(ACParser.GetNameAssignmentContext ctx) {
+		String id = ctx.ID().getText();
+		return HeapMem.put(id, new Value("__CapInstanceName__", "String"));
 	}
 
 	@Override
@@ -386,6 +397,13 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		Value right = this.visit(ctx.expr(1));
 		return new Value(left.asBoolean() || right.asBoolean(), "Boolean");
 	}
+	
+	@Override
+	public Value visitRandFuncExpr(ACParser.RandFuncExprContext ctx){
+		//Generate random number within [1,100]
+		Random random = new Random();
+		return new Value(random.nextInt((100 - 1) + 1) + 1, "Integer");
+	}
 
 	// log override
 	@Override
@@ -491,9 +509,15 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		String msg = ctx.ID(1).getText();
 		String dataName = "";
 		Value data;
+		
+		
 		if (ctx.expr() != null) {
 			dataName = ctx.expr().getText();
 			data = this.visit(ctx.expr());
+		
+		}else if (ctx.GETNAME() != null){
+			dataName = "__getName__";
+			data = new Value("__CapInstanceName__","String");
 		}else {
 			dataName = "";
 			data = null;

@@ -43,7 +43,7 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_gU8CMAgwEea_md0mpENoqg" name="StateMachine1">
         <region xmi:type="uml:Region" xmi:id="_jSIzIAgwEea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTR" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrEnv" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_B6hioAg6Eea_md0mpENoqg" name="ENVInit">
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;ENV: Intialization\n&quot;;
@@ -87,7 +87,7 @@
 </body>
             </effect>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_32w4UAgxEea_md0mpENoqg" name="ConfigNOK" source="_dWznsAgxEea_md0mpENoqg" target="_NvBagAgxEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_32w4UAgxEea_md0mpENoqg" name="NoConfigFound" source="_dWznsAgxEea_md0mpENoqg" target="_NvBagAgxEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_r3tJQAjJEea_md0mpENoqg" name="LogFailure">
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;ENV: The configuration is not OK, the transition configCheck-> ConfigFailure was taken\n&quot;;
@@ -147,7 +147,7 @@
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_IX_MkApvEeaGqPUk-4V4qQ" name="server2Failure" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rXZWwApkEeaGqPUk-4V4qQ"/>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_npsCMAgwEea_md0mpENoqg" name="Init"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_npsCMAgwEea_md0mpENoqg" name="InitState"/>
           <subvertex xmi:type="uml:State" xmi:id="_sdehUAgwEea_md0mpENoqg" name="ReadConfig">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_EE4RAAigEea_md0mpENoqg" name="ReadConfig">
               <language>C++</language>
@@ -172,7 +172,7 @@
 </body>
             </entry>
           </subvertex>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_dWznsAgxEea_md0mpENoqg" name="Config" kind="choice"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_dWznsAgxEea_md0mpENoqg" name="CheckConfig" kind="choice"/>
         </region>
       </ownedBehavior>
     </packagedElement>
@@ -208,8 +208,8 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xB_iwAlLEea_md0mpENoqg" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_pQ6HcAnMEeaGqPUk-4V4qQ" name="ServerComm" visibility="public" type="_4--ccAnEEeaGqPUk-4V4qQ" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_etWXMAnOEeaGqPUk-4V4qQ" value="1"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_euWcwAnOEeaGqPUk-4V4qQ" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_etWXMAnOEeaGqPUk-4V4qQ" value="5"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_euWcwAnOEeaGqPUk-4V4qQ" value="5"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_HIvrsApCEeaGqPUk-4V4qQ" name="Master" visibility="public" type="_f2ud0ApBEeaGqPUk-4V4qQ" isOrdered="true" aggregation="composite" isBehavior="true"/>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_ZDrx0ApDEeaGqPUk-4V4qQ" name="KeepAliveTimer" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
@@ -259,14 +259,16 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_xgwrEApLEeaGqPUk-4V4qQ" name="CancellTimer">
               <language>C++</language>
               <body>    if (KeepAliveTimerId.isValid())
-    KeepAliveTimer.cancelTimer(KeepAliveTimerId);
+    	KeepAliveTimer.cancelTimer(KeepAliveTimerId);
+    
     if (AnnouncementTimerId.isValid())
-    MasterAnnounceTimer.cancelTimer(AnnouncementTimerId);
+    	MasterAnnounceTimer.cancelTimer(AnnouncementTimerId);
+    
     if (TimerId.isValid())
-    Timer.cancelTimer(TimerId);
-    int r=random()%30+5;
-    Timer.informEvery(UMLRTTimespec(r,0),4);
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Failure,  will recover after &quot; &lt;&lt; r &lt;&lt; &quot; seconds\n&quot;;
+    	Timer.cancelTimer(TimerId);
+    int failureTimer = 4; 
+    Timer.informEvery(UMLRTTimespec(failureTimer,0),4);
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: In Failure state, the server  will recover after &quot; &lt;&lt; failureTimer &lt;&lt; &quot; seconds\n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_qt8XoApEEeaGqPUk-4V4qQ" name="Failure" port="_855RMAs1EeaGqPUk-4V4qQ">
@@ -300,19 +302,24 @@
             </ownedRule>
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_nB58AApKEeaGqPUk-4V4qQ" name="InitTimer">
               <language>C++</language>
-              <body>logfile&lt;&lt;&quot;capsuleName&quot;&lt;&lt;&quot;,messageType,&quot;&lt;&lt;&quot;messageID&quot;&lt;&lt;&quot;,&quot;&lt;&lt;&quot;second&quot;&lt;&lt;&quot;,&quot;&lt;&lt;&quot;nano&quot;&lt;&lt;&quot;\n&quot;;    
-//UMLRTTimespec ts;
-    //ts.getclock(ts);
-    //this->setTimePointSecond();
+              <body>    logfile&lt;&lt;&quot;capsuleName&quot;&lt;&lt;&quot;,messageType,&quot;&lt;&lt;&quot;messageID&quot;&lt;&lt;&quot;,&quot;&lt;&lt;&quot;second&quot;&lt;&lt;&quot;,&quot;&lt;&lt;&quot;nano&quot;&lt;&lt;&quot;\n&quot;;    
+
     logfile.open(this->getName());
-    //if (logfile.is_open())
-    //	logfile&lt;&lt;ts.tv_sec&lt;&lt;&quot;:&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
-    //logfile.close();
-    int r=random()%30+5;
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; r &lt;&lt; &quot;second\n&quot;;
-    //TimerId=Timer.informEvery(UMLRTTimespec(r,0),4);
-   TimerId=Timer.informEvery(UMLRTTimespec(3600000,0),4);
+    
+    int failureRate = 4;
+    KeepAliveTimeOut = 3;
+    AnnouncementTimeOut = 5;
+    
+    std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; failureRate &lt;&lt; &quot; second\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: KeepAliveTimer will received after &quot;&lt;&lt; KeepAliveTimeOut &lt;&lt; &quot; second\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: AnnouncementTimeOut will received after &quot;&lt;&lt; AnnouncementTimeOut &lt;&lt; &quot; second\n&quot;;
+    
+
+    TimerId=Timer.informEvery(UMLRTTimespec(failureRate,0),4);
+
     KeepAliveTimerId=KeepAliveTimer.informEvery(UMLRTTimespec(KeepAliveTimeOut,0),4);
+
     AnnouncementTimerId=MasterAnnounceTimer.informEvery(UMLRTTimespec(AnnouncementTimeOut,0),4);
 </body>
             </effect>
@@ -324,22 +331,21 @@
           <transition xmi:type="uml:Transition" xmi:id="_aRWloAnREeaGqPUk-4V4qQ" name="ServiceRequest" source="_UrcckAlOEea_md0mpENoqg" target="_UrcckAlOEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_jf2tMAosEeaGqPUk-4V4qQ" name="ReplyRequest">
               <language>C++</language>
-              <body>   //messageID=messageID+1;
+              <body>
     ts.getclock(ts);
     if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,ClientRequest,&quot;&lt;&lt;messageID&lt;&lt;&quot;,,&quot;&lt;&lt;&quot;\n&quot;;
+		logfile&lt;&lt;this->getName()&lt;&lt;&quot;,ClientRequest,&quot;&lt;&lt;messageID&lt;&lt;&quot;,,&quot;&lt;&lt;&quot;\n&quot;;
+
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Message from client replied at index &quot;&lt;&lt;msg->sapIndex0_&lt;&lt;&quot;\n&quot;;
-    int tempid=msg->sapIndex0_;
+
+    int tempid = 0;
+
     ServerComm.Reply(0).sendAt(tempid);
     int j=1;
-    for (int i=0;i&lt;=1000000;i++)
-	j=j+1;
-    j=j+1;
-    std::cout&lt;&lt;j&lt;&lt;&quot;\n&quot;;
-    //ts.getclock(ts);
-    //if (logfile.is_open())
-    //logfile&lt;&lt;&quot;CleintReply,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
-    //logfile.flush();
+    for (int i=0;i&lt;1000000;i++)
+	    j=j+1;
+    
+    std::cout&lt;&lt;&quot;Do something: like counting j from 1 to &quot;&lt;&lt;j&lt;&lt;&quot;\n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_2NJiIAnREeaGqPUk-4V4qQ" event="_G3K7UAnFEeaGqPUk-4V4qQ" port="_pQ6HcAnMEeaGqPUk-4V4qQ"/>
@@ -347,18 +353,21 @@
           <transition xmi:type="uml:Transition" xmi:id="_2jFDsApyEeaGqPUk-4V4qQ" name="MasterAnnounce" source="_UrcckAlOEea_md0mpENoqg" target="_UrcckAlOEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_1qc9IApzEeaGqPUk-4V4qQ" name="MasterAnnounce">
               <language>C++</language>
-              <body>    //messageID=messageID+1;
+              <body>
     ts.getclock(ts);
     if (logfile.is_open())
-	logfile&lt;&lt;&quot;keepAliveStart,&quot;&lt;&lt;messageID&lt;&lt;&quot;,,&quot;&lt;&lt;&quot;\n&quot;;
+ 		logfile&lt;&lt;&quot;keepAliveStart,&quot;&lt;&lt;messageID&lt;&lt;&quot;,,&quot;&lt;&lt;&quot;\n&quot;;
+
     if (AnnouncementTimerId.isValid())
-    MasterAnnounceTimer.cancelTimer(AnnouncementTimerId);
+    	MasterAnnounceTimer.cancelTimer(AnnouncementTimerId);
+
     AnnouncementTimerId=MasterAnnounceTimer.informEvery(UMLRTTimespec(AnnouncementTimeOut,0),4);
+    
     int j=1;
-    for (int i=0;i&lt;=1000000;i++)
+    for (int i=0;i&lt;1000000;i++)
 	j=j+1;
-    j=j+1;
-    std::cout&lt;&lt;j&lt;&lt;&quot;\n&quot;;
+    
+    std::cout&lt;&lt;&quot;Do something: like counting j from 1 to &quot;&lt;&lt;j&lt;&lt;&quot;\n&quot;;
 
 </body>
             </effect>
@@ -370,10 +379,13 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_9ovXcAp1EeaGqPUk-4V4qQ" name="SendKeepAlive">
               <language>C++</language>
               <body>    if (KeepAliveTimerId.isValid())
-    KeepAliveTimer.cancelTimer(KeepAliveTimerId);
+    	KeepAliveTimer.cancelTimer(KeepAliveTimerId);
+    
     KeepAliveTimerId=KeepAliveTimer.informEvery(UMLRTTimespec(KeepAliveTimeOut,0),4);
+    
     if (hostConfig.RunningMode==1)
-    Master.IAmAlive((char *)this->getName()).send();
+    	Master.IAmAlive((char *)this->getName()).send();
+    
     std::cout&lt;&lt;&quot;Master: Keep Alive is sent\n&quot;;
 </body>
             </effect>
@@ -392,7 +404,7 @@
               </specification>
             </ownedRule>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_pYtP8Ap5EeaGqPUk-4V4qQ" name="BeingMaster" source="_kLngAAp5EeaGqPUk-4V4qQ" target="_UrcckAlOEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_pYtP8Ap5EeaGqPUk-4V4qQ" name="ToRunAsMaster" source="_kLngAAp5EeaGqPUk-4V4qQ" target="_UrcckAlOEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_lf6aoAqTEeaGqPUk-4V4qQ" name="BeMaster">
               <language>C++</language>
               <body>    int r=random()%30+5;
@@ -406,44 +418,50 @@
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_wPvR0Ap8EeaGqPUk-4V4qQ" name="PassiveMode" source="_Pyhf8Ap5EeaGqPUk-4V4qQ" target="_887yAKozEeiNHY6qjNhZ4w"/>
           <transition xmi:type="uml:Transition" xmi:id="_QEtu0AsLEeaGqPUk-4V4qQ" name="purgeotherMessage" source="_hgSoEAlOEea_md0mpENoqg" target="_hgSoEAlOEea_md0mpENoqg">
-            <trigger xmi:type="uml:Trigger" xmi:id="_AvvGoF_NEemzd8ekUzLVJQ" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
-            <trigger xmi:type="uml:Trigger" xmi:id="_F15IIF_NEemzd8ekUzLVJQ" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_HIvrsApCEeaGqPUk-4V4qQ"/>
-            <trigger xmi:type="uml:Trigger" xmi:id="_Gy2foF_NEemzd8ekUzLVJQ" event="_G3K7UAnFEeaGqPUk-4V4qQ" port="_pQ6HcAnMEeaGqPUk-4V4qQ"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_os5WQGBcEemOW4bl5-QSZA" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_HIvrsApCEeaGqPUk-4V4qQ"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_qGltEGBcEemOW4bl5-QSZA" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_rJO10GBcEemOW4bl5-QSZA" port="_ZDrx0ApDEeaGqPUk-4V4qQ">
+              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
+            </trigger>
+            <trigger xmi:type="uml:Trigger" xmi:id="_thfGoGBcEemOW4bl5-QSZA" event="_G3K7UAnFEeaGqPUk-4V4qQ" port="_pQ6HcAnMEeaGqPUk-4V4qQ"/>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_bHEIAONOEeaTpaLNj-zYpw" name="ToBeMaster" source="_M8iZcONCEeaTpaLNj-zYpw" target="_kLngAAp5EeaGqPUk-4V4qQ"/>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_hY-7oAlNEea_md0mpENoqg" name="Init"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_hY-7oAlNEea_md0mpENoqg" name="InitState"/>
           <subvertex xmi:type="uml:State" xmi:id="_jLPjcAlNEea_md0mpENoqg" name="StandBy"/>
           <subvertex xmi:type="uml:State" xmi:id="_UrcckAlOEea_md0mpENoqg" name="RunAsMaster">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_YzyAkAlyEea_md0mpENoqg" name="RunAsMasterEntry">
               <language>C++</language>
               <body>    
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Run as Master now\n&quot;;
-    ConfigComm.IAMMaster((char *)this->getName()).send();
+   char * MasterName = (char *)this->getName(); 
+	ConfigComm.IAMMaster(MasterName).send();
+
     ts.getclock(ts);
-    //messageID=messageID+1;
-    if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,TranstionEnd,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
-     logfile.flush();
-</body>
+    
+	 if (logfile.is_open())
+		logfile&lt;&lt;this->getName()&lt;&lt;&quot;,TranstionEnd,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
+    logfile.flush();</body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_cjKg0PMsEeauO5SNGpOV7w" name="startTransition">
               <language>C++</language>
               <body>    ts.getclock(ts);
+
     messageID=messageID+1;
+
     if (logfile.is_open())
 	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,TranstionStart,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
-     //logfile.flush();</body>
+</body>
             </exit>
           </subvertex>
           <subvertex xmi:type="uml:State" xmi:id="_hgSoEAlOEea_md0mpENoqg" name="Failure">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_GNo-cAp7EeaGqPUk-4V4qQ" name="SetTimer">
               <language>C++</language>
-              <body>    //------
+              <body>
 </body>
             </entry>
           </subvertex>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_Rrrc0AlvEea_md0mpENoqg" name="CheckConfig" kind="choice"/>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_Pyhf8Ap5EeaGqPUk-4V4qQ" name="Choice1" kind="choice"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_Pyhf8Ap5EeaGqPUk-4V4qQ" name="Choice_Active_Passive" kind="choice"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_kLngAAp5EeaGqPUk-4V4qQ" name="BeMaster" kind="junction"/>
           <subvertex xmi:type="uml:State" xmi:id="_2g5S0ONBEeaTpaLNj-zYpw" name="Backup">
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_M8iZcONCEeaTpaLNj-zYpw" name="ExitPoint1" kind="exitPoint"/>
@@ -453,12 +471,11 @@
               <transition xmi:type="uml:Transition" xmi:id="_LmVmEONDEeaTpaLNj-zYpw" name="NokeepAlive" source="_ZaK1gAlOEea_md0mpENoqg" target="_Px2BIAqSEeaGqPUk-4V4qQ">
                 <effect xmi:type="uml:OpaqueBehavior" xmi:id="_LmWNIONDEeaTpaLNj-zYpw" name="CancellTimer">
                   <language>C++</language>
-                  <body>    //if (KeepAliveTimerId.isValid())
-    //	KeepAliveTimer.cancelTimer(KeepAliveTimerId);
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No keep Alive message from Master, Try to be Master-------\n&quot;;
-    //TimerId=Timer.informEvery(UMLRTTimespec(2,0),4);
+                  <body>
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No keep Alive message from Master, Retry to be Master ...\n&quot;;
+
     ConfigComm.QueryConfig().send();
-    //std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: trying to be Master\n&quot;;
+
 </body>
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_LmWNIeNDEeaTpaLNj-zYpw" name="KeepAliveTimer" port="_ZDrx0ApDEeaGqPUk-4V4qQ">
@@ -468,84 +485,74 @@
               <transition xmi:type="uml:Transition" xmi:id="_R_7lYONDEeaTpaLNj-zYpw" name="BackToSlave" source="_Px2BIAqSEeaGqPUk-4V4qQ" target="_ZaK1gAlOEea_md0mpENoqg">
                 <effect xmi:type="uml:OpaqueBehavior" xmi:id="_R_7lYeNDEeaTpaLNj-zYpw" name="MasterRecovered">
                   <language>C++</language>
-                  <body>    //std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: The Master recovered itself, backing to slave mode\n&quot;;
-    //if (TimerId.isValid())
-    //	Timer.cancelTimer(TimerId);
+                  <body>std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: The Master recovered itself, backing to slave mode\n&quot;;
 </body>
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_R_7lYuNDEeaTpaLNj-zYpw" name="BackToSlave" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
               </transition>
               <transition xmi:type="uml:Transition" xmi:id="_XafJkONDEeaTpaLNj-zYpw" name="ReplyConfig" source="_Px2BIAqSEeaGqPUk-4V4qQ" target="_NU8OsAszEeaGqPUk-4V4qQ">
+                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_7oy0AGBmEemOW4bl5-QSZA" name="Effect" isReentrant="false">
+                  <language>C++</language>
+                  <body>std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: ReplyConfig message is received!\n&quot;;</body>
+                </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_XafJkeNDEeaTpaLNj-zYpw" name="ConfigReply" event="_Iv3CQAl4Eea_md0mpENoqg" port="_-3KD0AgvEea_md0mpENoqg"/>
               </transition>
-              <transition xmi:type="uml:Transition" xmi:id="_dg_NwONDEeaTpaLNj-zYpw" name="backtoslave1" source="_NU8OsAszEeaGqPUk-4V4qQ" target="_5yefMAszEeaGqPUk-4V4qQ"/>
-              <transition xmi:type="uml:Transition" xmi:id="_dg_NweNDEeaTpaLNj-zYpw" name="backtoslave" source="_5yefMAszEeaGqPUk-4V4qQ" target="_ZaK1gAlOEea_md0mpENoqg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_dg_NwONDEeaTpaLNj-zYpw" name="masterNotFound" source="_NU8OsAszEeaGqPUk-4V4qQ" target="_5yefMAszEeaGqPUk-4V4qQ">
+                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_dJkcAGBnEemOW4bl5-QSZA" name="Effect" isReentrant="false">
+                  <language>C++</language>
+                  <body>std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Master not found !\n&quot;;</body>
+                </effect>
+              </transition>
+              <transition xmi:type="uml:Transition" xmi:id="_dg_NweNDEeaTpaLNj-zYpw" name="backToSlave" source="_5yefMAszEeaGqPUk-4V4qQ" target="_ZaK1gAlOEea_md0mpENoqg"/>
               <transition xmi:type="uml:Transition" xmi:id="_mHBPcONDEeaTpaLNj-zYpw" name="KeepAliveMsg" source="_ZaK1gAlOEea_md0mpENoqg" target="_ZaK1gAlOEea_md0mpENoqg">
                 <effect xmi:type="uml:OpaqueBehavior" xmi:id="_mHBPceNDEeaTpaLNj-zYpw" name="ProcessKeppAlive">
                   <language>C++</language>
                   <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Keep Alive Message from &quot;&lt;&lt; ServerName&lt;&lt;&quot;\n&quot;;
-    //if (KeepAliveTimerId.isValid())
-    //	KeepAliveTimer.cancelTimer(KeepAliveTimerId);
-    //KeepAliveTimerId=KeepAliveTimer.informEvery(UMLRTTimespec(6,0),4);
 </body>
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_mHBPcuNDEeaTpaLNj-zYpw" name="IAmlive" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
               </transition>
               <transition xmi:type="uml:Transition" xmi:id="_-mdZ0ONDEeaTpaLNj-zYpw" name="initTrBackup" source="_8WMAUONDEeaTpaLNj-zYpw" target="_ZaK1gAlOEea_md0mpENoqg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_CPd8UONOEeaTpaLNj-zYpw" name="CheckNoMaster" guard="_CPd8UeNOEeaTpaLNj-zYpw" source="_NU8OsAszEeaGqPUk-4V4qQ" target="_M8iZcONCEeaTpaLNj-zYpw">
+              <transition xmi:type="uml:Transition" xmi:id="_CPd8UONOEeaTpaLNj-zYpw" name="masterFound" guard="_CPd8UeNOEeaTpaLNj-zYpw" source="_NU8OsAszEeaGqPUk-4V4qQ" target="_M8iZcONCEeaTpaLNj-zYpw">
                 <ownedRule xmi:type="uml:Constraint" xmi:id="_CPd8UeNOEeaTpaLNj-zYpw" name="CheckNoServer">
                   <specification xmi:type="uml:OpaqueExpression" xmi:id="_CPd8UuNOEeaTpaLNj-zYpw" name="checkNoServer">
                     <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                     <language>C++</language>
-                    <body>    std::cout&lt;&lt;&quot;00000----------------------------------------------------000000\n&quot;;
+                    <body>    std::cout&lt;&lt;&quot;----------------------[Choice_Master_Slave]------------------------------\n&quot;;
     this->hostConfig=config;
     if (!(this->hostConfig.MasterList[0] || this->hostConfig.MasterList[1]))
     {
-    //Echo.Echo().send();
-    //Timer.cancelTimer(TimerId);
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
-    return true;
+    	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
+    	return true;
     }
     else if ((strcmp((char*)this->getName(),&quot;server1&quot;)==0) &amp;&amp; (config.MasterList[1]==false))
     {
-    //Echo.Echo().send();
-    //Timer.cancelTimer(TimerId);
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
-    return true;
+    	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
+    	return true;
     }
     else if ((strcmp((char *)this->getName(),&quot;server2&quot;))==0 &amp;&amp; (config.MasterList[0]==false))
     {
-    //Echo.Echo().send();
-    //Timer.cancelTimer(TimerId);
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
-    return true;
+    	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
+    	return true;
     }
-    std::cout&lt;&lt;&quot;11111111-----------------------------------------111111111111\n&quot;;
     return false;
 </body>
                   </specification>
                 </ownedRule>
               </transition>
-              <subvertex xmi:type="uml:State" xmi:id="_Px2BIAqSEeaGqPUk-4V4qQ" name="TryBeMaster">
-                <entry xmi:type="uml:OpaqueBehavior" xmi:id="_6FKVcAqVEeaGqPUk-4V4qQ" name="trytobemasterinit">
-                  <language>C++</language>
-                  <body>    //std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: trying to Be Master ------------\n&quot;;
-</body>
-                </entry>
-              </subvertex>
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_NU8OsAszEeaGqPUk-4V4qQ" name="Choice2" kind="choice"/>
+              <subvertex xmi:type="uml:State" xmi:id="_Px2BIAqSEeaGqPUk-4V4qQ" name="TryBeMaster"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_NU8OsAszEeaGqPUk-4V4qQ" name="Choice_Master_Slave" kind="choice"/>
               <subvertex xmi:type="uml:State" xmi:id="_ZaK1gAlOEea_md0mpENoqg" name="RunAsSlave">
                 <entry xmi:type="uml:OpaqueBehavior" xmi:id="_JeHBoAlzEea_md0mpENoqg" name="RunAsSlaveEntry">
                   <language>C++</language>
                   <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Running as Slave now\n&quot;;
-    //if (KeepAliveTimerId.isValid())
-    //	KeepAliveTimer.cancelTimer(KeepAliveTimerId);
+
     KeepAliveTimerId=KeepAliveTimer.informIn(UMLRTTimespec(6,0),4);
 </body>
                 </entry>
               </subvertex>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_5yefMAszEeaGqPUk-4V4qQ" name="Slave" kind="junction"/>
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_8WMAUONDEeaTpaLNj-zYpw" name="Initial1"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_8WMAUONDEeaTpaLNj-zYpw" name="InitState"/>
             </region>
           </subvertex>
         </region>
@@ -615,10 +622,12 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_CC7jEAovEeaGqPUk-4V4qQ" name="getResponse">
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: got reponse from server, go to process response state\n&quot;;
-    int j=0;
-    for (int i=0;i&lt;=100000;i++)
-	j=j+1;
-    std::cout&lt;&lt;j;
+    int j=1;
+    for (int i=0;i&lt;1000000;i++)
+	    j=j+1;
+    
+    std::cout&lt;&lt;&quot;Do something: like counting j from 1 to &quot;&lt;&lt;j&lt;&lt;&quot;\n&quot;;
+
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_DEh6sAnGEeaGqPUk-4V4qQ" name="Result" event="_P4-6EAnFEeaGqPUk-4V4qQ" port="_fL3OQAnFEeaGqPUk-4V4qQ _lRZpIAnFEeaGqPUk-4V4qQ"/>
@@ -656,25 +665,25 @@
 	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,SendingMessage,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
     if (hostConfig.MasterList[0] &amp;&amp; hostConfig.MasterList[1])
     {
-    int r=rand()%2;
-    if (r==0)
-    {
-    Server1Comm.Request(0).send();
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
-    }
-    else{
-    Server2Comm.Request(0).send();
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
-    }
+    	int randomServer=rand()%2;
+    	if (randomServer==0)
+    	{
+    		Server1Comm.Request(0).send();
+    	std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
+    	}
+    	else{
+    		Server2Comm.Request(0).send();
+    		std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
+    	}
     }
     else if (hostConfig.MasterList[0]){
-    Server1Comm.Request(0).send();
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
+    	Server1Comm.Request(0).send();
+    	std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
     }
     else
     {
-    Server2Comm.Request(0).send();
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
+    	Server2Comm.Request(0).send();
+    	std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
     }
 </body>
             </effect>
@@ -694,16 +703,16 @@
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
             </trigger>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_Oll1cAlKEea_md0mpENoqg" name="init"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_Oll1cAlKEea_md0mpENoqg" name="initState"/>
           <subvertex xmi:type="uml:State" xmi:id="_Q5-S4AlKEea_md0mpENoqg" name="StandBY"/>
           <subvertex xmi:type="uml:State" xmi:id="_IjppsAlhEea_md0mpENoqg" name="Ready">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_fmLpMAm5Eea_md0mpENoqg" name="ReadyEntry">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: is in Ready State\n&quot;;
-    //int r=rand()%11;
-    int r=1;
+              <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: is in Ready State\n&quot;;
+    int requestRate=1;
     RequestTimer.informIn(UMLRTTimespec(0,1000),4);
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: will try to request service after &quot;&lt;&lt; r&lt;&lt;&quot; second \n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: will try to request service after &quot;&lt;&lt; requestRate&lt;&lt;&quot; second \n&quot;;
 </body>
             </entry>
           </subvertex>
@@ -741,10 +750,9 @@ ts.getclock(ts);
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_u-x1UAoxEeaGqPUk-4V4qQ" name="ProcessMessage">
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot; : Processing Response .....\n&quot;;
-    //int r=rand()%10;
     
     Timer.informIn(UMLRTTimespec(0,500),4);
-    //messageID=messageID+1; 
+
     ts.getclock(ts);
     if (logfile.is_open())
 	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,MessageProcessed,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
@@ -755,9 +763,10 @@ ts.getclock(ts);
           <subvertex xmi:type="uml:State" xmi:id="_KwFHIAo0EeaGqPUk-4V4qQ" name="Retry">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_1CJTsAo2EeaGqPUk-4V4qQ" name="RetryConfig">
               <language>C++</language>
-              <body>    int r=rand()%5;
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: The master is not available, retry in &quot;&lt;&lt;r&lt;&lt; &quot; second\n&quot;;
-    Timer.informIn(UMLRTTimespec(r,0),4);
+              <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));
+	 int masterRetryRate=rand()%5;
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: The master is not available, retry in &quot;&lt;&lt;masterRetryRate&lt;&lt; &quot; second\n&quot;;
+    Timer.informIn(UMLRTTimespec(masterRetryRate,0),4);
 </body>
             </entry>
           </subvertex>
@@ -897,7 +906,7 @@ ts.getclock(ts);
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_WlNQsAg0Eea_md0mpENoqg" name="StateMachine1">
         <region xmi:type="uml:Region" xmi:id="_abLcsAg0Eea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_ftWg8Ag0Eea_md0mpENoqg" name="initTR" source="_bHyrEAg0Eea_md0mpENoqg" target="_cfbzcAg0Eea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_ftWg8Ag0Eea_md0mpENoqg" name="initTrEco" source="_bHyrEAg0Eea_md0mpENoqg" target="_cfbzcAg0Eea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_Izo0QAiiEea_md0mpENoqg" name="init">
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;EchoCapsule: Intializing\n&quot;;
@@ -915,7 +924,7 @@ ts.getclock(ts);
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_2CMcAAg0Eea_md0mpENoqg" name="Echo" event="_7w0oMAgzEea_md0mpENoqg" port="_PdYSYAg0Eea_md0mpENoqg"/>
           </transition>
-          <subvertex xmi:type="uml:Pseudostate" xmi:id="_bHyrEAg0Eea_md0mpENoqg" name="init"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_bHyrEAg0Eea_md0mpENoqg" name="initState"/>
           <subvertex xmi:type="uml:State" xmi:id="_cfbzcAg0Eea_md0mpENoqg" name="WaitForEcho"/>
         </region>
       </ownedBehavior>
@@ -1162,9 +1171,9 @@ ts.getclock(ts);
         <end xmi:type="uml:ConnectorEnd" xmi:id="_ZHkrUCaBEemRHqIdTQnNyA" partWithPort="_6qCFoAg7Eea_md0mpENoqg" role="_-3KD0AgvEea_md0mpENoqg"/>
         <end xmi:type="uml:ConnectorEnd" xmi:id="_ZHkrUSaBEemRHqIdTQnNyA" partWithPort="_trcC4AgoEea_md0mpENoqg" role="_GXsSgAgvEea_md0mpENoqg"/>
       </ownedConnector>
-      <ownedConnector xmi:type="uml:Connector" xmi:id="_f4z_0F-_Eemzd8ekUzLVJQ" name="RTConnector12">
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_f41N8F-_Eemzd8ekUzLVJQ" partWithPort="_trcC4AgoEea_md0mpENoqg" role="_GXsSgAgvEea_md0mpENoqg"/>
-        <end xmi:type="uml:ConnectorEnd" xmi:id="_f41N8V-_Eemzd8ekUzLVJQ" partWithPort="_odv2AAgoEea_md0mpENoqg" role="_g3nG4AgvEea_md0mpENoqg"/>
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_RH95EGBsEemOW4bl5-QSZA" name="RTConnector12">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_RIEmwGBsEemOW4bl5-QSZA" partWithPort="_trcC4AgoEea_md0mpENoqg" role="_GXsSgAgvEea_md0mpENoqg"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_RIFN0GBsEemOW4bl5-QSZA" partWithPort="_odv2AAgoEea_md0mpENoqg" role="_g3nG4AgvEea_md0mpENoqg"/>
       </ownedConnector>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_lcu1sAggEea_md0mpENoqg">
@@ -1230,7 +1239,7 @@ ts.getclock(ts);
   <UMLRealTime:RTPort xmi:id="_wQWSkAjLEea_md0mpENoqg" isWired="false" base_Port="_wQHCAAjLEea_md0mpENoqg"/>
   <UMLRealTime:RTPort xmi:id="_X4gvkAjMEea_md0mpENoqg" isWired="false" base_Port="_X4ceIAjMEea_md0mpENoqg"/>
   <RTCppProperties:CapsuleProperties xmi:id="_6nxNAAkFEea_md0mpENoqg" implementationPreface="#include &lt;iostream>&#xA;#include &lt;cstdlib>" implementationEnding="" base_Class="_xCGHkAgmEea_md0mpENoqg"/>
-  <RTCppProperties:CapsuleProperties xmi:id="_skTr8AlKEea_md0mpENoqg" implementationPreface="#include &lt;iostream>&#xA;#include &lt;cstdlib>" base_Class="_zpdLYAgmEea_md0mpENoqg"/>
+  <RTCppProperties:CapsuleProperties xmi:id="_skTr8AlKEea_md0mpENoqg" implementationPreface="#include &lt;chrono>&#xA;#include &lt;thread>&#xA;#include &lt;iostream>&#xA;#include &lt;cstdlib>" base_Class="_zpdLYAgmEea_md0mpENoqg"/>
   <UMLRealTime:RTPort xmi:id="_iLgtsAmuEea_md0mpENoqg" isWired="false" base_Port="_iLeRcAmuEea_md0mpENoqg"/>
   <UMLRealTime:RTPort xmi:id="_oWjToAmuEea_md0mpENoqg" isWired="false" base_Port="_oWg3YAmuEea_md0mpENoqg"/>
   <UMLRealTime:RTPort xmi:id="_tQAV4AmuEea_md0mpENoqg" isWired="false" base_Port="_tP9SkAmuEea_md0mpENoqg"/>
@@ -1304,5 +1313,5 @@ ts.getclock(ts);
   <UMLRTStateMachines:RTStateMachine xmi:id="_BsmawKpjEeiNHY6qjNhZ4w" base_StateMachine="_gU8CMAgwEea_md0mpENoqg"/>
   <UMLRealTime:RTConnector xmi:id="_XeOH4CaBEemRHqIdTQnNyA" base_Connector="_XeEW4CaBEemRHqIdTQnNyA"/>
   <UMLRealTime:RTConnector xmi:id="_ZHlSYCaBEemRHqIdTQnNyA" base_Connector="_ZHhA8CaBEemRHqIdTQnNyA"/>
-  <UMLRealTime:RTConnector xmi:id="_f411AF-_Eemzd8ekUzLVJQ" base_Connector="_f4z_0F-_Eemzd8ekUzLVJQ"/>
+  <UMLRealTime:RTConnector xmi:id="_RIF04GBsEemOW4bl5-QSZA" base_Connector="_RH95EGBsEemOW4bl5-QSZA"/>
 </xmi:XMI>

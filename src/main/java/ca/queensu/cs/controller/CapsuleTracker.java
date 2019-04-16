@@ -767,7 +767,11 @@ public class CapsuleTracker implements Runnable{
 	        { 
 				Entry<String, CapsuleTracker> entry = itr.next();
 				if (entry.getKey().contains(trgCapsule)) {
-					entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
+					if (sendMessage.dataName.contentEquals("__getName__") && sendMessage.data.toString().contains("__CapInstanceName__")) { //TODO: find the corresponding varibale name in the target capsule; we have the same rule in the AC.g4
+						sendMessage.data = new Value (dataContainer.getCapsuleInstance(),"String");
+						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
+					}else
+						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
 					break;
 				}
 	        }
@@ -789,15 +793,19 @@ public class CapsuleTracker implements Runnable{
 		visitor.visit(parser.parse());
 		listPortMsg = visitor.getListPortMsg();
 		
-		sendMessages();
 		
 		Iterator<Entry<String, Value>> itr = visitor.getHeapMem().entrySet().iterator(); 
         
         while(itr.hasNext()) 
         { 
              Map.Entry<String, Value> entry = itr.next();
-             maplocalHeap.put(entry.getKey(), entry.getValue());
+             if (entry.getValue().toString().contentEquals("__CapInstanceName__"))
+            	 maplocalHeap.put(entry.getKey(), new Value (dataContainer.getCapsuleInstance(),"String"));
+             else
+            	 maplocalHeap.put(entry.getKey(), entry.getValue());
         }
+        
+        sendMessages();
 		
 		lexer = null;
 		parser = null;
