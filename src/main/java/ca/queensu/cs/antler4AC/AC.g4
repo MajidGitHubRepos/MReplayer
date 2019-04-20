@@ -17,21 +17,25 @@ stat
  | sendat_stat
  | send_stat
  | showContent_stat
- | unknowns
+ | timer_stat
+// | unknowns
  ;
 
+done: EOF #processingDone
+; 
 assignment
- : ID ASSIGN expr SCOL     											 #normalAssignment
- | op=(INTVAR | DOUBLEVAR | STRINGVAR) ID ASSIGN? expr? SCOL	 #basicAssignment
+ : ID ASSIGN (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? expr SCOL     											 #normalAssignment
+ | op=(INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR) ID ASSIGN? (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? expr? SCOL	     #basicAssignment
  | ID MINUSMINUS SCOL       										 #minusminusAssignment
  | ID PLUSPLUS SCOL													 #plusplusAssignment
- | STRINGVAR? ID ASSIGN GETNAME SCOL 								 #getNameAssignment   							 			 
+ | STRINGVAR? ID ASSIGN GETNAME SCOL 								 #getNameAssignment
+ | ID ASSIGN timer_stat												 #getTimerAssignment
  ;
 
 if_stat
  : IF condition_block (ELSE IF condition_block)* (ELSE stat_block)?
  ;
-
+ 
 condition_block
  : expr stat_block
  ;
@@ -52,14 +56,18 @@ loop_stat
    ;
  
 sendat_stat
-   : ID '.' ID '(' expr ')' '.' SENDAT '(' (expr | BACKMSG) ')' SCOL
+   : ID '.' ID '(' (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? expr ')' '.' SENDAT '(' (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? (expr | BACKMSG) ')' SCOL
    | ID '.' ID '()' '.' SENDAT '(' (expr | BACKMSG) ')' SCOL
    ;
 
 send_stat
-   : ID '.' ID '(' (expr | GETNAME) ')' '.' SEND '()' SCOL
-   | ID '.' ID '()' '.' SEND '()' SCOL
+   : ID '.' ID '(' (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? expr ')' '.' SEND '()' SCOL
+   | ID '.' ID '(' (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? GETNAME? ')' '.' SEND '()' SCOL
    ;
+
+timer_stat
+ : ID '.' op=('informIn' | 'cancelTimer' | 'informEvery') .*? SCOL 
+ ;
 
 showContent_stat
    : SHOWHEAP SCOL     #showHeapMem
@@ -79,12 +87,18 @@ expr
  | expr op=(MULT | DIV | MOD | MINUSMINUS | PLUSPLUS) expr      #multiplicationExpr
  | expr op=(PLUS | MINUS) expr          						#additiveExpr
  | expr op=(LTEQ | GTEQ | LT | GT) expr 						#relationalExpr
- | expr op=(EQ | NEQ) expr              						#equalityExpr
+ | expr op=(EQ | NEQ) expr               						#equalityExpr
  | expr AND expr                        						#andExpr
  | expr OR expr                         						#orExpr
- | RANDFUNC														#randFuncExpr
  | GETNAME														#getNameExpr
+ | BACKMSG														#backMsgExpr
  | atom                                 						#atomExpr
+ | RANDFUNC														#randFuncExpr
+ | ID DOT 'find' OPAR (ID | STRING) CPAR 											#findFuncExpr
+ | (ID | STRING) DOT 'substr' OPAR expr ',' expr CPAR 						#substrFuncExpr
+ | (ID | STRING) DOT 'length()' 											#lengthFuncExpr
+ | 'strcmp' '(' STRINGVAR? op1=(ID | STRING) ',' STRINGVAR? op2=(ID | STRING) ')' 								    #strcmpFuncExpr
+ | IGNOREEXPR                                                   #ignoreExpr
  ;
 
 atom
@@ -96,8 +110,9 @@ atom
  | NIL            #nilAtom
  ;
 
-
-
+DOT : '.' ;
+INSTREAM : '<<';
+OUTSTREAM : '>>';
 OR : '||';
 AND : '&&';
 EQ : '==';
@@ -140,19 +155,21 @@ DO  : 'do' ;
 SEND : 'send';
 SENDAT : 'sendAt';
 BACKMSG: 'msg->sapIndex0_';
-GETNAME:  '(' SPACE? STRINGVAR SPACE? ')' SPACE? 'this->getName()'
-	;
+
+GETNAME:  STRINGVAR? SPACE? 'this->getName()';
+
 RANDFUNC: 'rand()';
 
 SHOWHEAP : 'showHeap';
 SHOWLISTSEND : 'showListSendMsg';
 
+BOOLVAR : 'bool' ;
 INTVAR : 'int';
 DOUBLEVAR : 'double';
 CHARVAR : 'char';
 STRINGVAR 
- : 'String'
- | CHARVAR SPACE? MULT
+ : 'string'
+ | '('? SPACE? CHARVAR SPACE? MULT SPACE? ')'?
  ;
 
 
@@ -181,19 +198,38 @@ BLOCKCOMMENT
  ;
 
 SPACE
- :  (' ' | '\t' | '\n' | 'r')+ -> skip
+ :  (' ' | '\t' | '\n')+ -> skip
  ;
 
 NEWLINE
  : ('\r' '\n'? | '\n') -> skip
  ;
 
-unknowns : . ; 
+unknowns : .   #unknownsExpr
+ ;
 
 Space
-  :  (' ' | '\t' | '\n' | 'r')+ {skip();}
-  ; 
+ :  (' ' | '\t' | '\n')+ {skip();}
+ ; 
 
-IGNORE
- : ('this->hostConfig' .*? ';') -> skip
+IGNORELINE
+ : 'std::'? ('logfile>>' | 'cout<<' | 'this_thread' | 'ts.getclock') .*? ';'  -> skip
  ;
+
+IGNOREWORD
+ : ('this->' | 'std::' | '.c_str()') -> skip
+ ;
+
+IGNOREEXPR
+ : ('logfile' | 'KeepAliveTimerId' | 'KeepAliveTimerId' | 'AnnouncementTimerId' | 'TimerId' | 'AnnouncementServer1Id' | 'AnnouncementServer2Id') DOT .*? '(' .*? ')'
+ ;
+  
+//IGNORE
+// : ('this->hostConfig' | 'RequestTimer.informIn' |  'ts.getclock' | 'std::' |IF .*? 'systemConfig.RunningMode'| IF? .*? 'logfile' | 'TimerId=' | 'KeepAliveTimerId=' | 'AnnouncementTimerId=' | 'ConfigComm.StartUp(this->systemConfig)') .*? ';'  -> skip
+// ;
+//IFIGNORE
+// : (IF .*?  'hostConfig.')
+// ; 
+//BLOCKIGNORE
+// : (ELSE? .*? IF *.? STRCMP) .*? '}'  -> skip
+// ;

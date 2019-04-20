@@ -40,5 +40,7 @@
 	<classpathentry kind="lib" path="src/main/resources/jarFiles/jackson-annotations-2.9.8.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/jarFiles/jackson-core-2.9.8.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/jarFiles/jackson-databind-2.9.8.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/org.eclipse.papyrusrt.umlrt.core.source_0.7.0.201509011319.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jarFiles/org.eclipse.papyrusrt.umlrt.core_0.7.0.201509011319.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -3,6 +3,7 @@ package ca.queensu.cs.antler4AC;
 
 public class SendMessage {
 	
+	public String capsuleInstance;
 	public String port;
 	public String msg;
 	public String dataName;
@@ -10,6 +11,7 @@ public class SendMessage {
 	public Value dest;
 	
 	public SendMessage (String _port, String _msg, String _dataName, Value _data, Value _dest) {
+		this.capsuleInstance = "";
 		this.msg = _msg;
 		this.port = _port;
 		this.dataName = _dataName;

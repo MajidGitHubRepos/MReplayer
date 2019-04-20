@@ -37,6 +37,13 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitProcessingDone(ACParser.ProcessingDoneContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitNormalAssignment(ACParser.NormalAssignmentContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -66,6 +73,13 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitGetNameAssignment(ACParser.GetNameAssignmentContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitGetTimerAssignment(ACParser.GetTimerAssignmentContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -135,6 +149,13 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitTimer_stat(ACParser.Timer_statContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitShowHeapMem(ACParser.ShowHeapMemContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -150,6 +171,13 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitLog(ACParser.LogContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitFindFuncExpr(ACParser.FindFuncExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -191,6 +219,20 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitBackMsgExpr(ACParser.BackMsgExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitIgnoreExpr(ACParser.IgnoreExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitNotExpr(ACParser.NotExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -219,7 +261,28 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitStrcmpFuncExpr(ACParser.StrcmpFuncExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitLengthFuncExpr(ACParser.LengthFuncExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitRandFuncExpr(ACParser.RandFuncExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitSubstrFuncExpr(ACParser.SubstrFuncExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -296,5 +359,5 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUnknowns(ACParser.UnknownsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitUnknownsExpr(ACParser.UnknownsExprContext ctx) { return visitChildren(ctx); }
 }

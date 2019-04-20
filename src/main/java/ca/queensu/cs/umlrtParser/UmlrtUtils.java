@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.uml2.uml.BodyOwner;
 import org.eclipse.uml2.uml.CallEvent;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Collaboration;
 import org.eclipse.uml2.uml.Connector;
 import org.eclipse.uml2.uml.ConnectorEnd;
 import org.eclipse.uml2.uml.Element;
@@ -30,6 +31,7 @@ import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.FinalState;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.OpaqueBehavior;
+import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.PackageableElement;
 import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.Profile;
@@ -47,6 +49,9 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 import org.springframework.statemachine.transition.TransitionKind;
 import org.springframework.util.StringUtils;
+import org.eclipse.papyrusrt.umlrt.core.utils.MessageUtils;
+import org.eclipse.papyrusrt.umlrt.core.utils.ProtocolUtils;
+import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.RTMessageKind;
 
 import ca.queensu.cs.controller.Controller;
 import ca.queensu.cs.umlrtParser.MyConnector;
@@ -336,12 +341,12 @@ public class UmlrtUtils {
 		//==================================================================	
 		//==============================================[getCapsulePartsRecursive]
 		//==================================================================	
-		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts,  List<MyConnector> listMyConnectors) {
+		public static void getCapsulePartsRecursive(Class capsule, String prvInstanceName, HashMap<String, Property> mapNameParts, List<MyConnector> listMyConnectors, HashMap<String, Integer> mapPortRep) {
 			if (capsule == null)
 				return;
 			//			List<Property> tmpParts = new ArrayList<Property>();
 			
-			
+
 			
 			for (Property part : capsule.getParts()) {
 				// TODO: why getAppliedStereotypes is always empty! [https://www.eclipse.org/forums/index.php/t/953534/]
@@ -367,8 +372,9 @@ public class UmlrtUtils {
 						PackageableElement element = ParserEngine.getModelElements().get(i);
 						if((element instanceof Class) && (capName.contains(element.getName()))) {
 							//extract connectors
+
 							for (Connector connector : UmlrtUtils.getConnectors((Class)element)) {  // Not for top 
-								
+
 								MyConnector myConnector = new MyConnector();
 								
 								//String connectorName = "";
@@ -388,6 +394,16 @@ public class UmlrtUtils {
 									myConnector.portCap1 = connEnd1.getRole().getName();
 									if (connEnd1.getPartWithPort() != null) {
 										myConnector.capInstanceName1 = connEnd1.getPartWithPort().getName();
+										//if (connEnd1.lowerBound()> 0) {
+											String key = myConnector.capInstanceName1+":"+myConnector.portCap1;
+											
+											if (mapPortRep.containsKey(key)) {//capInst:port
+												myConnector.port1Idx = mapPortRep.get(key) +1;
+												mapPortRep.put(key, myConnector.port1Idx);
+											}else {
+												mapPortRep.put(key, 0);
+											}
+										//}
 										for (Port port : UmlrtUtils.getPorts(capsule)) {
 											if (port.getName().contentEquals(myConnector.portCap1)) {
 												myConnector.bhvPortCap1 = port.isBehavior();
@@ -403,6 +419,16 @@ public class UmlrtUtils {
 									myConnector.portCap2 = connEnd2.getRole().getName();
 									if (connEnd2.getPartWithPort() != null) {
 										myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName();
+										//if (connEnd2.lowerBound()> 0) {
+											String key = myConnector.capInstanceName2+":"+myConnector.portCap2;
+
+											if (mapPortRep.containsKey(key)) {//capInst:port
+												myConnector.port2Idx = mapPortRep.get(key) +1;
+												mapPortRep.put(key, myConnector.port2Idx);
+											}else {
+												mapPortRep.put(key, 0);
+											}
+										//}
 										for (Port port : UmlrtUtils.getPorts(capsule)) {
 											if (port.getName().contentEquals(myConnector.portCap2)) {
 												myConnector.bhvPortCap2 = port.isBehavior();
@@ -424,7 +450,7 @@ public class UmlrtUtils {
 					
 					
 					//parts.add(part);
-					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts, listMyConnectors);
+					getCapsulePartsRecursive((Class) part.getType(),part.getName(), mapNameParts, listMyConnectors, mapPortRep);
 					if (partName.contains("_")) {
 						lastIndexOf_ = partName.lastIndexOf("__");
 						tmpStr = partName.substring(0, lastIndexOf_);
@@ -576,5 +602,33 @@ public class UmlrtUtils {
 			return listPolicies;
 
 		}
+		
+	//==================================================================	
+	//==============================================[getInEvents]
+	//==================================================================			
+
+		
+	public static List<Operation> getInEvents(Port port){
+		//System.out.println("ProtocolUtils.getMessageSetIn((Collaboration)port.getType()):" + ProtocolUtils.getMessageSet((Collaboration)port.getType(), RTMessageKind.IN));
+            return ProtocolUtils.getMessageSetIn((Collaboration)port.getType()).getAllOperations();
+
+    }
+	
+	//==================================================================	
+	//==============================================[getOutEvents]
+	//==================================================================			
+
+    public static List<Operation> getOutEvents(Port port) {
+            return ProtocolUtils.getMessageSetOut((Collaboration)port.getType()).getAllOperations();
+    }
+	
+	//==================================================================	
+	//==============================================[getCallEvent]
+	//==================================================================			
+
+    public static CallEvent getCallEvent(Operation op){
+            return MessageUtils.getCallEvent(op);
+    }
+
 
 }

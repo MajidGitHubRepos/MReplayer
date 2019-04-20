@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -141,6 +142,8 @@ public class CapsuleTracker implements Runnable{
 						maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Integer"));
 					else if (attSplit[1].contentEquals("Real"))
 						maplocalHeap.put(attSplit[0], new Value(Double.valueOf(0), "Double"));
+					else if (attSplit[1].contentEquals("Boolean"))
+						maplocalHeap.put(attSplit[0], new Value(false, "Boolean"));
 					else {
 						System.err.println("__________ The Tyep of Attribute Not supported! __________");
 						System.exit(1);
@@ -722,7 +725,7 @@ public class CapsuleTracker implements Runnable{
 			dataContainer.mapRegionCurrentState.put(ParserEngine.mapTransitionData.get(id).getReginName(),pathSplit[2]);
 			
 			pathFinder(event.getSourceName());
-			if (listPaths.size() == 1) {
+			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
 			}else if ((listPaths.size() > 1)){
@@ -738,28 +741,49 @@ public class CapsuleTracker implements Runnable{
 	
 	
 	//==================================================================	
-	//==============================================[interpretActionCode]
+	//==============================================[sendMessages]
 	//==================================================================	
 	public void sendMessages() throws InterruptedException {
 		
 		for (SendMessage sendMessage : listPortMsg) {
+			sendMessage.capsuleInstance = dataContainer.getCapsuleInstance();
 			List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
 			String trgCapsule = "";
-			for ( CapsuleConn capConn : ParserEngine.listCapsuleConn) {
-				if (capConn.getCapsuleInstanceName().contentEquals(dataContainer.getCapsuleInstance())) {
-					
-					listMyConnectors = capConn.getListMyConnector();
-					for (MyConnector connector : listMyConnectors) { //TODO: port mulitipilicity dose not work! 
-						
-						if (connector.portCap1.contentEquals(sendMessage.port)) {
-							trgCapsule = connector.capInstanceName2;
-							break;
-						}else if (connector.portCap2.contentEquals(sendMessage.port)) {
-							trgCapsule = connector.capInstanceName1;
-							break;
+			if (sendMessage.dest != null) {
+				System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> DEST is not NULL!");
+				for ( CapsuleConn capConn : ParserEngine.listCapsuleConn) {
+					if (capConn.getCapsuleInstanceName().contentEquals(dataContainer.getCapsuleInstance())) {
+						listMyConnectors = capConn.getListMyConnector();
+						for (MyConnector connector : listMyConnectors) { 
+							if (connector.portCap1.contentEquals(sendMessage.port) && (connector.port1Idx == sendMessage.dest.asInteger())) {
+								trgCapsule = connector.capInstanceName2;
+								break;
+							}else if (connector.portCap2.contentEquals(sendMessage.port)&& (connector.port2Idx == sendMessage.dest.asInteger())) {
+								trgCapsule = connector.capInstanceName1;
+								break;
+							}
 						}
+						break;
 					}
-					break;
+				}
+				
+			}else {
+				for ( CapsuleConn capConn : ParserEngine.listCapsuleConn) {
+					if (capConn.getCapsuleInstanceName().contentEquals(dataContainer.getCapsuleInstance())) {
+
+						listMyConnectors = capConn.getListMyConnector();
+						for (MyConnector connector : listMyConnectors) { 
+
+							if (connector.portCap1.contentEquals(sendMessage.port)) {
+								trgCapsule = connector.capInstanceName2;
+								break;
+							}else if (connector.portCap2.contentEquals(sendMessage.port)) {
+								trgCapsule = connector.capInstanceName1;
+								break;
+							}
+						}
+						break;
+					}
 				}
 			}
 			Iterator<Entry<String, CapsuleTracker>> itr = TrackerMaker.mapCapsuleTracker.entrySet().iterator();  
@@ -784,8 +808,8 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[interpretActionCode]
 	//==================================================================	
-	public void interpretActionCode(String actionCode) throws InterruptedException {
-        //System.out.println("[actionCode]: "+actionCode);
+	public void interpretActionCode(String actionCode, String msgSender) throws InterruptedException {
+        System.out.println("[actionCode]: "+actionCode);
 
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
@@ -794,15 +818,33 @@ public class CapsuleTracker implements Runnable{
 		listPortMsg = visitor.getListPortMsg();
 		
 		
+		
+		//Thread.currentThread().sleep(2000); //TODO: replace with a thread syncronization method
+		
+		
+		
 		Iterator<Entry<String, Value>> itr = visitor.getHeapMem().entrySet().iterator(); 
         
         while(itr.hasNext()) 
         { 
              Map.Entry<String, Value> entry = itr.next();
-             if (entry.getValue().toString().contentEquals("__CapInstanceName__"))
+             if (entry.getValue().toString().contentEquals("__CapInstanceName__")) {
             	 maplocalHeap.put(entry.getKey(), new Value (dataContainer.getCapsuleInstance(),"String"));
-             else
+             }else if (entry.getValue().toString().contentEquals("msg->sapIndex0")) { // msg->sapIndex0 returns port index that the msg came in
+            	 //who did this path trigger ? (which message from which port)
+            	 for (MyConnector myConnector : ParserEngine.listMyConnectors) {
+            		 if (msgSender.contains(myConnector.capInstanceName1) && dataContainer.getCapsuleInstance().contains(myConnector.capInstanceName2)) {
+            			 maplocalHeap.put(entry.getKey(), new Value(myConnector.port2Idx,"Integer"));
+            			 break;
+            		 }else if (msgSender.contains(myConnector.capInstanceName2) && dataContainer.getCapsuleInstance().contains(myConnector.capInstanceName1)){
+            			 maplocalHeap.put(entry.getKey(), new Value(myConnector.port1Idx,"Integer"));
+            			 break;
+            		 }
+            		 
+            	 }            	 
+        	 }else {
             	 maplocalHeap.put(entry.getKey(), entry.getValue());
+        	 }
         }
         
         sendMessages();
@@ -812,21 +854,67 @@ public class CapsuleTracker implements Runnable{
 		visitor = null;
 		
 	}
+	/* WithRunnable
+	 * public void interpretActionCode(String actionCode, String msgSender) throws InterruptedException {
+        System.out.println("[actionCode]: "+actionCode);
+
+		currentActionCode = actionCode;
+		
+		
+		Thread runnableVisitorT = new Thread(new RunnableVisitor()); 		
+		runnableVisitorT.start();
+
+
+		Thread.currentThread().sleep(1000); //TODO: replace with a thread syncronization method
+		listPortMsg = RunnableVisitor.visitor.getListPortMsg();
+		Iterator<Entry<String, Value>> itr = RunnableVisitor.visitor.getHeapMem().entrySet().iterator(); 
+        
+        while(itr.hasNext()) 
+        { 
+             Map.Entry<String, Value> entry = itr.next();
+             if (entry.getValue().toString().contentEquals("__CapInstanceName__")) {
+            	 maplocalHeap.put(entry.getKey(), new Value (dataContainer.getCapsuleInstance(),"String"));
+             }else if (entry.getValue().toString().contentEquals("msg->sapIndex0")) { // msg->sapIndex0 returns port index that the msg came in
+            	 //who did this path trigger ? (which message from which port)
+            	 for (MyConnector myConnector : ParserEngine.listMyConnectors) {
+            		 if (msgSender.contains(myConnector.capInstanceName1) && dataContainer.getCapsuleInstance().contains(myConnector.capInstanceName2)) {
+            			 maplocalHeap.put(entry.getKey(), new Value(myConnector.port2Idx,"Integer"));
+            			 break;
+            		 }else if (msgSender.contains(myConnector.capInstanceName2) && dataContainer.getCapsuleInstance().contains(myConnector.capInstanceName1)){
+            			 maplocalHeap.put(entry.getKey(), new Value(myConnector.port1Idx,"Integer"));
+            			 break;
+            		 }
+            		 
+            	 }            	 
+        	 }else {
+            	 maplocalHeap.put(entry.getKey(), entry.getValue());
+        	 }
+        }
+        
+        sendMessages();
+        runnableVisitorT.stop();
+		
+	}
 	
+	 */
 	//==================================================================	
 	//==============================================[updateLocalHeap]
 	//==================================================================	
-	public void updateLocalHeap(String path) throws InterruptedException {
+	public void updateLocalHeap(String path, String msgSender) throws InterruptedException {
 		List<String> listTrigger = new ArrayList<String>();
 		List<String> listActionCode = new ArrayList<String>();
-		listActionCode = mapPathActionCode.get(path);
-			
-		for(String ac : listActionCode) {
-			interpretActionCode(ac);
-		}
+		String firstTrInPath = "";
+		if (path.contains(",")) {
+			String [] pathSplit = path.split("\\,");
+			firstTrInPath = pathSplit[0];
+		}else
+			firstTrInPath = path;
 		
 		listTrigger = mapPathTrigger.get(path);
-		if (listTrigger != null) {
+		
+		
+		
+		if (!listTrigger.isEmpty()) {
 			
 			for(String msg : listTrigger) {
 				SendMessage sendMessage = dataContainer.mapSendMessages.get(msg);
@@ -835,8 +923,14 @@ public class CapsuleTracker implements Runnable{
 			}
 			
 			
-		}else {
+		}/*else if (!ParserEngine.mapTransitionData.get(firstTrInPath).getIsInit()){ //init Tr dose not need a trigger!
 			System.err.println("__________ listTrigger is empty! __________"); //TODO: make it clean!
+		}*/
+		
+		listActionCode = mapPathActionCode.get(path);
+		
+		for(String ac : listActionCode) {
+			interpretActionCode(ac,msgSender);
 		}
 	}
 	//==================================================================	
@@ -887,23 +981,49 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	public boolean isRequirementMet(String path) throws InterruptedException {
 
-		boolean result = true;
+		boolean result = false;
 		List<String> listTrigger = new ArrayList<String>();
 		
 		listTrigger = mapPathTrigger.get(path);
 		if (listTrigger == null) {
 			listTrigger = makeListTrigger(path);
 		}
-
+		String msgSender = "";
 		for(String msg : listTrigger) {
-			if ((dataContainer.mapSendMessages.get(msg) != null) && (!msg.contentEquals("__TIMER__")))
-				result = false;
-			else
+			String [] msgSplit = msg.split("\\.");
+			if ((dataContainer.mapSendMessages.get(msgSplit[1]) != null) || (msgSplit[1].contains("__TIMER__"))) {
+				msgSender = dataContainer.mapSendMessages.get(msgSplit[1]).capsuleInstance;
+				result = true;
 				dataContainer.mapSendMessages.remove(msg);
+			}
 		}
 		
+		if (listTrigger.isEmpty())
+			result = true;
+		else
+			for(String msg : listTrigger) {
+				if(msg.contains("__TIMER__")){
+					result = true;
+				}					
+			}
+		
+		if (!result) {
+			for(String msg : listTrigger) {
+				String [] msgSplit = msg.split("\\.");
+				System.out.println("In: "+ dataContainer.getCapsuleInstance() + ", expecting msg is "+ msgSplit[1]);
+			}
+			
+			Iterator<Entry<String, SendMessage>> itr = dataContainer.mapSendMessages.entrySet().iterator();  
+			while(itr.hasNext()) 
+	        { 
+				Entry<String, SendMessage> entry = itr.next();
+				System.out.println("In: "+ dataContainer.getCapsuleInstance() + ", we got "+ entry.getKey());
+	        }
+		}
+ 		
+		System.out.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> updateLocalHeap: " + result);
 		if (result)
-			updateLocalHeap(path);
+			updateLocalHeap(path,msgSender);
 
 		
 		return result;
@@ -929,13 +1049,20 @@ public class CapsuleTracker implements Runnable{
 			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
+			}/*else if ((listPaths.size() == 1) && !isRequirementMet(listPaths.get(0))) {
+				result =  false;
+				//currentStatus = "TRANISTIONEND";
 			}else if ((listPaths.size() > 1)){
 				result = false;
 			
 			}else {
-				System.err.println("__________ No Path Found! __________");
+				System.err.println("__________ No Path Found! in ["+dataContainer.getCapsuleInstance()+"]__________"+listPaths.size());
+				System.err.println("__________ Event:__________"+event.allDataToString());
+
 				System.exit(1);
-			}
+			}*/
+			else
+				result = false;
 		}
 		return result;
 	}

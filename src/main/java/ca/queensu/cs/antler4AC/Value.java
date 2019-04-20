@@ -14,7 +14,15 @@ public class Value {
     }
 
     public Boolean asBoolean() {
-        return (Boolean)value;
+    	//System.out.println("value: "+value.toString());
+        if (value.toString().contentEquals("true"))
+        	return true;
+        else if (value.toString().contentEquals("false"))
+        	return false;
+        else 
+        	System.err.println("value cannot be converted to a boolean because it is: "+value.toString());
+        return false;
+
     }
 
     public Double asDouble() {

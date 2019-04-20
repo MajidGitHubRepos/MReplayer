@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 /* 
@@ -24,9 +25,12 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
 	// store variables (there's only one global scope!)
 	private Map<String, Value> HeapMem = new HashMap<String, Value>();
-	private List<SendMessage> listPortMsg = new ArrayList<SendMessage>();
+	private List<SendMessage> listPortMsg;
+	public boolean eof;
 
 	public EvalVisitor(Map<String, Value> mapLocalHeap) {
+		this.listPortMsg = new ArrayList<SendMessage>();
+		eof = false;
 		if (mapLocalHeap != null)
 			for (Entry<String, Value> entry : mapLocalHeap.entrySet()) {
 				HeapMem.put(entry.getKey(), entry.getValue());
@@ -35,6 +39,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	public EvalVisitor() {
 		this(null);
 	}
+	
 
 	public String getOpertionType(Value left,Value right) {
 
@@ -52,11 +57,149 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	}
 
 	public List<SendMessage> getListPortMsg() {
+		eof = true;
 		return listPortMsg;
 	}
 
 	public Map<String, Value> getHeapMem() {
 		return HeapMem;
+	}
+	
+	@Override
+	public Value visitProcessingDone(ACParser.ProcessingDoneContext ctx) {
+		eof = true;
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>> EOF <<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		return new Value (0, "");
+	}
+	
+	@Override
+	public Value visitStrcmpFuncExpr(ACParser.StrcmpFuncExprContext ctx){
+		 String str1Id = "";
+		 String str2Id = "";
+		 
+		 Value str1 = null;
+		 Value str2 = null;
+		
+		if (ctx.ID(0) != null) {
+			str1Id = ctx.ID(0).getText();
+			str1 = HeapMem.get(str1Id);
+		}else {
+			str1 = HeapMem.get(ctx.op1.getText());
+			if (str1 == null)
+				str1 = new Value(ctx.op1.getText(), "String");
+		}
+		
+		if (ctx.ID(1) != null) {
+			str2Id = ctx.ID(1).getText();
+			str2 = HeapMem.get(str2Id);
+
+		}else {
+			str2 = HeapMem.get(ctx.op2.getText());
+			if (str2 == null)
+				str2 = new Value(ctx.op2.getText(), "String");
+		}
+		//System.out.println("str1ID: " + str1Id + ", str2ID: "+str2Id);
+		//System.out.println("str1: " + str1.asString().replaceAll("^\"|\"$", "") + ", str2: "+str2.asString().replaceAll("^\"|\"$", ""));
+		
+		boolean eval = false;
+		
+		if (str1Id.isEmpty())
+			eval = str1.asString().replaceAll("^\"|\"$", "").contentEquals(str2.toString().replaceAll("^\"|\"$", ""));
+			//return new Value(str1.asString().contentEquals(str2.toString()),"");
+		else 
+			eval = str2.asString().replaceAll("^\"|\"$", "").contentEquals(str1.toString().replaceAll("^\"|\"$", ""));
+			//return new Value(str2.asString().contentEquals(str2.toString()),"");
+		
+		if (eval)
+			return new Value (0, "Integer");
+		return new Value (-1, "Integer");
+	}
+	
+	@Override
+	public Value visitTimer_stat(ACParser.Timer_statContext ctx) {
+		//Do nothing for timer stat
+		return new Value(0,"");
+		
+	}
+	
+	@Override
+	public Value visitGetTimerAssignment(ACParser.GetTimerAssignmentContext ctx) {
+		//Do nothing for timer stat
+		return new Value(0,"");
+	}
+	
+	@Override
+	public Value visitIgnoreExpr(ACParser.IgnoreExprContext ctx) {
+		//Do nothing for timer stat
+		return new Value(false,"");
+	}
+	
+	@Override
+	public Value visitFindFuncExpr(ACParser.FindFuncExprContext ctx) {
+		
+		String str = "";
+		String delimiter = "";
+		
+		String id0 = ctx.ID(0).getText();
+		Value value0 = HeapMem.get(id0);
+		str = value0.asString();
+		
+		
+		
+		if (ctx.ID(1) != null) {
+			String id1 = ctx.ID(1).getText();
+			Value value1 = HeapMem.get(id1);
+			delimiter = value1.asString();
+		
+		}else { 
+			delimiter = ctx.STRING().toString().replaceAll("^\"|\"$", "");
+		}
+		System.out.println("str: " + str + ", delimiter: "+delimiter);
+
+		return new Value(str.indexOf(delimiter),"Integer");
+	}
+	
+	@Override
+	public Value visitSubstrFuncExpr(ACParser.SubstrFuncExprContext ctx) {
+		String str = "";
+		int pos0 =  0;
+		int pos1 = 0;
+		
+		if (ctx.ID() != null) {
+			String id = ctx.ID().getText();
+			Value value = HeapMem.get(id);
+			str = value.asString();
+		
+		}else { 
+			str = ctx.STRING().toString().replaceAll("^\"|\"$", "");
+		}
+		
+		Value value0 = this.visit(ctx.expr(0));
+		Value value1 = this.visit(ctx.expr(1));
+		
+		pos0 = value0.asInteger();
+		pos1 = value1.asInteger();
+		
+		
+		System.out.println("str: " + str + ", pos0: "+pos0 +", pos1: "+ pos1);
+		return new Value(str.substring(pos0, pos1),"String");
+		
+	}
+	
+	@Override
+	public Value visitLengthFuncExpr(ACParser.LengthFuncExprContext ctx) {
+		String str = "";
+		
+		if (ctx.ID() != null) {
+			String id = ctx.ID().getText();
+			Value value = HeapMem.get(id);
+			str = value.asString();
+		
+		}else { 
+			str = ctx.STRING().toString().replaceAll("^\"|\"$", "");
+		}
+		
+		return new Value(str.length(),"Integer");
 	}
 
 	// assignment/id overrides
@@ -67,7 +210,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		//System.out.println("in visitNormalAssignment: "+value);
 		if(value == null) {
 			throw new RuntimeException("no such variable: " + id);
-		}else if (value.toString().contains("this->getName()"))
+		}else if (value.toString().contains("getName()"))
 			return HeapMem.put(id, new Value ("__CapInstanceName__", "String"));
 		else 
 			value = this.visit(ctx.expr());
@@ -78,8 +221,11 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	public Value visitBasicAssignment(ACParser.BasicAssignmentContext ctx) {
 
 		String id = ctx.ID().getText();
-		if (ctx.expr().getText().contains("this->getName()"))
+		if (ctx.expr().getText().contains("msg->sapIndex0_")) {
+			return HeapMem.put(id, new Value ("msg->sapIndex0_", "String"));
+		}else if (ctx.expr().getText().contains("getName()")) {
 			return HeapMem.put(id, new Value ("__CapInstanceName__", "String"));
+		}
 		if (ctx.expr() == null)
 			return HeapMem.put(id, new Value (0, ""));
 		else {
@@ -363,22 +509,48 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 			throw new RuntimeException("unknown operator: " + ACParser.tokenNames[ctx.op.getType()]);
 		}
 	}
-
+	
 	@Override
 	public Value visitEqualityExpr(@NotNull ACParser.EqualityExprContext ctx) {
+		//System.out.println("in visitEqualityExpr");
 
 		Value left = this.visit(ctx.expr(0));
+		if (left == null) {
+			String leftID = ctx.expr(0).getText();
+			left = HeapMem.get(leftID);
+		}
 		Value right = this.visit(ctx.expr(1));
+		if (left == null) {
+			String rightID = ctx.expr(1).getText();
+			right = HeapMem.get(rightID);
+		}
+
+		String type = getOpertionType(left,right);
 
 		switch (ctx.op.getType()) {
 		case ACParser.EQ:
-			return left.isDouble() && right.isDouble() ?
-					new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE, "") :
-						new Value(left.equals(right),"");
+			switch (type) {
+			case "Double":
+				return left.isDouble() && right.isDouble() ?
+						new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE, "") :
+							new Value(left.equals(right),"");
+			case "Integer":
+				return left.isInteger() && right.isInteger() ?
+						new Value(Math.abs(left.asInteger() - right.asInteger()) < SMALL_VALUE, "") :
+							new Value(left.equals(right),"");	
+			}
 		case ACParser.NEQ:
-			return left.isDouble() && right.isDouble() ?
-					new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE, "") :
-						new Value(!left.equals(right),"");
+			
+			switch (type) {
+			case "Double":
+				return left.isDouble() && right.isDouble() ?
+						new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE, "") :
+							new Value(!left.equals(right),"");
+			case "Integer":
+				return left.isInteger() && right.isInteger() ?
+						new Value(Math.abs(left.asInteger() - right.asInteger()) >= SMALL_VALUE, "") :
+							new Value(!left.equals(right),"");
+			}
 		default:
 			throw new RuntimeException("unknown operator: " + ACParser.tokenNames[ctx.op.getType()]);
 		}
@@ -439,7 +611,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		}
 		return Value.VOID;
 	}
-
+	
 	// while override
 	@Override
 	public Value visitWhile_stat(ACParser.While_statContext ctx) {
@@ -490,15 +662,19 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 			default:
 				HeapMem.put(id, new Value (this.visit(ctx.expr(0)).asDouble().intValue(),"Integer"));
 			}
-	}
-		Value valueCondition = this.visit(ctx.expr(1));
-		Value valueEnd = this.visit(ctx.expr(2));
-
-		while (valueCondition.asBoolean()) {
+		}else {
+		Value valueFirst = HeapMem.get(id);
+		HeapMem.put(id, new Value (this.visit(ctx.expr(0)),valueFirst.type));
+		}
+		
+		
+		Value evaluated = this.visit(ctx.expr(1));
+		
+		while (evaluated.asBoolean()) {
 			// evaluate the code block
 			this.visit(ctx.stat_block());            
 			HeapMem.put(id, new Value (this.visit(ctx.expr(2)).asDouble().intValue(),"Integer"));
-			valueCondition = this.visit(ctx.expr(1));
+			evaluated = this.visit(ctx.expr(1));
 		}
 		return Value.VOID;
 	}
@@ -508,21 +684,19 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		String port = ctx.ID(0).getText();
 		String msg = ctx.ID(1).getText();
 		String dataName = "";
-		Value data;
+		Value data = HeapMem.get(ctx.expr().getText());
 		
-		
-		if (ctx.expr() != null) {
-			dataName = ctx.expr().getText();
-			data = this.visit(ctx.expr());
-		
-		}else if (ctx.GETNAME() != null){
+		if (ctx.getText().contains("getName")){
 			dataName = "__getName__";
 			data = new Value("__CapInstanceName__","String");
+		}else if (ctx.expr().getText().contains("\"") || (data == null)){
+			dataName = msg+":VAR";
+			data = this.visit(ctx.expr());
 		}else {
-			dataName = "";
-			data = null;
+			dataName = ctx.expr().getText();
+			data = this.visit(ctx.expr());
 		}
-
+		
 		SendMessage sendMsg = new SendMessage(port,msg, dataName, data, null);
 		listPortMsg.add(sendMsg);
 
@@ -535,12 +709,22 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		String msg = ctx.ID(1).getText();
 		String dataName = ctx.expr(0).getText();
 		Value data = this.visit(ctx.expr(0));
-		Value dest = new Value(0,"");
+		Value dest = new Value(0,"String");
+		Value dataTmp = HeapMem.get(dataName);
 
 		if (ctx.getText().contains("msg->sapIndex0_")){
 			dest = new Value("msg->sapIndex0_","String");
 		}else	
 			dest = this.visit(ctx.expr(1));
+
+		if (ctx.getText().contains("getName")){
+			dataName = "__getName__";
+			data = new Value("__CapInstanceName__","String");
+		}else if (ctx.getText().contains("\"")|| (dataTmp == null)){
+			dataName = msg+":VAR";
+			data = this.visit(ctx.expr(0));
+		}
+		System.out.println("in visitSendat_stat"+ data.asString());
 
 		SendMessage sendMsg = new SendMessage(port,msg, dataName, data, dest);
 		listPortMsg.add(sendMsg);
@@ -549,8 +733,8 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	}
 
 	@Override
-	public Value visitUnknowns(ACParser.UnknownsContext ctx) {
-		//System.out.println("in [visitUnknowns]");
+	public Value visitUnknownsExpr(ACParser.UnknownsExprContext ctx) {
+		System.out.println("in [visitUnknowns] : " + ctx.getText());
 
 		//Do nothing
 		return new Value(0, "");

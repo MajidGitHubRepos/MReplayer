@@ -29,7 +29,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.papyrusrt.umlrt.core.utils.ProtocolUtils;
 import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
+import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.RTMessageKind;
 import org.eclipse.papyrusrt.umlrt.uml.UMLRTFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
 
@@ -55,6 +57,7 @@ import org.eclipse.uml2.uml.Connector;
 import org.eclipse.uml2.uml.ConnectorEnd;
 import org.eclipse.uml2.uml.Constraint;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.ElementImport;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.Event;
 import org.eclipse.uml2.uml.Generalization;
@@ -83,6 +86,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Vertex;
 import org.eclipse.uml2.uml.OpaqueBehavior;
 import org.eclipse.uml2.uml.OpaqueExpression;
+import org.eclipse.uml2.uml.Operation;
 
 public class ParserEngine implements Runnable {
 	public PES pes;
@@ -222,6 +226,7 @@ public class ParserEngine implements Runnable {
 	//==============================================[elementsExtractor]
 	//==================================================================	
 	public void elementsExtractor() {
+		HashMap<String, Integer> mapPortRep = new HashMap<String, Integer>();
 		HashMap<String, StateMachine> smMap = new HashMap<String, StateMachine>();
 		HashMap<String, String> capsuleInstanceNameRepMap = new HashMap<String, String>();
 		String capsuleName = "";
@@ -270,7 +275,7 @@ public class ParserEngine implements Runnable {
 				//------------
 				//System.out.println(">>>>>>>>>>>>> capInstanceName: "+ elementTmp.getName());
 
-				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts, listMyConnectors);
+				UmlrtUtils.getCapsulePartsRecursive(((Class) elementTmp), elementTmp.getName(), mapNameParts, listMyConnectors, mapPortRep);
 
 				//------------
 
@@ -305,6 +310,17 @@ public class ParserEngine implements Runnable {
 
 					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
 						myConnector.portCap1 = connEnd1.getRole().getName();
+						//if (connEnd1.upperBound()> 1) {
+							String key = connEnd1.getPartWithPort().getName()+":"+myConnector.portCap1;
+							//System.out.println("============> connEnd1.getPartWithPort(): "+connEnd1.getPartWithPort().get);
+							if (mapPortRep.containsKey(key)) {//capInst:port
+								myConnector.port1Idx = mapPortRep.get(key) +1;
+								mapPortRep.put(key, myConnector.port1Idx);
+							}else {
+								mapPortRep.put(key, 0);
+							}
+						//}
+							
 						if (connEnd1.getPartWithPort() != null) {
 							myConnector.capInstanceName1 = connEnd1.getPartWithPort().getName();
 							for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
@@ -321,6 +337,16 @@ public class ParserEngine implements Runnable {
 
 					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
 						myConnector.portCap2 = connEnd2.getRole().getName();
+						//if (connEnd2.upperBound()> 1) {
+							String key = connEnd2.getPartWithPort().getName()+":"+myConnector.portCap2;
+							if (mapPortRep.containsKey(key)) {//capInst:port
+								myConnector.port2Idx = mapPortRep.get(key) +1;
+								mapPortRep.put(key, myConnector.port2Idx);
+							}else {
+								mapPortRep.put(key, 0);
+							}
+						//}
+							
 						if (connEnd2.getPartWithPort() != null) {
 							myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName();
 							for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
@@ -364,9 +390,11 @@ public class ParserEngine implements Runnable {
 				EList<Property> listOwnedAtt =  ((Class) element).getOwnedAttributes();
 				List<String> listAttributes = new ArrayList<String>();
 				for (Property attribute : listOwnedAtt) {
-					
+					if ((attribute.getType() != null) && (attribute.getType().getName() != null))
+					System.out.println("Cap:"+ element.getName() +", attribute Name: "+ attribute.getName() + ",  getDatatype: " + attribute.getType().getName() + ", other: " + attribute.getQualifiedName());
+
 					if ((attribute.getType() != null) && (attribute.getType().getName() != null) && 
-							( (attribute.getType().getName().contentEquals("Real") || (attribute.getType().getName().contentEquals("Integer")) || attribute.getType().getName().contentEquals("String")))) { //TODO: we support only Real, String and Integer type
+							( attribute.getType().getName().contentEquals("Boolean") || (attribute.getType().getName().contentEquals("Real") || (attribute.getType().getName().contentEquals("Integer")) || attribute.getType().getName().contentEquals("String")))) { //TODO: we support only Real, String and Integer type
 						listAttributes.add(attribute.getName()+":"+attribute.getType().getName());
 						//System.out.println(element.getName() +" --------------> attribute Name: "+ attribute.getName() + ", -----------> getDatatype: " + attribute.getType().getName());
 						
@@ -468,7 +496,9 @@ public class ParserEngine implements Runnable {
 				portName = port.getName();
 				if (port.getType() != null){
 					protocolName = port.getType().getName();
-
+					//System.out.println(protocolName +" =======> port.getType(): " + port.getType().getNamespace()); 
+					
+					//System.out.println(protocolName +">>>>>>>>>> ProtocolUtils.getMessageSetOut: " + (Collaboration)port.getType());
 					if (protocolName != null) {
 						int k = 0;
 						for (k = 0; k< listMyConnectors.size(); k++) {

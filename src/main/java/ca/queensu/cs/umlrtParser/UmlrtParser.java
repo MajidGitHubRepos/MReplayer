@@ -151,8 +151,6 @@ public class UmlrtParser {
 		    
 		    EList<PackageableElement> modelElements = inputModel.getPackagedElements();	
 		    
-		    //System.out.println("--------------> modelElements.size(): "+ modelElements.size() );
-		    
 		    parserEngine = new ParserEngine(modelElements, topCapsuleName);
 		    Thread parserEngineT = new Thread(parserEngine);
 		    

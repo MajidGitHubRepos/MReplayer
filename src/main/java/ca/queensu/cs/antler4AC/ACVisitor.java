@@ -28,6 +28,13 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStat(ACParser.StatContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code processingDone}
+	 * labeled alternative in {@link ACParser#done}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProcessingDone(ACParser.ProcessingDoneContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code normalAssignment}
 	 * labeled alternative in {@link ACParser#assignment}.
 	 * @param ctx the parse tree
@@ -62,6 +69,13 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitGetNameAssignment(ACParser.GetNameAssignmentContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code getTimerAssignment}
+	 * labeled alternative in {@link ACParser#assignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGetTimerAssignment(ACParser.GetTimerAssignmentContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ACParser#if_stat}.
 	 * @param ctx the parse tree
@@ -120,6 +134,12 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSend_stat(ACParser.Send_statContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ACParser#timer_stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTimer_stat(ACParser.Timer_statContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code showHeapMem}
 	 * labeled alternative in {@link ACParser#showContent_stat}.
 	 * @param ctx the parse tree
@@ -139,6 +159,13 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLog(ACParser.LogContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code findFuncExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFindFuncExpr(ACParser.FindFuncExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code atomExpr}
 	 * labeled alternative in {@link ACParser#expr}.
@@ -175,6 +202,20 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRelationalExpr(ACParser.RelationalExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code backMsgExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBackMsgExpr(ACParser.BackMsgExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ignoreExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIgnoreExpr(ACParser.IgnoreExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code notExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree
@@ -203,12 +244,33 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMinusminusExpr(ACParser.MinusminusExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code strcmpFuncExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStrcmpFuncExpr(ACParser.StrcmpFuncExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code lengthFuncExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLengthFuncExpr(ACParser.LengthFuncExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code randFuncExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitRandFuncExpr(ACParser.RandFuncExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code substrFuncExpr}
+	 * labeled alternative in {@link ACParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubstrFuncExpr(ACParser.SubstrFuncExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code powExpr}
 	 * labeled alternative in {@link ACParser#expr}.
@@ -280,9 +342,10 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNilAtom(ACParser.NilAtomContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ACParser#unknowns}.
+	 * Visit a parse tree produced by the {@code unknownsExpr}
+	 * labeled alternative in {@link ACParser#unknowns}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUnknowns(ACParser.UnknownsContext ctx);
+	T visitUnknownsExpr(ACParser.UnknownsExprContext ctx);
 }
