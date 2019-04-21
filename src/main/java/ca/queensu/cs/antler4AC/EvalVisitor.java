@@ -684,15 +684,18 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		String port = ctx.ID(0).getText();
 		String msg = ctx.ID(1).getText();
 		String dataName = "";
-		Value data = HeapMem.get(ctx.expr().getText());
-		
-		if (ctx.getText().contains("getName")){
-			dataName = "__getName__";
-			data = new Value("__CapInstanceName__","String");
-		}else if (ctx.expr().getText().contains("\"") || (data == null)){
+		Value data = new Value("","String");
+		if (ctx.expr() == null) { //port.msg().send();
+			SendMessage sendMsg = new SendMessage(port,msg, null, null, null);
+			listPortMsg.add(sendMsg);
+			return data;
+		}else if (ctx.expr().getText().contains("\"")) {  //port.msg("test").send();
 			dataName = msg+":VAR";
-			data = this.visit(ctx.expr());
-		}else {
+			data = new Value(ctx.expr().getText().replaceAll("^\"|\"$", ""),"String");
+		}else if (ctx.getText().contains("getName")){ //port.msg(this->getName()).send();
+			dataName = "__getName__";
+			data = new Value("__CapInstanceName__","String"); 
+		}else { //port.msg(var).send();
 			dataName = ctx.expr().getText();
 			data = this.visit(ctx.expr());
 		}
@@ -702,7 +705,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
 		return data;
 	}
-
+	
 	@Override
 	public Value visitSendat_stat(ACParser.Sendat_statContext ctx) {
 		String port = ctx.ID(0).getText();
@@ -734,7 +737,13 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 
 	@Override
 	public Value visitUnknownsExpr(ACParser.UnknownsExprContext ctx) {
-		System.out.println("in [visitUnknowns] : " + ctx.getText());
+		//System.out.println("in [visitUnknowns] : " + ctx.getText());
+
+		//Do nothing
+		return new Value(0, "");
+	}
+	public Value visitIgnoreLine(ACParser.IgnoreLineContext ctx) {
+		//System.out.println("in [visitUnknowns] : " + ctx.getText());
 
 		//Do nothing
 		return new Value(0, "");

@@ -57,7 +57,7 @@ public class Main {
 		String expression3 = "configTimer.informIn(UMLRTTimespec(3,0));";
 		String expression4 = "char * MasterName = (char *)this->getName();  if (KeepAliveTimerId.isValid()) KeepAliveTimer.cancelTimer(KeepAliveTimerId); if (logfile.is_open()) log \"Do not print that!\"; else log \" Print that!\"; showHeap; showListSendMsg; ";
 		*/
-		//String expression4 = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else { log \" ODD\"; }  } showHeap; showListSendMsg;";
+		String expression3 = "int count = 4; for (count = 0 ; count < 10 ; count++) { log \"count: \" + count; if (count % 2 == 0) {log \" EVEN\"; } else { log \" ODD\"; }  } showHeap; showListSendMsg;";
 
 		
 		/*String expression1 = "char* str = \"MajidBabaei\"; int pos = str.find(\"B\"); log \"pos: \" + pos; showHeap; showListSendMsg;";
@@ -68,25 +68,12 @@ public class Main {
 		
 		String expression1 = "char* str = \"MajidBabaei\"; int pos = str.find(\"B\"); std::string subStr = str.substr(pos,pos+2);";
 		String expression2 = "std::string str = \"MajidBabaei\"; int pos = str.find(\"B\"); ";
-		String expression3 = "std::string str = \"MajidBabaei\"; std::string det = \"Ba\"; int pos = str.find(det);  std::string subStr = str.substr(pos,str.length()); ";
+		String expression4 = "    if (logfile.is_open())\n" + 
+				"    logfile<<this->getName()<<\",TranstionEnd,\"<<messageID<<\",\"<<ts.tv_sec<<\",\"<<ts.tv_nsec<<\"\\n\";\n" + 
+				"    logfile.flush(); ";
+		
 		//String expression4 = " ts.getclock(ts); std::this_thread::sleep_for(std::chrono::milliseconds(700)); if (logfile.is_open()) log \" DO not print\"; string this->hostConfig = \"1:server1\"; int pos = this->hostConfig.find(\":\"); string systemConfigRunningMode = this->hostConfig.substr(0, pos); string serverName = this->hostConfig.substr(pos+1, this->hostConfig.length()); if (strcmp(systemConfigRunningMode,\"1\")==0) Master.IAmAlive((char *)this->getName()).send(); showHeap; showListSendMsg;";
-		String expression4 = "std::cout<<\"ENV: Reading the configuration \\n\";\n" + 
-				"    configTimer.informIn(UMLRTTimespec(3,0));\n" + 
-				"    //systemConfig.loadConfig();\n" + 
-				"    char* systemConfigRunningMode = (char*)\"1\";\n" + 
-				"bool server1Selected = false; bool server2Selected = false;\n" + 
-				"    if (strcmp(systemConfigRunningMode, \"0\")==0){ \n" + 
-				"    	server1Selected = true;\n" + 
-				"    	server2Selected = true;\n" + 
-				"    }else{\n" + 
-				"	server1Selected = true;\n" + 
-				"    	server2Selected = false;\n" + 
-				"    }\n" + 
-				"    std::cout<<\"ENV: Reading the configuration was done\\n\";"+
-				" char* config = \"1:server1\"; ConfigComm.StartUp(config).sendAt(0);\n" + 
-				"    ConfigComm.StartUp(config).sendAt(1);\n" + 
-				"    ConfigComm.StartUp(config).sendAt(2);"+
-				" showHeap; showListSendMsg;";
+		//String expression4 = " int var = 1; ConfigComm.QueryConfig().send(); port.msg(\"test\").send(); port.msg(this->getName()).send(); port.msg(var).send(); showHeap; showListSendMsg;";
 		
 		List<String> listExprs = new ArrayList<String>();
 		

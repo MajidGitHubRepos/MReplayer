@@ -86,9 +86,12 @@ public class CapsuleTracker implements Runnable{
     private List<SendMessage> listPortMsg;
     private List<String> listAllPathTaken;
     private String lastTookPath;
+    private String msgTobeConsumed;
+    private String msgSender;
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
+		this.msgTobeConsumed = "";
 		this.maplocalHeap = new HashMap<String, Value>();
 		this.listPortMsg = new ArrayList<SendMessage>();
 		this.mapPathTrigger =  new HashMap<String,List<String>>();
@@ -121,6 +124,7 @@ public class CapsuleTracker implements Runnable{
 		this.initDone = false;
 		this.startUpDone = false;
 		this.lastTookPath = "";
+		this.msgSender = "";
 	}
 
 
@@ -173,8 +177,14 @@ public class CapsuleTracker implements Runnable{
 							if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
 								//vTimeHandler(currentEventTmp);
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
-									if ((listPaths.size() == 1) && updateCurrentState()) {
+									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 										listAllPathTaken.add(listPaths.get(0));
+							 			//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
+										updateLocalHeap(listPaths.get(0),msgSender);
+										updateCurrentState();
+										dataContainer.mapSendMessages.remove(msgTobeConsumed);
+										msgTobeConsumed = "";
+										msgSender = "";
 										listPaths.clear();
 										break;
 									}
@@ -192,8 +202,14 @@ public class CapsuleTracker implements Runnable{
 
 						if (isConsumable(currentEvent) || (listPaths.size()>1)) {
 							if (currentStatus.contentEquals("TRANISTIONEND")) {
-								if ((listPaths.size() == 1) && updateCurrentState()) {
+								if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 									listAllPathTaken.add(listPaths.get(0));
+						 			//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
+									updateLocalHeap(listPaths.get(0),msgSender);
+									updateCurrentState();
+									dataContainer.mapSendMessages.remove(msgTobeConsumed);
+									msgTobeConsumed = "";
+									msgSender = "";
 									listPaths.clear();
 								}
 								//else
@@ -791,7 +807,7 @@ public class CapsuleTracker implements Runnable{
 	        { 
 				Entry<String, CapsuleTracker> entry = itr.next();
 				if (entry.getKey().contains(trgCapsule)) {
-					if (sendMessage.dataName.contentEquals("__getName__") && sendMessage.data.toString().contains("__CapInstanceName__")) { //TODO: find the corresponding varibale name in the target capsule; we have the same rule in the AC.g4
+					if ((sendMessage.data != null) && sendMessage.dataName.contentEquals("__getName__") && sendMessage.data.toString().contains("__CapInstanceName__")) { //TODO: find the corresponding varibale name in the target capsule; we have the same rule in the AC.g4
 						sendMessage.data = new Value (dataContainer.getCapsuleInstance(),"String");
 						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
 					}else
@@ -809,20 +825,15 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[interpretActionCode]
 	//==================================================================	
 	public void interpretActionCode(String actionCode, String msgSender) throws InterruptedException {
-        System.out.println("[actionCode]: "+actionCode);
-
+        System.out.println("[actionCode]: "+actionCode);        
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
 		EvalVisitor visitor = new EvalVisitor(maplocalHeap);
 		visitor.visit(parser.parse());
 		listPortMsg = visitor.getListPortMsg();
 		
-		
-		
 		//Thread.currentThread().sleep(2000); //TODO: replace with a thread syncronization method
-		
-		
-		
+
 		Iterator<Entry<String, Value>> itr = visitor.getHeapMem().entrySet().iterator(); 
         
         while(itr.hasNext()) 
@@ -917,9 +928,12 @@ public class CapsuleTracker implements Runnable{
 		if (!listTrigger.isEmpty()) {
 			
 			for(String msg : listTrigger) {
-				SendMessage sendMessage = dataContainer.mapSendMessages.get(msg);
-				if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) 
-					maplocalHeap.put(sendMessage.dataName, sendMessage.data);
+				String [] msgSplit = msg.split("\\.");
+				//if (!msgSplit[1].contains("_TIMER_")) { //we need to get msg __TIMER__ !
+					SendMessage sendMessage = dataContainer.mapSendMessages.get(msgSplit[1]);
+					if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) 
+						maplocalHeap.put(sendMessage.dataName, sendMessage.data);
+				//}
 			}
 			
 			
@@ -930,7 +944,8 @@ public class CapsuleTracker implements Runnable{
 		listActionCode = mapPathActionCode.get(path);
 		
 		for(String ac : listActionCode) {
-			interpretActionCode(ac,msgSender);
+			if (!ac.isEmpty())
+				interpretActionCode(ac,msgSender);
 		}
 	}
 	//==================================================================	
@@ -985,47 +1000,58 @@ public class CapsuleTracker implements Runnable{
 		List<String> listTrigger = new ArrayList<String>();
 		
 		listTrigger = mapPathTrigger.get(path);
+		
 		if (listTrigger == null) {
 			listTrigger = makeListTrigger(path);
-		}
-		String msgSender = "";
-		for(String msg : listTrigger) {
-			String [] msgSplit = msg.split("\\.");
-			if ((dataContainer.mapSendMessages.get(msgSplit[1]) != null) || (msgSplit[1].contains("__TIMER__"))) {
-				msgSender = dataContainer.mapSendMessages.get(msgSplit[1]).capsuleInstance;
-				result = true;
-				dataContainer.mapSendMessages.remove(msg);
-			}
 		}
 		
 		if (listTrigger.isEmpty())
 			result = true;
-		else
+		else {
+			result = true;
 			for(String msg : listTrigger) {
-				if(msg.contains("__TIMER__")){
-					result = true;
-				}					
+				if(!msg.contains("__TIMER__")){
+					//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++[in isRequirementMet]+++++++++++++>>>found a msg that is not : __TIMER__");
+					result = false;
+				}
 			}
-		
+
+			for(String msg : listTrigger) {
+				String [] msgSplit = msg.split("\\.");
+				if ((dataContainer.mapSendMessages.get(msgSplit[1]) != null)) {
+					//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++[in isRequirementMet]+++++++++++++>>>found: " + msgSplit[1]);
+
+					msgSender = dataContainer.mapSendMessages.get(msgSplit[1]).capsuleInstance;
+					result = true;
+					msgTobeConsumed = msgSplit[1];
+					//System.out.println("----------> In: "+ dataContainer.getCapsuleInstance() + ",msgTobeConsumed: "+ msgTobeConsumed);
+
+				}
+			}
+		}
+
+
+
 		if (!result) {
 			for(String msg : listTrigger) {
 				String [] msgSplit = msg.split("\\.");
-				System.out.println("In: "+ dataContainer.getCapsuleInstance() + ", expecting msg is "+ msgSplit[1]);
+				//System.err.println("In: "+ dataContainer.getCapsuleInstance() + ", expecting msg is "+ msgSplit[1]);
 			}
 			
 			Iterator<Entry<String, SendMessage>> itr = dataContainer.mapSendMessages.entrySet().iterator();  
 			while(itr.hasNext()) 
 	        { 
 				Entry<String, SendMessage> entry = itr.next();
-				System.out.println("In: "+ dataContainer.getCapsuleInstance() + ", we got "+ entry.getKey());
+				//System.err.println("In: "+ dataContainer.getCapsuleInstance() + ", we got "+ entry.getKey());
 	        }
+			//System.exit(1);
 		}
- 		
-		System.out.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> updateLocalHeap: " + result);
-		if (result)
-			updateLocalHeap(path,msgSender);
+			//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> isRequirementMet: " + result);
 
-		
+ 		if (! result) {
+ 			//System.out.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> isRequirementMet: " + result);
+ 			//System.exit(1);
+ 		}
 		return result;
 			
 	}
@@ -1037,7 +1063,13 @@ public class CapsuleTracker implements Runnable{
 		
 		boolean result = false;
 		String id = PES.mapQnameId.get(event.getSourceName());
-		//System.out.println("event.getSourceName(): " + event.allDataToString());
+		/*System.out.println(dataContainer.getCapsuleInstance()+", event.getSourceName(): " + event.getSourceName());
+		System.out.println(dataContainer.getCapsuleInstance()+ ", id: " + id);
+		System.out.println(dataContainer.getCapsuleInstance()+ ", ParserEngine.mapTransitionData.get(id): " + ParserEngine.mapTransitionData.get(id));
+		System.out.println(dataContainer.getCapsuleInstance()+ ", ParserEngine.mapTransitionData.get(id).getReginName(): " + ParserEngine.mapTransitionData.get(id).getReginName());
+		 */
+
+
 		String currentSateId = dataContainer.mapRegionCurrentState.get(ParserEngine.mapTransitionData.get(id).getReginName());
 		
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong

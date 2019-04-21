@@ -14,10 +14,11 @@ stat
  | while_stat
  | loop_stat
  | log
- | sendat_stat
  | send_stat
+ | sendat_stat
  | showContent_stat
  | timer_stat
+ | ignore_stat
 // | unknowns
  ;
 
@@ -30,6 +31,10 @@ assignment
  | ID PLUSPLUS SCOL													 #plusplusAssignment
  | STRINGVAR? ID ASSIGN GETNAME SCOL 								 #getNameAssignment
  | ID ASSIGN timer_stat												 #getTimerAssignment
+ ;
+
+ignore_stat
+ : IGNORELINE                                                   #ignoreLine
  ;
 
 if_stat
@@ -63,6 +68,7 @@ sendat_stat
 send_stat
    : ID '.' ID '(' (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? expr ')' '.' SEND '()' SCOL
    | ID '.' ID '(' (INTVAR | DOUBLEVAR | STRINGVAR | BOOLVAR)? GETNAME? ')' '.' SEND '()' SCOL
+   | ID '.' ID '()' '.' SEND '()' SCOL
    ;
 
 timer_stat
@@ -212,8 +218,7 @@ Space
  :  (' ' | '\t' | '\n')+ {skip();}
  ; 
 
-IGNORELINE
- : 'std::'? ('logfile>>' | 'cout<<' | 'this_thread' | 'ts.getclock') .*? ';'  -> skip
+IGNORELINE : 'std::'? ( 'logfile.flush()' |'logfile<<' | 'logfile>>' | 'cout<<' | 'this_thread' | 'ts.getclock') .*? ';'  
  ;
 
 IGNOREWORD
@@ -225,7 +230,7 @@ IGNOREEXPR
  ;
   
 //IGNORE
-// : ('this->hostConfig' | 'RequestTimer.informIn' |  'ts.getclock' | 'std::' |IF .*? 'systemConfig.RunningMode'| IF? .*? 'logfile' | 'TimerId=' | 'KeepAliveTimerId=' | 'AnnouncementTimerId=' | 'ConfigComm.StartUp(this->systemConfig)') .*? ';'  -> skip
+// : ('logfile.flush()' | 'this->hostConfig' | 'RequestTimer.informIn' |  'ts.getclock' | 'std::' |IF .*? 'systemConfig.RunningMode'| IF? .*? 'logfile' | 'TimerId=' | 'KeepAliveTimerId=' | 'AnnouncementTimerId=' | 'ConfigComm.StartUp(this->systemConfig)') .*? ';'  -> skip
 // ;
 //IFIGNORE
 // : (IF .*?  'hostConfig.')

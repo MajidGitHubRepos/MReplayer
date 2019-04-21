@@ -135,6 +135,18 @@ public class ACBaseListener implements ACListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterIgnoreLine(ACParser.IgnoreLineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIgnoreLine(ACParser.IgnoreLineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterIf_stat(ACParser.If_statContext ctx) { }
 	/**
 	 * {@inheritDoc}

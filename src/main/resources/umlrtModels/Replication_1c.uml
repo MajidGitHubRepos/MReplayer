@@ -37,7 +37,7 @@
       <ownedAttribute xmi:type="uml:Property" xmi:id="_bmibMApmEeaGqPUk-4V4qQ" name="AnnouncementServer2Id">
         <type xmi:type="uml:Class" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6qkTMGXmEeS_4daqvwyFrg"/>
       </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_fXb_wAxwEeaB2MeL96fedA" name="systemConfigRunningMode" aggregation="composite" association="_fXXuUAxwEeaB2MeL96fedA">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_fXb_wAxwEeaB2MeL96fedA" name="runningMode" aggregation="composite" association="_fXXuUAxwEeaB2MeL96fedA">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_mKfGEOM2EeaTpaLNj-zYpw" name="configTimer" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
@@ -93,21 +93,22 @@
 
 	char* config = (char*) &quot;&quot;;
 
-   if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
+   if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
 	config = (char*)&quot;1:server1_2&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
+    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;1:server1&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
+    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;1:server2&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
+    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;0:server1&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
+    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;0:server2&quot;;
-
+    else
+    	config = (char*)&quot;1:server1&quot;;
  
     ConfigComm.StartUp(config).sendAt(0);
     ConfigComm.StartUp(config).sendAt(1);
@@ -140,7 +141,7 @@
     AnnouncementServer2Id=AnnouncmentServer2.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
     }
     // the following code has been generated
-    if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0)&amp;&amp; (server1Selected ) &amp;&amp; (server2Selected))
+    if ((strcmp(runningMode,&quot;1&quot;)==0)&amp;&amp; (server1Selected ) &amp;&amp; (server2Selected))
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Violation, there are 2 master in passive mode\n&quot;;
 </body>
             </effect>
@@ -154,20 +155,23 @@
 
    char* config = (char*) &quot;&quot;;
 
-   if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
+   if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
 	config = (char*)&quot;1:server1_2&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
+    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;1:server1&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
+    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;1:server2&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
+    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;0:server1&quot;;
 
-    else if ((strcmp(systemConfigRunningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
+    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;0:server2&quot;;
+	
+	else
+    	config = (char*)&quot;1:server1&quot;;
  
     ConfigComm.ReplyConfig(config).sendAt(tempid);
 </body>
@@ -200,9 +204,9 @@
               <body>    std::cout&lt;&lt;&quot;ENV: Reading the configuration \n&quot;;
     configTimer.informIn(UMLRTTimespec(3,0));
     //systemConfig.loadConfig();
-    systemConfigRunningMode = (char*)&quot;1&quot;;
+    runningMode = (char*)&quot;1&quot;;
 
-    if (strcmp(systemConfigRunningMode, &quot;0&quot;)==0){ 
+    if (strcmp(runningMode, &quot;0&quot;)==0){ 
     	server1Selected = true;
     	server2Selected = true;
     }else{
@@ -257,7 +261,7 @@
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
         <defaultValue xmi:type="uml:LiteralReal" xmi:id="_G0bAofMlEeauO5SNGpOV7w"/>
       </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_ogGu8GHyEem3NOFNgSjWkQ" name="systemConfigRunningMode">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_ogGu8GHyEem3NOFNgSjWkQ" name="runningMode">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Property" xmi:id="__kMBcGKpEem3NOFNgSjWkQ" name="server1Selected">
@@ -323,20 +327,20 @@
     std::string systemConfig = config;
     int pos = systemConfig.find(&quot;:&quot;);
     std::string modeStr = systemConfig.substr(0, pos);
-    systemConfigRunningMode = (char*) modeStr.c_str();
+    runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
     serverName = (char*) srvName.c_str();
     if (strcmp(serverName, &quot;server1_2&quot;)==0) {
     server1Selected = true;
-    server1Selected = true;
+    server2Selected = true;
     }else if (strcmp(serverName, &quot;server1&quot;)==0) {
     server1Selected = true;
-    server1Selected = false;
+    server2Selected = false;
     }else {
     server1Selected = false;
-    server1Selected = true;
+    server2Selected = true;
     }
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Configuration is:&quot;&lt;&lt; systemConfigRunningMode&lt;&lt;&quot;\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Configuration is:&quot;&lt;&lt; runningMode&lt;&lt;&quot;\n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_aihU8AlfEea_md0mpENoqg" event="_MloQ4AguEea_md0mpENoqg" port="_-3KD0AgvEea_md0mpENoqg"/>
@@ -378,8 +382,16 @@
               <specification xmi:type="uml:OpaqueExpression" xmi:id="_XImjEAlwEea_md0mpENoqg" name="CheckConfig">
                 <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 <language>C++</language>
-                <body>    if ((strcmp(systemConfigRunningMode,&quot;0&quot;)==0) ||
-    ((strcmp(systemConfigRunningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp(serverName,this->getName())==0)))
+                <body>    
+                std::string systemConfig = config;
+    int pos = systemConfig.find(&quot;:&quot;);
+    std::string modeStr = systemConfig.substr(0, pos);
+    runningMode = (char*) modeStr.c_str();
+    std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
+    serverName = (char*) srvName.c_str();
+                
+                if ((strcmp(runningMode,&quot;0&quot;)==0) ||
+    ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp(serverName,this->getName())==0)))
     	return true;
     else 
     return false;
@@ -388,9 +400,7 @@
             </ownedRule>
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_nB58AApKEeaGqPUk-4V4qQ" name="InitTimer">
               <language>C++</language>
-              <body>    logfile&lt;&lt;&quot;capsuleName&quot;&lt;&lt;&quot;,messageType,&quot;&lt;&lt;&quot;messageID&quot;&lt;&lt;&quot;,&quot;&lt;&lt;&quot;second&quot;&lt;&lt;&quot;,&quot;&lt;&lt;&quot;nano&quot;&lt;&lt;&quot;\n&quot;;    
-
-    logfile.open(this->getName());
+              <body>    
     
     int failureRate = 4;
     KeepAliveTimeOut = 3;
@@ -418,10 +428,7 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_jf2tMAosEeaGqPUk-4V4qQ" name="ReplyRequest">
               <language>C++</language>
               <body>    ts.getclock(ts);
-    if (logfile.is_open())
-    logfile&lt;&lt;this->getName()&lt;&lt;&quot;,ClientRequest,&quot;&lt;&lt;messageID&lt;&lt;&quot;,,&quot;&lt;&lt;&quot;\n&quot;;
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Message from client replied at index &quot;&lt;&lt;msg->sapIndex0_&lt;&lt;&quot;\n&quot;;
-
+    
     //Only one client is asssumed
     int tempid = 0;
     ServerComm.Reply(0).sendAt(tempid);
@@ -439,9 +446,7 @@
               <language>C++</language>
               <body>
     ts.getclock(ts);
-    if (logfile.is_open())
- 		logfile&lt;&lt;&quot;keepAliveStart,&quot;&lt;&lt;messageID&lt;&lt;&quot;,,&quot;&lt;&lt;&quot;\n&quot;;
-
+    
     if (AnnouncementTimerId.isValid())
     	MasterAnnounceTimer.cancelTimer(AnnouncementTimerId);
 
@@ -467,7 +472,7 @@
     
     KeepAliveTimerId=KeepAliveTimer.informEvery(UMLRTTimespec(KeepAliveTimeOut,0),4);
 
-    if (strcmp(systemConfigRunningMode,&quot;1&quot;)==0)
+    if (strcmp(runningMode,&quot;1&quot;)==0)
     	Master.IAmAlive((char *)this->getName()).send();
     
     std::cout&lt;&lt;&quot;Master: Keep Alive is sent\n&quot;;
@@ -481,7 +486,7 @@
             <ownedRule xmi:type="uml:Constraint" xmi:id="_OyNyIAp8EeaGqPUk-4V4qQ" name="checkConfig">
               <specification xmi:type="uml:OpaqueExpression" xmi:id="_OyOZMAp8EeaGqPUk-4V4qQ" name="checkConfig">
                 <language>C++</language>
-                <body>    if (strcmp(systemConfigRunningMode,&quot;0&quot;)==0)
+                <body>    if (strcmp(runningMode,&quot;0&quot;)==0)
     return true;
     else return false;
 </body>
@@ -522,9 +527,7 @@
     ConfigComm.IAMMaster(MasterName).send();
     ts.getclock(ts);
 
-    if (logfile.is_open())
-    logfile&lt;&lt;this->getName()&lt;&lt;&quot;,TranstionEnd,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
-    logfile.flush();
+    
 </body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_cjKg0PMsEeauO5SNGpOV7w" name="startTransition">
@@ -533,8 +536,7 @@
 
     messageID=messageID+1;
 
-    if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,TranstionStart,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
+   
 </body>
             </exit>
           </subvertex>
@@ -736,8 +738,7 @@
               <body>    
     messageID=messageID+1;
     ts.getclock(ts);
-    if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,SendingMessage,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
+   
     if (strcmp(serverName,&quot;server1_2&quot;)==0)
     {
     	int randomServer=rand()%2;
@@ -773,7 +774,7 @@
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
             </trigger>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_KpN_QAo2EeaGqPUk-4V4qQ" name="Retry" source="_KwFHIAo0EeaGqPUk-4V4qQ" target="_aVMuMAmtEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_KpN_QAo2EeaGqPUk-4V4qQ" name="RetryToGetMasterName" source="_KwFHIAo0EeaGqPUk-4V4qQ" target="_aVMuMAmtEea_md0mpENoqg">
             <trigger xmi:type="uml:Trigger" xmi:id="_2jDQUAo3EeaGqPUk-4V4qQ" name="Retry" port="_8sGy4AovEeaGqPUk-4V4qQ">
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
             </trigger>
@@ -806,8 +807,7 @@
     std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Waiting for Response, The timeout is 60 Second\n&quot;;
     TimerId=ResponseTimer.informIn(UMLRTTimespec(60,0),4);
     ts.getclock(ts);
-    if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,MessageSent,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
+    
 </body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_r05c0Ao9EeaGqPUk-4V4qQ" name="CancellTimer">
@@ -815,9 +815,7 @@
               <body>ResponseTimer.cancelTimer(TimerId);
 messageID=messageID+1; 
 ts.getclock(ts);
-    if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,ProcessingMessage,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;   
-
+   
 </body>
             </exit>
           </subvertex>
@@ -829,13 +827,12 @@ ts.getclock(ts);
     Timer.informIn(UMLRTTimespec(0,500),4);
 
     ts.getclock(ts);
-    if (logfile.is_open())
-	logfile&lt;&lt;this->getName()&lt;&lt;&quot;,MessageProcessed,&quot;&lt;&lt;messageID&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_sec&lt;&lt;&quot;,&quot;&lt;&lt;ts.tv_nsec&lt;&lt;&quot;\n&quot;;
+    
 </body>
             </entry>
           </subvertex>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_qr_J4AnCEeaGqPUk-4V4qQ" name="checkConfig" kind="choice"/>
-          <subvertex xmi:type="uml:State" xmi:id="_KwFHIAo0EeaGqPUk-4V4qQ" name="Retry">
+          <subvertex xmi:type="uml:State" xmi:id="_KwFHIAo0EeaGqPUk-4V4qQ" name="RetryState">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_1CJTsAo2EeaGqPUk-4V4qQ" name="RetryConfig">
               <language>C++</language>
               <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));

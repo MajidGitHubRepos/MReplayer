@@ -77,6 +77,13 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGetTimerAssignment(ACParser.GetTimerAssignmentContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ignoreLine}
+	 * labeled alternative in {@link ACParser#ignore_stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIgnoreLine(ACParser.IgnoreLineContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ACParser#if_stat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

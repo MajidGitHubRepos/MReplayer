@@ -121,6 +121,18 @@ public interface ACListener extends ParseTreeListener {
 	 */
 	void exitGetTimerAssignment(ACParser.GetTimerAssignmentContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ignoreLine}
+	 * labeled alternative in {@link ACParser#ignore_stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterIgnoreLine(ACParser.IgnoreLineContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ignoreLine}
+	 * labeled alternative in {@link ACParser#ignore_stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitIgnoreLine(ACParser.IgnoreLineContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ACParser#if_stat}.
 	 * @param ctx the parse tree
 	 */
