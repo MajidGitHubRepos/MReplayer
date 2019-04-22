@@ -107,8 +107,6 @@
 
     else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;0:server2&quot;;
-    else
-    	config = (char*)&quot;1:server1&quot;;
  
     ConfigComm.StartUp(config).sendAt(0);
     ConfigComm.StartUp(config).sendAt(1);
@@ -141,7 +139,7 @@
     AnnouncementServer2Id=AnnouncmentServer2.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
     }
     // the following code has been generated
-    if ((strcmp(runningMode,&quot;1&quot;)==0)&amp;&amp; (server1Selected ) &amp;&amp; (server2Selected))
+    if ((strcmp(runningMode,&quot;1&quot;)==0)&amp;&amp; (!server1Selected ) &amp;&amp; (!server2Selected))
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Violation, there are 2 master in passive mode\n&quot;;
 </body>
             </effect>
@@ -169,9 +167,7 @@
 
     else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;0:server2&quot;;
-	
-	else
-    	config = (char*)&quot;1:server1&quot;;
+
  
     ConfigComm.ReplyConfig(config).sendAt(tempid);
 </body>
@@ -283,8 +279,8 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xB_iwAlLEea_md0mpENoqg" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_pQ6HcAnMEeaGqPUk-4V4qQ" name="ServerComm" visibility="public" type="_4--ccAnEEeaGqPUk-4V4qQ" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_etWXMAnOEeaGqPUk-4V4qQ" value="5"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_euWcwAnOEeaGqPUk-4V4qQ" value="5"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_etWXMAnOEeaGqPUk-4V4qQ" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_euWcwAnOEeaGqPUk-4V4qQ" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_HIvrsApCEeaGqPUk-4V4qQ" name="Master" visibility="public" type="_f2ud0ApBEeaGqPUk-4V4qQ" isOrdered="true" aggregation="composite" isBehavior="true"/>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_ZDrx0ApDEeaGqPUk-4V4qQ" name="KeepAliveTimer" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
@@ -383,7 +379,7 @@
                 <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 <language>C++</language>
                 <body>    
-                std::string systemConfig = config;
+     std::string systemConfig = config;
     int pos = systemConfig.find(&quot;:&quot;);
     std::string modeStr = systemConfig.substr(0, pos);
     runningMode = (char*) modeStr.c_str();
@@ -403,8 +399,8 @@
               <body>    
     
     int failureRate = 4;
-    KeepAliveTimeOut = 3;
-    AnnouncementTimeOut = 5;
+    KeepAliveTimeOut = 4;
+    AnnouncementTimeOut = 3;
     
     std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; failureRate &lt;&lt; &quot; second\n&quot;;
@@ -429,8 +425,8 @@
               <language>C++</language>
               <body>    ts.getclock(ts);
     
-    //Only one client is asssumed
-    int tempid = 0;
+
+    int tempid=msg->sapIndex0_;
     ServerComm.Reply(0).sendAt(tempid);
     int j=1;
     for (int i=0;i&lt;1000000;i++)
@@ -496,7 +492,7 @@
           <transition xmi:type="uml:Transition" xmi:id="_pYtP8Ap5EeaGqPUk-4V4qQ" name="ToRunAsMaster" source="_kLngAAp5EeaGqPUk-4V4qQ" target="_UrcckAlOEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_lf6aoAqTEeaGqPUk-4V4qQ" name="BeMaster">
               <language>C++</language>
-              <body>    int r=random()%30+5;
+              <body>    int r=rand()%30+5;
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; r &lt;&lt; &quot;second\n&quot;;
 
     TimerId=Timer.informEvery(UMLRTTimespec(3600000,0),4);
@@ -694,6 +690,30 @@
             </trigger>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_9CvEQAmtEea_md0mpENoqg" name="ReplayConfig" source="_aVMuMAmtEea_md0mpENoqg" target="_qr_J4AnCEeaGqPUk-4V4qQ">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_nYJJ4GR6EemELOueqj8-HA" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>
+   std::string systemConfig = config;
+ std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> given Config is: &quot;&lt;&lt; systemConfig&lt;&lt;&quot;\n&quot;;
+
+int pos = systemConfig.find(&quot;:&quot;);
+std::string modeStr = systemConfig.substr(0, pos);
+runningMode = (char*) modeStr.c_str();
+std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
+serverName = (char*) srvName.c_str();
+
+if (strcmp(serverName, &quot;server1_2&quot;)==0) {
+    server1Selected = true;
+    server2Selected = true;
+    }else if (strcmp(serverName, &quot;server1&quot;)==0) {
+    server1Selected = true;
+    server2Selected = false;
+    }else {
+    server1Selected = false;
+    server2Selected = true;
+}
+</body>
+            </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_fW6vEAnCEeaGqPUk-4V4qQ" name="ConfigReply" event="_Iv3CQAl4Eea_md0mpENoqg" port="_g3nG4AgvEea_md0mpENoqg"/>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_BanqgAmuEea_md0mpENoqg" name="ServiceResult" source="_fO-gkAmtEea_md0mpENoqg" target="_uScfwAmtEea_md0mpENoqg">
@@ -735,31 +755,40 @@
             </ownedRule>
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_xvuAcAnEEeaGqPUk-4V4qQ" name="requestserive">
               <language>C++</language>
-              <body>    
+              <body>if (server1Selected)
+  std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> server1Selected is TRUE &quot;&lt;&lt;&quot;\n&quot;;
+if (server2Selected)
+  std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> server2Selected is TRUE &quot;&lt;&lt;&quot;\n&quot;;
+
     messageID=messageID+1;
     ts.getclock(ts);
-   
-    if (strcmp(serverName,&quot;server1_2&quot;)==0)
+
+    if (server1Selected &amp;&amp; server2Selected)
     {
-    	int randomServer=rand()%2;
-    	if (randomServer==0)
-    	{
-    		Server1Comm.Request(0).send();
-    		std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
-    	}
-    	else{
-    		Server2Comm.Request(0).send();
-    		std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
-    	}
+    //int randomServer=rand()%2;
+    int randomServer = 0;
+
+    if (randomServer==0)
+    {
+    Server1Comm.Request(0).send();
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> sending Request to Server1\n&quot;;
     }
-    else if (strcmp(serverName,&quot;server1&quot;)==0){
-    	Server1Comm.Request(0).send();
-    	std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
+    else{
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> sending Request to Server2\n&quot;;
+    Server2Comm.Request(0).send();
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
+    }
+    }
+    else if (server1Selected){
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> sending Request to Server1\n&quot;;
+    Server1Comm.Request(0).send();
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server1\n&quot;;
     }
     else
     {
-    	Server2Comm.Request(0).send();
-    	std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: ==================================> sending Request to Server2\n&quot;;
+    Server2Comm.Request(0).send();
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: sending Request to Server2\n&quot;;
     }
 </body>
             </effect>

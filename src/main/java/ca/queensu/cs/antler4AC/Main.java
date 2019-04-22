@@ -66,7 +66,7 @@ public class Main {
 		String expression4 = "(char*) str = \"MajidBabaei\"; int pos = str.find ( \"B\" ); log \"pos: \" + pos; showHeap; showListSendMsg;";
 		*/
 		
-		String expression1 = "char* str = \"MajidBabaei\"; int pos = str.find(\"B\"); std::string subStr = str.substr(pos,pos+2);";
+		String expression1 = " int r=rand()%30+5; char* str = \"MajidBabaei\"; int pos = str.find(\"B\"); std::string subStr = str.substr(pos,pos+2);";
 		String expression2 = "std::string str = \"MajidBabaei\"; int pos = str.find(\"B\"); ";
 		String expression4 = "    if (logfile.is_open())\n" + 
 				"    logfile<<this->getName()<<\",TranstionEnd,\"<<messageID<<\",\"<<ts.tv_sec<<\",\"<<ts.tv_nsec<<\"\\n\";\n" + 
