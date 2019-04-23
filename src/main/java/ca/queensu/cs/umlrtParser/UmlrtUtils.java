@@ -418,6 +418,7 @@ public class UmlrtUtils {
 								if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
 									myConnector.portCap2 = connEnd2.getRole().getName();
 									if (connEnd2.getPartWithPort() != null) {
+
 										myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName();
 										//if (connEnd2.lowerBound()> 0) {
 											String key = myConnector.capInstanceName2+":"+myConnector.portCap2;
@@ -629,6 +630,37 @@ public class UmlrtUtils {
     public static CallEvent getCallEvent(Operation op){
             return MessageUtils.getCallEvent(op);
     }
+    
+  //==================================================================	
+  	//==============================================[getCallEvent]
+  	//==================================================================			
 
+   /* public static MyConnector putPortInfoToMyConnector (MyConnector myConnector,Connector connector, PackageableElement elementTmp){
+    	
+    	ConnectorEnd connEnd1 = connector.getEnds().get(0);
+		ConnectorEnd connEnd2 = connector.getEnds().get(1);
+		
+    	
+    	myConnector.connectorName = connector.getName();
+    	myConnector.portCap1 = port.getName();
+    	String key = myConnector.capInstanceName1+":"+myConnector.portCap1;
+    	
+    	if (ParserEngine.mapPortRep.containsKey(key)) {//capInst:port
+    		myConnector.port1Idx = ParserEngine.mapPortRep.get(key) +1;
+    		ParserEngine.mapPortRep.put(key, myConnector.port1Idx);
+    	}else {
+    		ParserEngine.mapPortRep.put(key, 0);
+    	}
 
+    	for (Port portTmp : UmlrtUtils.getPorts((Class)elementTmp)) {
+    		if (portTmp.getName().contentEquals(myConnector.portCap1)) {
+    			myConnector.bhvPortCap1 = portTmp.isBehavior();
+    		}
+    	}
+
+    	return myConnector;
+
+    }
+
+*/
 }

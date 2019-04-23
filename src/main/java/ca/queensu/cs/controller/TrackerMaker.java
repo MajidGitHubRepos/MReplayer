@@ -179,7 +179,7 @@ public class TrackerMaker implements Runnable{
 			capsuleInstances__indexes = capsuleInstances__indexes + ", " + capsuleInstance__capsuleIndex;
 			eventCount++;
 			this.semCapsuleTracker.release();
-			//showElements();
+			showElements();
 
 		}else {
 			//System.out.println("2 ============> [Controller.mapIdxCapInst.get(capsuleInstance__capsuleIndex)]: "+ Controller.mapIdxCapInst.get(capsuleInstance__capsuleIndex));

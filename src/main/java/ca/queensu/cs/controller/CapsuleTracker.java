@@ -84,17 +84,22 @@ public class CapsuleTracker implements Runnable{
 	private Map<String,List<String>> mapPathActionCode;
 	private Map<String, Value> maplocalHeap;
     private List<SendMessage> listPortMsg;
+    private List<String> listConsumedPaths;
     private List<String> listAllPathTaken;
     private String lastTookPath;
     private String msgTobeConsumed;
     private String msgSender;
-    private boolean msgConsumed;
+    private boolean msgConsumedTmpQueue;
+    private boolean msgConsumedQueue;
+
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
-		this.msgConsumed = false;
+		this.msgConsumedQueue = false;
+		this.msgConsumedTmpQueue = false;
 		this.msgTobeConsumed = "";
 		this.maplocalHeap = new HashMap<String, Value>();
+		this.listConsumedPaths = new ArrayList<String>();
 		this.listPortMsg = new ArrayList<SendMessage>();
 		this.mapPathTrigger =  new HashMap<String,List<String>>();
 		this.mapPathActionCode =  new HashMap<String,List<String>>();
@@ -181,6 +186,7 @@ public class CapsuleTracker implements Runnable{
 									if (currentStatus.contentEquals("TRANISTIONEND")) {
 										if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 											listAllPathTaken.add(listPaths.get(0));
+											addToListConsumedPaths(listPaths.get(0));
 											//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
 											updateLocalHeap(listPaths.get(0),msgSender);
 											updateCurrentState();
@@ -188,7 +194,7 @@ public class CapsuleTracker implements Runnable{
 											msgTobeConsumed = "";
 											msgSender = "";
 											listPaths.clear();
-											msgConsumed = true;
+											msgConsumedTmpQueue = true;
 											break;
 										}
 										//else
@@ -202,11 +208,11 @@ public class CapsuleTracker implements Runnable{
 					if(!dataContainer.getEventQueue().isEmpty()) {
 						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
 						if(!isPassedEvent(currentEvent)) {
-
 							if (isConsumable(currentEvent) || (listPaths.size()>1)) {
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
 									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
 										listAllPathTaken.add(listPaths.get(0));
+										addToListConsumedPaths(listPaths.get(0));
 										//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
 										updateLocalHeap(listPaths.get(0),msgSender);
 										updateCurrentState();
@@ -214,7 +220,7 @@ public class CapsuleTracker implements Runnable{
 										msgTobeConsumed = "";
 										msgSender = "";
 										listPaths.clear();
-										msgConsumed = true;
+										msgConsumedQueue = true;
 									}
 									//else
 									//throw new IllegalAccessException("updateCurrentState Faild!");
@@ -223,14 +229,16 @@ public class CapsuleTracker implements Runnable{
 							}else {eventQueueTmp.put(currentEvent);}
 						}
 					}
-					if (msgConsumed && currentEventTmp.getSourceName() != null) {
+					if (msgConsumedTmpQueue && currentEventTmp.getSourceName() != null) {
 						showInfo(currentEventTmp);
 						currentEventTmp = null;
-					}if (msgConsumed && currentEvent.getSourceName() !=null) {
+					}if (msgConsumedQueue && currentEvent.getSourceName() !=null) {
 						showInfo(currentEvent);
 						currentEvent = null;
 					}
-					msgConsumed = false;
+					msgConsumedTmpQueue = false;
+					msgConsumedQueue = false;
+
 
 				}
 				semCapsuleTracker.release();
@@ -242,13 +250,37 @@ public class CapsuleTracker implements Runnable{
 	}
 
 	//==================================================================	
+	//====================================================[addToListConsumedPaths]
+	//==================================================================	
+	public void addToListConsumedPaths(String path) {
+		
+		if(path.contains(",")) {
+			String [] pathsSplit = path.split("\\,");
+			for (String p : pathsSplit) {
+				listConsumedPaths.add(p);
+			}
+		}else {
+			listConsumedPaths.add(path);
+		}
+		
+	}
+	
+	//==================================================================	
 	//====================================================[isPassedEvent]
 	//==================================================================	
 	public boolean isPassedEvent(Event event) {
 		String id = PES.mapQnameId.get(event.getSourceName());
-		if(!prvTookPath.isEmpty() && prvTookPath.contains(",") && prvTookPath.contains(id)) {
-			return true;
+		//if(!prvTookPath.isEmpty() && prvTookPath.contains(",") && prvTookPath.contains(id)) {
+		//	return true;
+		//}
+		
+		for (String path : listConsumedPaths) {
+			if (path.contentEquals(id)) {
+				listConsumedPaths.remove(path);
+				return true;
+			}
 		}
+		
 		return false;
 	}
 	
@@ -402,6 +434,12 @@ public class CapsuleTracker implements Runnable{
 		String [] pathSplit;
 		String lastId = "";
 		String region = "";
+		String region_begin = "";
+		String region_begin_currentState = "";
+		boolean firstTrTook = false;
+		boolean trTookIntoCS = false;
+		String trPrv = "";
+
 		
 		if (listPaths.size()==1) {
 			String path = listPaths.get(0);
@@ -411,16 +449,32 @@ public class CapsuleTracker implements Runnable{
 				pathSplit = path.split("\\,");
 				lastId = pathSplit[pathSplit.length -1];
 				for(String tr : pathSplit) {
+					if (!firstTrTook) {
+						region_begin = ParserEngine.mapTransitionData.get(tr).getReginName();
+						region_begin_currentState = dataContainer.mapRegionCurrentState.get(region_begin);
+						firstTrTook = true;
+					}
 					region = ParserEngine.mapTransitionData.get(tr).getReginName();
 					String [] trSplit = ParserEngine.mapTransitionData.get(tr).getPath().split("\\-");
-					dataContainer.mapRegionCurrentState.put(region, trSplit[trSplit.length -1]);
+					dataContainer.mapRegionCurrentState.put(region, trSplit[2]);
+
+					if (region.contains(region_begin+"_")) { //We assuem that _ separates regions 
+						String [] trPrvSplit = ParserEngine.mapTransitionData.get(trPrv).getPath().split("\\-");
+						region_begin_currentState = trPrvSplit[2];
+						trTookIntoCS = true;
+					}
+					trPrv = tr;
 				}
 			}else {
 				lastId = path;
 				region = ParserEngine.mapTransitionData.get(lastId).getReginName();
 				String [] trSplit = ParserEngine.mapTransitionData.get(lastId).getPath().split("\\-");
-				dataContainer.mapRegionCurrentState.put(region, trSplit[trSplit.length -1]);	
+				dataContainer.mapRegionCurrentState.put(region, trSplit[2]);	
 				}
+			
+			if ( (trTookIntoCS || firstTrTook) && !region.contentEquals(region_begin)) { //recover the current state in the initial region
+				dataContainer.mapRegionCurrentState.put(region_begin, region_begin_currentState);
+			}
 			
 			return true;
 		}else {
@@ -443,8 +497,8 @@ public class CapsuleTracker implements Runnable{
 			firstId = path;}
 		String [] stateIds = ParserEngine.mapTransitionData.get(firstId).getPath().split("\\-");		
 		
-		if ((dataContainer.mapRegionCurrentState.get(region) != null) && dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0]) || 
-				((ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind() != null) && (ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind().toString().contentEquals("INITIAL"))))
+		if ((dataContainer.mapRegionCurrentState.get(region) != null) && dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0])  || currentStatus.contentEquals("INIT")
+				/* || ((ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind() != null) && (ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind().toString().contentEquals("INITIAL")))*/)
 			return true;
 		else 
 			return false;
@@ -458,7 +512,8 @@ public class CapsuleTracker implements Runnable{
 		String id = PES.mapQnameId.get(qName);
 		String region = ParserEngine.mapTransitionData.get(id).getReginName();
 		String capInstance = ParserEngine.mapTransitionData.get(id).getCapsuleInstanceName();
-		
+		//System.err.println(qName + ", capInstance is : "+capInstance);
+
 		
 		if (listPaths.isEmpty()) {
 			for (Map.Entry<String, List<String>> entry : PES.mapRegionPaths.entrySet()) {
@@ -821,7 +876,8 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 
-			
+			System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
+
 			if (trgCapsule.isEmpty()){
 				System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
 				System.err.println(sendMessage.capsuleInstance + "  In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>> msgSender: " +msgSender +", dest: " + sendMessage.dest.asString());
@@ -1066,7 +1122,8 @@ public class CapsuleTracker implements Runnable{
 				//System.err.println("In: "+ dataContainer.getCapsuleInstance() + ", expecting msg is "+ msgSplit[1]);
 			}
 			
-			Iterator<Entry<String, SendMessage>> itr = dataContainer.mapSendMessages.entrySet().iterator();  
+			Iterator<Entry<String, SendMessage>> itr = dataContainer.mapSendMessages.entrySet().iterator();
+
 			while(itr.hasNext()) 
 	        { 
 				Entry<String, SendMessage> entry = itr.next();
@@ -1121,8 +1178,11 @@ public class CapsuleTracker implements Runnable{
 
 				System.exit(1);
 			}*/
-			else
+			else {
+				//System.err.println("[EVENT]"+event.allDataToString());
+				//System.err.println("__________ No Path Found! __________");
 				result = false;
+			}
 		}
 		return result;
 	}

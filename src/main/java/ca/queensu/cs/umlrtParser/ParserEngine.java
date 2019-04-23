@@ -238,6 +238,7 @@ public class ParserEngine implements Runnable {
 		String connEnd1PortName = "";
 		String connEnd2PortName = "";
 		String capsuleInstanceNameRep = "";
+		boolean capsuleReplication = false;
 
 		int i=0;
 		//TODO: [*] What if we dont have a Top capsule?!
@@ -255,12 +256,15 @@ public class ParserEngine implements Runnable {
 					capsuleInstanceNameRep = "";
 					System.out.println(">>>>>>>>>>>>> PART: " +part.getName() +"___"+ part.lowerBound());
 					//When there are multiple instances from one capsuel with identical name.
+					int ii =1;
 					if (part.lowerBound()>1) {
-						for(int ii = 1; ii<=part.lowerBound(); ii++) {
-							capsuleInstanceNameRep =  capsuleInstanceNameRep + topCapsuleName+"__"+part.getName()+"__"+ii+", ";
-							//System.out.println("==========================> capsuleInstanceNameRep: " +capsuleInstanceNameRep);
-
+						for(ii = 1; ii<part.lowerBound(); ii++) {
+							capsuleInstanceNameRep =  capsuleInstanceNameRep + topCapsuleName+"__"+part.getName()+"__"+ii+",";
+							//System.err.println(topCapsuleName+"__"+part.getName() +" ==========================> capsuleInstanceNameRep: " +capsuleInstanceNameRep);
 						}
+						if (ii == part.lowerBound())
+							capsuleInstanceNameRep =  capsuleInstanceNameRep + topCapsuleName+"__"+part.getName()+"__"+ii;
+
 						capsuleInstanceNameRepMap.put(topCapsuleName+"__"+part.getName(), capsuleInstanceNameRep);
 						//System.out.println("==========================> capsuleInstanceNameRepMap: " +capsuleInstanceNameRepMap);
 
@@ -303,25 +307,130 @@ public class ParserEngine implements Runnable {
 				//extract connectors
 				for (Connector connector : UmlrtUtils.getConnectors((Class)elementTmp)) {	
 
-					MyConnector myConnector = new MyConnector();
-					myConnector.connectorName = connector.getName();
+					
 					ConnectorEnd connEnd1 = connector.getEnds().get(0);
 					ConnectorEnd connEnd2 = connector.getEnds().get(1);
+					
+					if (connEnd1.getPartWithPort().lowerBound()>1 || connEnd2.getPartWithPort().lowerBound()>1) {
+						
+						if (connEnd1.getPartWithPort().lowerBound()>1) {
+							int lowerBound = connEnd1.getPartWithPort().lowerBound();
+							for (int capRepCounter =1 ; capRepCounter <= lowerBound; capRepCounter++) {
+								
+								MyConnector myConnector = new MyConnector();
+								myConnector.connectorName = connector.getName();
+								
+								if (connEnd1.getRole() instanceof Port) {
+									myConnector.capInstanceName1 = connEnd1.getPartWithPort().getName()+"__"+capRepCounter;
+									myConnector.portCap1 = connEnd1.getRole().getName();
 
+									String key = myConnector.capInstanceName1+":"+myConnector.portCap1;
+									if (mapPortRep.containsKey(key)) {//capInst:port
+										myConnector.port1Idx = mapPortRep.get(key) +1;
+										mapPortRep.put(key, myConnector.port1Idx);
+									}else {
+										mapPortRep.put(key, 0);
+									}
+									
+									for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
+										if (port.getName().contentEquals(myConnector.portCap1)) {
+											myConnector.bhvPortCap1 = port.isBehavior();
+										}
+									}
+								}//getRole()->Port1
+								if (connEnd2.getRole() instanceof Port) {
+									myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName();
+									myConnector.portCap2 = connEnd2.getRole().getName();
+
+									String key = myConnector.capInstanceName2+":"+myConnector.portCap2;
+									if (mapPortRep.containsKey(key)) {//capInst:port
+										myConnector.port2Idx = mapPortRep.get(key) +1;
+										mapPortRep.put(key, myConnector.port2Idx);
+									}else {
+										mapPortRep.put(key, 0);
+									}
+									
+									for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
+										if (port.getName().contentEquals(myConnector.portCap2)) {
+											myConnector.bhvPortCap2 = port.isBehavior();
+										}
+									}
+								}//getRole()->Port2
+								if (!UmlrtUtils.existsInListMyConnectors(listMyConnectors, myConnector.capInstanceName1, myConnector.capInstanceName2, myConnector.connectorName))
+									listMyConnectors.add(myConnector);
+							}
+							
+							
+						}else if (connEnd2.getPartWithPort().lowerBound()>1) {
+							int lowerBound = connEnd2.getPartWithPort().lowerBound();
+							for (int capRepCounter =1 ; capRepCounter <= lowerBound; capRepCounter++) {
+								MyConnector myConnector = new MyConnector();
+								myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName()+"__"+capRepCounter;
+								myConnector.connectorName = connector.getName();
+								
+								if (connEnd2.getRole() instanceof Port) {
+									myConnector.portCap2 = connEnd1.getRole().getName();
+
+									String key = myConnector.capInstanceName2+":"+myConnector.portCap2;
+									if (mapPortRep.containsKey(key)) {//capInst:port
+										myConnector.port2Idx = mapPortRep.get(key) +1;
+										mapPortRep.put(key, myConnector.port2Idx);
+									}else {
+										mapPortRep.put(key, 0);
+									}
+									
+									for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
+										if (port.getName().contentEquals(myConnector.portCap2)) {
+											myConnector.bhvPortCap2 = port.isBehavior();
+										}
+									}
+								}//getRole()->Port2
+								if (connEnd1.getRole() instanceof Port) {
+									myConnector.capInstanceName1 = connEnd1.getPartWithPort().getName();
+									myConnector.portCap1 = connEnd1.getRole().getName();
+
+									String key = myConnector.capInstanceName1+":"+myConnector.portCap1;
+									if (mapPortRep.containsKey(key)) {//capInst:port
+										myConnector.port1Idx = mapPortRep.get(key) +1;
+										mapPortRep.put(key, myConnector.port1Idx);
+									}else {
+										mapPortRep.put(key, 0);
+									}
+									
+									for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
+										if (port.getName().contentEquals(myConnector.portCap1)) {
+											myConnector.bhvPortCap1 = port.isBehavior();
+										}
+									}
+								}//getRole()->Port1
+								if (!UmlrtUtils.existsInListMyConnectors(listMyConnectors, myConnector.capInstanceName1, myConnector.capInstanceName2, myConnector.connectorName))
+									listMyConnectors.add(myConnector);
+							}
+						}
+						
+						
+					}else {
+					
+					MyConnector myConnector = new MyConnector();
+					myConnector.connectorName = connector.getName();
+					
 					if (connEnd1 != null && connEnd1.getRole() instanceof Port) {
 						myConnector.portCap1 = connEnd1.getRole().getName();
 						//if (connEnd1.upperBound()> 1) {
-							String key = connEnd1.getPartWithPort().getName()+":"+myConnector.portCap1;
-							//System.out.println("============> connEnd1.getPartWithPort(): "+connEnd1.getPartWithPort().get);
-							if (mapPortRep.containsKey(key)) {//capInst:port
-								myConnector.port1Idx = mapPortRep.get(key) +1;
-								mapPortRep.put(key, myConnector.port1Idx);
-							}else {
-								mapPortRep.put(key, 0);
-							}
+
+						String key = connEnd1.getPartWithPort().getName()+":"+myConnector.portCap1;
+						//System.out.println("============> connEnd1.getPartWithPort(): "+connEnd1.getPartWithPort().get);
+						if (mapPortRep.containsKey(key)) {//capInst:port
+							myConnector.port1Idx = mapPortRep.get(key) +1;
+							mapPortRep.put(key, myConnector.port1Idx);
+						}else {
+							mapPortRep.put(key, 0);
+						}
 						//}
-							
+
 						if (connEnd1.getPartWithPort() != null) {
+							//System.err.println(">>>>>>>>>>>>> connEnd1.getPartWithPort().getName(): " +connEnd1.getPartWithPort().getName() +"=>"+ connEnd1.getPartWithPort().lowerBound());
+
 							myConnector.capInstanceName1 = connEnd1.getPartWithPort().getName();
 							for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
 								if (port.getName().contentEquals(myConnector.portCap1)) {
@@ -338,16 +447,18 @@ public class ParserEngine implements Runnable {
 					if (connEnd2 != null && connEnd2.getRole() instanceof Port) {
 						myConnector.portCap2 = connEnd2.getRole().getName();
 						//if (connEnd2.upperBound()> 1) {
-							String key = connEnd2.getPartWithPort().getName()+":"+myConnector.portCap2;
-							if (mapPortRep.containsKey(key)) {//capInst:port
-								myConnector.port2Idx = mapPortRep.get(key) +1;
-								mapPortRep.put(key, myConnector.port2Idx);
-							}else {
-								mapPortRep.put(key, 0);
-							}
+						String key = connEnd2.getPartWithPort().getName()+":"+myConnector.portCap2;
+						if (mapPortRep.containsKey(key)) {//capInst:port
+							myConnector.port2Idx = mapPortRep.get(key) +1;
+							mapPortRep.put(key, myConnector.port2Idx);
+						}else {
+							mapPortRep.put(key, 0);
+						}
 						//}
-							
+
 						if (connEnd2.getPartWithPort() != null) {
+							//System.err.println(">>>>>>>>>>>>> connEnd2.getPartWithPort().getName(): " +connEnd2.getPartWithPort().getName() +"=>"+ connEnd2.getPartWithPort().lowerBound());
+
 							myConnector.capInstanceName2 = connEnd2.getPartWithPort().getName();
 							for (Port port : UmlrtUtils.getPorts((Class)elementTmp)) {
 								if (port.getName().contentEquals(myConnector.portCap2)) {
@@ -364,6 +475,7 @@ public class ParserEngine implements Runnable {
 						listMyConnectors.add(myConnector);
 					//listPortName_connectorName_PortName.add(partWithPort1+"__"+connEnd1PortName+"::"+connectorName+"::"+partWithPort2+"__"+connEnd2PortName);
 					//break;
+				}
 				}
 			}
 			i++;
@@ -426,7 +538,7 @@ public class ParserEngine implements Runnable {
 					if (tmpCapsuleName.contentEquals(capsuleName)) {
 						this.elementName = capsuleName;
 						if (this.elementInstanceName != "")
-							this.elementInstanceName = this.elementInstanceName + ", " +splitCapsuleName_InstanceName[1];
+							this.elementInstanceName = this.elementInstanceName + "," +splitCapsuleName_InstanceName[1];
 						else
 							this.elementInstanceName = splitCapsuleName_InstanceName[1];
 
@@ -435,7 +547,7 @@ public class ParserEngine implements Runnable {
 							if (capsuleInstanceName.contentEquals("Top")) //Top dosen't have any instance 
 								break;
 						} else
-							capsuleInstanceName = capsuleInstanceName + ", "+ splitCapsuleName_InstanceName[1];
+							capsuleInstanceName = capsuleInstanceName + ","+ splitCapsuleName_InstanceName[1];
 						//break;
 					}
 				}
@@ -444,14 +556,19 @@ public class ParserEngine implements Runnable {
 
 				//check for capsule replication
 				//System.out.println(">>>>>>>>>>>>> PARTS: "+ ((Class) element).getParts());
+				//System.err.println(capsuleInstanceName +" ==========================> capsuleInstanceNameRep: " +capsuleInstanceNameRepMap.get(capsuleInstanceName));
+
 				if (capsuleInstanceNameRepMap.get(capsuleInstanceName) != null) {
-					this.elementInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + ", " + this.elementInstanceName;
+					
+					//this.elementInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + "," + this.elementInstanceName; //changed with the bellow line to avoid extera  Simulator__client
+					this.elementInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName);
+
 					capsuleInstanceName = capsuleInstanceNameRepMap.get(capsuleInstanceName) + capsuleInstanceName;
 					//System.out.println("--------------> capsuleInstanceName: "+capsuleInstanceName);
 				}
 
 				capsuleConn.setCapsuleName(capsuleName);
-				capsuleConn.setCapsuleInstanceName(capsuleInstanceName);
+				capsuleConn.setCapsuleInstanceName(this.elementInstanceName);
 				//TODO:  listCapsuleConn.get(t).addListPortName(portName+"::"+port.isBehavior());
 				
 				for (Port port : UmlrtUtils.getPorts((Class)element)) {
