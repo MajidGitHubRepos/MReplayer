@@ -182,8 +182,10 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		
 		
 		System.out.println("str: " + str + ", pos0: "+pos0 +", pos1: "+ pos1);
-		return new Value(str.substring(pos0, pos1),"String");
-		
+		if (pos1 != -1)
+			return new Value(str.substring(pos0, pos1),"String");
+		else 
+			return new Value("","String");
 	}
 	
 	@Override

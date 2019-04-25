@@ -226,6 +226,7 @@ public class TrackerMaker implements Runnable{
 					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, outputFileStream, logicalVectorTime, dataContainer); 
 					Thread capsuleTrackerT = new Thread(capsuleTracker); 
 					capsuleTrackerT.start();
+					capsuleTrackerT.setPriority(1);
 					
 					mapCapsuleTracker.put(capsuleFullname, capsuleTracker);
 					trackerCount++;

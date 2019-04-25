@@ -171,26 +171,75 @@ public class CapsuleTracker implements Runnable{
 			try {
 				semCapsuleTracker.acquire();
 				//System.out.println(dataContainer.getCapsuleInstance() + "============> eventQueueSize : "+ dataContainer.getEventQueue().size());
+				//System.err.println(dataContainer.getCapsuleInstance()+"-----[dataContainer.mapSendMessages.size()]--------- " + dataContainer.mapSendMessages.size());
 
 				if (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) {
 					Event currentEventTmp = new Event();
 					Event currentEvent = new Event();
-					if (!eventQueueTmp.isEmpty()) {
+					
+					if(!dataContainer.getEventQueue().isEmpty()) {
+						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
+					//	if(!isPassedEvent(currentEvent, "eventQueue")) {
+						if (currentEvent.getSourceName().contains("Server1Failure") || currentEvent.getSourceName().contains("Server2Failure")) {
+							System.err.println("======================================================================================> Server1Failure || Server2Failure");
+						//	System.exit(1);
+						}
+						//else if (currentEvent.getSourceName().contains("MasterAnnouncment") )
+						//	System.err.println("======================================================================================> MasterAnnouncment");
+							if (isConsumable(currentEvent) || (listPaths.size()>1)) {
+								listConsumedPaths.add(PES.mapQnameId.get(currentEvent.getSourceName()));
+
+								if (currentStatus.contentEquals("TRANISTIONEND")) {
+									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
+										listConsumedPaths.clear();
+										listAllPathTaken.add(listPaths.get(0));
+										addToListConsumedPaths(listPaths.get(0));
+										updateLocalHeap(listPaths.get(0),msgSender);
+										updateCurrentState();
+										if (!msgTobeConsumed.isEmpty())
+											dataContainer.mapSendMessages.remove(msgTobeConsumed);
+										msgTobeConsumed = "";
+										msgSender = "";
+										listPaths.clear();
+										msgConsumedQueue = true;
+									}
+									//else
+									//throw new IllegalAccessException("updateCurrentState Faild!");
+								}
+								//vTimeHandler(currentEvent);
+							}else {eventQueueTmp.put(currentEvent);}
+						//}else {
+							//System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  dataContainer.eventQueue > "+currentEvent.allDataToString());
+						//	currentEvent = null;
+						//	//dataContainer.eventQueue.remove(currentEvent);
+						//}
+					}
+					
+					if (!eventQueueTmp.isEmpty()  && !msgConsumedQueue) {
 						int eventQueueTmpSize = eventQueueTmp.size();
 						for (int j = 0; j < eventQueueTmpSize;  j++) {
 							currentEventTmp = eventQueueTmp.take();
-							if(!isPassedEvent(currentEventTmp)) {
+							//if(!isPassedEvent(currentEventTmp, "eventQueueTmp")) {
 								//checking its validity based on the state machine
+							if (currentEventTmp.getSourceName().contains("Server1Failure") || currentEventTmp.getSourceName().contains("Server2Failure")) {
+								//System.err.println("==============================================currentEventTmp========================================> Server1Failure || Server2Failure");
+								//System.exit(1);
+							}
+							//else if (currentEvent.getSourceName().contains("MasterAnnouncment") )
+							//	System.err.println("======================================================================================> MasterAnnouncment");
 								if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
+									listConsumedPaths.add(PES.mapQnameId.get(currentEventTmp.getSourceName()));
 									//vTimeHandler(currentEventTmp);
 									if (currentStatus.contentEquals("TRANISTIONEND")) {
-										if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
+										if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
+											listConsumedPaths.clear();
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0));
 											//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
 											updateLocalHeap(listPaths.get(0),msgSender);
 											updateCurrentState();
-											dataContainer.mapSendMessages.remove(msgTobeConsumed);
+											if (!msgTobeConsumed.isEmpty())
+												dataContainer.mapSendMessages.remove(msgTobeConsumed);
 											msgTobeConsumed = "";
 											msgSender = "";
 											listPaths.clear();
@@ -202,46 +251,56 @@ public class CapsuleTracker implements Runnable{
 									}
 									break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
 								}else {eventQueueTmp.put(currentEventTmp);}
-							}
+							//}else {
+							///	System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  eventQueueTmp > "+currentEventTmp.allDataToString());
+							//	currentEventTmp = null;
+								//eventQueueTmp.remove(currentEventTmp);
+							//	break;
+							//}
 						}
 					}
-					if(!dataContainer.getEventQueue().isEmpty()) {
-						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
-						if(!isPassedEvent(currentEvent)) {
-							if (isConsumable(currentEvent) || (listPaths.size()>1)) {
-								if (currentStatus.contentEquals("TRANISTIONEND")) {
-									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
-										listAllPathTaken.add(listPaths.get(0));
-										addToListConsumedPaths(listPaths.get(0));
-										//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
-										updateLocalHeap(listPaths.get(0),msgSender);
-										updateCurrentState();
-										dataContainer.mapSendMessages.remove(msgTobeConsumed);
-										msgTobeConsumed = "";
-										msgSender = "";
-										listPaths.clear();
-										msgConsumedQueue = true;
-									}
-									//else
-									//throw new IllegalAccessException("updateCurrentState Faild!");
-								}
-								//vTimeHandler(currentEvent);
-							}else {eventQueueTmp.put(currentEvent);}
-						}
-					}
-					if (msgConsumedTmpQueue && currentEventTmp.getSourceName() != null) {
+
+					if (msgConsumedTmpQueue && currentEventTmp != null && currentEventTmp.getSourceName() != null) {
+						//System.err.println(dataContainer.getCapsuleInstance()+"---[Event is consumed from TmpEventQueue]---------- "+currentEventTmp.allDataToString());
 						showInfo(currentEventTmp);
 						currentEventTmp = null;
-					}if (msgConsumedQueue && currentEvent.getSourceName() !=null) {
+					}else if (msgConsumedQueue && currentEvent != null && currentEvent.getSourceName() !=null) {
+						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Event is consumed from EventQueue]--------- " + currentEvent.allDataToString());
 						showInfo(currentEvent);
 						currentEvent = null;
+					}else {
+						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Warning]: <neither a msg from currentEvent nor from currentEventTmp has been consumed in this round> ");
+
 					}
+					
 					msgConsumedTmpQueue = false;
 					msgConsumedQueue = false;
 
-
+					/*System.out.println(dataContainer.getCapsuleInstance()+"  =====================[listPaths]");
+					int i = 0;
+					for (String path : listPaths) {
+						String pathCurr = "";
+						if(path.contains(",")) {
+							String [] pathsSplit = path.split("\\,");
+							pathCurr = "";
+							for (String str : pathsSplit) {
+								if (pathCurr.isEmpty()) {
+									pathCurr = PES.mapIdQname.get(str);
+									//pathCurr = str;
+								}else {	
+									pathCurr = pathCurr+ "-->" + PES.mapIdQname.get(str);
+									//pathCurr = pathCurr+ "-->" + str;
+								}
+							}
+						}else {
+							pathCurr = PES.mapIdQname.get(path);
+							//pathCurr = listRegionalPaths.get(i);
+						}
+						System.out.println("["+i+++"]:" +pathCurr);
+					}*/
 				}
 				semCapsuleTracker.release();
+				Thread.yield();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -249,34 +308,58 @@ public class CapsuleTracker implements Runnable{
 		}
 	}
 
+	public boolean pathCompeleted(String path) {
+		if (path.contains(",")) {
+			String [] pathsSplit = path.split("\\,");
+			for (String tr : pathsSplit) {
+				if (!listConsumedPaths.contains(tr))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	//==================================================================	
+	//====================================================[addToListConsumedPaths]
+	//==================================================================	
+	public String separateTopFromInstanceName(String top__instanceName) {
+		if (top__instanceName.contains("__")) {
+			int idx = top__instanceName.indexOf("__");
+			return top__instanceName.substring(idx+2);
+		}else {
+			System.err.println("__________ bad instanceName __________");
+			System.exit(1);
+		}
+		return null;
+	}
+
 	//==================================================================	
 	//====================================================[addToListConsumedPaths]
 	//==================================================================	
 	public void addToListConsumedPaths(String path) {
-		
-		if(path.contains(",")) {
-			String [] pathsSplit = path.split("\\,");
-			for (String p : pathsSplit) {
-				listConsumedPaths.add(p);
-			}
-		}else {
+		if (path.contains(","))
 			listConsumedPaths.add(path);
-		}
-		
 	}
 	
 	//==================================================================	
 	//====================================================[isPassedEvent]
 	//==================================================================	
-	public boolean isPassedEvent(Event event) {
+	public boolean isPassedEvent(Event event , String queueName) {
 		String id = PES.mapQnameId.get(event.getSourceName());
 		//if(!prvTookPath.isEmpty() && prvTookPath.contains(",") && prvTookPath.contains(id)) {
 		//	return true;
 		//}
 		
 		for (String path : listConsumedPaths) {
-			if (path.contentEquals(id)) {
-				listConsumedPaths.remove(path);
+			String lastTr = "";
+			if(path.contains(",")) {
+				String [] pathsSplit = path.split("\\,");
+				lastTr = pathsSplit[pathsSplit.length-1];
+			}
+			if (lastTr.contentEquals(id)) {
+				System.err.println(dataContainer.getCapsuleInstance()+ " from: "+queueName + " , lastTr.contentEquals(id):"+event.allDataToString());
+				if (queueName.contentEquals("eventQueue"))
+					 listConsumedPaths.remove(path);
 				return true;
 			}
 		}
@@ -876,7 +959,7 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 
-			System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
+			System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
 
 			if (trgCapsule.isEmpty()){
 				System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
@@ -891,8 +974,10 @@ public class CapsuleTracker implements Runnable{
 	        { 
 				Entry<String, CapsuleTracker> entry = itr.next();
 				if (entry.getKey().contains(trgCapsule)) {
-					if ((sendMessage.data != null) && sendMessage.dataName.contentEquals("__getName__") && sendMessage.data.toString().contains("__CapInstanceName__")) { //TODO: find the corresponding varibale name in the target capsule; we have the same rule in the AC.g4
-						sendMessage.data = new Value (dataContainer.getCapsuleInstance(),"String");
+					if ((sendMessage.data != null) && (sendMessage.dataName.contentEquals("__getName__") || sendMessage.data.toString().contains("__CapInstanceName__"))) { //TODO: find the corresponding varibale name in the target capsule; we have the same rule in the AC.g4
+						sendMessage.data = new Value (separateTopFromInstanceName(dataContainer.getCapsuleInstance()),"String");
+						System.err.println("NEWWWWWWWWWWWWWWWWW In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
+
 						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
 					}else
 						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
@@ -924,7 +1009,7 @@ public class CapsuleTracker implements Runnable{
         { 
              Map.Entry<String, Value> entry = itr.next();
              if (entry.getValue().toString().contentEquals("__CapInstanceName__")) {
-            	 maplocalHeap.put(entry.getKey(), new Value (dataContainer.getCapsuleInstance(),"String"));
+            	 maplocalHeap.put(entry.getKey(), new Value (separateTopFromInstanceName(dataContainer.getCapsuleInstance()),"String"));
              }else if (entry.getValue().toString().contentEquals("msg->sapIndex0")) { // msg->sapIndex0 returns port index that the msg came in
             	 //who did this path trigger ? (which message from which port)
             	 for (MyConnector myConnector : ParserEngine.listMyConnectors) {
