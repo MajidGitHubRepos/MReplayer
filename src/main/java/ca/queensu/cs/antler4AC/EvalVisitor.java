@@ -27,17 +27,19 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	private Map<String, Value> HeapMem = new HashMap<String, Value>();
 	private List<SendMessage> listPortMsg;
 	public boolean eof;
+	public String srvName;
 
-	public EvalVisitor(Map<String, Value> mapLocalHeap) {
+	public EvalVisitor(Map<String, Value> mapLocalHeap, String serverName) {
 		this.listPortMsg = new ArrayList<SendMessage>();
 		eof = false;
+		this.srvName = serverName;
 		if (mapLocalHeap != null)
 			for (Entry<String, Value> entry : mapLocalHeap.entrySet()) {
 				HeapMem.put(entry.getKey(), entry.getValue());
 			}
 	}
 	public EvalVisitor() {
-		this(null);
+		this(null, "");
 	}
 	
 
@@ -212,7 +214,9 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		//System.out.println("in visitNormalAssignment: "+value);
 		if(value == null) {
 			throw new RuntimeException("no such variable: " + id);
-		}else if (value.toString().contains("getName()"))
+		}else if (value.toString().contains("getName()") && !srvName.isEmpty())
+			return HeapMem.put(id, new Value (srvName, "String"));
+		else if (value.toString().contains("getName()") && srvName.isEmpty())
 			return HeapMem.put(id, new Value ("__CapInstanceName__", "String"));
 		else 
 			value = this.visit(ctx.expr());
@@ -225,7 +229,9 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		String id = ctx.ID().getText();
 		if (ctx.expr().getText().contains("msg->sapIndex0_")) {
 			return HeapMem.put(id, new Value ("msg->sapIndex0_", "String"));
-		}else if (ctx.expr().getText().contains("getName()")) {
+		}else if (ctx.expr().getText().contains("getName()") && !srvName.isEmpty())
+			return HeapMem.put(id, new Value (srvName, "String"));
+		else if (ctx.expr().getText().contains("getName()")) {
 			return HeapMem.put(id, new Value ("__CapInstanceName__", "String"));
 		}
 		if (ctx.expr() == null)
@@ -302,7 +308,10 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 	@Override
 	public Value visitGetNameAssignment(ACParser.GetNameAssignmentContext ctx) {
 		String id = ctx.ID().getText();
-		return HeapMem.put(id, new Value("__CapInstanceName__", "String"));
+		if (!srvName.isEmpty())
+			return HeapMem.put(id, new Value (srvName, "String"));
+		else
+			return HeapMem.put(id, new Value("__CapInstanceName__", "String"));
 	}
 
 	@Override
@@ -694,7 +703,10 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		}else if (ctx.expr().getText().contains("\"")) {  //port.msg("test").send();
 			dataName = msg+":VAR";
 			data = new Value(ctx.expr().getText().replaceAll("^\"|\"$", ""),"String");
-		}else if (ctx.getText().contains("getName")){ //port.msg(this->getName()).send();
+		}else if (ctx.getText().contains("getName") && !srvName.isEmpty()){ //port.msg(this->getName()).send();
+			dataName = "__getName__";
+			data = new Value(srvName,"String"); 
+		}else if (ctx.getText().contains("getName") && srvName.isEmpty()){ //port.msg(this->getName()).send();
 			dataName = "__getName__";
 			data = new Value("__CapInstanceName__","String"); 
 		}else { //port.msg(var).send();
@@ -722,9 +734,12 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		}else	
 			dest = this.visit(ctx.expr(1));
 
-		if (ctx.getText().contains("getName")){
+		if (ctx.getText().contains("getName") && srvName.isEmpty()){
 			dataName = "__getName__";
 			data = new Value("__CapInstanceName__","String");
+		}else if (ctx.getText().contains("getName") && !srvName.isEmpty()){ //port.msg(this->getName()).send();
+			dataName = "__getName__";
+			data = new Value(srvName,"String"); 
 		}else if (ctx.getText().contains("\"")|| (dataTmp == null)){
 			dataName = msg+":VAR";
 			data = this.visit(ctx.expr(0));

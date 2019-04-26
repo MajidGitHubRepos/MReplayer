@@ -997,7 +997,7 @@ public class CapsuleTracker implements Runnable{
         System.out.println("[actionCode]: "+actionCode);        
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
-		EvalVisitor visitor = new EvalVisitor(maplocalHeap);
+		EvalVisitor visitor = new EvalVisitor(maplocalHeap,separateTopFromInstanceName(dataContainer.getCapsuleInstance()));
 		visitor.visit(parser.parse());
 		listPortMsg = visitor.getListPortMsg();
 		
