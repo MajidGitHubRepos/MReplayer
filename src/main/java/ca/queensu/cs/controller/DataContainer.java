@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import ca.queensu.cs.antler4AC.SendMessage;
@@ -25,13 +26,13 @@ public class DataContainer {
 	
 	private String capsuleInstance;
 	private String capsuleName;
-	public BlockingQueue <Event> eventQueue;
+	public PriorityBlockingQueue <Event> eventQueue;
 	public Map<String,SendMessage> mapSendMessages;
 	public Map<String, String> mapRegionCurrentState;
 	
 	//private String threadName;
 	//--
-	public DataContainer(String capsuleName, String capsuleInstance, BlockingQueue <Event> eventQueue) {
+	public DataContainer(String capsuleName, String capsuleInstance, PriorityBlockingQueue <Event> eventQueue) {
 		this.capsuleName = capsuleName;
 		this.mapRegionCurrentState =  new HashMap<String, String>();
 		this.capsuleInstance = capsuleInstance;
@@ -62,7 +63,7 @@ public class DataContainer {
 	public void setEventToEventQueue(Event event) throws InterruptedException {
 		this.eventQueue.put(event);
 	}
-	public void setEventQueue(BlockingQueue <Event> eventQueue) {
+	public void setEventQueue(PriorityBlockingQueue <Event> eventQueue) {
 		this.eventQueue = eventQueue;
 	}
 	

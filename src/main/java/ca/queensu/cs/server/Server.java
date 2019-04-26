@@ -27,7 +27,7 @@ public class Server  {
 	private ServerSocket serverSocket;
 	private ByteReader reader; //queueWriter because it can write into the queue
 	private ByteWriter writer;
-	public static BlockingQueue<Event> eventQueue;
+	public static PriorityBlockingQueue<Event> eventQueue;
 	static Semaphore sem; 
 
 	public Server(final String ipAddress, final int portNumber, Semaphore sem) throws IOException {
@@ -35,7 +35,7 @@ public class Server  {
 		ip = ipAddress;
 		port = portNumber;
 		io = new SocketIO();
-		eventQueue = new LinkedBlockingQueue<Event>();
+		eventQueue = new PriorityBlockingQueue<Event>();
 		reader = new ByteReader(capsuleNames, sem);
 		//writer = new ByteWriter(capsuleNames);
 		readerT = new Thread(reader);

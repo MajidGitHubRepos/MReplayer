@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +53,7 @@ public class CapsuleTracker implements Runnable{
 
 	private Semaphore semCapsuleTracker;
 	//private String capsuleInstance;
-	private BlockingQueue <Event> eventQueueTmp;
+	private PriorityBlockingQueue <Event> eventQueueTmp;
 	private String currentStatus; //{StartUp, INIT, TRANSITIONEND}
 	//public String currentStateName;
 	//public String currentStateId;
@@ -115,7 +116,7 @@ public class CapsuleTracker implements Runnable{
 		//this.capsuleInstance = capsuleInstance;
 		this.outputFileStream = outputFileStream;
 		this.logicalVectorTime = logicalVectorTime;
-		this.eventQueueTmp = new LinkedBlockingQueue<Event>(); // read but not consume!
+		this.eventQueueTmp = new PriorityBlockingQueue<Event>(); // read but not consume!
 		this.currentStatus = "StartUp";
 		//this.currentStateName = "INIT";
 		//this.currentStateId = "";
@@ -178,7 +179,7 @@ public class CapsuleTracker implements Runnable{
 					Event currentEvent = new Event();
 					
 					if(!dataContainer.getEventQueue().isEmpty()) {
-						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
+						currentEvent =  dataContainer.eventQueue.poll(); //push it back to the queue if it dose not consume !
 					//	if(!isPassedEvent(currentEvent, "eventQueue")) {
 						if (currentEvent.getSourceName().contains("Server1Failure") || currentEvent.getSourceName().contains("Server2Failure")) {
 							System.err.println("======================================================================================> Server1Failure || Server2Failure");
@@ -207,7 +208,7 @@ public class CapsuleTracker implements Runnable{
 									//throw new IllegalAccessException("updateCurrentState Faild!");
 								}
 								//vTimeHandler(currentEvent);
-							}else {eventQueueTmp.put(currentEvent);}
+							}else {eventQueueTmp.add(currentEvent);}
 						//}else {
 							//System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  dataContainer.eventQueue > "+currentEvent.allDataToString());
 						//	currentEvent = null;
@@ -218,7 +219,7 @@ public class CapsuleTracker implements Runnable{
 					if (!eventQueueTmp.isEmpty()  && !msgConsumedQueue) {
 						int eventQueueTmpSize = eventQueueTmp.size();
 						for (int j = 0; j < eventQueueTmpSize;  j++) {
-							currentEventTmp = eventQueueTmp.take();
+							currentEventTmp = eventQueueTmp.poll();
 							//if(!isPassedEvent(currentEventTmp, "eventQueueTmp")) {
 								//checking its validity based on the state machine
 							if (currentEventTmp.getSourceName().contains("Server1Failure") || currentEventTmp.getSourceName().contains("Server2Failure")) {
@@ -250,7 +251,7 @@ public class CapsuleTracker implements Runnable{
 										//throw new IllegalAccessException("updateCurrentState Faild!");
 									}
 									break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
-								}else {eventQueueTmp.put(currentEventTmp);}
+								}else {eventQueueTmp.add(currentEventTmp);}
 							//}else {
 							///	System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  eventQueueTmp > "+currentEventTmp.allDataToString());
 							//	currentEventTmp = null;

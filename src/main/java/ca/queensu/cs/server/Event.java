@@ -1,6 +1,8 @@
 package ca.queensu.cs.server;
 
-public class Event {
+import java.util.Date;
+
+public class Event implements Comparable<Event> {
 	private String eventId; 
 	private String eventSourceKind; 
 	private String eventType; 
@@ -17,6 +19,7 @@ public class Event {
 	private String eventStatus;
 	private String eventTarget;
 	private String vectorTime;
+	private int counter;
 	
 	
 	/*
@@ -62,6 +65,7 @@ public class Event {
 		this.eventStatus=eventStatus;
 		this.eventTarget=eventTarget; 
 		this.vectorTime = vectorTime;
+		this.counter=ByteReader.eventCounter++;
 	}
 	public Event() {
 		this(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -152,6 +156,11 @@ public class Event {
 				+  ", eventTimePointSecond=" + eventTimePointSecond + ", eventTimePointNano=" + eventTimePointNano +
 				", eventVariableData=" + eventVariableData +", eventSignal=" + eventSignal +", eventSource=" + eventSource +
 				", eventStatus=" + eventStatus +", vectorTime=" + vectorTime + ", eventTarget=" + eventTarget +"]";
+	}
+	@Override
+	public int compareTo(Event event) {
+		// TODO Auto-generated method stub
+		return this.counter;
 	}
 	
 	

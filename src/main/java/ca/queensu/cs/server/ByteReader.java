@@ -112,7 +112,7 @@ public final class ByteReader implements Runnable {
 	private static int commandId = 0;
 	private String[] capsuleNames;
 	private Semaphore sem;
-	private int eventCounter;
+	public static int eventCounter;
 	private int totalSize = 0;
 	
 
@@ -339,7 +339,7 @@ public final class ByteReader implements Runnable {
 			Event event = eventMaker(message);
 			//if (Server.eventQueue.size()<100)
 			/*
-			if (this.eventCounter<10000) {
+			if (this.eventCounter1111111111<10000) {
 				totalSize += event.eventSize("pt");
 				this.eventCounter++;
 				System.out.println("[Event]: "+event.allDataToString_originalFromMDebugger() + "\n\n");
@@ -350,7 +350,7 @@ public final class ByteReader implements Runnable {
 			}*/
 			if((event.getSourceKind().contentEquals("3") || event.getSourceKind().contentEquals("10")) && 
 					(event.getType().contentEquals("36") || event.getType().contentEquals("14")))
-				Server.eventQueue.put(event);
+				Server.eventQueue.add(event);
 			event = null;
 			int id = 0;
 

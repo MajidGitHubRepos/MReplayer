@@ -25,6 +25,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
@@ -147,7 +148,7 @@ public class TrackerMaker implements Runnable{
 
 	public Event getEventFromServerQueue() throws InterruptedException {
 		//semServer.acquire(); //blockingQueue can handle that with an internal semaphore
-		Event event = Server.eventQueue.take();
+		Event event = Server.eventQueue.poll();
 		//semServer.release(); 
 		return event;
 	}
@@ -205,7 +206,7 @@ public class TrackerMaker implements Runnable{
 			for (String capsuleFullname: regionKeySplit) {
 				if (!capsuleFullname.isEmpty()) {
 					
-					BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
+					PriorityBlockingQueue<Event> eventQueue = new PriorityBlockingQueue<Event>();
 					//BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 					//CapFullname
 					//System.out.println("[in makeCapsuleTrakers] capsuleFullname: " + capsuleFullname);
@@ -225,9 +226,8 @@ public class TrackerMaker implements Runnable{
 					int[] logicalVectorTime = new int[MAX_NUM_CAPSULE]; //default value of 0 for arrays of integral types is guaranteed by the language spec
 					CapsuleTracker capsuleTracker = new CapsuleTracker(semCapsuleTracker, outputFileStream, logicalVectorTime, dataContainer); 
 					Thread capsuleTrackerT = new Thread(capsuleTracker); 
+					capsuleTrackerT.setPriority(Thread.NORM_PRIORITY); 					
 					capsuleTrackerT.start();
-					capsuleTrackerT.setPriority(1);
-					
 					mapCapsuleTracker.put(capsuleFullname, capsuleTracker);
 					trackerCount++;
 				}

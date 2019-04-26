@@ -49,6 +49,10 @@
       <ownedAttribute xmi:type="uml:Property" xmi:id="_mX86QGEvEemY9_bgw3-6qQ" name="server2Selected">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
       </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_A2sW0GhrEemLEYOGFSyoZA" name="MasterName">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <defaultValue xmi:type="uml:LiteralString" xmi:id="_A2sW0WhrEemLEYOGFSyoZA" value=""/>
+      </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_gU8CMAgwEea_md0mpENoqg" name="StateMachine1">
         <region xmi:type="uml:Region" xmi:id="_jSIzIAgwEea_md0mpENoqg" name="Region1">
           <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrEnv" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
@@ -91,22 +95,20 @@
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;ENV: The configuration is OK, the transition config-> Running was taken, sending signal to servers and clients \n&quot;;
 
-	char* config = (char*) &quot;&quot;;
-
-   if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
-	config = (char*)&quot;1:server1_2&quot;;
-
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
+ char* config = (char*) &quot;&quot;;
+ if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server1&quot;)==0))
 	config = (char*)&quot;1:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server2&quot;)==0))
 	config = (char*)&quot;1:server2&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server1&quot;)==0))
 	config = (char*)&quot;0:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server2&quot;)==0))
 	config = (char*)&quot;0:server2&quot;;
+
+
  
     ConfigComm.StartUp(config).sendAt(0);
     ConfigComm.StartUp(config).sendAt(1);
@@ -131,16 +133,23 @@
     {
     server1Selected=true;
 
+
     if (AnnouncementServer1Id.isValid())
-    AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);
+    	AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);
     AnnouncementServer1Id=AnnouncmentServer1.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
     }else if (strcmp((char *)MasterName,&quot;server2&quot;)==0){
     server2Selected=true;
 
     if (AnnouncementServer2Id.isValid())
-    AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
+    	AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
     AnnouncementServer2Id=AnnouncmentServer2.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
+    }else{
+   	 std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Violation, MasterName is not valid! &quot;&lt;&lt; MasterName&lt;&lt;&quot;\n&quot;;
     }
+
+
+
+
     // the following code has been generated
     if ((strcmp(runningMode,&quot;1&quot;)==0)&amp;&amp; (!server1Selected ) &amp;&amp; (!server2Selected))
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Violation, there are 2 master in passive mode\n&quot;;
@@ -156,21 +165,17 @@
 
    char* config = (char*) &quot;&quot;;
 
-   if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
-	config = (char*)&quot;1:server1_2&quot;;
-
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
+ if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;1:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;1:server2&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;0:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;0:server2&quot;;
-
  
     ConfigComm.ReplyConfig(config).sendAt(tempid);
 </body>
@@ -183,6 +188,7 @@
               <body>    std::cout&lt;&lt;&quot;ENV: No announcment from server1, remove server1 from masters list\n&quot;;
     //systemConfig.MasterList[0]=false;
    server1Selected =false;
+   MasterName = (char *) &quot;&quot;;
     if (AnnouncementServer1Id.isValid())
     AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);</body>
             </effect>
@@ -196,7 +202,7 @@
               <body>    std::cout&lt;&lt;&quot;ENV: No announcment from server2, remove Server2 from masters list\n&quot;;
     //systemConfig.MasterList[1]=false;
     server2Selected =false;
-
+   MasterName = (char *) &quot;&quot;;
     if (AnnouncementServer2Id.isValid())
        AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
 </body>
@@ -217,12 +223,14 @@
     if (strcmp(runningMode, &quot;0&quot;)==0){ 
     	server1Selected = true;
     	server2Selected = true;
+	   MasterName = (char*) &quot;server1&quot;;
     }else{
 	server1Selected = true;
     	server2Selected = false;
+	MasterName = (char*) &quot;server1&quot;;
     }
 
-    AnnouncmentServerTimeout =5;
+    AnnouncmentServerTimeout =3;
 
     std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION FOR ENV]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
 
@@ -347,7 +355,7 @@
     runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
     serverName = (char*) srvName.c_str();
-char* runningSrvName = (char*) this->getName();
+
     if (strcmp(serverName, &quot;server1_2&quot;)==0) {
     server1Selected = true;
     server2Selected = true;
@@ -357,16 +365,9 @@ char* runningSrvName = (char*) this->getName();
     }else if (strcmp(serverName, &quot;server2&quot;)==0) {
     server1Selected = false;
     server2Selected = true;
-    }else if (strcmp(runningSrvName, &quot;server2&quot;)==0){
-    server1Selected = false;
-    server2Selected = true;
-    runningMode = (char*) &quot;1&quot;;
-    serverName = (char*) &quot;server2&quot;;
     }else{
-    server1Selected = true;
+    server1Selected = false;
     server2Selected = false;
-    runningMode = (char*) &quot;1&quot;;
-    serverName = (char*) &quot;server1&quot;;
     }
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Configuration is:&quot;&lt;&lt; runningMode&lt;&lt;&quot;\n&quot;;
 </body>
@@ -431,8 +432,8 @@ char* runningSrvName = (char*) this->getName();
               <body>    
     
     int failureRate = 5;
-    KeepAliveTimeOut = 2;
-    AnnouncementTimeOut = 3;
+    KeepAliveTimeOut = 1;
+    AnnouncementTimeOut = 1;
     
     std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; failureRate &lt;&lt; &quot; second\n&quot;;
@@ -521,8 +522,8 @@ char* runningSrvName = (char*) this->getName();
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_lf6aoAqTEeaGqPUk-4V4qQ" name="BeMaster">
               <language>C++</language>
               <body>    int newFailureRate = 4;
-    KeepAliveTimeOut = 2;
-    AnnouncementTimeOut = 3;
+    KeepAliveTimeOut = 1;
+    AnnouncementTimeOut = 1;
     
     std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED NEW TIMING CONFIGURATION]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; newFailureRate &lt;&lt; &quot; second\n&quot;;
@@ -631,26 +632,19 @@ char* runningSrvName = (char*) this->getName();
     runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
     serverName = (char*) srvName.c_str();
-char* runningSrvName = (char*) this->getName();
+
     if (strcmp(serverName, &quot;server1_2&quot;)==0) {
-    server1Selected = true;
-    server2Selected = true;
+  		 server1Selected = true;
+  		  server2Selected = true;
     }else if (strcmp(serverName, &quot;server1&quot;)==0) {
-    server1Selected = true;
-    server2Selected = false;
+  		  server1Selected = true;
+  		  server2Selected = false;
     }else if (strcmp(serverName, &quot;server2&quot;)==0) {
-    server1Selected = false;
-    server2Selected = true;
-    }else if (strcmp(runningSrvName, &quot;server2&quot;)==0){
-    server1Selected = false;
-    server2Selected = true;
-    runningMode = (char*) &quot;1&quot;;
-    serverName = (char*) &quot;server2&quot;;
+ 		   server1Selected = false;
+  		   server2Selected = true;
     }else{
-    server1Selected = true;
-    server2Selected = false;
-    runningMode = (char*) &quot;1&quot;;
-    serverName = (char*) &quot;server1&quot;;
+  		  server1Selected = false;
+  		  server2Selected = false;
     }
 
   std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: serverName extracted from the new config and it is: &quot;&lt;&lt;serverName&lt;&lt;&quot;\n&quot;;</body>
@@ -909,8 +903,8 @@ if (server2Selected)
               <language>C++</language>
               <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));
     std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: is in Ready State\n&quot;;
-    int requestRate=1;
-    RequestTimer.informIn(UMLRTTimespec(0,1000),4);
+    int requestRate=2;
+    RequestTimer.informIn(UMLRTTimespec(requestRate,0),4);
     std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: will try to request service after &quot;&lt;&lt; requestRate&lt;&lt;&quot; second \n&quot;;
 </body>
             </entry>
@@ -959,7 +953,7 @@ ts.getclock(ts);
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_1CJTsAo2EeaGqPUk-4V4qQ" name="RetryConfig">
               <language>C++</language>
               <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));
-    int masterRetryRate=rand()%5;
+    int masterRetryRate=4;
     std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: The master is not available, retry in &quot;&lt;&lt;masterRetryRate&lt;&lt; &quot; second\n&quot;;
     Timer.informIn(UMLRTTimespec(masterRetryRate,0),4);
 </body>
