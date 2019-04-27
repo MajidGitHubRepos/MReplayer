@@ -156,7 +156,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		}else { 
 			delimiter = ctx.STRING().toString().replaceAll("^\"|\"$", "");
 		}
-		System.out.println("str: " + str + ", delimiter: "+delimiter);
+		//System.out.println("str: " + str + ", delimiter: "+delimiter);
 
 		return new Value(str.indexOf(delimiter),"Integer");
 	}
@@ -183,7 +183,7 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 		pos1 = value1.asInteger();
 		
 		
-		System.out.println("str: " + str + ", pos0: "+pos0 +", pos1: "+ pos1);
+		//System.out.println("str: " + str + ", pos0: "+pos0 +", pos1: "+ pos1);
 		if (pos1 != -1)
 			return new Value(str.substring(pos0, pos1),"String");
 		else 

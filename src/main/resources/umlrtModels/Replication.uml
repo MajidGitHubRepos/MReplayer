@@ -129,7 +129,7 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_2u7rQAmqEea_md0mpENoqg" name="RegisterMaster">
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Master Annoucment from &quot;&lt;&lt; MasterName&lt;&lt;&quot;\n&quot;;
-    if (strcmp((char *)MasterName,&quot;server1&quot;)==0)
+    if (strcmp((char *)MasterName,&quot;server1&quot;)==0 &amp;&amp; !server2Selected)
     {
     server1Selected=true;
 
@@ -137,18 +137,15 @@
     if (AnnouncementServer1Id.isValid())
     	AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);
     AnnouncementServer1Id=AnnouncmentServer1.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
-    }else if (strcmp((char *)MasterName,&quot;server2&quot;)==0){
+    }else if (strcmp((char *)MasterName,&quot;server2&quot;)==0 &amp;&amp; !server1Selected){
     server2Selected=true;
 
     if (AnnouncementServer2Id.isValid())
     	AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
     AnnouncementServer2Id=AnnouncmentServer2.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
     }else{
-   	 std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Violation, MasterName is not valid! &quot;&lt;&lt; MasterName&lt;&lt;&quot;\n&quot;;
+    	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: The Master Annoucment from &quot;&lt;&lt; MasterName&lt;&lt; &quot; is useless because the server is already down!&quot;&lt;&lt;&quot;\n&quot;;
     }
-
-
-
 
     // the following code has been generated
     if ((strcmp(runningMode,&quot;1&quot;)==0)&amp;&amp; (!server1Selected ) &amp;&amp; (!server2Selected))
