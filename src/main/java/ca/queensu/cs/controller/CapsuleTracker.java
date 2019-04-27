@@ -183,10 +183,7 @@ public class CapsuleTracker implements Runnable{
 					if(!dataContainer.getEventQueue().isEmpty()) {
 						currentEvent =  dataContainer.eventQueue.poll(); //push it back to the queue if it dose not consume !
 					//	if(!isPassedEvent(currentEvent, "eventQueue")) {
-						if (currentEvent.getSourceName().contains("Server1Failure") || currentEvent.getSourceName().contains("Server2Failure")) {
-							System.err.println("======================================================================================> Server1Failure || Server2Failure");
-						//	System.exit(1);
-						}
+					
 						//else if (currentEvent.getSourceName().contains("MasterAnnouncment") )
 						//	System.err.println("======================================================================================> MasterAnnouncment");
 							if (isConsumable(currentEvent) || (listPaths.size()>1)) {
@@ -194,6 +191,7 @@ public class CapsuleTracker implements Runnable{
 
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
 									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
+										
 										listConsumedPaths.clear();
 										listAllPathTaken.add(listPaths.get(0));
 										addToListConsumedPaths(listPaths.get(0));
@@ -748,7 +746,7 @@ public class CapsuleTracker implements Runnable{
 			dataContainer.mapRegionCurrentState.put(ParserEngine.mapTransitionData.get(id).getReginName(),pathSplit[2]);
 			
 			pathFinder(event.getSourceName());
-			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
+			if ((listPaths.size() == 1) /*&& isRequirementMet(listPaths.get(0))*/) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
 			}else if ((listPaths.size() > 1)){
@@ -784,9 +782,7 @@ public class CapsuleTracker implements Runnable{
 	            			 break;
 	            		 }
 	            	 }            	 
-	        	 }
-				
-				
+	        	 }	
 				
 				for ( CapsuleConn capConn : ParserEngine.listCapsuleConn) {
 					if (capConn.getCapsuleInstanceName().contains(dataContainer.getCapsuleInstance())) { //e.g.: [capConn.getCapsuleInstanceName(): Simulator__server1, Simulator__server2] [dataContainer.getCapsuleInstance(): Simulator__server1]
@@ -857,13 +853,13 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[interpretActionCode]
 	//==================================================================	
-	public void interpretActionCode(String actionCode, String msgSender, boolean guardEval) throws InterruptedException {
+	public void interpretActionCode(String actionCode, String msgSender , boolean guardEval) throws InterruptedException {
         //System.out.println("[actionCode]: "+actionCode);        
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
 		EvalVisitor visitor = new EvalVisitor(maplocalHeap,separateTopFromInstanceName(dataContainer.getCapsuleInstance()));
 		visitor.visit(parser.parse());
-		listPortMsg = visitor.getListPortMsg();
+		
 		
 		//Thread.currentThread().sleep(2000); //TODO: replace with a thread syncronization method
 
@@ -891,8 +887,10 @@ public class CapsuleTracker implements Runnable{
         	 }
         }
         
-        if (!guardEval)
+        if (!guardEval) {
+        	listPortMsg = visitor.getListPortMsg();
         	sendMessages();
+        }
 		
 		lexer = null;
 		parser = null;
@@ -1030,7 +1028,7 @@ public class CapsuleTracker implements Runnable{
 		if (result && listGuards != null) {
 			//make a local copy before guard evaluation
 			Map<String, Value> maplocalHeapCopy = new HashMap<String, Value>();
-			maplocalHeapCopy = maplocalHeap;
+			maplocalHeapCopy.putAll(maplocalHeap);
 			updateLocalHeap(path,"");
 			
 			for(String ac : listGuards) {
@@ -1044,8 +1042,8 @@ public class CapsuleTracker implements Runnable{
 					maplocalHeap.remove("__GUARD__");
 				}
 			}
-			maplocalHeap.remove("__GUARD__");
-			maplocalHeap = maplocalHeapCopy;
+			maplocalHeap.clear();
+			maplocalHeap.putAll(maplocalHeapCopy);
 		}
 
 
