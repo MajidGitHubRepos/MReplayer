@@ -184,6 +184,13 @@ public class ACBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements ACV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitReturn_stat(ACParser.Return_statContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitFindFuncExpr(ACParser.FindFuncExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

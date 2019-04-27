@@ -744,12 +744,22 @@ public class EvalVisitor extends ACBaseVisitor<Value> {
 			dataName = msg+":VAR";
 			data = this.visit(ctx.expr(0));
 		}
-		System.out.println("in visitSendat_stat"+ data.asString());
+		//System.out.println("in visitSendat_stat"+ data.asString());
 
 		SendMessage sendMsg = new SendMessage(port,msg, dataName, data, dest);
 		listPortMsg.add(sendMsg);
 
 		return data;
+	}
+	
+	@Override
+	public Value visitReturn_stat(ACParser.Return_statContext ctx) {
+		//TODO: we only support boolean value as a return value in this version
+		if ((ctx.expr() != null) && (!HeapMem.containsKey("__GUARD__"))) {
+			HeapMem.put("__GUARD__", new Value (this.visit(ctx.expr()).asBoolean(),"Boolean"));
+			return new Value(this.visit(ctx.expr()), "Boolean");
+		}
+		return new Value(0, ""); 
 	}
 
 	@Override

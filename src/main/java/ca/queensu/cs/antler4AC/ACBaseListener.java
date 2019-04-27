@@ -303,6 +303,18 @@ public class ACBaseListener implements ACListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterReturn_stat(ACParser.Return_statContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReturn_stat(ACParser.Return_statContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterFindFuncExpr(ACParser.FindFuncExprContext ctx) { }
 	/**
 	 * {@inheritDoc}

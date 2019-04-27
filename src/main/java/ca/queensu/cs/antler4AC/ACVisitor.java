@@ -167,6 +167,12 @@ public interface ACVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLog(ACParser.LogContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ACParser#return_stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturn_stat(ACParser.Return_statContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code findFuncExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree

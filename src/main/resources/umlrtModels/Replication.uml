@@ -417,10 +417,11 @@
     std::string modeStr = systemConfig.substr(0, pos);
     runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
+	 char* thisSrvName = (char*) this->getName();
     serverName = (char*) srvName.c_str();
                 
                 if ((strcmp(runningMode,&quot;0&quot;)==0) ||
-    ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp(serverName,this->getName())==0)))
+    ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp(serverName,thisSrvName)==0)))
     	return true;
     else 
     return false;
@@ -680,17 +681,18 @@ if (server2Selected)
   std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: ==================================> server2Selected is TRUE &quot;&lt;&lt;&quot;\n&quot;;
 
     std::string systemConfig = config;
+    char* thisSrvName = (char*) this->getName();
     if (!(server1Selected) &amp;&amp; !(server2Selected))
     {
     	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
     	return true;
     }
-    else if ((strcmp((char*)this->getName(),&quot;server1&quot;)==0) &amp;&amp; (server2Selected==false))
+    else if ((strcmp(thisSrvName,&quot;server1&quot;)==0) &amp;&amp; server2Selected)
     {
     	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
     	return true;
     }
-    else if ((strcmp((char *)this->getName(),&quot;server2&quot;))==0 &amp;&amp; (server1Selected==false))
+    else if ((strcmp(thisSrvName,&quot;server2&quot;))==0 &amp;&amp; server1Selected)
     {
     	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
     	return true;
@@ -833,7 +835,7 @@ if (strcmp(serverName, &quot;server1_2&quot;)==0) {
               <specification xmi:type="uml:OpaqueExpression" xmi:id="_Ro31QAnDEeaGqPUk-4V4qQ" name="checkMaster">
                 <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 <language>C++</language>
-                <body>    std::string systemConfig = config;
+                <body>
     if (server1Selected || server2Selected)
     	return true;
     else 

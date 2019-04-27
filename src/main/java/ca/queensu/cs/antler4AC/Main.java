@@ -68,40 +68,35 @@ public class Main {
 		
 		String expression1 = " int r=rand()%30+5; char* str = \"MajidBabaei\"; int pos = str.find(\"B\"); std::string subStr = str.substr(pos,pos+2);";
 		String expression2 = "std::string str = \"MajidBabaei\"; int pos = str.find(\"B\"); ";
-		String expression4 = "  bool server1Selected = true; bool server2Selected = true;  char* config = \"\"; std::string systemConfig = config;\n" + 
-				" int pos = systemConfig.find(\":\");\n" + 
-				"    std::string modeStr = systemConfig.substr(0, pos);\n" + 
-				"    char* runningMode = (char*) modeStr.c_str();\n" + 
-				"    std::string srvName = systemConfig.substr(pos+1, systemConfig.length());\n" + 
-				"    char* serverName = (char*) srvName.c_str();\n" + 
-				"char* runningSrvName = (char*) this->getName();\n" + 
-				"    if (strcmp(serverName, \"server1_2\")==0) {\n" + 
-				"    server1Selected = true;\n" + 
-				"    server2Selected = true;\n" + 
-				"    }else if (strcmp(serverName, \"server1\")==0) {\n" + 
-				"    server1Selected = true;\n" + 
-				"    server2Selected = false;\n" + 
-				"    }else if (strcmp(serverName, \"server2\")==0) {\n" + 
-				"    server1Selected = false;\n" + 
-				"    server2Selected = true;\n" + 
-				"    }else if (strcmp(runningSrvName, \"server2\")==0){\n" + 
-				"    server1Selected = false;\n" + 
-				"    server2Selected = true;\n" + 
-				"    runningMode = (char*) \"1\";\n" + 
-				"    serverName = (char*) \"server2\";\n" + 
-				"    }else{\n" + 
-				"    server1Selected = true;\n" + 
-				"    server2Selected = false;\n" + 
-				"    runningMode = (char*) \"1\";\n" + 
-				"    serverName = (char*) \"server1\";\n" + 
-				"    }  showHeap; showListSendMsg;";
+		String expr = "  bool server1Selected = true; bool server2Selected = false;   "
+				+ " std::string systemConfig = config;\n" + 
+				"    char* thisSrvName = (char*) this->getName();\n" + 
+				"    if (!(server1Selected) && !(server2Selected))\n" + 
+				"    {\n" + 
+				"    	std::cout<<this->getName()<<\": No one is Master, I am going to Be master\\n\";\n" + 
+				"    	return true;\n" + 
+				"    }\n" + 
+				"    else if ((strcmp(thisSrvName,\"server1\")==0) && server1Selected)\n" + 
+				"    {\n" + 
+				"    	std::cout<<this->getName()<<\": No one is Master, I am going to Be master\\n\";\n" + 
+				"    	return true;\n" + 
+				"    }\n" + 
+				"    else if ((strcmp(thisSrvName,\"server2\"))==0 && server2Selected)\n" + 
+				"    {\n" + 
+				"    	std::cout<<this->getName()<<\": No one is Master, I am going to Be master\\n\";\n" + 
+				"    	return true;\n" + 
+				"    }\n" + 
+				"    return false;\n" + 
+				"" + 
+				"" + 
+				"      showHeap; showListSendMsg;";
 		
 		//String expression4 = " ts.getclock(ts); std::this_thread::sleep_for(std::chrono::milliseconds(700)); if (logfile.is_open()) log \" DO not print\"; string this->hostConfig = \"1:server1\"; int pos = this->hostConfig.find(\":\"); string systemConfigRunningMode = this->hostConfig.substr(0, pos); string serverName = this->hostConfig.substr(pos+1, this->hostConfig.length()); if (strcmp(systemConfigRunningMode,\"1\")==0) Master.IAmAlive((char *)this->getName()).send(); showHeap; showListSendMsg;";
 		//String expression4 = " int var = 1; ConfigComm.QueryConfig().send(); port.msg(\"test\").send(); port.msg(this->getName()).send(); port.msg(var).send(); showHeap; showListSendMsg;";
 		
 		List<String> listExprs = new ArrayList<String>();
 		
-		listExprs.add(expression1);listExprs.add(expression2);listExprs.add(expression3);listExprs.add(expression4);
+		//listExprs.add(expression1);listExprs.add(expression2);listExprs.add(expression3);listExprs.add(expression4);
 		
 		Map<String, Value> maplocalHeap = new HashMap<String, Value>();
 		maplocalHeap.put("pingCount", new Value(1,"Integer"));
@@ -112,13 +107,13 @@ public class Main {
 		//ParseTree tree = parser.parse();
 		EvalVisitor visitor = new EvalVisitor(maplocalHeap);
 		*/
-		for (String expr : listExprs) {
+		//for (String expr : listExprs) {
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(expr));
 		//System.out.println("lexer.nextToken().getType(): "+lexer.nextToken().getType());
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
-		EvalVisitor visitor = new EvalVisitor(maplocalHeap,"server2");
+		EvalVisitor visitor = new EvalVisitor(maplocalHeap,"server1");
 		visitor.visit(parser.parse());
-		}
+		//}
 		//listPortMsg = visitor.getListPortMsg();
 	}
 	

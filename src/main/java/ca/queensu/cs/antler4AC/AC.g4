@@ -18,6 +18,7 @@ stat
  | sendat_stat
  | showContent_stat
  | timer_stat
+ | return_stat
  | ignore_stat
 // | unknowns
  ;
@@ -82,6 +83,10 @@ showContent_stat
 
 log
  : LOG expr SCOL
+ ;
+
+return_stat
+ : RETURN expr? SCOL
  ;
 
 expr
@@ -157,6 +162,7 @@ WHILE : 'while';
 LOG : 'log';
 FOR : 'for';
 DO  : 'do' ;
+RETURN: 'return';
 
 SEND : 'send';
 SENDAT : 'sendAt';

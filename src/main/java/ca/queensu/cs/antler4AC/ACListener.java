@@ -273,6 +273,16 @@ public interface ACListener extends ParseTreeListener {
 	 */
 	void exitLog(ACParser.LogContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ACParser#return_stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturn_stat(ACParser.Return_statContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ACParser#return_stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturn_stat(ACParser.Return_statContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code findFuncExpr}
 	 * labeled alternative in {@link ACParser#expr}.
 	 * @param ctx the parse tree

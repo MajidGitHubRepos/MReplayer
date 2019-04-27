@@ -82,6 +82,7 @@ public class CapsuleTracker implements Runnable{
 	private boolean startUpDone;
 	private boolean initDone;
 	private Map<String,List<String>> mapPathTrigger;
+	private Map<String,List<String>> mapPathGuards;
 	private Map<String,List<String>> mapPathActionCode;
 	private Map<String, Value> maplocalHeap;
     private List<SendMessage> listPortMsg;
@@ -102,6 +103,7 @@ public class CapsuleTracker implements Runnable{
 		this.maplocalHeap = new HashMap<String, Value>();
 		this.listConsumedPaths = new ArrayList<String>();
 		this.listPortMsg = new ArrayList<SendMessage>();
+		this.mapPathGuards =  new HashMap<String,List<String>>();
 		this.mapPathTrigger =  new HashMap<String,List<String>>();
 		this.mapPathActionCode =  new HashMap<String,List<String>>();
 		this.listAllPathTaken =  new ArrayList<String>();
@@ -218,7 +220,7 @@ public class CapsuleTracker implements Runnable{
 					
 					if (!eventQueueTmp.isEmpty()  && !msgConsumedQueue) {
 						int eventQueueTmpSize = eventQueueTmp.size();
-						for (int j = 0; j < eventQueueTmpSize;  j++) {
+						//for (int j = 0; j < eventQueueTmpSize;  j++) {
 							currentEventTmp = eventQueueTmp.poll();
 							//if(!isPassedEvent(currentEventTmp, "eventQueueTmp")) {
 								//checking its validity based on the state machine
@@ -245,12 +247,12 @@ public class CapsuleTracker implements Runnable{
 											msgSender = "";
 											listPaths.clear();
 											msgConsumedTmpQueue = true;
-											break;
+											//break;
 										}
 										//else
 										//throw new IllegalAccessException("updateCurrentState Faild!");
 									}
-									break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
+									//break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
 								}else {eventQueueTmp.add(currentEventTmp);}
 							//}else {
 							///	System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  eventQueueTmp > "+currentEventTmp.allDataToString());
@@ -258,7 +260,7 @@ public class CapsuleTracker implements Runnable{
 								//eventQueueTmp.remove(currentEventTmp);
 							//	break;
 							//}
-						}
+						//}
 					}
 
 					if (msgConsumedTmpQueue && currentEventTmp != null && currentEventTmp.getSourceName() != null) {
@@ -994,7 +996,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[interpretActionCode]
 	//==================================================================	
-	public void interpretActionCode(String actionCode, String msgSender) throws InterruptedException {
+	public void interpretActionCode(String actionCode, String msgSender, boolean guardEval) throws InterruptedException {
         System.out.println("[actionCode]: "+actionCode);        
 		ACLexer lexer = new ACLexer(new ANTLRInputStream(actionCode));
 		ACParser parser = new ACParser(new CommonTokenStream(lexer));
@@ -1028,7 +1030,8 @@ public class CapsuleTracker implements Runnable{
         	 }
         }
         
-        sendMessages();
+        if (!guardEval)
+        	sendMessages();
 		
 		lexer = null;
 		parser = null;
@@ -1079,10 +1082,31 @@ public class CapsuleTracker implements Runnable{
 	
 	 */
 	//==================================================================	
+	//==============================================[processTriggers]
+	//==================================================================	
+	public void processTriggers(String path) {
+		List<String> listTrigger = new ArrayList<String>();
+
+		listTrigger = mapPathTrigger.get(path);
+
+		if (!listTrigger.isEmpty()) {
+
+			for(String msg : listTrigger) {
+				String [] msgSplit = msg.split("\\.");
+				//if (!msgSplit[1].contains("_TIMER_")) { //we need to get msg __TIMER__ !
+				SendMessage sendMessage = dataContainer.mapSendMessages.get(msgSplit[1]);
+				if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) 
+					maplocalHeap.put(sendMessage.dataName, sendMessage.data);
+				//}
+			}
+		}/*else if (!ParserEngine.mapTransitionData.get(firstTrInPath).getIsInit()){ //init Tr dose not need a trigger!
+			System.err.println("__________ listTrigger is empty! __________"); //TODO: make it clean!
+		}*/
+	}
+	//==================================================================	
 	//==============================================[updateLocalHeap]
 	//==================================================================	
 	public void updateLocalHeap(String path, String msgSender) throws InterruptedException {
-		List<String> listTrigger = new ArrayList<String>();
 		List<String> listActionCode = new ArrayList<String>();
 		String firstTrInPath = "";
 		if (path.contains(",")) {
@@ -1090,32 +1114,14 @@ public class CapsuleTracker implements Runnable{
 			firstTrInPath = pathSplit[0];
 		}else
 			firstTrInPath = path;
-		
-		listTrigger = mapPathTrigger.get(path);
-		
-		
-		
-		if (!listTrigger.isEmpty()) {
 			
-			for(String msg : listTrigger) {
-				String [] msgSplit = msg.split("\\.");
-				//if (!msgSplit[1].contains("_TIMER_")) { //we need to get msg __TIMER__ !
-					SendMessage sendMessage = dataContainer.mapSendMessages.get(msgSplit[1]);
-					if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) 
-						maplocalHeap.put(sendMessage.dataName, sendMessage.data);
-				//}
-			}
-			
-			
-		}/*else if (!ParserEngine.mapTransitionData.get(firstTrInPath).getIsInit()){ //init Tr dose not need a trigger!
-			System.err.println("__________ listTrigger is empty! __________"); //TODO: make it clean!
-		}*/
+		processTriggers(path);
 		
 		listActionCode = mapPathActionCode.get(path);
 		
 		for(String ac : listActionCode) {
 			if (!ac.isEmpty())
-				interpretActionCode(ac,msgSender);
+				interpretActionCode(ac,msgSender, false);
 		}
 	}
 	//==================================================================	
@@ -1123,12 +1129,14 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 		public List<String> makeListTrigger(String path) throws InterruptedException {
 			List<String> listTrigger = new ArrayList<String>();
+			List<String> listGuards = new ArrayList<String>();
 			List<String> listActionCode = new ArrayList<String>();
 			
 			if (path.contains(",")) {
 				String [] pathSplit = path.split("\\,");
 				for (String pathID : pathSplit) {
 					listTrigger.addAll(ParserEngine.mapTransitionData.get(pathID).getTriggers());
+					listGuards.addAll(ParserEngine.mapTransitionData.get(pathID).getGuard());
 					listActionCode.add(ParserEngine.mapTransitionData.get(pathID).getActionCode());
 					
 					String [] trPartsID = ParserEngine.mapTransitionData.get(pathID).getPath().split("\\-");
@@ -1140,6 +1148,7 @@ public class CapsuleTracker implements Runnable{
 				}
 			}else {
 				listTrigger.addAll(ParserEngine.mapTransitionData.get(path).getTriggers());
+				listGuards.addAll(ParserEngine.mapTransitionData.get(path).getGuard());
 				listActionCode.add(ParserEngine.mapTransitionData.get(path).getActionCode());
 				
 				
@@ -1150,6 +1159,7 @@ public class CapsuleTracker implements Runnable{
 					listActionCode.add(ParserEngine.mapStateData.get(trPartsID[2]).getEntrAC());
 			}
 			if (listTrigger != null) {
+				mapPathGuards.put(path, listGuards);
 				mapPathTrigger.put(path, listTrigger);
 				mapPathActionCode.put(path, listActionCode);
 				
@@ -1168,8 +1178,11 @@ public class CapsuleTracker implements Runnable{
 
 		boolean result = false;
 		List<String> listTrigger = new ArrayList<String>();
+		List<String> listGuards = new ArrayList<String>();
 		
 		listTrigger = mapPathTrigger.get(path);
+		listGuards = mapPathGuards.get(path);
+
 		
 		if (listTrigger == null) {
 			listTrigger = makeListTrigger(path);
@@ -1199,6 +1212,28 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 		}
+		
+		//GUARD EVALUATION
+		if (result && listGuards != null) {
+			//make a local copy before guard evaluation
+			Map<String, Value> maplocalHeapCopy = new HashMap<String, Value>();
+			maplocalHeapCopy = maplocalHeap;
+			updateLocalHeap(path,"");
+			
+			for(String ac : listGuards) {
+				if (!ac.isEmpty()) {
+					interpretActionCode(ac,msgSender, true);
+					boolean guard = maplocalHeap.get("__GUARD__").asBoolean();
+					if (!guard) {
+						result = false;
+						break;
+					}
+					maplocalHeap.remove("__GUARD__");
+				}
+			}
+			maplocalHeap.remove("__GUARD__");
+			maplocalHeap = maplocalHeapCopy;
+		}
 
 
 
@@ -1219,10 +1254,7 @@ public class CapsuleTracker implements Runnable{
 		}
 			//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> isRequirementMet: " + result);
 
- 		if (! result) {
- 			//System.out.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> isRequirementMet: " + result);
- 			//System.exit(1);
- 		}
+
 		return result;
 			
 	}
