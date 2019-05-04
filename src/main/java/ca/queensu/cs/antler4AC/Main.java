@@ -68,19 +68,15 @@ public class Main {
 		
 		String expression1 = " int r=rand()%30+5; char* str = \"MajidBabaei\"; int pos = str.find(\"B\"); std::string subStr = str.substr(pos,pos+2);";
 		String expression2 = "std::string str = \"MajidBabaei\"; int pos = str.find(\"B\"); ";
-		String expr = "  char* config = \"1:server2\"; std::string systemConfig = config;\n" + 
-				"    int pos = systemConfig.find(\":\");\n" + 
-				"    std::string modeStr = systemConfig.substr(0, pos);\n" + 
-				"    char* runningMode = (char*) modeStr.c_str();\n" + 
-				"    std::string srvName = systemConfig.substr(pos+1, systemConfig.length());\n" + 
-				"	 char* thisSrvName = (char*) this->getName();\n" + 
-				"    char* serverName = (char*) srvName.c_str();\n" + 
-				"                \n" + 
-				"                if ((strcmp(runningMode,\"0\")==0) ||\n" + 
-				"    ((strcmp(runningMode,\"1\")==0) && (strcmp(serverName,thisSrvName)==0)))\n" + 
-				"    	return true;\n" + 
-				"    else \n" + 
-				"    return false;  showHeap; showListSendMsg;";
+		String expr = "  log.show(\"leaving initial pseudo state of pinger\\n\");\n" + 
+				"pingerPort.ping().send();\n" + 
+				"pingCount=1; std::this_thread::sleep_for(std::chrono::milliseconds(3000*randNumber));\n" + 
+				"pingerPort.ping().send();\n" + 
+				"pingCount=pingCount+1;\n" + 
+				"log.show(\"pong message received to: %s:%s\\n\",\n" + 
+				"	this->getTypeName(),	        // name of the capsule. \n" + 
+				"	this->getName()		// name of the capsule part.\n" + 
+				");  showHeap; showListSendMsg;";
 		
 		//String expression4 = " ts.getclock(ts); std::this_thread::sleep_for(std::chrono::milliseconds(700)); if (logfile.is_open()) log \" DO not print\"; string this->hostConfig = \"1:server1\"; int pos = this->hostConfig.find(\":\"); string systemConfigRunningMode = this->hostConfig.substr(0, pos); string serverName = this->hostConfig.substr(pos+1, this->hostConfig.length()); if (strcmp(systemConfigRunningMode,\"1\")==0) Master.IAmAlive((char *)this->getName()).send(); showHeap; showListSendMsg;";
 		//String expression4 = " int var = 1; ConfigComm.QueryConfig().send(); port.msg(\"test\").send(); port.msg(this->getName()).send(); port.msg(var).send(); showHeap; showListSendMsg;";

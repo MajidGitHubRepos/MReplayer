@@ -224,7 +224,7 @@ Space
  :  (' ' | '\t' | '\n')+ {skip();}
  ; 
 
-IGNORELINE : 'std::'? ( 'logfile.flush()' |'logfile<<' | 'logfile>>' | 'cout<<' | 'this_thread' | 'ts.getclock') .*? ';'  
+IGNORELINE : 'std::'? ( 'log.' | 'logfile.flush()' |'logfile<<' | 'logfile>>' | 'cout<<' | 'this_thread' | 'ts.getclock') .*? ';'  
  ;
 
 IGNOREWORD
@@ -232,11 +232,11 @@ IGNOREWORD
  ;
 
 IGNOREEXPR
- : ('logfile' | 'KeepAliveTimerId' | 'KeepAliveTimerId' | 'AnnouncementTimerId' | 'TimerId' | 'AnnouncementServer1Id' | 'AnnouncementServer2Id') DOT .*? '(' .*? ')'
+ : ('logfile' | 'ResponseTimerId' | 'KeepAliveTimerId' | 'KeepAliveTimerId' | 'AnnouncementTimerId' | 'TimerId' | 'AnnouncementServer1Id' | 'AnnouncementServer2Id') DOT .*? '(' .*? ')'
  ;
   
 //IGNORE
-// : ('logfile.flush()' | 'this->hostConfig' | 'RequestTimer.informIn' |  'ts.getclock' | 'std::' |IF .*? 'systemConfig.RunningMode'| IF? .*? 'logfile' | 'TimerId=' | 'KeepAliveTimerId=' | 'AnnouncementTimerId=' | 'ConfigComm.StartUp(this->systemConfig)') .*? ';'  -> skip
+// : ('log.' | 'logfile.flush()' | 'this->hostConfig' | 'RequestTimer.informIn' |  'ts.getclock' | 'std::' |IF .*? 'systemConfig.RunningMode'| IF? .*? 'logfile' | 'TimerId=' | 'KeepAliveTimerId=' | 'AnnouncementTimerId=' | 'ConfigComm.StartUp(this->systemConfig)') .*? ';'  -> skip
 // ;
 //IFIGNORE
 // : (IF .*?  'hostConfig.')

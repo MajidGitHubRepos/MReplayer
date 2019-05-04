@@ -49,6 +49,10 @@
       <ownedAttribute xmi:type="uml:Property" xmi:id="_mX86QGEvEemY9_bgw3-6qQ" name="server2Selected">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
       </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_A2sW0GhrEemLEYOGFSyoZA" name="MasterName">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <defaultValue xmi:type="uml:LiteralString" xmi:id="_A2sW0WhrEemLEYOGFSyoZA" value=""/>
+      </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_gU8CMAgwEea_md0mpENoqg" name="StateMachine1">
         <region xmi:type="uml:Region" xmi:id="_jSIzIAgwEea_md0mpENoqg" name="Region1">
           <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrEnv" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
@@ -91,22 +95,20 @@
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;ENV: The configuration is OK, the transition config-> Running was taken, sending signal to servers and clients \n&quot;;
 
-	char* config = (char*) &quot;&quot;;
-
-   if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
-	config = (char*)&quot;1:server1_2&quot;;
-
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
+ char* config = (char*) &quot;&quot;;
+ if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server1&quot;)==0))
 	config = (char*)&quot;1:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server2&quot;)==0))
 	config = (char*)&quot;1:server2&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server1&quot;)==0))
 	config = (char*)&quot;0:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server2&quot;)==0))
 	config = (char*)&quot;0:server2&quot;;
+
+
  
     ConfigComm.StartUp(config).sendAt(0);
     ConfigComm.StartUp(config).sendAt(1);
@@ -126,18 +128,24 @@
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_2u7rQAmqEea_md0mpENoqg" name="RegisterMaster">
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Master Annoucment from &quot;&lt;&lt; MasterName&lt;&lt;&quot;\n&quot;;
-    if (strcmp((char *)MasterName,&quot;server1&quot;)==0)
+    if (strcmp((char *)MasterName,&quot;server1&quot;)==0 &amp;&amp; !server2Selected)
     {
     server1Selected=true;
+
+
     if (AnnouncementServer1Id.isValid())
-    AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);
+    	AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);
     AnnouncementServer1Id=AnnouncmentServer1.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
-    }else if (strcmp((char *)MasterName,&quot;server2&quot;)==0){
+    }else if (strcmp((char *)MasterName,&quot;server2&quot;)==0 &amp;&amp; !server1Selected){
     server2Selected=true;
+
     if (AnnouncementServer2Id.isValid())
-    AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
+    	AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
     AnnouncementServer2Id=AnnouncmentServer2.informEvery(UMLRTTimespec(AnnouncmentServerTimeout,0),4);
+    }else{
+    	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: The Master Annoucment from &quot;&lt;&lt; MasterName&lt;&lt; &quot; is useless because the server is already down!&quot;&lt;&lt;&quot;\n&quot;;
     }
+
     // the following code has been generated
     if ((strcmp(runningMode,&quot;1&quot;)==0)&amp;&amp; (!server1Selected ) &amp;&amp; (!server2Selected))
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Violation, there are 2 master in passive mode\n&quot;;
@@ -153,21 +161,17 @@
 
    char* config = (char*) &quot;&quot;;
 
-   if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected &amp;&amp; server2Selected)
-	config = (char*)&quot;1:server1_2&quot;;
-
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
+ if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;1:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;1:server2&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server1Selected)
 	config = (char*)&quot;0:server1&quot;;
 
-    else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
+ else if ((strcmp(runningMode,&quot;0&quot;)==0) &amp;&amp; server2Selected)
 	config = (char*)&quot;0:server2&quot;;
-
  
     ConfigComm.ReplyConfig(config).sendAt(tempid);
 </body>
@@ -179,9 +183,14 @@
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;ENV: No announcment from server1, remove server1 from masters list\n&quot;;
     //systemConfig.MasterList[0]=false;
-	server1Selected =false;</body>
+   server1Selected =false;
+   MasterName = (char *) &quot;&quot;;
+    if (AnnouncementServer1Id.isValid())
+    AnnouncmentServer1.cancelTimer(AnnouncementServer1Id);</body>
             </effect>
-            <trigger xmi:type="uml:Trigger" xmi:id="_X5K_UAprEeaGqPUk-4V4qQ" name="Server1Failure" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_lxs5kApkEeaGqPUk-4V4qQ"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_2E540GdlEemLEYOGFSyoZA" port="_lxs5kApkEeaGqPUk-4V4qQ">
+              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
+            </trigger>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_FVtOsApsEeaGqPUk-4V4qQ" name="server2Failure" source="__kywcAgwEea_md0mpENoqg" target="__kywcAgwEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_BjKUsAptEeaGqPUk-4V4qQ" name="Server2Failure">
@@ -189,9 +198,14 @@
               <body>    std::cout&lt;&lt;&quot;ENV: No announcment from server2, remove Server2 from masters list\n&quot;;
     //systemConfig.MasterList[1]=false;
     server2Selected =false;
+   MasterName = (char *) &quot;&quot;;
+    if (AnnouncementServer2Id.isValid())
+       AnnouncmentServer2.cancelTimer(AnnouncementServer2Id);
 </body>
             </effect>
-            <trigger xmi:type="uml:Trigger" xmi:id="_IX_MkApvEeaGqPUk-4V4qQ" name="server2Failure" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rXZWwApkEeaGqPUk-4V4qQ"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_AkO-cGdmEemLEYOGFSyoZA" port="_rXZWwApkEeaGqPUk-4V4qQ">
+              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
+            </trigger>
           </transition>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_npsCMAgwEea_md0mpENoqg" name="InitState"/>
           <subvertex xmi:type="uml:State" xmi:id="_sdehUAgwEea_md0mpENoqg" name="ReadConfig">
@@ -201,14 +215,19 @@
     configTimer.informIn(UMLRTTimespec(3,0));
     //systemConfig.loadConfig();
     runningMode = (char*)&quot;1&quot;;
-
     if (strcmp(runningMode, &quot;0&quot;)==0){ 
-    	server1Selected = true;
-    	server2Selected = true;
+    server1Selected = true;
+    server2Selected = true;
+    MasterName = (char*) &quot;server1&quot;;
     }else{
-	server1Selected = true;
-    	server2Selected = false;
+    server1Selected = true;
+    server2Selected = false;
+    MasterName = (char*) &quot;server1&quot;;
     }
+    AnnouncmentServerTimeout =2;
+    std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION FOR ENV]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: AnnouncmentServerTimeout will received after &quot;&lt;&lt; AnnouncmentServerTimeout &lt;&lt; &quot; second\n&quot;;
+
     std::cout&lt;&lt;&quot;ENV: Reading the configuration was done\n&quot;;
 </body>
             </entry>
@@ -326,6 +345,7 @@
     runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
     serverName = (char*) srvName.c_str();
+
     if (strcmp(serverName, &quot;server1_2&quot;)==0) {
     server1Selected = true;
     server2Selected = true;
@@ -335,7 +355,7 @@
     }else if (strcmp(serverName, &quot;server2&quot;)==0) {
     server1Selected = false;
     server2Selected = true;
-    }else {
+    }else{
     server1Selected = false;
     server2Selected = false;
     }
@@ -355,9 +375,9 @@
     
     if (TimerId.isValid())
     	Timer.cancelTimer(TimerId);
-    int recoverTimer = 6; 
+    int recoverTimer = 10; 
     Timer.informEvery(UMLRTTimespec(recoverTimer,0),4);
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: goes to Failure state, the server will be recovered after &quot; &lt;&lt; recoverTimer &lt;&lt; &quot; seconds\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: -----------------------> goes to &lt;Failure state> , the server will be recovered after &quot; &lt;&lt; recoverTimer &lt;&lt; &quot; seconds\n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_qt8XoApEEeaGqPUk-4V4qQ" name="Failure" port="_855RMAs1EeaGqPUk-4V4qQ">
@@ -381,17 +401,18 @@
               <specification xmi:type="uml:OpaqueExpression" xmi:id="_XImjEAlwEea_md0mpENoqg" name="CheckConfig">
                 <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 <language>C++</language>
-                <body>    
-     std::string systemConfig = config;
+                <body>
+    std::string systemConfig = config;
     int pos = systemConfig.find(&quot;:&quot;);
     std::string modeStr = systemConfig.substr(0, pos);
     runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
+    char* thisSrvName = (char*) this->getName();
     serverName = (char*) srvName.c_str();
-                
-                if ((strcmp(runningMode,&quot;0&quot;)==0) ||
-    ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp(serverName,this->getName())==0)))
-    	return true;
+
+    if ((strcmp(runningMode,&quot;0&quot;)==0) ||
+    ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp(serverName,thisSrvName)==0)))
+    return true;
     else 
     return false;
 </body>
@@ -401,9 +422,9 @@
               <language>C++</language>
               <body>    
     
-    int failureRate = 4;
-    KeepAliveTimeOut = 4;
-    AnnouncementTimeOut = 3;
+    int failureRate = 5;
+    KeepAliveTimeOut = 2;
+    AnnouncementTimeOut = 4;
     
     std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; failureRate &lt;&lt; &quot; second\n&quot;;
@@ -434,8 +455,8 @@
     for (int i=0;i&lt;100;i++)
     Result=Result+1;
 
-    std::cout&lt;&lt; this->getName() &lt;&lt;&quot;is doing something: like counting from 0 to &quot;&lt;&lt; Result &lt;&lt;&quot;\n&quot;; 
-    std::cout&lt;&lt;this->getName() &lt;&lt;&quot; is sending Result value which is &quot;&lt;&lt; Result &lt;&lt;&quot; to the client &quot; &lt;&lt; msg->sapIndex0_&lt;&lt;&quot;\n&quot;;
+    std::cout&lt;&lt; this->getName() &lt;&lt;&quot; >> is doing something: like counting from 0 to &quot;&lt;&lt; Result &lt;&lt;&quot;\n&quot;; 
+    std::cout&lt;&lt;this->getName() &lt;&lt;&quot; >> is sending Result value which is &quot;&lt;&lt; Result &lt;&lt;&quot; to the client &quot; &lt;&lt; msg->sapIndex0_&lt;&lt;&quot;\n&quot;;
    
     int tempid=msg->sapIndex0_;
     ServerComm.Reply(Result).sendAt(tempid);</body>
@@ -453,7 +474,7 @@
 
     AnnouncementTimerId=MasterAnnounceTimer.informEvery(UMLRTTimespec(AnnouncementTimeOut,0),4);
    
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot; received MasterAnnouncement from the other server&quot;&lt;&lt;&quot;\n&quot;;</body>
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot; Sending MasterAnnouncement to other server!&quot;&lt;&lt;&quot;\n&quot;;</body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_8oV_gAp3EeaGqPUk-4V4qQ" name="MasterAnnouncment" port="_Vj1U4ApFEeaGqPUk-4V4qQ">
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
@@ -491,8 +512,29 @@
           <transition xmi:type="uml:Transition" xmi:id="_pYtP8Ap5EeaGqPUk-4V4qQ" name="ToRunAsMaster" source="_kLngAAp5EeaGqPUk-4V4qQ" target="_UrcckAlOEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_lf6aoAqTEeaGqPUk-4V4qQ" name="BeMaster">
               <language>C++</language>
-              <body>    //int r=rand()%5+5;
+              <body>    char* thisSrvName = (char*) this->getName();
+	if ((strcmp(thisSrvName,&quot;server2&quot;))==0)
+    {
+    	server2Selected = true;
+    } else if ((strcmp(thisSrvName,&quot;server1&quot;))==0)
+    {
+    	server1Selected = true;
+    }
+
+
+
     int newFailureRate = 5;
+    KeepAliveTimeOut = 2;
+    AnnouncementTimeOut = 4;
+    
+    std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED NEW TIMING CONFIGURATION]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; newFailureRate &lt;&lt; &quot; second\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: KeepAliveTimer will received after &quot;&lt;&lt; KeepAliveTimeOut &lt;&lt; &quot; second\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: AnnouncementTimeOut will received after &quot;&lt;&lt; AnnouncementTimeOut &lt;&lt; &quot; second\n&quot;;
+
+
+
+
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: will go fail state after &quot;&lt;&lt; newFailureRate &lt;&lt; &quot;second\n&quot;;
 
     TimerId=Timer.informEvery(UMLRTTimespec(newFailureRate,0),4);
@@ -505,6 +547,10 @@
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_wPvR0Ap8EeaGqPUk-4V4qQ" name="PassiveMode" source="_Pyhf8Ap5EeaGqPUk-4V4qQ" target="_887yAKozEeiNHY6qjNhZ4w"/>
           <transition xmi:type="uml:Transition" xmi:id="_QEtu0AsLEeaGqPUk-4V4qQ" name="purgeotherMessage" source="_hgSoEAlOEea_md0mpENoqg" target="_hgSoEAlOEea_md0mpENoqg">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_y-9LEGbiEemHEpt3bqt0SA" name="Effect" isReentrant="false">
+              <language>C++</language>
+              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Ignore other messages when the server is in the failure state ... \n&quot;;</body>
+            </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_os5WQGBcEemOW4bl5-QSZA" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_HIvrsApCEeaGqPUk-4V4qQ"/>
             <trigger xmi:type="uml:Trigger" xmi:id="_qGltEGBcEemOW4bl5-QSZA" event="_xM6tkApBEeaGqPUk-4V4qQ" port="_rmnI0OM8EeaTpaLNj-zYpw"/>
             <trigger xmi:type="uml:Trigger" xmi:id="_rJO10GBcEemOW4bl5-QSZA" port="_ZDrx0ApDEeaGqPUk-4V4qQ">
@@ -512,6 +558,9 @@
             </trigger>
             <trigger xmi:type="uml:Trigger" xmi:id="_thfGoGBcEemOW4bl5-QSZA" event="_G3K7UAnFEeaGqPUk-4V4qQ" port="_pQ6HcAnMEeaGqPUk-4V4qQ"/>
             <trigger xmi:type="uml:Trigger" xmi:id="_ZUXggGBxEemOW4bl5-QSZA" event="_Iv3CQAl4Eea_md0mpENoqg" port="_-3KD0AgvEea_md0mpENoqg"/>
+            <trigger xmi:type="uml:Trigger" xmi:id="_RDZEgGbiEemHEpt3bqt0SA" port="_Vj1U4ApFEeaGqPUk-4V4qQ">
+              <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
+            </trigger>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_bHEIAONOEeaTpaLNj-zYpw" name="ToBeMaster" source="_M8iZcONCEeaTpaLNj-zYpw" target="_kLngAAp5EeaGqPUk-4V4qQ"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_hY-7oAlNEea_md0mpENoqg" name="InitState"/>
@@ -520,7 +569,7 @@
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_YzyAkAlyEea_md0mpENoqg" name="RunAsMasterEntry">
               <language>C++</language>
               <body>
-    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Run as Master now\n&quot;;
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Run as Master\n&quot;;
     char* MasterName = (char *)this->getName(); 
     ConfigComm.IAMMaster(MasterName).send();
     ts.getclock(ts);
@@ -578,9 +627,9 @@
               <transition xmi:type="uml:Transition" xmi:id="_XafJkONDEeaTpaLNj-zYpw" name="ReplyConfig" source="_Px2BIAqSEeaGqPUk-4V4qQ" target="_NU8OsAszEeaGqPUk-4V4qQ">
                 <effect xmi:type="uml:OpaqueBehavior" xmi:id="_7oy0AGBmEemOW4bl5-QSZA" name="Effect" isReentrant="false">
                   <language>C++</language>
-                  <body>std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: ReplyConfig message is received!:&quot; &lt;&lt; config &lt;&lt; &quot;\n&quot;;
- std::string systemConfig = config;
- int pos = systemConfig.find(&quot;:&quot;);
+                  <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: ReplyConfig message is received!:&quot; &lt;&lt; config &lt;&lt; &quot;\n&quot;;
+    std::string systemConfig = config;
+    int pos = systemConfig.find(&quot;:&quot;);
     std::string modeStr = systemConfig.substr(0, pos);
     runningMode = (char*) modeStr.c_str();
     std::string srvName = systemConfig.substr(pos+1, systemConfig.length());
@@ -594,12 +643,12 @@
     }else if (strcmp(serverName, &quot;server2&quot;)==0) {
     server1Selected = false;
     server2Selected = true;
-    }else {
+    }else{
     server1Selected = false;
     server2Selected = false;
     }
-
-  std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: serverName extracted from the new config and it is: &quot;&lt;&lt;serverName&lt;&lt;&quot;\n&quot;;</body>
+    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: serverName extracted from the new config and it is: &quot;&lt;&lt;serverName&lt;&lt;&quot;\n&quot;;
+</body>
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_XafJkeNDEeaTpaLNj-zYpw" name="ConfigReply" event="_Iv3CQAl4Eea_md0mpENoqg" port="_-3KD0AgvEea_md0mpENoqg"/>
               </transition>
@@ -632,17 +681,22 @@ if (server2Selected)
   std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: ==================================> server2Selected is TRUE &quot;&lt;&lt;&quot;\n&quot;;
 
     std::string systemConfig = config;
+    char* thisSrvName = (char*) this->getName();
     if (!(server1Selected) &amp;&amp; !(server2Selected))
     {
     	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
     	return true;
     }
-    else if ((strcmp((char*)this->getName(),&quot;server1&quot;)==0) &amp;&amp; (server2Selected==false))
+    else if ((strcmp(thisSrvName,&quot;server1&quot;)==0) &amp;&amp; !server2Selected)
     {
     	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
     	return true;
     }
-    else if ((strcmp((char *)this->getName(),&quot;server2&quot;))==0 &amp;&amp; (server1Selected==false))
+    else if ((strcmp(thisSrvName,&quot;server2&quot;))==0 &amp;&amp; !server1Selected)
+    {
+    	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
+    	return true;
+    }else if (!server1Selected &amp;&amp; !server2Selected)
     {
     	std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: No one is Master, I am going to Be master\n&quot;;
     	return true;
@@ -651,6 +705,13 @@ if (server2Selected)
 </body>
                   </specification>
                 </ownedRule>
+              </transition>
+              <transition xmi:type="uml:Transition" xmi:id="_nxxT8GdxEemLEYOGFSyoZA" name="IgnoreConfig" kind="external" source="_ZaK1gAlOEea_md0mpENoqg" target="_ZaK1gAlOEea_md0mpENoqg">
+                <effect xmi:type="uml:OpaqueBehavior" xmi:id="_-jhNcGdxEemLEYOGFSyoZA" name="Effect" isReentrant="false">
+                  <language>C++</language>
+                  <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Ignore config message from Env \n&quot;;</body>
+                </effect>
+                <trigger xmi:type="uml:Trigger" xmi:id="_Qu0q0GdzEemLEYOGFSyoZA" event="_Iv3CQAl4Eea_md0mpENoqg" port="_-3KD0AgvEea_md0mpENoqg"/>
               </transition>
               <subvertex xmi:type="uml:State" xmi:id="_Px2BIAqSEeaGqPUk-4V4qQ" name="TryBeMaster">
                 <entry xmi:type="uml:OpaqueBehavior" xmi:id="_THfB8GUbEemm-d406BDrxQ" name="Entry" isReentrant="false">
@@ -700,6 +761,9 @@ if (server2Selected)
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Port" xmi:id="_8sGy4AovEeaGqPUk-4V4qQ" name="Timer" visibility="protected" isOrdered="true" aggregation="composite" isBehavior="true" isService="false">
         <type xmi:type="uml:Collaboration" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_MxQZgGXsEeS_4daqvwyFrg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_afxTYG65EemY4ISVB3uHfw" name="ResponseTimerId">
+        <type xmi:type="uml:Class" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_6qkTMGXmEeS_4daqvwyFrg"/>
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_BKT8EAlKEea_md0mpENoqg" name="ClientStateMachine">
         <region xmi:type="uml:Region" xmi:id="_Bk0GwAlKEea_md0mpENoqg" name="Region1">
@@ -755,7 +819,7 @@ if (strcmp(serverName, &quot;server1_2&quot;)==0) {
           <transition xmi:type="uml:Transition" xmi:id="_BanqgAmuEea_md0mpENoqg" name="ServiceResult" source="_fO-gkAmtEea_md0mpENoqg" target="_uScfwAmtEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_CC7jEAovEeaGqPUk-4V4qQ" name="getResponse">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: got reponse from server which is &quot;&lt;&lt; Result &lt;&lt; &quot;\n&quot;;
+              <body>std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: got reponse from server which is &quot;&lt;&lt; Result &lt;&lt; &quot;\n&quot;;
 
     
 </body>
@@ -778,7 +842,7 @@ if (strcmp(serverName, &quot;server1_2&quot;)==0) {
               <specification xmi:type="uml:OpaqueExpression" xmi:id="_Ro31QAnDEeaGqPUk-4V4qQ" name="checkMaster">
                 <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 <language>C++</language>
-                <body>    std::string systemConfig = config;
+                <body>
     if (server1Selected || server2Selected)
     	return true;
     else 
@@ -829,7 +893,7 @@ if (server2Selected)
           <transition xmi:type="uml:Transition" xmi:id="_QnYuMAozEeaGqPUk-4V4qQ" name="NoResponseFromServer" source="_fO-gkAmtEea_md0mpENoqg" target="_IjppsAlhEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_WkrVwApkEeaGqPUk-4V4qQ" name="ServiceFailure">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Service Failur.....\n&quot;;
+              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Service request failed!, back to the ready state .....\n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_ZV1SwAo4EeaGqPUk-4V4qQ" port="_tP9SkAmuEea_md0mpENoqg">
@@ -846,10 +910,9 @@ if (server2Selected)
           <subvertex xmi:type="uml:State" xmi:id="_IjppsAlhEea_md0mpENoqg" name="Ready">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_fmLpMAm5Eea_md0mpENoqg" name="ReadyEntry">
               <language>C++</language>
-              <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: is in Ready State\n&quot;;
-    int requestRate=1;
-    RequestTimer.informIn(UMLRTTimespec(0,1000),4);
+              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: is in Ready state\n&quot;;
+    int requestRate=2;
+    RequestTimer.informIn(UMLRTTimespec(requestRate,0),4);
     std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: will try to request service after &quot;&lt;&lt; requestRate&lt;&lt;&quot; second \n&quot;;
 </body>
             </entry>
@@ -866,15 +929,17 @@ if (server2Selected)
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_SJEfMAo6EeaGqPUk-4V4qQ" name="WaitForReply">
               <language>C++</language>
               <body>    
-    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Waiting for Response, The timeout is 60 Second\n&quot;;
-    TimerId=ResponseTimer.informIn(UMLRTTimespec(60,0),4);
+    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: Waiting for Response, The timeout is 4 Second\n&quot;;
+    ResponseTimerId=ResponseTimer.informIn(UMLRTTimespec(4,0),4);
     ts.getclock(ts);
     
 </body>
             </entry>
             <exit xmi:type="uml:OpaqueBehavior" xmi:id="_r05c0Ao9EeaGqPUk-4V4qQ" name="CancellTimer">
               <language>C++</language>
-              <body>ResponseTimer.cancelTimer(TimerId);
+              <body>if (ResponseTimerId.isValid())
+    	ResponseTimer.cancelTimer(ResponseTimerId);    
+
 messageID=messageID+1; 
 ts.getclock(ts);
    
@@ -886,7 +951,7 @@ ts.getclock(ts);
               <language>C++</language>
               <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot; : Processing Response .....\n&quot;;
     
-    Timer.informIn(UMLRTTimespec(0,500),4);
+    Timer.informIn(UMLRTTimespec(2,0),4);
 
     ts.getclock(ts);
     
@@ -897,10 +962,11 @@ ts.getclock(ts);
           <subvertex xmi:type="uml:State" xmi:id="_KwFHIAo0EeaGqPUk-4V4qQ" name="RetryState">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_1CJTsAo2EeaGqPUk-4V4qQ" name="RetryConfig">
               <language>C++</language>
-              <body>    std::this_thread::sleep_for(std::chrono::milliseconds(700));
-    int masterRetryRate=rand()%5;
+              <body>    //std::this_thread::sleep_for(std::chrono::milliseconds(700));
+    int masterRetryRate=4;
     std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;: The master is not available, retry in &quot;&lt;&lt;masterRetryRate&lt;&lt; &quot; second\n&quot;;
     Timer.informIn(UMLRTTimespec(masterRetryRate,0),4);
+
 </body>
             </entry>
           </subvertex>

@@ -115,13 +115,10 @@ public class CapsuleTracker implements Runnable{
 		this.stateExitEvent = null;
 		this.TrackerMakerNumber = 0;
 		this.semCapsuleTracker = semCapsuleTracker;
-		//this.capsuleInstance = capsuleInstance;
 		this.outputFileStream = outputFileStream;
 		this.logicalVectorTime = logicalVectorTime;
 		this.eventQueueTmp = new PriorityBlockingQueue<Event>(); // read but not consume!
 		this.currentStatus = "StartUp";
-		//this.currentStateName = "INIT";
-		//this.currentStateId = "";
 		this.targetStateData = new StateData();
 		this.sourceStateData = new StateData();
 		this.targetChoiceState = false;
@@ -236,7 +233,6 @@ public class CapsuleTracker implements Runnable{
 											listConsumedPaths.clear();
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0));
-											//System.err.println(dataContainer.getCapsuleInstance()+"++++++++++++++++++++++++++++++++>>>>>>>> before updateLocalHeap: ");
 											updateLocalHeap(listPaths.get(0),msgSender);
 											updateCurrentState();
 											if (!msgTobeConsumed.isEmpty())
@@ -264,41 +260,23 @@ public class CapsuleTracker implements Runnable{
 					if (msgConsumedTmpQueue && currentEventTmp != null && currentEventTmp.getSourceName() != null) {
 						//System.err.println(dataContainer.getCapsuleInstance()+"---[Event is consumed from TmpEventQueue]---------- "+currentEventTmp.allDataToString());
 						showInfo(currentEventTmp);
-						currentEventTmp = null;
+						//currentEventTmp = null;
 					}else if (msgConsumedQueue && currentEvent != null && currentEvent.getSourceName() !=null) {
 						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Event is consumed from EventQueue]--------- " + currentEvent.allDataToString());
 						showInfo(currentEvent);
-						currentEvent = null;
-					}else {
+						//currentEvent = null;
+					}/*else {
 						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Warning]: <neither a msg from currentEvent nor from currentEventTmp has been consumed in this round> ");
+						if (currentEventTmp != null && currentEventTmp.getSourceName() != null && currentEventTmp.getSourceName().contains("Simulator__client__2"))
+							System.err.println(dataContainer.getCapsuleInstance()+"=[currentEventTmp]==> "+currentEventTmp.allDataToString());
+						else if (currentEvent != null && currentEvent.getSourceName() != null && currentEvent.getSourceName().contains("Simulator__client__2"))
+							System.err.println(dataContainer.getCapsuleInstance()+"=[currentEvent]==> "+currentEvent.allDataToString());
 
-					}
+					}*/
 					
 					msgConsumedTmpQueue = false;
 					msgConsumedQueue = false;
 
-					/*System.out.println(dataContainer.getCapsuleInstance()+"  =====================[listPaths]");
-					int i = 0;
-					for (String path : listPaths) {
-						String pathCurr = "";
-						if(path.contains(",")) {
-							String [] pathsSplit = path.split("\\,");
-							pathCurr = "";
-							for (String str : pathsSplit) {
-								if (pathCurr.isEmpty()) {
-									pathCurr = PES.mapIdQname.get(str);
-									//pathCurr = str;
-								}else {	
-									pathCurr = pathCurr+ "-->" + PES.mapIdQname.get(str);
-									//pathCurr = pathCurr+ "-->" + str;
-								}
-							}
-						}else {
-							pathCurr = PES.mapIdQname.get(path);
-							//pathCurr = listRegionalPaths.get(i);
-						}
-						System.out.println("["+i+++"]:" +pathCurr);
-					}*/
 				}
 				semCapsuleTracker.release();
 				Thread.yield();
