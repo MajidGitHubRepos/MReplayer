@@ -369,9 +369,9 @@ public class CapsuleTracker implements Runnable{
 	}
 	
 	//==================================================================	
-	//==============================================[callSendJsonToServer]
+	//==============================================[jsonToServer]
 	//==================================================================
-	public static boolean callSendJsonToServer(int priorityEventCounter, String capsuleInstance, String itemName, String allVariables) throws Exception {
+	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String itemName, String allVariables) throws Exception {
 		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
 	

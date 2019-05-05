@@ -19,6 +19,8 @@ import org.json.simple.JSONObject;
 import ca.queensu.cs.controller.CapsuleTracker;
 import ca.queensu.cs.controller.Controller;
 import ca.queensu.cs.umlrtParser.EntryData;
+import ca.queensu.cs.umlrtParser.PES;
+import ca.queensu.cs.umlrtParser.ParserEngine;
 import ca.queensu.cs.umlrtParser.TableDataMember;
 import ca.queensu.cs.umlrtParser.UmlrtParser;
 import ca.queensu.cs.umlrtParser.UmlrtUtils;
@@ -42,7 +44,8 @@ public class ViewEngine implements Runnable {
 	public final void run() {
 		try {
 			if (CapsuleTracker.isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
-				makeInitJsonFile();
+				//makeInitJsonFile();
+				makeInitJsonFileFromMapRegionPaths();
 			}else {
 				System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 				System.err.println("=====[PROGRAM TERMINATED]=====");
@@ -195,6 +198,119 @@ public class ViewEngine implements Runnable {
 			//NOTE: ModelJsonServer checks if its Queue is empty then it is a registation message and save it in a registration.json file
 		
 
+
+	}
+	
+	//==================================================================	
+	//==============================================[makeInitJsonFileFromMapRegionPaths]
+	//==================================================================	
+	public final static void makeInitJsonFileFromMapRegionPaths() throws IOException {
+		System.out.println("["+ Thread.currentThread().getName() +"]==========================[makeInitJsonFile From mapRegionPaths]==========================");
+
+		List<JSONObject> listJSONobj = new ArrayList<JSONObject>();
+		JSONObject objTop = new JSONObject();
+		JSONArray listCapsulesInstances = new JSONArray();
+		objTop.put("name", "Top");
+		//--
+		List<String> regions = new ArrayList<String>();
+		String capInstances = "";
+		for (Map.Entry<String, List<String>> entryRegion : PES.mapModelRegionPaths.entrySet()) {
+			capInstances = entryRegion.getKey();
+			regions = entryRegion.getValue();
+			System.out.println("====> capInstances: "+ capInstances);
+
+			if (capInstances.contains(",")) {
+				String [] capsuleInstancesSplit = capInstances.split("\\,");
+				for (int i = 0; i < capsuleInstancesSplit.length; i++) {
+					JSONObject objCapsulesInstance = new JSONObject();
+					objCapsulesInstance.put("name", capsuleInstancesSplit[i]);
+
+					JSONArray listRegions = new JSONArray();
+					for (String region : regions) {
+						JSONObject objRegion = new JSONObject();
+						objRegion.put("name", region);
+						String key = capInstances+"::"+region;
+
+						List<String> listRegionalPaths = PES.mapRegionPaths.get(key);
+						//every value is a path
+						JSONArray listPaths = new JSONArray();
+						int pathCounter = 0;
+						for (int ii = 0; ii<listRegionalPaths.size(); ii++) {
+
+							JSONObject objPath = new JSONObject();
+							JSONArray listTransitions = new JSONArray();
+
+							if(listRegionalPaths.get(ii).contains(",")) {
+								String [] pathsSplit = listRegionalPaths.get(ii).split("\\,");
+								for (String str : pathsSplit) {
+									JSONObject objTR = new JSONObject();
+									objTR.put("name",PES.mapIdQname.get(str));
+									objTR.put("style","");
+									listTransitions.add(objTR);
+								}
+							}else {
+								JSONObject objTR = new JSONObject();
+								objTR.put("name",PES.mapIdQname.get(listRegionalPaths.get(ii)));
+								objTR.put("style","");
+								listTransitions.add(objTR);
+							}
+							objPath.put("Path"+pathCounter++, listTransitions);
+							listPaths.add(objPath);
+						}
+						objRegion.put("listPaths",listPaths);
+						listRegions.add(objRegion);
+					}
+					objCapsulesInstance.put("regions", listRegions);
+					listCapsulesInstances.add(objCapsulesInstance);
+				}
+
+			}else {
+
+				JSONObject objCapsulesInstance = new JSONObject();
+				objCapsulesInstance.put("name", capInstances);
+
+				JSONArray listRegions = new JSONArray();
+				for (String region : regions) {
+					JSONObject objRegion = new JSONObject();
+					objRegion.put("name", region);
+					String key = capInstances+"::"+region;
+					List<String> listRegionalPaths = PES.mapRegionPaths.get(key);
+					//every value is a path
+					JSONArray listPaths = new JSONArray();
+					int pathCounter = 0;
+					for (int ii = 0; ii<listRegionalPaths.size(); ii++) {
+						JSONObject objPath = new JSONObject();
+						JSONArray listTransitions = new JSONArray();
+
+						if(listRegionalPaths.get(ii).contains(",")) {
+							String [] pathsSplit = listRegionalPaths.get(ii).split("\\,");
+							for (String str : pathsSplit) {
+								JSONObject objTR = new JSONObject();
+								objTR.put("name",PES.mapIdQname.get(str));
+								objTR.put("style","");
+								listTransitions.add(objTR);
+							}
+						}else {
+							JSONObject objTR = new JSONObject();
+							objTR.put("name",PES.mapIdQname.get(listRegionalPaths.get(ii)));
+							objTR.put("style","");
+							listTransitions.add(objTR);
+						}
+						objPath.put("Path"+pathCounter++, listTransitions);
+					}
+					objRegion.put("listPaths",listPaths);
+					listRegions.add(objRegion);
+				}
+				objCapsulesInstance.put("regions", listRegions);
+				listCapsulesInstances.add(objCapsulesInstance);
+			}
+		}
+		objTop.put("listCapsulesInstances", listCapsulesInstances);
+		System.out.println(objTop.toJSONString());
+		System.out.println("=====[SEND INITIAL JSON FILE TO THE WEBSERVER]======");
+
+		sendJsonToServer(objTop.toJSONString()); //will be analysied in index.html by initialModelAnalysis()
+		//NOTE: ModelJsonServer checks if its Queue is empty then it is a registation message and save it in a registration.json file
 
 	}
 
