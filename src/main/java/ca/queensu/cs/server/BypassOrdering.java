@@ -31,8 +31,8 @@ public class BypassOrdering implements Runnable {
 					}
 					try {
 						//System.out.println("[Event]: "+capsuleInstance+", " +sourceName + "\n\n");
-						if ((sourceName != "__NOT_FOUND__") && (capsuleInstance != "__NOT_FOUND__"))
-							CapsuleTracker.jsonToServer(ServerBypassOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
+						//if ((sourceName != "__NOT_FOUND__") && (capsuleInstance != "__NOT_FOUND__"))
+						//	CapsuleTracker.jsonToServer(ServerBypassOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
 						capsuleInstance = "__NOT_FOUND__";
 						sourceName      = "__NOT_FOUND__";
 					} catch (Exception e) {

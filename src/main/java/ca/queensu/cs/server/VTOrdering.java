@@ -56,7 +56,7 @@ public class VTOrdering implements Runnable {
 							
 							if (event.getVT().isEmpty()) {
 								totalSize += event.eventSize("vt");
-								CapsuleTracker.jsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
+								//CapsuleTracker.jsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
 							}else if (vtIsRespected(event.getVT())) {
 								for (int i = 0; i < 4; i++){
 									System.out.println("LOCAL VT ["+i+"]: " + localVT[i]);
@@ -64,7 +64,7 @@ public class VTOrdering implements Runnable {
 								
 								System.out.println("CURRENT VT: " + event.getVT());
 								
-								CapsuleTracker.jsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
+								//CapsuleTracker.jsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
 								totalSize += event.eventSize("vt");
 							}else {
 								eventQueueVT.put(event);
@@ -78,7 +78,7 @@ public class VTOrdering implements Runnable {
 										if ((event.getSourceName().length()>lastIndex+2))
 											sourceName = event.getSourceName().substring(lastIndex+2);
 									}
-									CapsuleTracker.jsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
+									//CapsuleTracker.jsonToServer(ServerVTOrdering.priorityEventCounter++,capsuleInstance,sourceName,event.getVariableData());
 									totalSize += event.eventSize("vt");
 								}/*else {
 									System.err.println("=====[No event found in eventQueueVT!]=====");

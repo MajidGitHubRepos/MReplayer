@@ -19,6 +19,7 @@ public class Event implements Comparable<Event> {
 	private String eventStatus;
 	private String eventTarget;
 	private String vectorTime;
+	private String regionName;
 	private int counter;
 	
 	
@@ -66,6 +67,10 @@ public class Event implements Comparable<Event> {
 		this.eventTarget=eventTarget; 
 		this.vectorTime = vectorTime;
 		this.counter=ByteReader.eventCounter++;
+		if (this.eventSourceName  != null) {
+			this.regionName = extractAllRegions(this.eventSourceName);
+		}else
+			this.regionName = "__NULL__";
 	}
 	public Event() {
 		this(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -119,6 +124,25 @@ public class Event implements Comparable<Event> {
 	}
 	public String getVT() {
 		return this.vectorTime;
+	}
+	
+	public String getReginName() {
+		return regionName;
+	}
+	
+	public String extractAllRegions(String qName) {
+		String allRegions = "";
+		String [] qNameSplit = qName.split("\\::");
+		for (String str : qNameSplit) {
+			if(str.contains("Region")) {
+				if (allRegions.isEmpty())
+					allRegions = str;
+				else
+					allRegions = allRegions + "_" +str;
+			}
+		}
+		
+		return allRegions;
 	}
 	
 	public int eventSize(String typ) {

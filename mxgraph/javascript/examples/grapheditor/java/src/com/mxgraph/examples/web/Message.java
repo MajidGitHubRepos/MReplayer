@@ -7,17 +7,19 @@ import java.util.Map;
 public class Message implements Comparable<Message> {
 	private Integer priorityEventCounter;
 	private String capsuleName;
-	private String itemName;
+	private String region;
+	private String path;
 	private HashMap<String, String> vatriablesHashMap;
 	
-	public Message(int priorityEventCounter, String capsuleName, String itemName) {
+	public Message(int priorityEventCounter, String capsuleName, String region, String path) {
 		this.priorityEventCounter = priorityEventCounter;
 		this.capsuleName = capsuleName;
-		this.itemName = itemName;
+		this.region = region;
+		this.path = path;
 		this.vatriablesHashMap = new HashMap<String, String>();
 	}
 	public Message() {
-		this(0,null,null);
+		this(0,null,null, null);
 	}
 	public int getPriorityEventCounter() {
 		return priorityEventCounter;
@@ -25,8 +27,11 @@ public class Message implements Comparable<Message> {
 	public String getCapsuleName() {
 		return capsuleName;
 	}
-	public String getItemName() {
-		return itemName;
+	public String getRegion() {
+		return region;
+	}
+	public String getPath() {
+		return path;
 	}
 	public void putToVatriablesHashMap(String key, String value) {
 		vatriablesHashMap.put(key, value);
@@ -40,7 +45,20 @@ public class Message implements Comparable<Message> {
 		return priorityEventCounter.compareTo(msg.getPriorityEventCounter());
 	}
 	public String makeJSON() {
-		String result = "{\"traceID\":[\""+capsuleName+"\", \""+ itemName+ "\"";
+		String result = "{\"traceID\":[\""+capsuleName+"\", \""+ region+ "\"";
+		result = result+",[";
+		if (path.contains(",")) {
+			String [] pathsSplit = path.split("\\,");
+			for (String str : pathsSplit) {
+				if (str.contentEquals(pathsSplit[0]))
+					result = result+"{\"name\":\""+str+"\"}";
+				else
+					result = result+",{\"name\":\""+str+"\"}";
+			}
+		}else {
+			result = result+"{\"name\":\""+path+"\"}";
+		}
+		result = result+"]";
 		
 		Iterator iterator = vatriablesHashMap.entrySet().iterator();
 		int counter = 0;

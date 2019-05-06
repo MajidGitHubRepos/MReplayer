@@ -48,6 +48,10 @@ public class Value {
     public boolean isBoolean() {
         return value instanceof Boolean;
     }
+    
+    public String getType() {
+    	return type;
+    }
 
     @Override
     public int hashCode() {

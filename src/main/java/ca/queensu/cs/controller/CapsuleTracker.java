@@ -188,7 +188,7 @@ public class CapsuleTracker implements Runnable{
 
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
 									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
-										
+										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 										listConsumedPaths.clear();
 										listAllPathTaken.add(listPaths.get(0));
 										addToListConsumedPaths(listPaths.get(0));
@@ -230,6 +230,7 @@ public class CapsuleTracker implements Runnable{
 									//vTimeHandler(currentEventTmp);
 									if (currentStatus.contentEquals("TRANISTIONEND")) {
 										if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 											listConsumedPaths.clear();
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0));
@@ -283,6 +284,9 @@ public class CapsuleTracker implements Runnable{
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -371,13 +375,13 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[jsonToServer]
 	//==================================================================
-	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String itemName, String allVariables) throws Exception {
+	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables) throws Exception {
 		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
-	
-				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, itemName, allVariables);
+
+				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -387,7 +391,47 @@ public class CapsuleTracker implements Runnable{
 		}
 		return false;
 	}
+	//==================================================================	
+	//==============================================[makeJSONobj]
+	//==================================================================
+	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables) {
+		JSONObject jsonObj = new JSONObject();
+		JSONArray traceID = new JSONArray();
+		JSONArray listTRs = new JSONArray();
+		traceID.add(priorityEventCounter); traceID.add(capInstName); traceID.add(region);
+		String pathValue = "";
+		if(path.contains(",")) {
+			String [] pathsSplit = path.split("\\,");
+			for (String str : pathsSplit) {
+				//JSONObject objTR = new JSONObject();
+				//objTR.put("name",PES.mapIdQname.get(str));
+				//listTRs.add(objTR);
+				if (pathValue.isEmpty())
+					pathValue = PES.mapIdQname.get(str);
+				else
+					pathValue = pathValue +"," +PES.mapIdQname.get(str);
+			}
+		}else {
+			//JSONObject objTR = new JSONObject();
+			//objTR.put("name",PES.mapIdQname.get(path));
+			//listTRs.add(objTR);
+			pathValue = PES.mapIdQname.get(path);
+		}
+		//traceID.add(listTRs);
+		traceID.add(pathValue);
+		
+		jsonObj.put("traceID", traceID);
+		JSONArray traceVar = new JSONArray();
+		//processing variables
+		if(allVariables!=null) 
+			for (Entry<String, Value> entry : allVariables.entrySet()) {//Sample: pongCount,Integer,7
+				traceVar.add(entry.getKey()); traceVar.add(entry.getValue().getType()); traceVar.add(entry.getValue().asString());
+			}
+		
+		jsonObj.put("traceVar", traceVar);
+		return jsonObj;
 
+	}
 	//==================================================================	
 	//==============================================[isConsumable]
 	//==================================================================
@@ -1119,35 +1163,7 @@ public class CapsuleTracker implements Runnable{
 
 		  return result;
 		}
-	//==================================================================	
-	//==============================================[makeJSONobj]
-	//==================================================================
-	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String transitionName, String allVariables) {
-			JSONObject jsonObj = new JSONObject();
-			JSONArray traceID = new JSONArray();
-			traceID.add(priorityEventCounter); traceID.add(capInstName); traceID.add(transitionName);
-			jsonObj.put("traceID", traceID);
-			JSONArray traceVar = new JSONArray();
-			//processing variables
-			if(allVariables!=null) {
-				String[] variables = allVariables.split(System.getProperty("line.separator"));
-				for (int i=0; i<variables.length;i++) {
-					//System.out.println(">>>>>>>>>>>>>>>["+ Thread.currentThread().getName() +"]-->[variables]"+ variables[i] );
-					String[] varData = variables[i].split("\\,"); //Sample: pongCount,Integer,7
-					if (varData.length == 3) {
-						traceVar.add(varData[0]); traceVar.add(varData[1]); traceVar.add(varData[2]);
-					}
-					else {
-						//TODO: make sure it works with mulitple variables
-						//System.err.println("__________ Error in the event's vaiables__________");
-					}
-				}
-			}
-			
-			jsonObj.put("traceVar", traceVar);
-			return jsonObj;
-			
-		}
+	
 	@SuppressWarnings("deprecation")
 	public void shutdown() {
 		Thread.currentThread().stop();

@@ -66,7 +66,7 @@ public class Handler extends Thread {
 					JSONObject inMsgJSON = new JSONObject(inMsg);
 					//JSONArray inMsgJSONArr = inMsgJSON.getJSONArray("list");
 
-					Message msg = new Message( -1, null, null);
+					Message msg = new Message( -1, null, null,null);
 					ModelJsonServer.inMsgQueue.put(msg);
 					inMsgJSON = null;
 					msg = null;
@@ -78,7 +78,7 @@ public class Handler extends Thread {
 					JSONArray inMsgJSONArrID = inMsgJSON.getJSONArray("traceID");
 					JSONArray inMsgJSONArrVar = inMsgJSON.getJSONArray("traceVar");
 					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString());
-					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString());
+					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString());
 
 					for (int i=0;i<inMsgJSONArrVar.length();i++) {
 						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());
