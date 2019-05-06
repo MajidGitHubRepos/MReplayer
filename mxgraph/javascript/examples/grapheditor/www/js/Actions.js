@@ -1100,10 +1100,11 @@ Actions.prototype.init = function()
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					stopRun = true;
+					console.log("this.responseText:::>");
+					console.log(this.responseText);
 					responseProcess(this.responseText,editor,graph);
 					variablesHahMap = traceVarProcess(this.responseText,variablesHahMap);
 					
-					//console.log(variablesHahMap);
 				}
 			};
 			xhttp.open("POST", "/replayNext", true);

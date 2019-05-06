@@ -7,7 +7,7 @@
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Lcp5MKpbEeiNHY6qjNhZ4w" source="http://www.eclipse.org/papyrus-rt/language/1.0.0">
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_LcruYKpbEeiNHY6qjNhZ4w" key="language" value="umlrt-cpp"/>
     </eAnnotations>
-    <packagedElement xmi:type="uml:Class" xmi:id="_sMZ5EAgoEea_md0mpENoqg" name="ENV" visibility="public" classifierBehavior="_gU8CMAgwEea_md0mpENoqg" isActive="true">
+    <packagedElement xmi:type="uml:Class" xmi:id="_sMZ5EAgoEea_md0mpENoqg" name="environment" visibility="public" classifierBehavior="_gU8CMAgwEea_md0mpENoqg" isActive="true">
       <ownedAttribute xmi:type="uml:Port" xmi:id="_GXsSgAgvEea_md0mpENoqg" name="ConfigComm" visibility="public" type="_v000cAgsEea_md0mpENoqg" isOrdered="true" aggregation="composite" isBehavior="true" isConjugated="true">
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NBhGMAgvEea_md0mpENoqg" value="4"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NBssYAgvEea_md0mpENoqg" value="4"/>
@@ -55,17 +55,17 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_gU8CMAgwEea_md0mpENoqg" name="StateMachine1">
         <region xmi:type="uml:Region" xmi:id="_jSIzIAgwEea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrEnv" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_B6hioAg6Eea_md0mpENoqg" name="ENVInit">
+          <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrenvironment" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_B6hioAg6Eea_md0mpENoqg" name="environmentInit">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: Intialization\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: Intialization\n&quot;;
 </body>
             </effect>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_nn9HYAgxEea_md0mpENoqg" name="RetryConfig" source="_NvBagAgxEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_4q_JgAkAEea_md0mpENoqg" name="retry">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: retrying configuation, The transtion Failure -> readConfig was taken \n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: retrying configuation, The transtion Failure -> readConfig was taken \n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_eihL0AkAEea_md0mpENoqg" port="_b1NrIAjLEea_md0mpENoqg">
@@ -75,7 +75,7 @@
           <transition xmi:type="uml:Transition" xmi:id="_su1hoAgxEea_md0mpENoqg" name="configLoaded" source="_sdehUAgwEea_md0mpENoqg" target="_dWznsAgxEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_rKgosAigEea_md0mpENoqg" name="LogTransition">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: The transition from ReadConfig -> Config was taken\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: The transition from ReadConfig -> Config was taken\n&quot;;
 </body>
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_AvcsEAg5Eea_md0mpENoqg" name="configLoaded" port="_mKfGEOM2EeaTpaLNj-zYpw">
@@ -93,7 +93,7 @@
             </ownedRule>
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_Sw7kAAjHEea_md0mpENoqg" name="configCheckL">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: The configuration is OK, the transition config-> Running was taken, sending signal to servers and clients \n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: The configuration is OK, the transition config-> Running was taken, sending signal to servers and clients \n&quot;;
 
  char* config = (char*) &quot;&quot;;
  if ((strcmp(runningMode,&quot;1&quot;)==0) &amp;&amp; (strcmp((char *)MasterName,&quot;server1&quot;)==0))
@@ -114,14 +114,14 @@
     ConfigComm.StartUp(config).sendAt(1);
     ConfigComm.StartUp(config).sendAt(2);
     ConfigComm.StartUp(config).sendAt(3);
-    std::cout&lt;&lt;&quot;ENV: ENV is in  Running State\n&quot;;
+    std::cout&lt;&lt;&quot;environment: environment is in  Running State\n&quot;;
 </body>
             </effect>
           </transition>
           <transition xmi:type="uml:Transition" xmi:id="_32w4UAgxEea_md0mpENoqg" name="NoConfigFound" source="_dWznsAgxEea_md0mpENoqg" target="_NvBagAgxEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_r3tJQAjJEea_md0mpENoqg" name="LogFailure">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: The configuration is not OK, the transition configCheck-> ConfigFailure was taken\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: The configuration is not OK, the transition configCheck-> ConfigFailure was taken\n&quot;;
 </body>
             </effect>
           </transition>
@@ -157,7 +157,7 @@
           <transition xmi:type="uml:Transition" xmi:id="_WsCs0AnGEeaGqPUk-4V4qQ" name="QueryConfig" source="__kywcAgwEea_md0mpENoqg" target="__kywcAgwEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_488xQAnGEeaGqPUk-4V4qQ" name="configReply">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: The Config request replied at index&quot; &lt;&lt; msg->sapIndex0_&lt;&lt; &quot;\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: The Config request replied at index&quot; &lt;&lt; msg->sapIndex0_&lt;&lt; &quot;\n&quot;;
     int tempid=msg->sapIndex0_;
 
    char* config = (char*) &quot;&quot;;
@@ -179,10 +179,10 @@
             </effect>
             <trigger xmi:type="uml:Trigger" xmi:id="_nF2QAAnKEeaGqPUk-4V4qQ" name="QueryConfig" event="_BB3b0Al4Eea_md0mpENoqg" port="_GXsSgAgvEea_md0mpENoqg"/>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_J02wAAprEeaGqPUk-4V4qQ" name="Server1Failure" source="__kywcAgwEea_md0mpENoqg" target="__kywcAgwEea_md0mpENoqg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_jzDXYAprEeaGqPUk-4V4qQ" name="Server1failure">
+          <transition xmi:type="uml:Transition" xmi:id="_J02wAAprEeaGqPUk-4V4qQ" name="srv1Failure" source="__kywcAgwEea_md0mpENoqg" target="__kywcAgwEea_md0mpENoqg">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_jzDXYAprEeaGqPUk-4V4qQ" name="srv1Failure">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: No announcment from server1, remove server1 from masters list\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: No announcment from server1, remove server1 from masters list\n&quot;;
     //systemConfig.MasterList[0]=false;
    server1Selected =false;
    MasterName = (char *) &quot;&quot;;
@@ -193,10 +193,10 @@
               <event xmi:type="uml:CallEvent" href="pathmap://UMLRTRTSLIB/UMLRT-RTS.uml#_IaEO8HDxEeSwWKwNKw1iAA"/>
             </trigger>
           </transition>
-          <transition xmi:type="uml:Transition" xmi:id="_FVtOsApsEeaGqPUk-4V4qQ" name="server2Failure" source="__kywcAgwEea_md0mpENoqg" target="__kywcAgwEea_md0mpENoqg">
-            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_BjKUsAptEeaGqPUk-4V4qQ" name="Server2Failure">
+          <transition xmi:type="uml:Transition" xmi:id="_FVtOsApsEeaGqPUk-4V4qQ" name="srv2Failure" source="__kywcAgwEea_md0mpENoqg" target="__kywcAgwEea_md0mpENoqg">
+            <effect xmi:type="uml:OpaqueBehavior" xmi:id="_BjKUsAptEeaGqPUk-4V4qQ" name="srv2Failure">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: No announcment from server2, remove Server2 from masters list\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: No announcment from server2, remove Server2 from masters list\n&quot;;
     //systemConfig.MasterList[1]=false;
     server2Selected =false;
    MasterName = (char *) &quot;&quot;;
@@ -212,7 +212,7 @@
           <subvertex xmi:type="uml:State" xmi:id="_sdehUAgwEea_md0mpENoqg" name="ReadConfig">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_EE4RAAigEea_md0mpENoqg" name="ReadConfig">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: Reading the configuration \n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: Reading the configuration \n&quot;;
     configTimer.informIn(UMLRTTimespec(3,0));
     //systemConfig.loadConfig();
     runningMode = (char*)&quot;1&quot;;
@@ -229,13 +229,13 @@
 
     AnnouncmentServerTimeout =3;
 
-    std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION FOR ENV]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
+    std::cout&lt;&lt;&quot;\n\n------------------------------[APPLIED TIMING CONFIGURATION FOR environment]----------------------------------- &quot;&lt;&lt; &quot;\n\n&quot;;
 
     std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: AnnouncmentServerTimeout will received after &quot;&lt;&lt; AnnouncmentServerTimeout &lt;&lt; &quot; second\n&quot;;
     
 
 
-    std::cout&lt;&lt;&quot;ENV: Reading the configuration was done\n&quot;;
+    std::cout&lt;&lt;&quot;environment: Reading the configuration was done\n&quot;;
 </body>
             </entry>
           </subvertex>
@@ -248,7 +248,7 @@
           <subvertex xmi:type="uml:State" xmi:id="_NvBagAgxEea_md0mpENoqg" name="ConfigFailure">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_TasAwAjJEea_md0mpENoqg" name="failurEntry">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;&quot;ENV: The system is in Failure State, try to reload the config after 10 second\n&quot;;
+              <body>    std::cout&lt;&lt;&quot;environment: The system is in Failure State, try to reload the config after 10 second\n&quot;;
     FailureTimer.informIn(UMLRTTimespec(10,0),4);
 </body>
             </entry>
@@ -263,7 +263,7 @@
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_fXaKkAxwEeaB2MeL96fedA" source="org.eclipse.papyrus">
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_fXaxoAxwEeaB2MeL96fedA" key="nature" value="UML_Nature"/>
       </eAnnotations>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_fXcm0AxwEeaB2MeL96fedA" name="env" type="_sMZ5EAgoEea_md0mpENoqg" association="_fXXuUAxwEeaB2MeL96fedA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_fXcm0AxwEeaB2MeL96fedA" name="environment" type="_sMZ5EAgoEea_md0mpENoqg" association="_fXXuUAxwEeaB2MeL96fedA"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_4_oYIAghEea_md0mpENoqg" name="Host" isActive="true">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_qKL_IAgnEea_md0mpENoqg" name="hostInfo" type="_JesyoAgiEea_md0mpENoqg"/>
@@ -593,7 +593,7 @@
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_Rrrc0AlvEea_md0mpENoqg" name="CheckConfig" kind="choice"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_Pyhf8Ap5EeaGqPUk-4V4qQ" name="Choice_Active_Passive" kind="choice"/>
           <subvertex xmi:type="uml:Pseudostate" xmi:id="_kLngAAp5EeaGqPUk-4V4qQ" name="BeMaster" kind="junction"/>
-          <subvertex xmi:type="uml:State" xmi:id="_2g5S0ONBEeaTpaLNj-zYpw" name="Backup">
+          <subvertex xmi:type="uml:State" xmi:id="_2g5S0ONBEeaTpaLNj-zYpw" name="backup">
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_M8iZcONCEeaTpaLNj-zYpw" name="ExitPoint1" kind="exitPoint"/>
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_88oQAKozEeiNHY6qjNhZ4w" kind="entryPoint"/>
             <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_887yAKozEeiNHY6qjNhZ4w" kind="entryPoint"/>
@@ -702,7 +702,7 @@ if (server2Selected)
               <transition xmi:type="uml:Transition" xmi:id="_nxxT8GdxEemLEYOGFSyoZA" name="IgnoreConfig" kind="external" source="_ZaK1gAlOEea_md0mpENoqg" target="_ZaK1gAlOEea_md0mpENoqg">
                 <effect xmi:type="uml:OpaqueBehavior" xmi:id="_-jhNcGdxEemLEYOGFSyoZA" name="Effect" isReentrant="false">
                   <language>C++</language>
-                  <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Ignore config message from Env \n&quot;;</body>
+                  <body>    std::cout&lt;&lt;this->getName()&lt;&lt;&quot;: Ignore config message from environment \n&quot;;</body>
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_Qu0q0GdzEemLEYOGFSyoZA" event="_Iv3CQAl4Eea_md0mpENoqg" port="_-3KD0AgvEea_md0mpENoqg"/>
               </transition>
@@ -911,7 +911,7 @@ if (server2Selected)
           <subvertex xmi:type="uml:State" xmi:id="_aVMuMAmtEea_md0mpENoqg" name="getMasterName">
             <entry xmi:type="uml:OpaqueBehavior" xmi:id="_nvRWkAnBEea_md0mpENoqg" name="GetMasterNameEntry">
               <language>C++</language>
-              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;:  Request Master Information from ENV\n&quot;;
+              <body>    std::cout&lt;&lt;this->getName()&lt;&lt;this->getIndex()&lt;&lt;&quot;:  Request Master Information from environment\n&quot;;
     ConfigComm.QueryConfig().send();
 </body>
             </entry>
@@ -1333,7 +1333,7 @@ ts.getclock(ts);
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_odySQQgoEea_md0mpENoqg" value="2"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ody5UAgoEea_md0mpENoqg" value="2"/>
       </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_trcC4AgoEea_md0mpENoqg" name="ENV" visibility="protected" type="_sMZ5EAgoEea_md0mpENoqg" isOrdered="true" aggregation="composite">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_trcC4AgoEea_md0mpENoqg" name="environment" visibility="protected" type="_sMZ5EAgoEea_md0mpENoqg" isOrdered="true" aggregation="composite">
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_trfGMAgoEea_md0mpENoqg" value="1"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_trfGMQgoEea_md0mpENoqg" value="1"/>
       </ownedAttribute>
