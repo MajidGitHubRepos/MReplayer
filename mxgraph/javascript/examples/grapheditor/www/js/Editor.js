@@ -7,7 +7,9 @@
 Editor = function(chromeless, themes, model, graph, editable)
 {
 	var modelAnalysis = {}; //--Majid
-	var lastID = 0; //--Majid
+	var lastIDs = []; //--Majid
+	var lastIDsLength = 0;
+	var lastID = 0;
 	var lastStyle; //--Majid
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
@@ -16,6 +18,9 @@ Editor = function(chromeless, themes, model, graph, editable)
 	this.editable = (editable != null) ? editable : !chromeless;
 	this.undoManager = this.createUndoManager();
 	this.status = '';
+	
+	
+	
 
 	this.getOrCreateFilename = function()
 	{
@@ -2291,13 +2296,46 @@ PageSetupDialog.getFormats = function()
 	Editor.prototype.setModelAnalysis = function(hashMapModel)
 	{
 		modelAnalysis = hashMapModel;
-		console.log(modelAnalysis);	
+		//console.log(modelAnalysis);	
+	}
+	Editor.prototype.setLastIDs = function(lastIDsFromIndex)
+	{
+		lastIDs = lastIDsFromIndex;
+		lastIDsLength = 0;
+		lastID =0;
+		//console.log(modelAnalysis);	
+	}
+	
+	
+	Editor.prototype.setLastIDsLength = function()
+	{
+		this.lastIDsLength = lastIDs.length;
+	}
+	
+	Editor.prototype.cleanLastIDs = function()
+	{
+		lastIDs = [];
+	}
+	
+	Editor.prototype.pushToLastIDs = function(value)
+	{
+		//lastIDs = value;
+		lastIDs.push(value)
+		console.log(lastIDs);	
+	}
+	Editor.prototype.popFromLastIDs = function()
+	{
+		//lastIDs = value;
+		this.lastID = lastIDs.pop()
+		console.log(lastID);	
 	}
 	/**
 	 * set hashmap from the InitialModelAnalysis
 	 */
 	Editor.prototype.getIDfromHashMap = function(capsuleName,itemName)
 	{
+		console.log("capsuleName:"+capsuleName+", itemName:"+itemName);	
+		console.log(modelAnalysis);	
 		for (var i = 0, keys = Object.keys(modelAnalysis), j = keys.length; i < j; i++) {
 			 var capsuleSplit = keys[i].split(",");
 			 if (capsuleSplit[0].includes(capsuleName)){

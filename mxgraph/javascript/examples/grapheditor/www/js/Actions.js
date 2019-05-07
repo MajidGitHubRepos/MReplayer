@@ -20,6 +20,8 @@ Actions.prototype.init = function()
 	var stopRun = false;
 	var ui = this.editorUi;
 	var editor = ui.editor;
+	var lastIDs = [];
+
 	var graph = editor.graph;
 	var modelHahMap = {};
 	var variables = {};
@@ -1100,8 +1102,8 @@ Actions.prototype.init = function()
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					stopRun = true;
-					console.log("this.responseText:::>");
-					console.log(this.responseText);
+					//console.log("this.responseText:::>");
+					//console.log(this.responseText);
 					responseProcess(this.responseText,editor,graph);
 					variablesHahMap = traceVarProcess(this.responseText,variablesHahMap);
 					
@@ -1501,45 +1503,101 @@ responseProcess = function(response,editor,graph){
 	console.log(listChanges);
 	if (listChanges.traceID != null){
 		if (listChanges.traceID[0].includes('__')){
-			var lastIndex = listChanges.traceID[0].lastIndexOf('__');
+			var lastIndex = listChanges.traceID[0].indexOf('__');
 			capsuleName = listChanges.traceID[0].substr(lastIndex+2);
 		}else{
 			capsuleName = listChanges.traceID[0];
 		}
-		var itemName = listChanges.traceID[1];
-
-		var id = editor.getIDfromHashMap(capsuleName,itemName);
+		
+		var itemName = listChanges.traceID[2];
+		
+		var jsonVar = JSON.stringify(itemName);
+		console.log("itemName============>"+JSON.stringify(itemName));
+		//console.log("itemName============>"+JSON.stringify(itemName.length));
+		//console.log("itemName============>"+itemName.length);
+		
+		var i =0;
+		var ids = [];
+		
+		if (itemName.length == 1){
+			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));
+		}else if (itemName.length == 2){
+			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));
+			ids[1] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[1].name).replace(/\"/g, ''));
+		}else if (itemName.length == 3){
+			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));
+			ids[1] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[1].name).replace(/\"/g, ''));
+			ids[2] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[2].name).replace(/\"/g, ''));
+		}else if (itemName.length == 4){
+			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));
+			ids[1] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[1].name).replace(/\"/g, ''));
+			ids[2] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[2].name).replace(/\"/g, ''));
+			ids[3] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[3].name).replace(/\"/g, ''));
+		}else if (itemName.length == 5){
+			ids[0] = editor.getIDfromHashMap(JSON.stringify(itemName[0].name).replace(/\"/g, ''));
+			ids[1] = editor.getIDfromHashMap(JSON.stringify(itemName[1].name).replace(/\"/g, ''));
+			ids[2] = editor.getIDfromHashMap(JSON.stringify(itemName[2].name).replace(/\"/g, ''));
+			ids[3] = editor.getIDfromHashMap(JSON.stringify(itemName[3].name).replace(/\"/g, ''));
+			ids[4] = editor.getIDfromHashMap(JSON.stringify(itemName[4].name).replace(/\"/g, ''));
+		}else if (itemName.length == 6){
+			ids[0] = editor.getIDfromHashMap(JSON.stringify(itemName[0].name).replace(/\"/g, ''));
+			ids[1] = editor.getIDfromHashMap(JSON.stringify(itemName[1].name).replace(/\"/g, ''));
+			ids[2] = editor.getIDfromHashMap(JSON.stringify(itemName[2].name).replace(/\"/g, ''));
+			ids[3] = editor.getIDfromHashMap(JSON.stringify(itemName[3].name).replace(/\"/g, ''));
+			ids[4] = editor.getIDfromHashMap(JSON.stringify(itemName[4].name).replace(/\"/g, ''));
+			ids[5] = editor.getIDfromHashMap(JSON.stringify(itemName[5].name).replace(/\"/g, ''));
+		}else{
+			alert("The length of path is exceeded from 6 transition!");
+		}
+		
+		
+		/*for (i =0; i<ids.length ; i++){
+			console.log("i: " + i + ", ids[i] ============>"+ ids[i]);
+		}*/
 
 		graph.getModel().beginUpdate();
 		try
 		{
 
-			var model = graph.getModel();
-			var cell = model.getCell(editor.lastID);
+			var model = graph.getModel();			
+          editor.setLastIDsLength();
+			console.log("----------> editor.getLastIDs: "+ editor.lastIDsLength);
 
-			if (cell != null)
-			{
-				//graph.setCellStyles(editor.lastStyle);
-				//console.log(cell);
-				// Resets the fillcolor and the overlay
-				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
-				graph.removeCellOverlays(cell);
+			for (i =0; i< editor.lastIDsLength; i++){
+				editor.popFromLastIDs();
+				var cell = model.getCell(editor.lastID);
+				console.log("editor.lastIDs[i]: "+ editor.lastID +"---------------> cell: " + cell );
+
+				if (cell != null)
+				{
+					//graph.setCellStyles(editor.lastStyle);
+					//console.log(cell);
+					// Resets the fillcolor and the overlay
+					graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyle[mxConstants.STYLE_FILLCOLOR] , [cell]);
+					graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyle[mxConstants.STYLE_STROKECOLOR] , [cell]);
+					graph.removeCellOverlays(cell);
+				}
 			}
-
-
-			cell = model.getCell(id);
-			if (cell != null)
-			{
-				//console.log(cell);
-				// Resets the fillcolor and the overlay
-
-				editor.lastStyle = graph.getCellStyle(cell);
-				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
-				graph.removeCellOverlays(cell);
+			
+			if (editor.lastIDsLength > 0)
+				editor.cleanLastIDs();
+			
+			for (i =0; i<ids.length; i++){
+				cell = model.getCell(ids[i]);
+				//console.log("ids[i]: "+ ids[i] +"---------------> cell: " + cell );
+			
+				if (cell != null)
+				{
+					//console.log(cell);
+					// Resets the fillcolor and the overlay
+	
+					editor.lastStyle = graph.getCellStyle(cell);
+					graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+					graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+					graph.removeCellOverlays(cell);
+				}
+				editor.pushToLastIDs(ids[i]);
 			}
-			editor.lastID = id;
 
 		}
 		finally

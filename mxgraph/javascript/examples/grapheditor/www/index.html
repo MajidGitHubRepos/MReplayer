@@ -328,6 +328,7 @@
 				var capsuleName = "";
 				var regionID = "";
 				var listChildrenID = [];
+				var lastIDs = [];
 				//looking for capsules' children !
 				for (var i = 0; i < registrationJSON.listCapsulesInstances.length; i++) {
 					capsuleName = "";
@@ -488,6 +489,7 @@
 				}
 				initialModelAnalysisDone = true;
 				editorUi.editor.setModelAnalysis(hashMapCapsulesChildren);
+				editorUi.editor.setLastIDs(lastIDs);
 			}
 			});
 		}
