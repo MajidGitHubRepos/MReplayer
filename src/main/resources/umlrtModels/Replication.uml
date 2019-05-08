@@ -55,7 +55,7 @@
       </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_gU8CMAgwEea_md0mpENoqg" name="StateMachine1">
         <region xmi:type="uml:Region" xmi:id="_jSIzIAgwEea_md0mpENoqg" name="Region1">
-          <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrenvironment" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
+          <transition xmi:type="uml:Transition" xmi:id="_3Cms8AgwEea_md0mpENoqg" name="initTrEnvironment" source="_npsCMAgwEea_md0mpENoqg" target="_sdehUAgwEea_md0mpENoqg">
             <effect xmi:type="uml:OpaqueBehavior" xmi:id="_B6hioAg6Eea_md0mpENoqg" name="environmentInit">
               <language>C++</language>
               <body>    std::cout&lt;&lt;&quot;environment: Intialization\n&quot;;

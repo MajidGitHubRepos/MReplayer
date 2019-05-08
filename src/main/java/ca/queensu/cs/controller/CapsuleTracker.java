@@ -192,7 +192,7 @@ public class CapsuleTracker implements Runnable{
 										listConsumedPaths.clear();
 										listAllPathTaken.add(listPaths.get(0));
 										addToListConsumedPaths(listPaths.get(0));
-										updateLocalHeap(listPaths.get(0),msgSender);
+										updateLocalHeap(listPaths.get(0),msgSender,false);
 										updateCurrentState();
 										if (!msgTobeConsumed.isEmpty())
 											dataContainer.mapSendMessages.remove(msgTobeConsumed);
@@ -234,7 +234,7 @@ public class CapsuleTracker implements Runnable{
 											listConsumedPaths.clear();
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0));
-											updateLocalHeap(listPaths.get(0),msgSender);
+											updateLocalHeap(listPaths.get(0),msgSender,false);
 											updateCurrentState();
 											if (!msgTobeConsumed.isEmpty())
 												dataContainer.mapSendMessages.remove(msgTobeConsumed);
@@ -793,7 +793,7 @@ public class CapsuleTracker implements Runnable{
 			List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
 			String trgCapsule = "";
 			if (sendMessage.dest != null) {
-				System.out.println("sendMessage.dest != null");
+				//System.out.println("sendMessage.dest != null");
 				if (sendMessage.dest.asString().contentEquals("msg->sapIndex0_")) { // msg->sapIndex0 returns port index that the msg came in
 	            	 for (MyConnector myConnector : ParserEngine.listMyConnectors) {
 	            		 if (msgSender.contains(myConnector.capInstanceName1) && dataContainer.getCapsuleInstance().contains(myConnector.capInstanceName2)) {
@@ -910,6 +910,7 @@ public class CapsuleTracker implements Runnable{
         }
         
         if (!guardEval) {
+			//System.err.println("In: "+ dataContainer.getCapsuleInstance() + ",calling sendMessages in [interpretActionCode] because guardEval is "+ guardEval);
         	listPortMsg = visitor.getListPortMsg();
         	sendMessages();
         }
@@ -944,7 +945,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[updateLocalHeap]
 	//==================================================================	
-	public void updateLocalHeap(String path, String msgSender) throws InterruptedException {
+	public void updateLocalHeap(String path, String msgSender, boolean guardEval) throws InterruptedException {
 		List<String> listActionCode = new ArrayList<String>();
 		String firstTrInPath = "";
 		if (path.contains(",")) {
@@ -958,8 +959,9 @@ public class CapsuleTracker implements Runnable{
 		listActionCode = mapPathActionCode.get(path);
 		
 		for(String ac : listActionCode) {
+			//System.err.println("In: "+ dataContainer.getCapsuleInstance() + ",calling interpretActionCode in [updateLocalHeap] because guardEval is false");
 			if (!ac.isEmpty())
-				interpretActionCode(ac,msgSender, false);
+				interpretActionCode(ac,msgSender, guardEval);
 		}
 	}
 	//==================================================================	
@@ -1048,15 +1050,18 @@ public class CapsuleTracker implements Runnable{
 		
 		//GUARD EVALUATION
 		if (result && listGuards != null) {
+			//System.err.println(dataContainer.getCapsuleInstance() + " In GUARD EVALUATION");
 			//make a local copy before guard evaluation
 			Map<String, Value> maplocalHeapCopy = new HashMap<String, Value>();
 			maplocalHeapCopy.putAll(maplocalHeap);
-			updateLocalHeap(path,"");
+			updateLocalHeap(path,"",true);
 			
 			for(String ac : listGuards) {
 				if (!ac.isEmpty()) {
+					//System.out.println(dataContainer.getCapsuleInstance() + " AC: " + ac);
 					interpretActionCode(ac,msgSender, true);
 					boolean guard = maplocalHeap.get("__GUARD__").asBoolean();
+					//System.out.println("guard: " + guard);
 					if (!guard) {
 						result = false;
 						break;
