@@ -245,7 +245,7 @@ public class TrackerMaker implements Runnable{
 		for (Map.Entry<String, List<String>> entry : PES.mapModelRegionPaths.entrySet()) {
 			String regionKey = entry.getKey().replaceAll("\\s","");
 			if (!regionKey.isEmpty() && regionKey.contains(capsuleInstance)) {
-				String [] regionKeySplit = regionKey.split(",");
+				String [] regionKeySplit = regionKey.split("\\,");
 				for (String key: regionKeySplit) {
 					if (!Controller.mapCapInstIdx.containsKey(key) && key.contains(capsuleInstance)) {
 						Controller.mapCapInstIdx.put(key, capsuleInstance__capsuleIndex);

@@ -525,6 +525,10 @@ public class CapsuleTracker implements Runnable{
 		for (Entry<String, String> entry : dataContainer.mapRegionCurrentState.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ ParserEngine.mapStateData.get(entry.getValue()).getStateName());
 		}
+		System.out.println("=====================[MSG List]");
+		for (Entry<String, SendMessage> entry : dataContainer.mapSendMessages.entrySet()) {
+			System.out.println(entry.getKey());
+		}
 		System.out.println("=====================[mapLocalHeap]");
 		for (Entry<String, Value> entry : maplocalHeap.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ entry.getValue());
@@ -545,6 +549,7 @@ public class CapsuleTracker implements Runnable{
 		boolean firstTrTook = false;
 		boolean trTookIntoCS = false;
 		String trPrv = "";
+		String borderStateID = "";
 
 		
 		if (listPaths.size()==1) {
@@ -558,13 +563,25 @@ public class CapsuleTracker implements Runnable{
 					if (!firstTrTook) {
 						region_begin = ParserEngine.mapTransitionData.get(tr).getReginName();
 						region_begin_currentState = dataContainer.mapRegionCurrentState.get(region_begin);
+						
+						if (region_begin.contains("_")) {//finding border state
+							int idx = region_begin.indexOf("_");
+							String upperRegionName = region_begin.substring(0,idx);
+							
+							borderStateID = dataContainer.mapRegionCurrentState.get(upperRegionName);
+							//System.err.println("region_begin: " + region_begin +" __________ uperRegionName: " + upperRegionName + ", borderStateID: "+borderStateID);
+						}
 						firstTrTook = true;
 					}
 					region = ParserEngine.mapTransitionData.get(tr).getReginName();
 					String [] trSplit = ParserEngine.mapTransitionData.get(tr).getPath().split("\\-");
-					dataContainer.mapRegionCurrentState.put(region, trSplit[2]);
+					//1. Check the target state is not a PseudoState
+					//2. Avoid border state
+					
+					if (!trSplit[2].contentEquals(borderStateID) && (ParserEngine.mapStateData.get(trSplit[2]).getPseudoStateKind() == null))
+						dataContainer.mapRegionCurrentState.put(region, trSplit[2]);
 
-					if (region.contains(region_begin+"_")) { //We assuem that _ separates regions 
+					if (region.contains(region_begin+"_")) { //into the Composite State, We assuem that _ separates regions 
 						String [] trPrvSplit = ParserEngine.mapTransitionData.get(trPrv).getPath().split("\\-");
 						region_begin_currentState = trPrvSplit[2];
 						trTookIntoCS = true;
