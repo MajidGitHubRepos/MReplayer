@@ -185,8 +185,13 @@ public class CapsuleTracker implements Runnable{
 							currentEventTmp = eventQueueTmp.poll();
 							String id = PES.mapQnameId.get(currentEventTmp.getSourceName());
 							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {}
-							else if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
+							else if (isConsumable(currentEventTmp)) {
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
+									
+									
+									
+									
+									
 									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && (((id != null) && (listPaths.get(0).contains(id))) || currentStatus.contentEquals("StartUp"))) {
 										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 										listAllPathTaken.add(listPaths.get(0));
@@ -611,7 +616,7 @@ public class CapsuleTracker implements Runnable{
 		String [] stateIds = ParserEngine.mapTransitionData.get(firstId).getPath().split("\\-");		
 		
 		if (((region.contentEquals(dataContainer.activeRegion)) && (dataContainer.mapRegionCurrentState.get(region) != null) && dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0])) || 
-				(currentStatus.contentEquals("INIT") && !region.contains("_")
+				((currentStatus.contentEquals("INIT") && !region.contains("_"))
 				/* || ((ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind() != null) && (ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind().toString().contentEquals("INITIAL")))*/))
 			return true;
 		else 
@@ -652,7 +657,12 @@ public class CapsuleTracker implements Runnable{
 			listPaths.clear();
 			listPaths.addAll(listPathsTmp);
 			
-			if (listPaths.size() > 1) {//add all path from history into listPath
+			if (listPaths.size() == 2) { //For pahts like: Recover-->PassiveMode-->initTrBackup & Recover-->PassiveMode
+				int idx = 0;
+				String currentState = "";
+				capInstance = "";
+				region = "";
+				boolean initRefined = false;
 				for (String path : listPaths) {
 					String lastId = "";
 					if (path.contains(",")) {
@@ -661,27 +671,37 @@ public class CapsuleTracker implements Runnable{
 					}else {
 						lastId = path;
 					}
-					region = ParserEngine.mapTransitionData.get(lastId).getReginName();
-					capInstance = ParserEngine.mapTransitionData.get(lastId).getCapsuleInstanceName();
-					
-					String currentState = dataContainer.mapRegionCurrentState.get(region);
 					if(ParserEngine.mapTransitionData.get(lastId).getIsInit()) {
-						listPathsTmp.clear();
+						region = ParserEngine.mapTransitionData.get(lastId).getReginName();
+						currentState = dataContainer.mapRegionCurrentState.get(region);
 						if((currentState != null) && !currentState.contains("INIT")) {
-							listPathsTmp.addAll(addAllPathFrom(currentState));
-						}else {
-							listPathsTmp.add(path);
+							//remove path with initTr, so listPaths.size == 1
+							listPaths.remove(path);
+							initRefined = true;
+						}else if ((currentState != null) && currentState.contains("INIT")){
+							//remove path without initTr, so listPaths.size == 1
+							if (idx == 0)
+								listPaths.remove(1);
+							else if (idx == 1)
+								listPaths.remove(0);
+							initRefined = true;
 						}
+						
 					}
+					idx++;
 				}
-
-				listPaths.clear();
-				listPaths.addAll(listPathsTmp);
+				//listPahts has been shrunk to 1
+				if ((listPaths.size() == 1) && initRefined && !currentState.contains("INIT")) { // For paths like Recover-->PassiveMode
+					//add all path from the currentState to the listPaths, this part might increase the size of listPaths !
+					listPaths.clear();
+					listPaths.addAll(addAllPathFrom(currentState));
+					if (listPaths.isEmpty()) {
+						System.err.println("__________ No Path found from the Current State : "+currentState);
+						System.exit(1);
+					}
+				}	
 			}
-
 		}
-		
-
 		return listPaths;
 	}
 
@@ -696,6 +716,12 @@ public class CapsuleTracker implements Runnable{
 		String capInstance = ParserEngine.mapStateData.get(currentState).getCapsuleInstanceName();
 		List<String> innerRegionPaths = PES.mapRegionPaths.get(capInstance+"::"+innerRegionName);
 		
+		String mainPath = listPaths.get(0);
+		for (String path : innerRegionPaths) {
+			listPathsTmp.add(mainPath+","+path);
+		}
+		
+		/*
 		for (TransitionData tr :  ParserEngine.listTransitionData){
 			if((tr.getReginName().contentEquals(innerRegionName)) && 
 					(tr.getCapsuleInstanceName().contentEquals(capInstance))) {
@@ -717,7 +743,7 @@ public class CapsuleTracker implements Runnable{
 					}
 				}
 			}
-		}
+		}*/
 		return listPathsTmp;
 	}
 
