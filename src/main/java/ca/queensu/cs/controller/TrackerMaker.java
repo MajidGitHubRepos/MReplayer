@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
+import ca.queensu.cs.antler4AC.Value;
 import ca.queensu.cs.controller.Controller.RunnableImpl;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
@@ -135,6 +136,8 @@ public class TrackerMaker implements Runnable{
 				Event eventTmp;
 				try {
 					eventTmp = getEventFromServerQueue();
+					//if (eventTmp.getCapsuleInstance().contains("server1"))
+					//	System.err.println("=======SRV1=============EVENT=================> " + eventTmp.allDataToString());
 					enqueue(eventTmp);
 
 				} catch (InterruptedException e) {
@@ -174,6 +177,8 @@ public class TrackerMaker implements Runnable{
 			}			
 			
 			Controller.mapIdxCapInst.put(capsuleInstance__capsuleIndex,chosenInstance);
+			//if (event.getSourceName().contains("QueryConfig") || event.getSourceName().contains("MasterAnnouncment") || event.getSourceName().contains("configOK"))
+				//System.err.println("====================EVENT=================> " + event.allDataToString());
 
 			mapCapsuleTracker.get(chosenInstance).dataContainer.eventQueue.add(event);
 
@@ -190,17 +195,28 @@ public class TrackerMaker implements Runnable{
 		
 	}//enqueue
 	
+
+	//==================================================================	
+	//==============================================[showAllMSGlists]
+	//==================================================================			
+	public static void showAllMSGlists(){
+		System.err.println("=====================[ALL MSGs]");
+		for (Entry<String, CapsuleTracker> entry : mapCapsuleTracker.entrySet()) {
+			System.out.println(entry.getValue().dataContainer.showMapMSG());
+		}
+	}
+	
 	//==================================================================	
 	//==============================================[makeCapsuleTrakers]
 	//==================================================================			
 	public void makeCapsuleTrakers(){
-		for (Map.Entry<String, List<String>> entry : PES.mapModelRegionPaths.entrySet()) {
+		for (Entry<String, List<Map<String, String>>> entry : PES.mapModelRegionPaths.entrySet()) {
 			String regionKey = entry.getKey().replaceAll("\\s","");
 			String [] regionKeySplit = regionKey.split("\\,");
-			List<String> listRegions = entry.getValue();
-			Map<String, String> mapRegionCurrentState   =  new HashMap<String, String>();
-			for(String regionName: listRegions) {
-				mapRegionCurrentState.put(regionName, "INIT");
+			List<Map<String, String>> listRegionStates = entry.getValue();
+			Map<String, String> mapRegionCurrentState   =  new HashMap<String, String>(); //TODO: put regionName StateName into that!
+			for(Map<String, String> regionStates: listRegionStates) {
+				mapRegionCurrentState.put(regionStates.keySet().toString().replaceAll("\\[", "").replaceAll("\\]",""), "INIT");
 			}
 			
 			for (String capsuleFullname: regionKeySplit) {
@@ -242,7 +258,7 @@ public class TrackerMaker implements Runnable{
 	public String mappingIdxToInstance(String capsuleInstance ,String capsuleIndex){
 		String capsuleInstance__capsuleIndex = capsuleInstance + "__" + capsuleIndex;
 		
-		for (Map.Entry<String, List<String>> entry : PES.mapModelRegionPaths.entrySet()) {
+		for (Entry<String, List<Map<String, String>>> entry : PES.mapModelRegionPaths.entrySet()) {
 			String regionKey = entry.getKey().replaceAll("\\s","");
 			if (!regionKey.isEmpty() && regionKey.contains(capsuleInstance)) {
 				String [] regionKeySplit = regionKey.split("\\,");

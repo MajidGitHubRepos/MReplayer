@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -21,8 +22,9 @@ public class PES {
 
 	public List<String> listRegionalPaths = new ArrayList<String>();
 	public List<String> listModelPaths = new ArrayList<String>();
+	//public static Map<String, String> mapRegionState = new HashMap<String, String>();
 	public static Map<String, List<String>> mapRegionPaths = new HashMap<String, List<String>>();
-	public static Map<String, List<String>> mapModelRegionPaths = new HashMap<String, List<String>>();
+	public static Map<String, List<Map<String, String>>> mapModelRegionPaths = new HashMap<String, List<Map<String, String>>>();
 	public static Map<String, String> mapQnameId     = new HashMap<String, String>();
 	public static Map<String, String> mapIdQname     = new HashMap<String, String>();
 	public static List<Map<String, List<String>>> listMapModelRegionPaths =  new ArrayList<Map<String, List<String>>>();
@@ -265,11 +267,11 @@ public class PES {
 		}
 		System.out.println("=======================[mapModelRegionPaths]==========================");
 
-		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+		for (Entry<String, List<Map<String, String>>> entry : mapModelRegionPaths.entrySet()) {
 			System.out.println("[KEY]= "+entry.getKey());
-			List<String>paths = entry.getValue();
+			List<Map<String, String>>paths = entry.getValue();
 			for (int i = 0; i<paths.size(); i++) {
-				System.out.println("["+i+"]:" +paths.get(i));
+				System.out.println("["+i+"]: RegionName: " +paths.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]","") + ", StateName: " + paths.get(i).values());
 			}
 		}
 		/*System.out.println("=======================[MapQNameId]==========================");
@@ -321,45 +323,79 @@ public class PES {
 	}
 	
 	//==================================================================	
+	//==============================================[findRegionStateName]
+	//==================================================================
+	public String findRegionStateName(String capInstances, String regionName) {
+		// we assume that a region at least has a state !
+		for (int i = 0; i<ParserEngine.listStateData.size(); i++) {
+			String qualifiedName = "";
+			if ((ParserEngine.listStateData.get(i).getRegion().contentEquals(regionName)) && (ParserEngine.listStateData.get(i).getState() != null) && (ParserEngine.listStateData.get(i).getState().getQualifiedName() != null)) {
+				qualifiedName = ParserEngine.listStateData.get(i).getState().getQualifiedName();
+				int lastIdx = qualifiedName.lastIndexOf("::");
+				String str = qualifiedName.substring(0,lastIdx);
+				lastIdx = str.lastIndexOf("::");
+				str = str.substring(0,lastIdx);
+				lastIdx = str.lastIndexOf("::");
+				return str.substring(lastIdx+2);
+			}		
+		}
+		
+		System.out.println("_________ A State Name for region [" +regionName+"] not found! __________");
+		System.exit(1);
+		return null;
+	}
+	
+	//==================================================================	
 	//==============================================[makeMapModelRegionPaths]
 	//==================================================================
 	public void makeMapModelRegionPaths() {
-		Set<String> set = new LinkedHashSet<>(); 
+		Set<Map<String, String>> set = new LinkedHashSet<>(); 
 		for (Map.Entry<String, List<String>> entry : mapRegionPaths.entrySet()) {
 			String [] keySplit = entry.getKey().split("\\::");
 			String capInstances = keySplit[0];
-			String region = keySplit[1];
-			List<String> currentRegionList = new ArrayList<String>();
+			String regionName = keySplit[1];
+			String StateName = "";
+			
+			if (!regionName.contains("_"))
+				StateName = "__MainRegion__";
+			else
+				StateName = findRegionStateName(capInstances,regionName);
+			
+			List<Map<String, String>> currentRegionList = new ArrayList<Map<String, String>>();
 			
 			currentRegionList = mapModelRegionPaths.get(capInstances);
 			if((currentRegionList != null) && (currentRegionList.size()>0)) {
-				currentRegionList.add(region);
+				Map<String, String> mapRegionState = new HashMap<String, String>();
+				mapRegionState.put(regionName, StateName);
+				currentRegionList.add(mapRegionState);
 				set.addAll(currentRegionList);
 				currentRegionList.clear();
 				currentRegionList.addAll(set);
 				set.clear();
 				mapModelRegionPaths.put(capInstances, currentRegionList);
 			}else {
-				List<String> newRegionList = new ArrayList<String>();
-				newRegionList.add(region);
+				List<Map<String, String>> newRegionList = new ArrayList<Map<String, String>>();
+				Map<String, String> mapRegionState = new HashMap<String, String>();
+				mapRegionState.put(regionName, StateName);
+				newRegionList.add(mapRegionState);
 				mapModelRegionPaths.put(capInstances, newRegionList);
 			}
 		}
 
 		//Sorting region in each capsule based on "_" //upper Region must be processed first!
 
-		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+		for (Entry<String, List<Map<String, String>>> entry : mapModelRegionPaths.entrySet()) {
 			int count_ = 0;
-			String sameLeveRegions = "";
-			List<String> currentRegionList = new ArrayList<String>();
+			Map<String, String> sameLeveRegions = new HashMap<String, String>();
+			List<Map<String, String>> currentRegionList = new ArrayList<Map<String, String>>();
 			do {
-				sameLeveRegions = "";
-				for(String region : entry.getValue()) {
-					if (StringUtils.countOccurrencesOf(region, "_")==count_) {
+				sameLeveRegions = new HashMap<String, String>();
+				for(Map<String, String> regionState : entry.getValue()) {
+					if (StringUtils.countOccurrencesOf(regionState.keySet().toString().replaceAll("\\[", "").replaceAll("\\]",""), "_")==count_) {
 						if (sameLeveRegions.isEmpty())
-							sameLeveRegions = region;
+							sameLeveRegions= regionState;
 						else
-							sameLeveRegions = sameLeveRegions + "," + region;
+							sameLeveRegions.putAll(regionState); 
 					}
 				}
 				if (!sameLeveRegions.isEmpty())
@@ -573,12 +609,12 @@ public class PES {
 		String entryPointId_inner = "";
 		String entryPointId_outer = "";
 		
-		for (Map.Entry<String, List<String>> entry : mapModelRegionPaths.entrySet()) {
+		for (Entry<String, List<Map<String, String>>> entry : mapModelRegionPaths.entrySet()) {
 			
 			//Collections.reverse(entry.getValue()); //reverse the list to process the most inner regions first 
-			for (String region: entry.getValue()) {
-				String currentRegion =  entry.getKey()+"::"+region;
-				
+			for (Map<String, String> regionState: entry.getValue()) {
+				String currentRegion =  entry.getKey()+"::"+regionState.keySet().toString().replaceAll("\\[", "").replaceAll("\\]","");
+				//System.err.println("currentRegion: " + currentRegion.replaceAll("\\[", "").replaceAll("\\]",""));
 				listCurrentPath = mapRegionPaths.get(currentRegion);
 				for (int i = 0; i<listCurrentPath.size(); i++) {
 					boolean updated = false;

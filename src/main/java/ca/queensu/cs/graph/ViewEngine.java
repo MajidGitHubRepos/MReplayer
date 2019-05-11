@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 
 import org.json.simple.JSONArray;
@@ -212,9 +213,9 @@ public class ViewEngine implements Runnable {
 		JSONArray listCapsulesInstances = new JSONArray();
 		objTop.put("name", "Top");
 		//--
-		List<String> regions = new ArrayList<String>();
+		List<Map<String, String>> regions = new ArrayList<Map<String, String>>();
 		String capInstances = "";
-		for (Map.Entry<String, List<String>> entryRegion : PES.mapModelRegionPaths.entrySet()) {
+		for (Entry<String, List<Map<String, String>>> entryRegion : PES.mapModelRegionPaths.entrySet()) {
 			capInstances = entryRegion.getKey();
 			regions = entryRegion.getValue();
 			System.out.println("====> capInstances: "+ capInstances);
@@ -226,10 +227,10 @@ public class ViewEngine implements Runnable {
 					objCapsulesInstance.put("name", capsuleInstancesSplit[i]);
 
 					JSONArray listRegions = new JSONArray();
-					for (String region : regions) {
+					for (Map<String, String> regionState : regions) {
 						JSONObject objRegion = new JSONObject();
-						objRegion.put("name", region);
-						String key = capInstances+"::"+region;
+						objRegion.put("name", regionState.keySet().toString().replaceAll("\\[", "").replaceAll("\\]",""));
+						String key = capInstances+"::"+regionState.keySet().toString().replaceAll("\\[", "").replaceAll("\\]","");
 
 						List<String> listRegionalPaths = PES.mapRegionPaths.get(key);
 						//every value is a path
@@ -270,10 +271,10 @@ public class ViewEngine implements Runnable {
 				objCapsulesInstance.put("name", capInstances);
 
 				JSONArray listRegions = new JSONArray();
-				for (String region : regions) {
+				for (Map<String, String> regionState : regions) {
 					JSONObject objRegion = new JSONObject();
-					objRegion.put("name", region);
-					String key = capInstances+"::"+region;
+					objRegion.put("name", regionState.keySet().toString().replaceAll("\\[", "").replaceAll("\\]",""));
+					String key = capInstances+"::"+regionState.keySet().toString().replaceAll("\\[", "").replaceAll("\\]","");
 					List<String> listRegionalPaths = PES.mapRegionPaths.get(key);
 					//every value is a path
 					JSONArray listPaths = new JSONArray();

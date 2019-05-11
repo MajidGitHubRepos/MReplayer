@@ -171,7 +171,7 @@ public class Event implements Comparable<Event> {
 	
 	public String allDataToString() {
 		return ", Event: [eventSourceKind=" + eventSourceKind + ", eventType=" + eventType + ", eventCapsuleInstance=" + eventCapsuleInstance
-				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName + ", vectorTime=" + vectorTime +"]";
+				+ ", eventCapsuleIndex=" + eventCapsuleIndex + ", eventSourceName=" + eventSourceName +", counter="+counter+ ", vectorTime=" + vectorTime +"]";
 	}
 	
 	public String allDataToString_originalFromMDebugger() {

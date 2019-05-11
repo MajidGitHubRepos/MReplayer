@@ -1,14 +1,17 @@
 package ca.queensu.cs.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import ca.queensu.cs.antler4AC.SendMessage;
+import ca.queensu.cs.antler4AC.Value;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
 import ca.queensu.cs.umlrtParser.TableDataMember;
@@ -27,8 +30,9 @@ public class DataContainer {
 	private String capsuleInstance;
 	private String capsuleName;
 	public PriorityBlockingQueue <Event> eventQueue;
-	public Map<String,SendMessage> mapSendMessages;
+	public List<Map<String,SendMessage>> listMapSendMessages;
 	public Map<String, String> mapRegionCurrentState;
+	public String activeRegion;
 	
 	//private String threadName;
 	//--
@@ -37,7 +41,8 @@ public class DataContainer {
 		this.mapRegionCurrentState =  new HashMap<String, String>();
 		this.capsuleInstance = capsuleInstance;
 		this.eventQueue = eventQueue;
-		this.mapSendMessages = new HashMap<String, SendMessage>();;
+		this.listMapSendMessages =  new ArrayList<Map<String,SendMessage>>();
+		this.activeRegion = "";
 	}
 	//--
 	public DataContainer() {
@@ -67,8 +72,30 @@ public class DataContainer {
 		this.eventQueue = eventQueue;
 	}
 	
-	public String allDataToString() {
-		return "TableDataMember [capsuleInstance=" + capsuleInstance + ", eventQueue=" + eventQueue +"]";
+	public void removeFromListMapSendMessages(String msg) {
+		boolean removed =false;
+		for (Map<String,SendMessage> listItem : listMapSendMessages) {
+			for (Entry<String, SendMessage> entry : listItem.entrySet()) { 
+				if (entry.getKey().contentEquals(msg)) {
+					listItem.remove(msg);
+					removed = true;
+					break;
+				}
+			}
+			if (removed)
+				break;
+		}
+	}
+	
+	public String showMapMSG() {
+		String result = "capsuleInstance: " + this.capsuleInstance + ", MSG [ ";
+		for (Map<String,SendMessage> listItem : listMapSendMessages) {
+			for (Entry<String, SendMessage> entry : listItem.entrySet()) { 
+				result = result + "[Name: " + entry.getKey() + ", value: "+ entry.getValue() + "], ";
+				
+			}
+		}
+		return result + " ]";
 	}
 	
 

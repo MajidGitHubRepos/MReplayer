@@ -176,96 +176,73 @@ public class CapsuleTracker implements Runnable{
 				if (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) {
 					Event currentEventTmp = new Event();
 					Event currentEvent = new Event();
-					
-					if(!dataContainer.getEventQueue().isEmpty()) {
-						currentEvent =  dataContainer.eventQueue.poll(); //push it back to the queue if it dose not consume !
-					//	if(!isPassedEvent(currentEvent, "eventQueue")) {
-					
-						//else if (currentEvent.getSourceName().contains("MasterAnnouncment") )
-						//	System.err.println("======================================================================================> MasterAnnouncment");
-							if (isConsumable(currentEvent) || (listPaths.size()>1)) {
-								listConsumedPaths.add(PES.mapQnameId.get(currentEvent.getSourceName()));
+					msgConsumedTmpQueue = false;
+					msgConsumedQueue = false;
 
+					if (!eventQueueTmp.isEmpty()) {
+						int eventQueueTmpSize = eventQueueTmp.size();
+						for (int j = 0; j < eventQueueTmpSize;  j++) {
+							currentEventTmp = eventQueueTmp.poll();
+							String id = PES.mapQnameId.get(currentEventTmp.getSourceName());
+							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {}
+							else if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
-									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
-										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
-										listConsumedPaths.clear();
+									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && (((id != null) && (listPaths.get(0).contains(id))) || currentStatus.contentEquals("StartUp"))) {
+										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 										listAllPathTaken.add(listPaths.get(0));
+										System.err.println(dataContainer.getCapsuleInstance()+"-----[listPaths.get(0)]--------- " + listPaths.get(0));
+
 										addToListConsumedPaths(listPaths.get(0));
 										updateLocalHeap(listPaths.get(0),msgSender,false);
 										updateCurrentState();
 										if (!msgTobeConsumed.isEmpty())
-											dataContainer.mapSendMessages.remove(msgTobeConsumed);
+											dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
 										msgTobeConsumed = "";
 										msgSender = "";
 										listPaths.clear();
-										msgConsumedQueue = true;
-									}
-									//else
-									//throw new IllegalAccessException("updateCurrentState Faild!");
+										msgConsumedTmpQueue = true;
+									}else {eventQueueTmp.add(currentEventTmp);}
 								}
-								//vTimeHandler(currentEvent);
-							}else {eventQueueTmp.add(currentEvent);}
-						//}else {
-							//System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  dataContainer.eventQueue > "+currentEvent.allDataToString());
-						//	currentEvent = null;
-						//	//dataContainer.eventQueue.remove(currentEvent);
-						//}
-					}
-					
-					if (!eventQueueTmp.isEmpty()  && !msgConsumedQueue) {
-						int eventQueueTmpSize = eventQueueTmp.size();
-						//for (int j = 0; j < eventQueueTmpSize;  j++) {
-							currentEventTmp = eventQueueTmp.poll();
-							//if(!isPassedEvent(currentEventTmp, "eventQueueTmp")) {
-								//checking its validity based on the state machine
-							if (currentEventTmp.getSourceName().contains("Server1Failure") || currentEventTmp.getSourceName().contains("Server2Failure")) {
-								//System.err.println("==============================================currentEventTmp========================================> Server1Failure || Server2Failure");
-								//System.exit(1);
-							}
-							//else if (currentEvent.getSourceName().contains("MasterAnnouncment") )
-							//	System.err.println("======================================================================================> MasterAnnouncment");
-								if (isConsumable(currentEventTmp) || (listPaths.size()>1)) {
-									listConsumedPaths.add(PES.mapQnameId.get(currentEventTmp.getSourceName()));
-									//vTimeHandler(currentEventTmp);
-									if (currentStatus.contentEquals("TRANISTIONEND")) {
-										if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && pathCompeleted(listPaths.get(0))) {
-											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
-											listConsumedPaths.clear();
-											listAllPathTaken.add(listPaths.get(0));
-											addToListConsumedPaths(listPaths.get(0));
-											updateLocalHeap(listPaths.get(0),msgSender,false);
-											updateCurrentState();
-											if (!msgTobeConsumed.isEmpty())
-												dataContainer.mapSendMessages.remove(msgTobeConsumed);
-											msgTobeConsumed = "";
-											msgSender = "";
-											listPaths.clear();
-											msgConsumedTmpQueue = true;
-											//break;
-										}
-										//else
-										//throw new IllegalAccessException("updateCurrentState Faild!");
-									}
-									//break; //because of the reason if the first element can not be consume at the moment it could go through the rest of the queue 
-								}else {eventQueueTmp.add(currentEventTmp);}
-							//}else {
-							///	System.err.println(dataContainer.getCapsuleInstance()+"REMOVE EVENT FROM  eventQueueTmp > "+currentEventTmp.allDataToString());
-							//	currentEventTmp = null;
-								//eventQueueTmp.remove(currentEventTmp);
-							//	break;
-							//}
-						//}
+							}else {eventQueueTmp.add(currentEventTmp);}
+						}
 					}
 
+
+					if(!dataContainer.getEventQueue().isEmpty()) {
+						currentEvent =  dataContainer.eventQueue.poll(); //push it back to the queue if it dose not consume !
+						String id = PES.mapQnameId.get(currentEvent.getSourceName());
+
+						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {}
+						else if (eventQueueTmp.isEmpty() && (isConsumable(currentEvent) || (listPaths.size()>1))) {
+							if (currentStatus.contentEquals("TRANISTIONEND")) {
+								if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) &&  (((id != null) && (listPaths.get(0).contains(id))) || currentStatus.contentEquals("StartUp"))) {
+									if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+									listAllPathTaken.add(listPaths.get(0));
+									System.err.println(dataContainer.getCapsuleInstance()+"-----[listPaths.get(0)]--------- " + listPaths.get(0));
+
+									addToListConsumedPaths(listPaths.get(0));
+									updateLocalHeap(listPaths.get(0),msgSender,false);
+									updateCurrentState();
+									if (!msgTobeConsumed.isEmpty())
+										dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
+									msgTobeConsumed = "";
+									msgSender = "";
+									listPaths.clear();
+									msgConsumedQueue = true;
+								}else {eventQueueTmp.add(currentEvent);/*showInfo(currentEvent);*/}
+							}
+						}else {eventQueueTmp.add(currentEvent);/*showInfo(currentEvent);*/}
+					}
+
+
 					if (msgConsumedTmpQueue && currentEventTmp != null && currentEventTmp.getSourceName() != null) {
-						//System.err.println(dataContainer.getCapsuleInstance()+"---[Event is consumed from TmpEventQueue]---------- "+currentEventTmp.allDataToString());
+						System.err.println(dataContainer.getCapsuleInstance()+"---[Event is consumed from TmpEventQueue]---------- "+currentEventTmp.allDataToString());
 						showInfo(currentEventTmp);
-						//currentEventTmp = null;
+						currentEventTmp = null;
 					}else if (msgConsumedQueue && currentEvent != null && currentEvent.getSourceName() !=null) {
-						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Event is consumed from EventQueue]--------- " + currentEvent.allDataToString());
+						System.err.println(dataContainer.getCapsuleInstance()+"-----[Event is consumed from EventQueue]--------- " + currentEvent.allDataToString());
 						showInfo(currentEvent);
-						//currentEvent = null;
+						currentEvent = null;
 					}/*else {
 						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Warning]: <neither a msg from currentEvent nor from currentEventTmp has been consumed in this round> ");
 						if (currentEventTmp != null && currentEventTmp.getSourceName() != null && currentEventTmp.getSourceName().contains("Simulator__client__2"))
@@ -290,7 +267,9 @@ public class CapsuleTracker implements Runnable{
 			}
 		}
 	}
-
+	//==================================================================	
+	//====================================================[pathCompeleted]
+	//==================================================================	
 	public boolean pathCompeleted(String path) {
 		if (path.contains(",")) {
 			String [] pathsSplit = path.split("\\,");
@@ -327,23 +306,25 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//====================================================[isPassedEvent]
 	//==================================================================	
-	public boolean isPassedEvent(Event event , String queueName) {
+	public boolean isPassedEvent(Event event) {
 		String id = PES.mapQnameId.get(event.getSourceName());
-		//if(!prvTookPath.isEmpty() && prvTookPath.contains(",") && prvTookPath.contains(id)) {
-		//	return true;
-		//}
+		//System.err.println("__________ event __________" + event.allDataToString());
+		//System.err.println(listConsumedPaths.size()+"__________ listConsumedPaths __________" + listConsumedPaths.toString());
+
 		
 		for (String path : listConsumedPaths) {
+			if (path != null) {
 			String lastTr = "";
-			if(path.contains(",")) {
-				String [] pathsSplit = path.split("\\,");
-				lastTr = pathsSplit[pathsSplit.length-1];
-			}
-			if (lastTr.contentEquals(id)) {
-				System.err.println(dataContainer.getCapsuleInstance()+ " from: "+queueName + " , lastTr.contentEquals(id):"+event.allDataToString());
-				if (queueName.contentEquals("eventQueue"))
-					 listConsumedPaths.remove(path);
+			if (path.contains(id)) {
+				if(path.contains(",")) {
+					String [] pathsSplit = path.split("\\,");
+					lastTr = pathsSplit[pathsSplit.length-1];
+				}
+				if (lastTr.contentEquals(id)) {
+					listConsumedPaths.remove(path);
+				}
 				return true;
+				}
 			}
 		}
 		
@@ -525,9 +506,12 @@ public class CapsuleTracker implements Runnable{
 		for (Entry<String, String> entry : dataContainer.mapRegionCurrentState.entrySet()) {
 			System.out.println("key: " + entry.getKey() + ", value: "+ ParserEngine.mapStateData.get(entry.getValue()).getStateName());
 		}
+		System.out.println("=====================[Active Region]:"+dataContainer.activeRegion);
 		System.out.println("=====================[MSG List]");
-		for (Entry<String, SendMessage> entry : dataContainer.mapSendMessages.entrySet()) {
-			System.out.println(entry.getKey());
+		for (Map<String,SendMessage> listItem : dataContainer.listMapSendMessages) {
+			for (Entry<String, SendMessage> entry : listItem.entrySet()) { 
+				System.out.println("Name: " + entry.getKey());
+			}
 		}
 		System.out.println("=====================[mapLocalHeap]");
 		for (Entry<String, Value> entry : maplocalHeap.entrySet()) {
@@ -578,8 +562,10 @@ public class CapsuleTracker implements Runnable{
 					//1. Check the target state is not a PseudoState
 					//2. Avoid border state
 					
-					if (!trSplit[2].contentEquals(borderStateID) && (ParserEngine.mapStateData.get(trSplit[2]).getPseudoStateKind() == null))
+					if (!trSplit[2].contentEquals(borderStateID) && (ParserEngine.mapStateData.get(trSplit[2]).getPseudoStateKind() == null)) {
 						dataContainer.mapRegionCurrentState.put(region, trSplit[2]);
+						dataContainer.activeRegion = ParserEngine.mapStateData.get(trSplit[2]).getRegion();
+					}
 
 					if (region.contains(region_begin+"_")) { //into the Composite State, We assuem that _ separates regions 
 						String [] trPrvSplit = ParserEngine.mapTransitionData.get(trPrv).getPath().split("\\-");
@@ -589,15 +575,19 @@ public class CapsuleTracker implements Runnable{
 					trPrv = tr;
 				}
 			}else {
-				lastId = path;
-				region = ParserEngine.mapTransitionData.get(lastId).getReginName();
-				String [] trSplit = ParserEngine.mapTransitionData.get(lastId).getPath().split("\\-");
-				dataContainer.mapRegionCurrentState.put(region, trSplit[2]);	
+					lastId = path;
+					region = ParserEngine.mapTransitionData.get(lastId).getReginName();
+					String [] trSplit = ParserEngine.mapTransitionData.get(lastId).getPath().split("\\-");
+					dataContainer.mapRegionCurrentState.put(region, trSplit[2]);	
+					dataContainer.activeRegion = ParserEngine.mapStateData.get(trSplit[2]).getRegion();
 				}
 			
 			if ( (trTookIntoCS || firstTrTook) && !region.contentEquals(region_begin)) { //recover the current state in the initial region
 				dataContainer.mapRegionCurrentState.put(region_begin, region_begin_currentState);
 			}
+			
+			//setActiveRegion
+			
 			
 			return true;
 		}else {
@@ -620,8 +610,9 @@ public class CapsuleTracker implements Runnable{
 			firstId = path;}
 		String [] stateIds = ParserEngine.mapTransitionData.get(firstId).getPath().split("\\-");		
 		
-		if (((dataContainer.mapRegionCurrentState.get(region) != null) && dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0])) || currentStatus.contentEquals("INIT")
-				/* || ((ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind() != null) && (ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind().toString().contentEquals("INITIAL")))*/)
+		if (((region.contentEquals(dataContainer.activeRegion)) && (dataContainer.mapRegionCurrentState.get(region) != null) && dataContainer.mapRegionCurrentState.get(region).contentEquals(stateIds[0])) || 
+				(currentStatus.contentEquals("INIT") && !region.contains("_")
+				/* || ((ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind() != null) && (ParserEngine.mapStateData.get(stateIds[0]).getPseudoStateKind().toString().contentEquals("INITIAL")))*/))
 			return true;
 		else 
 			return false;
@@ -636,7 +627,6 @@ public class CapsuleTracker implements Runnable{
 		String region = ParserEngine.mapTransitionData.get(id).getReginName();
 		String capInstance = ParserEngine.mapTransitionData.get(id).getCapsuleInstanceName();
 		//System.err.println(qName + ", capInstance is : "+capInstance);
-
 		
 		if (listPaths.isEmpty()) {
 			for (Map.Entry<String, List<String>> entry : PES.mapRegionPaths.entrySet()) {
@@ -649,7 +639,7 @@ public class CapsuleTracker implements Runnable{
 					break;
 				}
 			}
-		}else {
+		}else if (listPaths.toString().contains(id)){
 			List <String> listPathsTmp =  new ArrayList<String>();
 			listPathsTmp.clear();
 			
@@ -662,8 +652,7 @@ public class CapsuleTracker implements Runnable{
 			listPaths.clear();
 			listPaths.addAll(listPathsTmp);
 			
-			if (listPaths.size() == 2) {//add all path from history into listPath
-				listPathsTmp.clear();
+			if (listPaths.size() > 1) {//add all path from history into listPath
 				for (String path : listPaths) {
 					String lastId = "";
 					if (path.contains(",")) {
@@ -677,6 +666,7 @@ public class CapsuleTracker implements Runnable{
 					
 					String currentState = dataContainer.mapRegionCurrentState.get(region);
 					if(ParserEngine.mapTransitionData.get(lastId).getIsInit()) {
+						listPathsTmp.clear();
 						if((currentState != null) && !currentState.contains("INIT")) {
 							listPathsTmp.addAll(addAllPathFrom(currentState));
 						}else {
@@ -690,12 +680,14 @@ public class CapsuleTracker implements Runnable{
 			}
 
 		}
+		
+
 		return listPaths;
 	}
 
 
 	//==================================================================	
-	//==============================================[setLogicalVectorTime]
+	//==============================================[addAllPathFrom]
 	//==================================================================		
 	public List<String> addAllPathFrom (String currentState) {
 		
@@ -783,6 +775,7 @@ public class CapsuleTracker implements Runnable{
 			
 			String [] pathSplit = ParserEngine.mapTransitionData.get(id).getPath().split("\\-");
 			dataContainer.mapRegionCurrentState.put(ParserEngine.mapTransitionData.get(id).getReginName(),pathSplit[2]);
+			dataContainer.activeRegion = ParserEngine.mapStateData.get(pathSplit[2]).getRegion();
 			
 			pathFinder(event.getSourceName());
 			if ((listPaths.size() == 1) /*&& isRequirementMet(listPaths.get(0))*/) {
@@ -792,8 +785,8 @@ public class CapsuleTracker implements Runnable{
 				result = false;
 			
 			}else {
-				System.err.println("__________ No Path Found! __________");
-				System.exit(1);
+				//System.err.println("__________ No Path Found! __________");
+				//System.exit(1);
 			}
 		}
 		return result;
@@ -858,8 +851,7 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 
-			//System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
-
+			System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
 			if (trgCapsule.isEmpty()){
 				System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
 				System.err.println(sendMessage.capsuleInstance + "  In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>> msgSender: " +msgSender +", dest: " + sendMessage.dest.asString());
@@ -876,16 +868,23 @@ public class CapsuleTracker implements Runnable{
 					if ((sendMessage.data != null) && (sendMessage.dataName.contentEquals("__getName__") || sendMessage.data.toString().contains("__CapInstanceName__"))) { //TODO: find the corresponding varibale name in the target capsule; we have the same rule in the AC.g4
 						sendMessage.data = new Value (separateTopFromInstanceName(dataContainer.getCapsuleInstance()),"String");
 						//System.err.println("NEWWWWWWWWWWWWWWWWW In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
-
-						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
-					}else
-						entry.getValue().dataContainer.mapSendMessages.put(sendMessage.msg, sendMessage);
+						Map<String,SendMessage> mapMsgToSend =  new HashMap<String, SendMessage>();
+						mapMsgToSend.put(sendMessage.msg, sendMessage);
+						entry.getValue().dataContainer.listMapSendMessages.add(mapMsgToSend);
+						TrackerMaker.showAllMSGlists();
+					}else {
+						Map<String,SendMessage> mapMsgToSend =  new HashMap<String, SendMessage>();
+						mapMsgToSend.put(sendMessage.msg, sendMessage);
+						entry.getValue().dataContainer.listMapSendMessages.add(mapMsgToSend);
+						TrackerMaker.showAllMSGlists();
+					}
 					break;
 				}
 	        }
 			
 			listMyConnectors = null;
 		}
+
 		
 	}
 	
@@ -950,10 +949,14 @@ public class CapsuleTracker implements Runnable{
 			for(String msg : listTrigger) {
 				String [] msgSplit = msg.split("\\.");
 				//if (!msgSplit[1].contains("_TIMER_")) { //we need to get msg __TIMER__ !
-				SendMessage sendMessage = dataContainer.mapSendMessages.get(msgSplit[1]);
-				if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) 
-					maplocalHeap.put(sendMessage.dataName, sendMessage.data);
+				for (Map<String,SendMessage> listItem : dataContainer.listMapSendMessages) {
+					SendMessage sendMessage = listItem.get(msgSplit[1]);
+					if ((sendMessage != null) && (sendMessage.dataName != null) && (sendMessage.data != null)) { 
+						maplocalHeap.put(sendMessage.dataName, sendMessage.data);
+						break;
+					}
 				//}
+				}
 			}
 		}/*else if (!ParserEngine.mapTransitionData.get(firstTrInPath).getIsInit()){ //init Tr dose not need a trigger!
 			System.err.println("__________ listTrigger is empty! __________"); //TODO: make it clean!
@@ -1034,6 +1037,7 @@ public class CapsuleTracker implements Runnable{
 	public boolean isRequirementMet(String path) throws InterruptedException {
 
 		boolean result = false;
+		msgTobeConsumed = "";
 		List<String> listTrigger = new ArrayList<String>();
 		List<String> listGuards = new ArrayList<String>();
 		
@@ -1057,11 +1061,16 @@ public class CapsuleTracker implements Runnable{
 
 			for(String msg : listTrigger) {
 				String [] msgSplit = msg.split("\\.");
-				if ((dataContainer.mapSendMessages.get(msgSplit[1]) != null)) {
-					msgSender = dataContainer.mapSendMessages.get(msgSplit[1]).capsuleInstance;
-					result = true;
-					msgTobeConsumed = msgSplit[1];
+				for (Map<String,SendMessage> listItem : dataContainer.listMapSendMessages) {
+					if ((listItem.get(msgSplit[1]) != null)) {
+						msgSender = listItem.get(msgSplit[1]).capsuleInstance;
+						result = true;
+						msgTobeConsumed = msgSplit[1];
+						break;
+					}
 				}
+				if (!msgTobeConsumed.isEmpty())
+					break;
 			}
 		}
 		
@@ -1116,7 +1125,6 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[transitionChecking]
 	//==================================================================	
 	public boolean transitionChecking(Event event) throws InterruptedException {
-		
 		boolean result = false;
 		String id = PES.mapQnameId.get(event.getSourceName());
 		/*System.out.println(dataContainer.getCapsuleInstance()+", event.getSourceName(): " + event.getSourceName());
@@ -1134,7 +1142,8 @@ public class CapsuleTracker implements Runnable{
 			//showInfo();
 			//System.out.println(event.getSourceName() +", "+ dataContainer.getCapsuleInstance() +", id: "+ id+ ", listPaths.size(): "+ listPaths.size() +" => [Status : transitionChecking]currentStatus:> "+ currentStatus +" ,StateId: "+currentSateId);
 			pathFinder(event.getSourceName());
-			if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0))) {
+			String region = ParserEngine.mapTransitionData.get(id).getReginName();
+			if ((listPaths.size() == 1) && listPaths.get(0).contains(id) && checkPathConsistency(region, listPaths.get(0)) && isRequirementMet(listPaths.get(0))) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
 			}else {
