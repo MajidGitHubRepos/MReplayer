@@ -93,10 +93,16 @@ public class CapsuleTracker implements Runnable{
     private String msgSender;
     private boolean msgConsumedTmpQueue;
     private boolean msgConsumedQueue;
+    private List<String> listSoFarMachedTR;
+    private PriorityBlockingQueue <Event> accessoryEventQ;
+    //private List<String> listTrigger;
 
 
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
+		//this.listTrigger = new ArrayList<String>();
+		this.accessoryEventQ = new PriorityBlockingQueue<Event>();
+		this.listSoFarMachedTR = new ArrayList<String>();
 		this.msgConsumedQueue = false;
 		this.msgConsumedTmpQueue = false;
 		this.msgTobeConsumed = "";
@@ -140,6 +146,7 @@ public class CapsuleTracker implements Runnable{
 			semCapsuleTracker.acquire();
 			//Go to the initial state and wait for the right event
 			System.out.println("============> Running : "+ dataContainer.getCapsuleName() );
+			
 
 			List<String> listAttributes = ParserEngine.mapCapAttributes.get(dataContainer.getCapsuleName());
 
@@ -169,34 +176,70 @@ public class CapsuleTracker implements Runnable{
 
 		while(true) {
 			try {
+				if (((dataContainer.getEventQueue().size() > 0) || (eventQueueTmp.size() > 0))) {
 				semCapsuleTracker.acquire();
-				//System.out.println(dataContainer.getCapsuleInstance() + "============> eventQueueSize : "+ dataContainer.getEventQueue().size());
-				//System.err.println(dataContainer.getCapsuleInstance()+"-----[dataContainer.mapSendMessages.size()]--------- " + dataContainer.mapSendMessages.size());
 
-				if (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) {
+				if (TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance()))
+						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+				else
+					Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+				if ( /*isPerRequirementMet() &&*/ (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) && !TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) {
 					Event currentEventTmp = new Event();
 					Event currentEvent = new Event();
 					msgConsumedTmpQueue = false;
 					msgConsumedQueue = false;
-
+					
 					if (!eventQueueTmp.isEmpty()) {
 						int eventQueueTmpSize = eventQueueTmp.size();
 						for (int j = 0; j < eventQueueTmpSize;  j++) {
-							currentEventTmp = eventQueueTmp.poll();
-							String id = PES.mapQnameId.get(currentEventTmp.getSourceName());
+							currentEventTmp = eventQueueTmp.take();
 							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {}
 							else if (isConsumable(currentEventTmp)) {
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
-									
-									
-									
-									
-									
-									if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) && (((id != null) && (listPaths.get(0).contains(id))) || currentStatus.contentEquals("StartUp"))) {
-										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
-										listAllPathTaken.add(listPaths.get(0));
-										System.err.println(dataContainer.getCapsuleInstance()+"-----[listPaths.get(0)]--------- " + listPaths.get(0));
+									if ((currentEventTmp.getSourceName() != null) && validMatchedPath(PES.mapQnameId.get(currentEventTmp.getSourceName()))) {
+										listSoFarMachedTR.add(PES.mapQnameId.get(currentEventTmp.getSourceName()));
+									}
+									if ((listPaths.size() == 1) && listSoFarMachedTR.toString().replaceAll("\\s","").contains(listPaths.get(0))) {
+										if (isRequirementMet(listPaths.get(0))) {
+											TrackerMaker.listNotMetReq.clear();
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											listAllPathTaken.add(listPaths.get(0));
+											addToListConsumedPaths(listPaths.get(0));
+											updateLocalHeap(listPaths.get(0),msgSender,false);
+											updateCurrentState();
+											if (!msgTobeConsumed.isEmpty())
+												dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
+											msgTobeConsumed = "";
+											msgSender = "";
+											listPaths.clear();
+											listSoFarMachedTR.clear();
+											msgConsumedTmpQueue = true;
+											break;
+										}else { TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());accessoryEventQ.add(currentEventTmp);/*eventQueueTmp.add(currentEventTmp);*/ break; } //req did not meet!
+									}
+								}
+							}else {accessoryEventQ.add(currentEventTmp);/*eventQueueTmp.add(currentEventTmp);*/} //evet is out of order
+						}
+					}
+					
+					if (!accessoryEventQ.isEmpty()) {	
+						eventQueueTmp.addAll(accessoryEventQ);
+						accessoryEventQ.clear();
+					}
 
+					if(!dataContainer.getEventQueue().isEmpty()) {
+						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
+						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {}
+						else if (eventQueueTmp.isEmpty() && isConsumable(currentEvent)) {
+							if (currentStatus.contentEquals("TRANISTIONEND")) {
+								if ((currentEvent.getSourceName() != null) && validMatchedPath(PES.mapQnameId.get(currentEvent.getSourceName()))) {
+									listSoFarMachedTR.add(PES.mapQnameId.get(currentEvent.getSourceName()));
+								}
+								if ((listPaths.size() == 1) && listSoFarMachedTR.toString().replaceAll("\\s","").contains(listPaths.get(0))) {
+									if (isRequirementMet(listPaths.get(0))) {
+										TrackerMaker.listNotMetReq.clear();
+										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+										listAllPathTaken.add(listPaths.get(0));
 										addToListConsumedPaths(listPaths.get(0));
 										updateLocalHeap(listPaths.get(0),msgSender,false);
 										updateCurrentState();
@@ -205,38 +248,13 @@ public class CapsuleTracker implements Runnable{
 										msgTobeConsumed = "";
 										msgSender = "";
 										listPaths.clear();
-										msgConsumedTmpQueue = true;
-									}else {eventQueueTmp.add(currentEventTmp);}
+										listSoFarMachedTR.clear();
+										msgConsumedQueue = true;
+									}else {
+										TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());eventQueueTmp.add(currentEvent);} //req did not meet!
 								}
-							}else {eventQueueTmp.add(currentEventTmp);}
-						}
-					}
-
-
-					if(!dataContainer.getEventQueue().isEmpty()) {
-						currentEvent =  dataContainer.eventQueue.poll(); //push it back to the queue if it dose not consume !
-						String id = PES.mapQnameId.get(currentEvent.getSourceName());
-
-						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {}
-						else if (eventQueueTmp.isEmpty() && (isConsumable(currentEvent) || (listPaths.size()>1))) {
-							if (currentStatus.contentEquals("TRANISTIONEND")) {
-								if ((listPaths.size() == 1) && isRequirementMet(listPaths.get(0)) &&  (((id != null) && (listPaths.get(0).contains(id))) || currentStatus.contentEquals("StartUp"))) {
-									if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
-									listAllPathTaken.add(listPaths.get(0));
-									System.err.println(dataContainer.getCapsuleInstance()+"-----[listPaths.get(0)]--------- " + listPaths.get(0));
-
-									addToListConsumedPaths(listPaths.get(0));
-									updateLocalHeap(listPaths.get(0),msgSender,false);
-									updateCurrentState();
-									if (!msgTobeConsumed.isEmpty())
-										dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
-									msgTobeConsumed = "";
-									msgSender = "";
-									listPaths.clear();
-									msgConsumedQueue = true;
-								}else {eventQueueTmp.add(currentEvent);/*showInfo(currentEvent);*/}
 							}
-						}else {eventQueueTmp.add(currentEvent);/*showInfo(currentEvent);*/}
+						}else {eventQueueTmp.add(currentEvent);} //evet is out of order
 					}
 
 
@@ -244,25 +262,18 @@ public class CapsuleTracker implements Runnable{
 						System.err.println(dataContainer.getCapsuleInstance()+"---[Event is consumed from TmpEventQueue]---------- "+currentEventTmp.allDataToString());
 						showInfo(currentEventTmp);
 						currentEventTmp = null;
-					}else if (msgConsumedQueue && currentEvent != null && currentEvent.getSourceName() !=null) {
+					}if (msgConsumedQueue && currentEvent != null && currentEvent.getSourceName() !=null) {
 						System.err.println(dataContainer.getCapsuleInstance()+"-----[Event is consumed from EventQueue]--------- " + currentEvent.allDataToString());
 						showInfo(currentEvent);
 						currentEvent = null;
-					}/*else {
-						//System.err.println(dataContainer.getCapsuleInstance()+"-----[Warning]: <neither a msg from currentEvent nor from currentEventTmp has been consumed in this round> ");
-						if (currentEventTmp != null && currentEventTmp.getSourceName() != null && currentEventTmp.getSourceName().contains("Simulator__client__2"))
-							System.err.println(dataContainer.getCapsuleInstance()+"=[currentEventTmp]==> "+currentEventTmp.allDataToString());
-						else if (currentEvent != null && currentEvent.getSourceName() != null && currentEvent.getSourceName().contains("Simulator__client__2"))
-							System.err.println(dataContainer.getCapsuleInstance()+"=[currentEvent]==> "+currentEvent.allDataToString());
-
-					}*/
-					
+					}
 					msgConsumedTmpQueue = false;
 					msgConsumedQueue = false;
 
 				}
 				semCapsuleTracker.release();
 				Thread.yield();
+			}
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -272,6 +283,45 @@ public class CapsuleTracker implements Runnable{
 			}
 		}
 	}
+	//==================================================================	
+	//====================================================[validMatchedPath]
+	//==================================================================	
+	public boolean validMatchedPath(String id) {
+		if (!listSoFarMachedTR.isEmpty()) {
+			if (!listSoFarMachedTR.toString().contains(id) && listPaths.toString().contains(id)){ 
+				String soFarMatched = "";
+				if (!listSoFarMachedTR.isEmpty()) {
+					for (String path : listSoFarMachedTR) {
+						if (soFarMatched.isEmpty())
+							soFarMatched = path;
+						else
+							soFarMatched = soFarMatched +","+path;
+					}
+				}
+				if (listPaths.toString().contains(soFarMatched+","+id))
+					return true;
+				
+			}else {
+				return false;
+			}
+		}else {
+			for (String path : listPaths) {
+				String firstTr = "";
+				if(path.contains(",")) {
+					String [] pathsSplit = path.split("\\,");
+					firstTr = pathsSplit[0];
+				}else {
+					firstTr = path;
+				}
+				if (!firstTr.contentEquals(id)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+	
 	//==================================================================	
 	//====================================================[pathCompeleted]
 	//==================================================================	
@@ -624,27 +674,78 @@ public class CapsuleTracker implements Runnable{
 	}
 
 	//==================================================================	
+	//======================================================[jumpTr]
+	//==================================================================		
+	public boolean jumpTr (String id) {
+		String soFarMatched = "";
+		if (!listSoFarMachedTR.isEmpty()) {
+			for (String path : listSoFarMachedTR) {
+				if (soFarMatched.isEmpty())
+					soFarMatched = path;
+				else
+					soFarMatched = soFarMatched +","+path;
+			}
+		}
+		
+		
+		for (String path : listPaths) {
+			if (!soFarMatched.isEmpty() && path.contains(soFarMatched+","+id)) {
+				return false;
+			}else if (!soFarMatched.isEmpty()) { 
+				String lastId = "";
+				if (path.contains(",")) {
+					String [] pathSplit = path.split("\\,");
+					lastId = pathSplit[pathSplit.length -1];
+				}else {
+					lastId = path;
+				}
+				if (listSoFarMachedTR.get(listSoFarMachedTR.size()-1).contentEquals(lastId))
+					return false;
+			}else if (soFarMatched.isEmpty()) {
+				String firsId = "";
+				if (path.contains(",")) {
+					String [] pathSplit = path.split("\\,");
+					firsId = pathSplit[0];
+				}else {
+					firsId = path;
+				}
+				
+				if (id.contentEquals(firsId))
+					return false;
+			}
+		}
+		return true;
+	}
+	//==================================================================	
 	//======================================================[pathFinder]
 	//==================================================================		
-	public List<String> pathFinder (String qName) {
+	public boolean pathFinder (String qName) {
 
 		String id = PES.mapQnameId.get(qName);
 		String region = ParserEngine.mapTransitionData.get(id).getReginName();
 		String capInstance = ParserEngine.mapTransitionData.get(id).getCapsuleInstanceName();
+		boolean inOrderEvent = false;
 		//System.err.println(qName + ", capInstance is : "+capInstance);
 		
 		if (listPaths.isEmpty()) {
+			//System.out.println(dataContainer.getCapsuleInstance()+", [pathFinder] 1 " + qName);
 			for (Map.Entry<String, List<String>> entry : PES.mapRegionPaths.entrySet()) {
 				if (entry.getKey().contains(capInstance+"::"+region)) {
 					for (String path : entry.getValue()) {
 						if (path.contains(id) && checkPathConsistency(region, path)) {
 							listPaths.add(path);
+							inOrderEvent = true;
 						}
 					}
 					break;
 				}
 			}
-		}else if (listPaths.toString().contains(id)){
+		}else if ((listPaths.size() == 1) && !jumpTr(id)){
+			//System.out.println(dataContainer.getCapsuleInstance()+", [pathFinder] 2 "+qName);
+			inOrderEvent = true;
+		}else if ((listPaths.size()>1) && listPaths.toString().contains(id) && !jumpTr(id)){
+			//System.out.println(dataContainer.getCapsuleInstance()+", [pathFinder] 3 "+qName);
+			inOrderEvent = true;
 			List <String> listPathsTmp =  new ArrayList<String>();
 			listPathsTmp.clear();
 			
@@ -656,14 +757,16 @@ public class CapsuleTracker implements Runnable{
 			
 			listPaths.clear();
 			listPaths.addAll(listPathsTmp);
-			
+			//System.err.println(dataContainer.getCapsuleInstance() + " ___[(listPaths.size()>0) && listPaths.toString().contains(id)]_______ listPaths : "+listPaths.toString());
+
 			if (listPaths.size() == 2) { //For pahts like: Recover-->PassiveMode-->initTrBackup & Recover-->PassiveMode
-				int idx = 0;
 				String currentState = "";
 				capInstance = "";
 				region = "";
 				boolean initRefined = false;
-				for (String path : listPaths) {
+				Iterator<String> iter = listPaths.iterator();
+				while (iter.hasNext()) {
+				    String path = iter.next();
 					String lastId = "";
 					if (path.contains(",")) {
 						String [] pathSplit = path.split("\\,");
@@ -676,25 +779,26 @@ public class CapsuleTracker implements Runnable{
 						currentState = dataContainer.mapRegionCurrentState.get(region);
 						if((currentState != null) && !currentState.contains("INIT")) {
 							//remove path with initTr, so listPaths.size == 1
-							listPaths.remove(path);
+							iter.remove();
 							initRefined = true;
 						}else if ((currentState != null) && currentState.contains("INIT")){
 							//remove path without initTr, so listPaths.size == 1
-							if (idx == 0)
-								listPaths.remove(1);
-							else if (idx == 1)
-								listPaths.remove(0);
+							listPaths.clear();
+							listPaths.add(path);
 							initRefined = true;
 						}
 						
 					}
-					idx++;
 				}
 				//listPahts has been shrunk to 1
 				if ((listPaths.size() == 1) && initRefined && !currentState.contains("INIT")) { // For paths like Recover-->PassiveMode
 					//add all path from the currentState to the listPaths, this part might increase the size of listPaths !
+					listPathsTmp.clear();
+					listPathsTmp.addAll(addAllPathFrom(currentState));
 					listPaths.clear();
-					listPaths.addAll(addAllPathFrom(currentState));
+					listPaths.addAll(listPathsTmp);
+					System.err.println("__________ listPaths in very rare situation : "+listPaths.toString());
+
 					if (listPaths.isEmpty()) {
 						System.err.println("__________ No Path found from the Current State : "+currentState);
 						System.exit(1);
@@ -702,7 +806,9 @@ public class CapsuleTracker implements Runnable{
 				}	
 			}
 		}
-		return listPaths;
+		//System.err.println(dataContainer.getCapsuleInstance() + ", MachedSofar: "+listSoFarMachedTR.toString()+" ___[listPaths]__inOrderEvent["+inOrderEvent+"]_____  : "+listPaths.toString());
+
+		return inOrderEvent;
 	}
 
 
@@ -717,8 +823,19 @@ public class CapsuleTracker implements Runnable{
 		List<String> innerRegionPaths = PES.mapRegionPaths.get(capInstance+"::"+innerRegionName);
 		
 		String mainPath = listPaths.get(0);
-		for (String path : innerRegionPaths) {
-			listPathsTmp.add(mainPath+","+path);
+		for (String innerRegionPath : innerRegionPaths) {
+			String innerPathId = "";
+			if (innerRegionPath.contains(",")) {
+				
+				String [] innerRegionPathSplit = innerRegionPath.split("\\,");
+				innerPathId = innerRegionPathSplit[0];
+				}else
+					innerPathId = innerRegionPath;
+				String [] stateTrState = ParserEngine.mapTransitionData.get(innerPathId).getPath().split("\\-");
+				
+				if (currentState.contentEquals(stateTrState[0])) {
+					listPathsTmp.add(mainPath+","+innerRegionPath);
+				}
 		}
 		
 		/*
@@ -789,7 +906,7 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[initChecking]
 	//==================================================================	
 	public boolean initChecking(Event event) throws InterruptedException {
-		System.out.println(dataContainer.getCapsuleInstance() +", in initChecking "+ listPaths.size());
+		//System.out.println(dataContainer.getCapsuleInstance() +", in initChecking "+ listPaths.size());
 
 		boolean result = false;
 		String id = PES.mapQnameId.get(event.getSourceName());
@@ -877,7 +994,7 @@ public class CapsuleTracker implements Runnable{
 				}
 			}
 
-			System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
+			//System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + " with dataName "+ sendMessage.dataName+ " : " + sendMessage.data +", is sending via " + sendMessage.port +" to "+ trgCapsule);
 			if (trgCapsule.isEmpty()){
 				System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
 				System.err.println(sendMessage.capsuleInstance + "  In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>> msgSender: " +msgSender +", dest: " + sendMessage.dest.asString());
@@ -897,12 +1014,12 @@ public class CapsuleTracker implements Runnable{
 						Map<String,SendMessage> mapMsgToSend =  new HashMap<String, SendMessage>();
 						mapMsgToSend.put(sendMessage.msg, sendMessage);
 						entry.getValue().dataContainer.listMapSendMessages.add(mapMsgToSend);
-						TrackerMaker.showAllMSGlists();
+						//TrackerMaker.showAllMSGlists();
 					}else {
 						Map<String,SendMessage> mapMsgToSend =  new HashMap<String, SendMessage>();
 						mapMsgToSend.put(sendMessage.msg, sendMessage);
 						entry.getValue().dataContainer.listMapSendMessages.add(mapMsgToSend);
-						TrackerMaker.showAllMSGlists();
+						//TrackerMaker.showAllMSGlists();
 					}
 					break;
 				}
@@ -1058,6 +1175,38 @@ public class CapsuleTracker implements Runnable{
 		}
 	
 	//==================================================================	
+	//==============================================[isPerRequirementMet]
+	//==================================================================	
+	/*public boolean isPerRequirementMet(){
+		boolean result = false;
+		
+		if (listTrigger.isEmpty())
+			result = true;
+		else {
+			result = true;
+			for(String msg : listTrigger) {
+				if(!msg.contains("__TIMER__")){
+					result = false;
+				}
+			}
+
+			for(String msg : listTrigger) {
+				String [] msgSplit = msg.split("\\.");
+				for (Map<String,SendMessage> listItem : dataContainer.listMapSendMessages) {
+					if ((listItem.get(msgSplit[1]) != null)) {
+						msgSender = listItem.get(msgSplit[1]).capsuleInstance;
+						result = true;
+						msgTobeConsumed = msgSplit[1];
+						break;
+					}
+				}
+				if (!msgTobeConsumed.isEmpty())
+					break;
+			}
+		}
+		return result;
+	}*/
+	//==================================================================	
 	//==============================================[isRequirementMet]
 	//==================================================================	
 	public boolean isRequirementMet(String path) throws InterruptedException {
@@ -1070,8 +1219,9 @@ public class CapsuleTracker implements Runnable{
 		listTrigger = mapPathTrigger.get(path);
 		listGuards = mapPathGuards.get(path);
 
-		
-		if (listTrigger == null) {
+		//if (dataContainer.getCapsuleInstance().contains("env"))
+		//	System.out.println(dataContainer.getCapsuleInstance() + "in isRequirementMet path: " +path);
+		if (listTrigger == null){
 			listTrigger = makeListTrigger(path);
 		}
 		
@@ -1142,6 +1292,9 @@ public class CapsuleTracker implements Runnable{
 	        }
 			//System.exit(1);
 		}*/
+		
+		//if (result)
+		//	listTrigger.clear();
 
 		return result;
 			
@@ -1165,17 +1318,23 @@ public class CapsuleTracker implements Runnable{
 		//Samples: PingPong::Pinger::PingerStateMachine::Region::PLAYING , PingPong::Pinger::PingerStateMachine::Region::onPong
 
 		if (event.getSourceKind().contentEquals("3") && event.getType().contentEquals("14")) {
-			//showInfo();
-			//System.out.println(event.getSourceName() +", "+ dataContainer.getCapsuleInstance() +", id: "+ id+ ", listPaths.size(): "+ listPaths.size() +" => [Status : transitionChecking]currentStatus:> "+ currentStatus +" ,StateId: "+currentSateId);
-			pathFinder(event.getSourceName());
-			String region = ParserEngine.mapTransitionData.get(id).getReginName();
-			if ((listPaths.size() == 1) && listPaths.get(0).contains(id) && checkPathConsistency(region, listPaths.get(0)) && isRequirementMet(listPaths.get(0))) {
+			boolean inOrderEvent = pathFinder(event.getSourceName());
+			
+			if ((listPaths.size() == 1) && inOrderEvent) {
 				result =  true;
 				currentStatus = "TRANISTIONEND";
-			}else {
-				//System.err.println("[EVENT]"+event.allDataToString());
-				//System.err.println("__________ No Path Found! __________");
+			}else if ((listPaths.size() > 1) && inOrderEvent) {
+				result =  true;
+				currentStatus = "TRANISTIONEND";
+			}else if ((listPaths.size() > 0) && !inOrderEvent){
+				//System.err.println("__________ EVENT is received out of order! __________ [EVENT]:" + event.allDataToString());
+				//System.out.println("listPaths.toString(): " + listPaths.toString());
+				currentStatus = "TRANISTIONEND";
 				result = false;
+			}else if (listPaths.size() == 0) {
+				result = false;
+				//System.err.println("__________ No Path Found! __________[EVENT]:" + event.allDataToString());
+				//System.exit(1);
 			}
 		}
 		return result;

@@ -20,7 +20,7 @@ public class Event implements Comparable<Event> {
 	private String eventTarget;
 	private String vectorTime;
 	private String regionName;
-	private int counter;
+	private Integer counter;
 	
 	
 	/*
@@ -184,7 +184,7 @@ public class Event implements Comparable<Event> {
 	@Override
 	public int compareTo(Event event) {
 		// TODO Auto-generated method stub
-		return this.counter;
+		 return this.counter.compareTo(event.counter);
 	}
 	
 	

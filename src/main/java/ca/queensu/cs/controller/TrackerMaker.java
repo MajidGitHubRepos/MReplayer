@@ -62,9 +62,11 @@ public class TrackerMaker implements Runnable{
 	public static boolean checkPolicy;
 	public static HashMap<String, String> capsulePathsMap;
 	public static HashMap<String, CapsuleTracker> mapCapsuleTracker;
+	public static List<String> listNotMetReq;
 
 	
 	public TrackerMaker(Semaphore semServer, int numberOfCapsules){
+		this.listNotMetReq = new ArrayList<String>();
 		this.capsulePathsMap   =  new HashMap<String, String>();
 		this.mapCapsuleTracker =  new HashMap<String, CapsuleTracker>();
 		this.MAX_NUM_POLICY = 2; //Maximum number of entities in the policy chain
