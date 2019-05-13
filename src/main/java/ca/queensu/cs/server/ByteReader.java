@@ -112,13 +112,13 @@ public final class ByteReader implements Runnable {
 	private static int commandId = 0;
 	private String[] capsuleNames;
 	private Semaphore sem;
-	public static int eventCounter;
+	public static Long eventCounter = new Long(0);;
 	private int totalSize = 0;
 	
 
 
 	public ByteReader(String[] caps, Semaphore sem ) {
-		this.eventCounter = 0;
+		//this.eventCounter = new Long(0);
 		capsuleNames = caps;
 		this.sem = sem; 
 	}
