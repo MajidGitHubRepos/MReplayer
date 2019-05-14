@@ -97,6 +97,7 @@ public class CapsuleTracker implements Runnable{
     private PriorityBlockingQueue <Event> accessoryEventQ;
     private List<String> listSupplementaryAC;
     private String supplementaryActiveRegion;
+
     //private List<String> listTrigger;
 
 
@@ -197,7 +198,7 @@ public class CapsuleTracker implements Runnable{
 						int eventQueueTmpSize = eventQueueTmp.size();
 						for (int j = 0; j < eventQueueTmpSize;  j++) {
 							currentEventTmp = eventQueueTmp.take();
-							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {}
+							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {calcTraceSizes(currentEventTmp);}
 							else if (isConsumable(currentEventTmp)) {
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
 									if ((currentEventTmp.getSourceName() != null) && validMatchedPath(PES.mapQnameId.get(currentEventTmp.getSourceName()))) {
@@ -206,7 +207,8 @@ public class CapsuleTracker implements Runnable{
 									if ((listPaths.size() == 1) && listSoFarMachedTR.toString().replaceAll("\\s","").contains(listPaths.get(0))) {
 										if (isRequirementMet(listPaths.get(0))) {
 											TrackerMaker.listNotMetReq.clear();
-											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											calcTraceSizes(currentEventTmp);
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap,TrackerMaker.newTraceSize,TrackerMaker.oldTraceSize)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEventTmp.getSourceName()));
 											updateLocalHeap(listPaths.get(0),msgSender,false);
@@ -240,7 +242,7 @@ public class CapsuleTracker implements Runnable{
 						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
 					if (currentEvent.getCapsuleInstance().contains("server2") && !currentEvent.getSourceName().isEmpty() &&currentEvent.getSourceName().contains("ToRunAsMaster"))System.err.println(dataContainer.getCapsuleInstance()+", -----[SRV2]--listConsumedPaths---"+listConsumedPaths.toString()+" __[currentEvent]______ : "+currentEvent.allDataToString());
 
-						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {}
+						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {calcTraceSizes(currentEvent);}
 						else if (eventQueueTmp.isEmpty() && isConsumable(currentEvent)) {
 							
 							if (currentStatus.contentEquals("TRANISTIONEND")) {
@@ -250,7 +252,8 @@ public class CapsuleTracker implements Runnable{
 								if ((listPaths.size() == 1) && listSoFarMachedTR.toString().replaceAll("\\s","").contains(listPaths.get(0))) {
 									if (isRequirementMet(listPaths.get(0))) {
 										TrackerMaker.listNotMetReq.clear();
-										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+										calcTraceSizes(currentEvent);
+										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 										listAllPathTaken.add(listPaths.get(0));
 										addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEvent.getSourceName()));
 										updateLocalHeap(listPaths.get(0),msgSender,false);
@@ -300,6 +303,15 @@ public class CapsuleTracker implements Runnable{
 			}
 		}
 	}
+	//==================================================================	
+	//====================================================[calcTraceSizes]
+	//==================================================================	
+	public void calcTraceSizes(Event event) {
+		int overHeadEntryAndExit = 247;
+		TrackerMaker.newTraceSize += event.allDataToString().length();
+		TrackerMaker.oldTraceSize += event.allDataToString_originalFromMDebugger().length()+overHeadEntryAndExit;
+	}
+	
 	//==================================================================	
 	//====================================================[validMatchedPath]
 	//==================================================================	
@@ -421,11 +433,11 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[jsonToServer]
 	//==================================================================
-	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables) throws Exception {
+	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize) throws Exception {
 		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
 
-				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables);
+				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables, newTraceSize, oldTraceSize);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
 
 			} catch (IOException e) {
@@ -440,7 +452,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[makeJSONobj]
 	//==================================================================
-	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables) {
+	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize) {
 		JSONObject jsonObj = new JSONObject();
 		JSONArray traceID = new JSONArray();
 		JSONArray listTRs = new JSONArray();
@@ -475,6 +487,11 @@ public class CapsuleTracker implements Runnable{
 			}
 		
 		jsonObj.put("traceVar", traceVar);
+		JSONArray traceSizes = new JSONArray();
+		traceSizes.add(newTraceSize);
+		traceSizes.add(oldTraceSize);
+		jsonObj.put("traceSizes", traceSizes);		
+		
 		return jsonObj;
 
 	}

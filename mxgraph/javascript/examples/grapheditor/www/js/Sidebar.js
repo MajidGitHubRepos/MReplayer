@@ -86,8 +86,9 @@ Sidebar.prototype.init = function()
 	var dir = STENCIL_PATH;
 	
 	this.addSearchPalette(true);
-	this.addGeneralPalette(true);
-	this.addMiscPalette(false);
+	this.addGeneralPalette(false);
+	this.addLineChartPalette(true);
+	/*this.addMiscPalette(false);
 	this.addAdvancedPalette(false);
 	this.addBasicPalette(dir);
 	this.addStencilPalette('arrows', mxResources.get('arrows'), dir + '/arrows.xml',
@@ -104,6 +105,7 @@ Sidebar.prototype.init = function()
 		 'Worker1', 'Soldier1', 'Doctor1', 'Tech1', 'Security1', 'Telesales1'], null,
 		 {'Wireless_Router_N': 'wireless router switch wap wifi access point wlan',
 		  'Router_Icon': 'router switch'});
+	*/
 };
 
 /**
@@ -968,6 +970,120 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	
 	this.addPaletteFunctions('general', mxResources.get('general'), (expand != null) ? expand : true, fns);
 };
+
+//--Majid Start ===============================[Adding Line Chart]
+/**
+ * Adds the lineChart palette to the sidebar.
+ */
+Sidebar.prototype.addLineChartPalette = function(expand)
+{
+	var lineTags = 'line lines connector connectors connection connections arrow arrows ';
+	//document.getElementById("variables").innerHTML="<div>hello</div>";	
+	//document.body.appendChild(function () { alert("Majid"); });
+	var fns = [
+		this.createVertexTemplateEntryLineChart('text;html=1;strokeColor=#c0c0c0;fillColor=none;overflow=fill;', 1180, 1140,
+	 			'<table border="0" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
+	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
+	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
+	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2'),
+	];
+
+	this.addPaletteFunctions('lineChart', mxResources.get('lineChart'), (expand != null) ? expand : true, fns);
+};
+
+/**
+ * Creates a drop handler for inserting the given cells.
+ */
+Sidebar.prototype.createVertexTemplateEntryLineChart = function(style, width, height, value, title, showLabel, showTitle, tags)
+{
+	tags = (tags != null && tags.length > 0) ? tags : title.toLowerCase();
+	
+	return this.addEntry(tags, mxUtils.bind(this, function()
+ 	{
+ 		return this.createVertexTemplateLineChart(style, width, height, value, title, showLabel, showTitle);
+ 	}));
+}
+
+/**
+ * Creates a drop handler for inserting the given cells.
+ */
+Sidebar.prototype.createVertexTemplateLineChart = function(style, width, height, value, title, showLabel, showTitle, allowCellsInserted)
+{
+	var cells = [new mxCell((value != null) ? value : '', new mxGeometry(0, 0, width, height), style)];
+	cells[0].vertex = true;
+	
+	return this.createVertexTemplateFromCellsLineChart(cells, width, height, title, showLabel, showTitle, allowCellsInserted);
+};
+
+/**
+ * Creates a drop handler for inserting the given cells.
+ */
+Sidebar.prototype.createVertexTemplateFromCellsLineChart = function(cells, width, height, title, showLabel, showTitle, allowCellsInserted)
+{
+	// Use this line to convert calls to this function with lots of boilerplate code for creating cells
+	//console.trace('xml', this.graph.compress(mxUtils.getXml(this.graph.encodeCells(cells))), cells);
+	return this.createItemLineChart(cells, title, showLabel, showTitle, width, height, allowCellsInserted);
+};
+/**
+ * Creates and returns a new palette item for the given image.
+ */
+Sidebar.prototype.createItemLineChart = function(cells, title, showLabel, showTitle, width, height, allowCellsInserted)
+{
+	var div = document.createElement('div');
+	var ui = this.editorUi;
+	/*elt.setAttribute('id', 'chartContainer');
+	elt.setAttribute('style', 'height: 370px; width:100%;');
+	elt.setAttribute('href', 'javascript:void(0);');
+	elt.className = 'geItem';
+	*/
+	
+	var info = document.createElement('div');
+	info.className = 'geTitle';
+	info.style.cssText = 'background-color:transparent;border-color:transparent;' +
+		'color:gray;padding:6px 0px 0px 0px !important;margin:4px 8px 4px 8px;' +
+		'text-align:center;cursor:default !important';
+	
+	mxUtils.write(info,"Line Chart is under construction!");
+	div.appendChild(info);
+	
+	var input = document.createElement('input');
+	input.value = "Show Line Chart";
+	input.type = "button";
+	input.id = "showLineChartButton";
+	input.style.textAlign = 'center';
+	
+	//info.innerHTML = info.innerHTML + '</br><input type="button" value="Show Line Chart" id ="showLineChartButton" onclick="lineChart()">';
+	
+	mxEvent.addListener(input, 'click', function()
+			{
+		ui.actions.get('run').funct();
+		//ui.actions.get('creatLineChart').funct();
+			});
+	mxEvent.addListener(input, 'click', function()
+			{
+		//ui.actions.get('run').funct();
+		ui.actions.get('creatLineChart').funct();
+			});
+	div.appendChild(input);
+	
+	var head = document.getElementsByTagName("head")[0];
+	var script_canvasjs =document.createElement('script');
+	script_canvasjs.type= 'text/javascript';
+	script_canvasjs.src= 'https://canvasjs.com/assets/script/canvasjs.min.js';
+	head.appendChild(script_canvasjs);
+	
+	var script_lineChartjs =document.createElement('script');
+	script_lineChartjs.type= 'text/javascript';
+	script_lineChartjs.src= './js/lineChart.js';
+	head.appendChild(script_lineChartjs);
+	
+	var lineChart = document.createElement('div');
+	lineChart.setAttribute('id', 'chartContainer');
+	lineChart.setAttribute('style', 'height: 300px; width:100%;');
+	div.appendChild(lineChart);
+	return div;
+};
+//--Majid End
 
 /**
  * Adds the general palette to the sidebar.

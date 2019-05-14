@@ -5591,6 +5591,7 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 			//ui.actions.get('getVariables')); //Implemented but dose not called! variables handeled in Actions.java in traceVarProcess()
 			ui.actions.get('replayNext').funct();
 				});
+		
 		div.appendChild(imgNext);
 		
 	

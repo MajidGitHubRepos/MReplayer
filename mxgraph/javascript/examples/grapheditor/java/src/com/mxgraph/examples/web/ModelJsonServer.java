@@ -29,16 +29,19 @@ public class ModelJsonServer implements Runnable {
 	public static String outputFileName;
     public static File outputFile;
     public static boolean run;
+    public static long counter;
+    public static HashMap<String, List<String>> mapTraceSizes;//<counter,<newTraceSize,oldTraceSize>>
     public static HashMap<String, String> vatriablesHashMap;
 
-
 	public ModelJsonServer(int PORT) {
+		this.counter = 0;
 		this.run  = true;
 		this.PORT = PORT;
 		this.inMsgQueue = new PriorityBlockingQueue<Message>(); // input events --> ReplayNextServlet.java
 		this.mainStack = new Stack(); // consumed events --> ReplayPreviousServlet.java
 		this.tmpStack = new Stack();
 		this.vatriablesHashMap = new HashMap<String, String>();
+		this.mapTraceSizes = new HashMap<String, List<String>>();
 		try {
     		this.outputFileName = "./javascript/examples/grapheditor/www/resources/registration.json";
     		this.outputFile = new File(outputFileName);

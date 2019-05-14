@@ -63,6 +63,8 @@ public class TrackerMaker implements Runnable{
 	public static HashMap<String, String> capsulePathsMap;
 	public static HashMap<String, CapsuleTracker> mapCapsuleTracker;
 	public static List<String> listNotMetReq;
+    public static long newTraceSize = 0;
+	public static long oldTraceSize = 0;
 
 	
 	public TrackerMaker(Semaphore semServer, int numberOfCapsules){

@@ -10,12 +10,14 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,7 +29,7 @@ import org.json.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ReplayPreviousServlet extends HttpServlet
+public class LineChartServlet extends HttpServlet
 {
 
 	/**
@@ -74,24 +76,35 @@ public class ReplayPreviousServlet extends HttpServlet
 				// Uses JavaScript to load the XML on the client-side
 				//String name=request.getParameter("name");
 				String inMsg = "";
+				ModelJsonServer.run = true;
 				Message msg = new Message();
-				//ModelJsonServer.run = false;
-				
-				
-				if (!ModelJsonServer.mainStack.isEmpty()) { //tmpStak is not null!
-					msg = ModelJsonServer.mainStack.pop();
-					ModelJsonServer.tmpStack.push(msg);
-					ModelJsonServer.mapTraceSizes.remove(String.valueOf(ModelJsonServer.counter));
-					ModelJsonServer.counter--;
+				if (ModelJsonServer.run) {
+					if (!ModelJsonServer.tmpStack.isEmpty()) { //tmpStak is not null!
+						msg = ModelJsonServer.tmpStack.pop();
+					}else if (!ModelJsonServer.inMsgQueue.isEmpty()) { //tmpStak is not null!
+						msg = ModelJsonServer.inMsgQueue.take();
+					}else {
+						ModelJsonServer.run = false;
+						ModelJsonServer.inMsgQueue.put(msg);
+						//break;
+					}
 					ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
+					List<String> list= new ArrayList<String>();
+					list.add(msg.getNewTraceSize());
+					list.add(msg.getOldTraceSize());
+					ModelJsonServer.mapTraceSizes.put(String.valueOf(ModelJsonServer.counter++),list);
+					ModelJsonServer.mainStack.push(msg);
 					inMsg = msg.makeJSON();
+					System.out.println("\n[Run]> inMsg: "+ inMsg);
 					writer.println(inMsg);
-					System.out.println("\n[ReplayPreviousServlet]> inMsg: "+ inMsg);
-					//System.out.println("\n[ModelJsonServer.mainStack]>: "+ ModelJsonServer.mainStack);
-					//System.out.println("\n[ModelJsonServer.tmpStack]>: "+ ModelJsonServer.tmpStack);
-				}else {
-					// NO PREVIOUS ACTION !
-				}
+					TimeUnit.SECONDS.sleep(1);
+
+			    }else {
+			    	//Doing run in not valid ! null msg will be sent!
+			    	inMsg = msg.makeJSON();
+			    	writer.println(inMsg);
+					TimeUnit.SECONDS.sleep(1);
+			    }
 			}
 			else
 			{
@@ -116,6 +129,6 @@ public class ReplayPreviousServlet extends HttpServlet
 		w.println("<b><p>ERROR in MY CODE </p></b>");
 	}
 
-	
+
 
 }

@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -85,6 +86,11 @@ public class ReplayNextServlet extends HttpServlet
 				}
 				//System.out.println("\n[ModelJsonServer.vatriablesHashMap]>: "+ ModelJsonServer.vatriablesHashMap);
 				ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
+				List<String> list= new ArrayList<String>();
+				list.add(msg.getNewTraceSize());
+				list.add(msg.getOldTraceSize());
+				
+				ModelJsonServer.mapTraceSizes.put(String.valueOf(ModelJsonServer.counter++),list);
 				ModelJsonServer.mainStack.push(msg);
 				
 				inMsg = msg.makeJSON();

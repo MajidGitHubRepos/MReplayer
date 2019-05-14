@@ -47,6 +47,7 @@ public class GraphEditor
 		context.addServlet(new ServletHolder(new ReplayPreviousServlet()), "/replayPrevious");
 		context.addServlet(new ServletHolder(new RunServlet()), "/run");
 		context.addServlet(new ServletHolder(new GetVariablesServlet()), "/getVariables");
+		context.addServlet(new ServletHolder(new LineChartServlet()), "/lineChartSrv");
 
 		ResourceHandler fileHandler = new ResourceHandler();
 		fileHandler.setResourceBase(".");

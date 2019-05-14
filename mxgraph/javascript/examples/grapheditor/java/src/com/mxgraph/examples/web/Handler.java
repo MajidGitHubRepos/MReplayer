@@ -15,6 +15,10 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+
 import java.io.*;
 import org.json.*;
 
@@ -66,7 +70,7 @@ public class Handler extends Thread {
 					JSONObject inMsgJSON = new JSONObject(inMsg);
 					//JSONArray inMsgJSONArr = inMsgJSON.getJSONArray("list");
 
-					Message msg = new Message( -1, null, null,null);
+					Message msg = new Message( -1, null, null,null,"0","0");
 					ModelJsonServer.inMsgQueue.put(msg);
 					inMsgJSON = null;
 					msg = null;
@@ -77,8 +81,12 @@ public class Handler extends Thread {
 					JSONObject inMsgJSON = new JSONObject(inMsg);
 					JSONArray inMsgJSONArrID = inMsgJSON.getJSONArray("traceID");
 					JSONArray inMsgJSONArrVar = inMsgJSON.getJSONArray("traceVar");
+					JSONArray inMsgJSONTraceSizes = inMsgJSON.getJSONArray("traceSizes");
+
+					//JSONObject inMsgJSONnewTraceSize = inMsgJSON.getJSONObject("newTraceSize");
+					//JSONObject inMsgJSONoldTraceSize = inMsgJSON.getJSONObject("oldTraceSize");
 					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString());
-					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString());
+					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString(), inMsgJSONTraceSizes.get(0).toString(), inMsgJSONTraceSizes.get(1).toString() );
 
 					for (int i=0;i<inMsgJSONArrVar.length();i++) {
 						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());

@@ -24,7 +24,6 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import ca.queensu.cs.server.ByteReader.Command;
 import ca.queensu.cs.server.SocketIO;
 
@@ -112,7 +111,7 @@ public final class ByteReader implements Runnable {
 	private static int commandId = 0;
 	private String[] capsuleNames;
 	private Semaphore sem;
-	public static Long eventCounter = new Long(0);;
+	public static Double eventCounter = new Double(0);;
 	private int totalSize = 0;
 	
 

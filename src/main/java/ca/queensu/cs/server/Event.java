@@ -20,7 +20,7 @@ public class Event implements Comparable<Event> {
 	private String eventTarget;
 	private String vectorTime;
 	private String regionName;
-	private Long counter;
+	private Double counter;
 	
 	
 	/*

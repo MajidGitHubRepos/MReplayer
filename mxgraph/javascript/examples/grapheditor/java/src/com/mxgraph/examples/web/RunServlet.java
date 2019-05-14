@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -77,7 +78,6 @@ public class RunServlet extends HttpServlet
 				String inMsg = "";
 				ModelJsonServer.run = true;
 				Message msg = new Message();
-
 				if (ModelJsonServer.run) {
 					if (!ModelJsonServer.tmpStack.isEmpty()) { //tmpStak is not null!
 						msg = ModelJsonServer.tmpStack.pop();
@@ -89,6 +89,10 @@ public class RunServlet extends HttpServlet
 						//break;
 					}
 					ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
+					List<String> list= new ArrayList<String>();
+					list.add(msg.getNewTraceSize());
+					list.add(msg.getOldTraceSize());
+					ModelJsonServer.mapTraceSizes.put(String.valueOf(ModelJsonServer.counter++),list);
 					ModelJsonServer.mainStack.push(msg);
 					inMsg = msg.makeJSON();
 					System.out.println("\n[Run]> inMsg: "+ inMsg);

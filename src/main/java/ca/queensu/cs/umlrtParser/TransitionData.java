@@ -266,7 +266,6 @@ public class TransitionData {
 	public String getCapsuleInstanceName() {
 		return this.capsuleInstanceName;
 	}
-
 	//------------[SETTERS]
 	//public void setName(String n) {
 	//	this.name = n;
