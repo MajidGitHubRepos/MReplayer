@@ -2923,7 +2923,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	this.sidebarContainer.style.top = tmp + 'px';
 	this.sidebarContainer.style.width = effHsplitPosition + 'px';
 	this.formatContainer.style.top = tmp + 'px';
-	this.formatContainer.style.width = fw + 'px';
+	this.formatContainer.style.width = fw +40+ 'px'; //--Majid
 	this.formatContainer.style.display = (this.format != null) ? '' : 'none';
 	
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
@@ -2966,7 +2966,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 			this.footerContainer.style.bottom = off + 'px';
 		}
 		
-		this.diagramContainer.style.right = fw + 'px';
+		this.diagramContainer.style.right = fw + 40 + 'px'; //--Majid
 		var th = 0;
 		
 		if (this.tabContainer != null)
@@ -3007,7 +3007,9 @@ EditorUi.prototype.createDivs = function()
 	this.diagramContainer = this.createDiv('geDiagramContainer');
 	this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
+	this.hsplitFormat = this.createDiv('geHsplit');
 	this.hsplit.setAttribute('title', mxResources.get('collapseExpand'));
+	this.hsplitFormat.setAttribute('title', mxResources.get('collapseExpand'));
 
 	// Sets static style for containers
 	this.menubarContainer.style.top = '0px';
@@ -3024,6 +3026,7 @@ EditorUi.prototype.createDivs = function()
 	this.footerContainer.style.bottom = '0px';
 	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex - 2;
 	this.hsplit.style.width = this.splitSize + 'px';
+	this.hsplitFormat.style.width = this.splitSize + 'px';
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
 	
 	if (this.sidebarFooterContainer)

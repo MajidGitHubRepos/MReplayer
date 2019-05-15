@@ -1509,8 +1509,19 @@ traceVarProcess = function(response,variablesHahMap){
 		for (var name in variables) {
 			//console.log(name);
 			//console.log(variables[name]);
-			var input1 = '<input type="text" disabled="true" size="20" value="' + name+ '" style="margin: 0px 6px 0px 0px;font-weight: bold;">';
-			var input2 = '<input type="text" disabled="true" size="3" value="' + variables[name]+ '" style="margin: 0px 6px 0px 0px;font-weight: bold;"> </br>';
+			var nameSplit = name.split("__");
+			var counter = 1;
+			var newName = "";
+			while (counter < nameSplit.length){
+				if (counter == 1)
+					newName = nameSplit[counter]
+				else
+					newName = newName+"__"+nameSplit[counter]
+				
+				counter++; 
+			}
+			var input1 = '<input type="text" disabled="true" size="17" value="' + newName+ '" style="margin: 0px 6px 0px 0px;font-weight: bold;">';
+			var input2 = '<input type="text" disabled="true" size="8" value="' + variables[name]+ '" style="margin: 0px 6px 0px 0px;font-weight: bold;"> </br>';
 			document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML + input1 + input2;
 		}
 		document.getElementById("variables").innerHTML = document.getElementById("variables").innerHTML + '</div>';
@@ -1548,7 +1559,7 @@ showLineChart = function(){
 
 
 			var updateInterval = 1000;
-			var dataLength = 20; // number of dataPoints visible at any point
+			var dataLength = cumTraceSize_ourApproach.length; // number of dataPoints visible at any point
 
 			var updateChart = function (count) {
 				if (lineChartProcessDone){
@@ -1596,8 +1607,8 @@ processLineChart = function(response){
 		x: parseInt(jsonVar.time, 10),
 		y: parseInt(jsonVar.sizes[0], 10)
 	});
-	console.log("cumTraceSize_ourApproach>>>");
-	console.log(cumTraceSize_ourApproach);
+	//console.log("cumTraceSize_ourApproach>>>");
+	//console.log(cumTraceSize_ourApproach);
 }
 
 //===============================================================================
