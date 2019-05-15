@@ -1059,7 +1059,6 @@ Sidebar.prototype.createItemLineChart = function(cells, title, showLabel, showTi
 			});*/
 	mxEvent.addListener(input, 'click', function()
 			{
-		//ui.actions.get('run').funct();
 		ui.actions.get('creatLineChart').funct();
 			});
 	div.appendChild(input);

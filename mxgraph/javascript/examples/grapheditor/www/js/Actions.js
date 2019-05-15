@@ -1540,17 +1540,20 @@ showLineChart = function(){
 			
 			var chart = new CanvasJS.Chart("chartContainer", {
 				title :{
-					text: "Cumulative size of received traces"
+					text: "Cumulative size of traces",
+					fontSize: 20
 				},
 				axisY: {
 					includeZero: false
 				},      
 				data: [{
+					name: "ourApproach",
 					type: "line",
 					color: "red",
 					dataPoints: cumTraceSize_ourApproach
 				},
 				{
+					name: "MDebugger",
 					type: "line",
 					color: "blue",
 					dataPoints: cumTraceSize_mdebugger
