@@ -221,11 +221,10 @@ public class CapsuleTracker implements Runnable{
 											listSoFarMachedTR.clear();
 											msgConsumedTmpQueue = true;
 											break;
-										}else {accessoryEventQ.add(currentEventTmp); 
-										if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());
+										}else { if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());accessoryEventQ.add(currentEventTmp);
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> listConsumedPaths: " + listConsumedPaths.toString());
-										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> BAD EVENT: " + currentEventTmp.allDataToString());
+										System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> BAD EVENT: " + currentEventTmp.allDataToString());
 										//break; 
 										} //req did not meet!
 									}else {}
@@ -241,7 +240,7 @@ public class CapsuleTracker implements Runnable{
 
 					if(!dataContainer.getEventQueue().isEmpty()) {
 						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
-					//if (currentEvent.getCapsuleInstance().contains("server2") && !currentEvent.getSourceName().isEmpty() &&currentEvent.getSourceName().contains("ToRunAsMaster"))System.err.println(dataContainer.getCapsuleInstance()+", -----[SRV2]--listConsumedPaths---"+listConsumedPaths.toString()+" __[currentEvent]______ : "+currentEvent.allDataToString());
+					if (currentEvent.getCapsuleInstance().contains("server2") && !currentEvent.getSourceName().isEmpty() &&currentEvent.getSourceName().contains("ToRunAsMaster"))System.err.println(dataContainer.getCapsuleInstance()+", -----[SRV2]--listConsumedPaths---"+listConsumedPaths.toString()+" __[currentEvent]______ : "+currentEvent.allDataToString());
 
 						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {calcTraceSizes(currentEvent);}
 						else if (eventQueueTmp.isEmpty() && isConsumable(currentEvent)) {
@@ -266,10 +265,10 @@ public class CapsuleTracker implements Runnable{
 										listPaths.clear();
 										listSoFarMachedTR.clear();
 										msgConsumedQueue = true;
-									}else {if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); 
+									}else {if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); eventQueueTmp.add(currentEvent);
 									//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
 									//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> listConsumedPaths: " + listConsumedPaths.toString());
-									//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> BAD EVENT: " + currentEvent.allDataToString());
+									System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> BAD EVENT: " + currentEvent.allDataToString());
 									} //req did not meet!
 								}else {}
 							}
