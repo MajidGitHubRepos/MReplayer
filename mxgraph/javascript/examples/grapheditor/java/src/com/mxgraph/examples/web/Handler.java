@@ -85,9 +85,9 @@ public class Handler extends Thread {
 
 					//JSONObject inMsgJSONnewTraceSize = inMsgJSON.getJSONObject("newTraceSize");
 					//JSONObject inMsgJSONoldTraceSize = inMsgJSON.getJSONObject("oldTraceSize");
-					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString());
+					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString() + ", inMsgJSONTraceSizes: "+inMsgJSONTraceSizes.toString());
 					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString(), inMsgJSONTraceSizes.get(0).toString(), inMsgJSONTraceSizes.get(1).toString() );
-
+					//System.out.println("\n>>>>> msg.getNewTraceSize: "+ msg.getNewTraceSize().toString() + ", msg.getOldTraceSize: "+msg.getOldTraceSize().toString());
 					for (int i=0;i<inMsgJSONArrVar.length();i++) {
 						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());
 						i++;

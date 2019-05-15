@@ -93,6 +93,8 @@ public class RunServlet extends HttpServlet
 					list.add(msg.getNewTraceSize());
 					list.add(msg.getOldTraceSize());
 					ModelJsonServer.mapTraceSizes.put(String.valueOf(ModelJsonServer.counter++),list);
+					//System.out.println("\n>>>>> ModelJsonServer.mapTraceSizes.get(String.valueOf(ModelJsonServer.counter--)): "+ ModelJsonServer.mapTraceSizes.get(String.valueOf(ModelJsonServer.counter--)).toString());
+
 					ModelJsonServer.mainStack.push(msg);
 					inMsg = msg.makeJSON();
 					System.out.println("\n[Run]> inMsg: "+ inMsg);

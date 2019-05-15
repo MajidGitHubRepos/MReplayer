@@ -9,7 +9,12 @@ function Actions(editorUi)
 	this.editorUi = editorUi;
 	this.actions = new Object();
 	this.init();
+	
 };
+var cumTraceSize_mdebugger = []; // dataPoints
+var cumTraceSize_ourApproach = []; // dataPoints
+var lineChart_times = []; // dataPoints
+var lineChartProcessDone = false;
 
 /**
  * Adds the default actions.
@@ -1079,81 +1084,21 @@ Actions.prototype.init = function()
 			{
 		if (graph.isEnabled())
 		{
-			
-			//take the next action from msgQueue
+			lineChartProcessDone = false;
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
-
-					responseProcess(this.responseText,editor,graph);
-					
-					var cumTraceSize_mdebugger = []; // dataPoints
-					var cumTraceSize_ourApproach = []; // dataPoints
+					console.log("this.responseText:::>"+this.responseText);
+					processLineChart(this.responseText);
+					lineChartProcessDone = true;
+					showLineChart();
 				}
 			};
 			xhttp.open("POST", "/lineChartSrv", true);
-			xhttp.send();
-			
-			
-			var elem = document.getElementById("showLineChartButton");
-			var showChart = true;
-			if (elem.value=="Show Line Chart") {elem.value = "Hide Line Chart"; showChart = true;}
-			else {elem.value=="Show Line Chart"; showChart = false;}
-
-			if (showChart){
-				var cumTraceSize_mdebugger = []; // dataPoints
-				var cumTraceSize_ourApproach = []; // dataPoints
-				var chart = new CanvasJS.Chart("chartContainer", {
-					title :{
-						text: "Cumulative size of received traces"
-					},
-					axisY: {
-						includeZero: false
-					},      
-					data: [{
-						type: "line",
-						color: "red",
-						dataPoints: cumTraceSize_ourApproach
-					},
-					{
-						type: "line",
-						color: "blue",
-						dataPoints: cumTraceSize_mdebugger
-					}]
-				});
-
-				var xVal = 0;
-				var yVal = 100; 
-				var updateInterval = 1000;
-				var dataLength = 20; // number of dataPoints visible at any point
-
-				var updateChart = function (count) {
-
-					count = count || 1;
-
-					//for (var j = 0; j < count; j++) {
-						yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
-						cumTraceSize_mdebugger.push({
-							x: xVal,
-							y: yVal
-						});
-						xVal++;
-					//}
-
-					if (cumTraceSize_mdebugger.length > dataLength) {
-						cumTraceSize_mdebugger.shift();
-					}
-
-					chart.render();
-				};
-
-				updateChart(dataLength);
-				setInterval(function(){updateChart()}, updateInterval);
-			}
-
+			xhttp.send();			
 		}
 			}, null, null, Editor.ctrlKey + '+Shift+C');
-	
+
 	//===============================[getVariables]====================================
 	this.addAction('getVariables', function()
 			{
@@ -1207,6 +1152,8 @@ Actions.prototype.init = function()
 					stopRun = true;
 					responseProcess(this.responseText,editor,graph);
 					variablesHahMap = traceVarProcess(this.responseText,variablesHahMap);
+					cumTraceSize_mdebugger.pop();
+					cumTraceSize_ourApproach.pop();
 				}
 			};
 			xhttp.open("POST", "/replayPrevious", true);
@@ -1572,6 +1519,87 @@ traceVarProcess = function(response,variablesHahMap){
 	return variables;
 	
 };
+
+//===============================================================================
+showLineChart = function(){
+		var elem = document.getElementById("updateLineChartButton");
+		var showChart = true;
+		//if (elem.value=="Show Line Chart") {elem.value = "Hide Line Chart"; showChart = true;}
+		//else {elem.value=="Show Line Chart"; showChart = false;}
+			
+			var chart = new CanvasJS.Chart("chartContainer", {
+				title :{
+					text: "Cumulative size of received traces"
+				},
+				axisY: {
+					includeZero: false
+				},      
+				data: [{
+					type: "line",
+					color: "red",
+					dataPoints: cumTraceSize_ourApproach
+				},
+				{
+					type: "line",
+					color: "blue",
+					dataPoints: cumTraceSize_mdebugger
+				}]
+			});
+
+
+			var updateInterval = 1000;
+			var dataLength = 20; // number of dataPoints visible at any point
+
+			var updateChart = function (count) {
+				if (lineChartProcessDone){
+					count = count || 1;
+	
+					if (cumTraceSize_mdebugger.length > dataLength) {
+						cumTraceSize_mdebugger.shift();
+					}
+					if (cumTraceSize_ourApproach.length > dataLength) {
+						cumTraceSize_ourApproach.shift();
+					}
+	
+					chart.render();
+				}
+				lineChartProcessDone = false;
+				/*var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						//console.log("this.responseText:::>"+this.responseText);
+						processLineChart(this.responseText);
+						lineChartProcessDone = true;
+					}
+				};
+				xhttp.open("POST", "/lineChartSrv", true);
+				xhttp.send();*/
+			};
+
+			updateChart(dataLength);
+			setInterval(function(){updateChart()}, updateInterval);
+
+}
+
+//===============================================================================
+processLineChart = function(response){
+	
+	 console.log("RES: "+response);
+	var jsonVar = JSON.parse(response);
+	lineChart_times.push(jsonVar.time);
+	
+	cumTraceSize_mdebugger.push({
+		x: parseInt(jsonVar.time, 10),
+		y: parseInt(jsonVar.sizes[1], 10)
+	});
+	cumTraceSize_ourApproach.push({
+		x: parseInt(jsonVar.time, 10),
+		y: parseInt(jsonVar.sizes[0], 10)
+	});
+	console.log("cumTraceSize_ourApproach>>>");
+	console.log(cumTraceSize_ourApproach);
+}
+
 //===============================================================================
 responseProcess = function(response,editor,graph){
 

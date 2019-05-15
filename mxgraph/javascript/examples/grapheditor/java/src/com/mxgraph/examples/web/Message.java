@@ -86,7 +86,7 @@ public class Message implements Comparable<Message> {
 		
 			result = result.substring(0, result.length() - 1);
 		}
-		return result+"],\"traceSizes\":["+newTraceSize+","+oldTraceSize+"]}";
+		return result+"],\"traceSizes\":[\""+newTraceSize+"\",\""+oldTraceSize+"\"]}";
 		
 	}
 } 

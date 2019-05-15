@@ -1047,18 +1047,16 @@ Sidebar.prototype.createItemLineChart = function(cells, title, showLabel, showTi
 	div.appendChild(info);
 	
 	var input = document.createElement('input');
-	input.value = "Show Line Chart";
+	input.value = "Update Line Chart";
 	input.type = "button";
-	input.id = "showLineChartButton";
+	input.id = "updateLineChartButton";
 	input.style.textAlign = 'center';
-	
-	//info.innerHTML = info.innerHTML + '</br><input type="button" value="Show Line Chart" id ="showLineChartButton" onclick="lineChart()">';
-	
-	mxEvent.addListener(input, 'click', function()
+		
+	/*mxEvent.addListener(input, 'click', function()
 			{
 		ui.actions.get('run').funct();
 		//ui.actions.get('creatLineChart').funct();
-			});
+			});*/
 	mxEvent.addListener(input, 'click', function()
 			{
 		//ui.actions.get('run').funct();

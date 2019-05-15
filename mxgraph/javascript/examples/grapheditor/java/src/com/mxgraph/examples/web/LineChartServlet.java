@@ -69,44 +69,15 @@ public class LineChartServlet extends HttpServlet
 		{
 			if (request.getContentLength() < Constants.MAX_REQUEST_SIZE)
 			{
-				//Map<String, String> post = parseMultipartRequest(request);
-				//String xml = new String(post.get("upfile").getBytes(ENCODING),"UTF-8");
-				//String filename = post.get("filename");
-
-				// Uses JavaScript to load the XML on the client-side
-				//String name=request.getParameter("name");
-				String inMsg = "";
-				ModelJsonServer.run = true;
-				Message msg = new Message();
-				if (ModelJsonServer.run) {
-					if (!ModelJsonServer.tmpStack.isEmpty()) { //tmpStak is not null!
-						msg = ModelJsonServer.tmpStack.pop();
-					}else if (!ModelJsonServer.inMsgQueue.isEmpty()) { //tmpStak is not null!
-						msg = ModelJsonServer.inMsgQueue.take();
-					}else {
-						ModelJsonServer.run = false;
-						ModelJsonServer.inMsgQueue.put(msg);
-						//break;
-					}
-					ModelJsonServer.updateVatriablesHashMap(msg.getVatriablesHashMap());
-					List<String> list= new ArrayList<String>();
-					list.add(msg.getNewTraceSize());
-					list.add(msg.getOldTraceSize());
-					ModelJsonServer.mapTraceSizes.put(String.valueOf(ModelJsonServer.counter++),list);
-					ModelJsonServer.mainStack.push(msg);
-					inMsg = msg.makeJSON();
-					System.out.println("\n[Run]> inMsg: "+ inMsg);
+					List<String> listTraceSizes = new ArrayList<String>();
+					listTraceSizes = ModelJsonServer.mapTraceSizes.get(String.valueOf(ModelJsonServer.counter-1));
+					System.out.println("\n2 [LineChartServlet]> listTraceSizes: "+ listTraceSizes.toString());
+					String inMsg =  "{\"time\":\""+String.valueOf(ModelJsonServer.counter-1)+"\",\"sizes\":[\""+listTraceSizes.get(0)+"\", \""+ listTraceSizes.get(1)+ "\"]}";
+					//System.out.println("\n[LineChartServlet]> inMsg: "+ inMsg);
 					writer.println(inMsg);
 					TimeUnit.SECONDS.sleep(1);
 
-			    }else {
-			    	//Doing run in not valid ! null msg will be sent!
-			    	inMsg = msg.makeJSON();
-			    	writer.println(inMsg);
-					TimeUnit.SECONDS.sleep(1);
-			    }
-			}
-			else
+			}else
 			{
 				error(writer, "drawingTooLarge");
 			}
