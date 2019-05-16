@@ -5512,6 +5512,7 @@ DiagramFormatPanel.prototype.addStyleOps = function(div)
 DiagramFormatPanel.prototype.addReplayOps = function(div)
 {
 	div.style.margin = '0 auto';
+	
 	var btn = mxUtils.button(mxResources.get('editData'), mxUtils.bind(this, function(evt)
 			{
 		this.editorUi.actions.get('editData').funct();
@@ -5519,8 +5520,8 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 
 	div.appendChild(this.createTitle(mxResources.get('replaySection')));
 	
-	var btnNext = document.createElement('div');
-	
+	var buttons = document.createElement('div');
+	buttons.style.textAlign = 'center';
 	var ui = this.editorUi;
 	//if (this.showCloseButton)
 	//{
@@ -5539,7 +5540,7 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 				{
 			ui.actions.get('replayPrevious').funct();
 				});
-		div.appendChild(imgBack);
+		buttons.appendChild(imgBack);
 		
 		//====
 		
@@ -5556,7 +5557,7 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 				{
 			ui.actions.get('run').funct();
 				});
-		div.appendChild(imgRun);
+		buttons.appendChild(imgRun);
 		
 		var imgStop = document.createElement('img');
 		imgStop.setAttribute('border', '0');
@@ -5571,7 +5572,7 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 				{
 			ui.actions.get('stopRun').funct();
 				});
-		div.appendChild(imgStop);
+		buttons.appendChild(imgStop);
 		
 		//====
 		
@@ -5592,8 +5593,10 @@ DiagramFormatPanel.prototype.addReplayOps = function(div)
 			ui.actions.get('replayNext').funct();
 				});
 		
-		div.appendChild(imgNext);
+		buttons.appendChild(imgNext);
 		
+		
+		div.appendChild(buttons);
 	
 	return div;
 };

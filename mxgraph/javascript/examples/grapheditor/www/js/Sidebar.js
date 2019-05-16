@@ -87,7 +87,7 @@ Sidebar.prototype.init = function()
 	
 	this.addSearchPalette(true);
 	this.addGeneralPalette(false);
-	this.addLineChartPalette(true);
+	this.addLineChartPalette(false);
 	/*this.addMiscPalette(false);
 	this.addAdvancedPalette(false);
 	this.addBasicPalette(dir);
@@ -1031,11 +1031,6 @@ Sidebar.prototype.createItemLineChart = function(cells, title, showLabel, showTi
 {
 	var div = document.createElement('div');
 	var ui = this.editorUi;
-	/*elt.setAttribute('id', 'chartContainer');
-	elt.setAttribute('style', 'height: 370px; width:100%;');
-	elt.setAttribute('href', 'javascript:void(0);');
-	elt.className = 'geItem';
-	*/
 	
 	var info = document.createElement('div');
 	info.className = 'geTitle';
@@ -1043,14 +1038,14 @@ Sidebar.prototype.createItemLineChart = function(cells, title, showLabel, showTi
 		'color:gray;padding:6px 0px 0px 0px !important;margin:4px 8px 4px 8px;' +
 		'text-align:center;cursor:default !important';
 	
-	mxUtils.write(info,"Line Chart is under construction!");
+	mxUtils.write(info,"Press the update button to see the cumulative size of traces!");
 	div.appendChild(info);
 	
 	var input = document.createElement('input');
 	input.value = "Update Line Chart";
 	input.type = "button";
 	input.id = "updateLineChartButton";
-	input.style.textAlign = 'center';
+	div.style.textAlign = 'center';
 		
 	/*mxEvent.addListener(input, 'click', function()
 			{
