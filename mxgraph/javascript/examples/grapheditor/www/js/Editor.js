@@ -11,6 +11,8 @@ Editor = function(chromeless, themes, model, graph, editable)
 	var lastIDsLength = 0;
 	var lastID = 0;
 	var lastStyle; //--Majid
+	var lastStyleGreenState; //--Majid
+	var lastStyleGrayState; //--Majid
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
 	this.initStencilRegistry();

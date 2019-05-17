@@ -208,7 +208,7 @@ public class CapsuleTracker implements Runnable{
 										if (isRequirementMet(listPaths.get(0))) {
 											TrackerMaker.listNotMetReq.clear();
 											calcTraceSizes(currentEventTmp);
-											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap,TrackerMaker.newTraceSize,TrackerMaker.oldTraceSize)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap,TrackerMaker.newTraceSize,TrackerMaker.oldTraceSize,makeStates())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEventTmp.getSourceName()));
 											updateLocalHeap(listPaths.get(0),msgSender,false);
@@ -253,7 +253,7 @@ public class CapsuleTracker implements Runnable{
 									if (isRequirementMet(listPaths.get(0))) {
 										TrackerMaker.listNotMetReq.clear();
 										calcTraceSizes(currentEvent);
-										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize, makeStates())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 										listAllPathTaken.add(listPaths.get(0));
 										addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEvent.getSourceName()));
 										updateLocalHeap(listPaths.get(0),msgSender,false);
@@ -302,6 +302,44 @@ public class CapsuleTracker implements Runnable{
 				e.printStackTrace();
 			}
 		}
+	}
+	//==================================================================	
+	//====================================================[isCompositeState]
+	//==================================================================	
+	public boolean isCompositeState(String stateId) {
+		String activeState = ParserEngine.mapStateData.get(stateId).getStateName();
+		for (Entry<String, List<Map<String, String>>> entry : PES.mapModelRegionPaths.entrySet()) {
+			if (entry.getKey().contains(dataContainer.getCapsuleInstance())) {
+				List<Map<String, String>>paths = entry.getValue();
+				for (int i = 0; i<paths.size(); i++) {
+					String state = paths.get(i).values().toString().replaceAll("\\[", "").replaceAll("\\]","");
+					if (activeState.contentEquals(state))
+						return true;
+				}
+			}
+		}
+		return false;
+		
+	}
+	//==================================================================	
+	//====================================================[makeStates]
+	//==================================================================	
+	public List<String> makeStates() {
+		List<String> listStates = new ArrayList<>();
+		
+		//find the active state
+		String stateId = dataContainer.mapRegionCurrentState.get(dataContainer.activeRegion);
+		String activeState = ParserEngine.mapStateData.get(stateId).getStateName();
+		listStates.add(activeState);
+		
+		for (Entry<String, String> entry : dataContainer.mapRegionCurrentState.entrySet()) {
+			if (!activeState.contentEquals(ParserEngine.mapStateData.get(entry.getValue()).getStateName()) && !isCompositeState(entry.getValue()))
+				listStates.add(ParserEngine.mapStateData.get(entry.getValue()).getStateName());
+		}
+		
+		
+		
+		return listStates;
 	}
 	//==================================================================	
 	//====================================================[calcTraceSizes]
@@ -433,11 +471,11 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[jsonToServer]
 	//==================================================================
-	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize) throws Exception {
+	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize, List<String> activeStates) throws Exception {
 		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
-
-				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables, newTraceSize, oldTraceSize);
+				
+				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables, newTraceSize, oldTraceSize, activeStates);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
 
 			} catch (IOException e) {
@@ -452,7 +490,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[makeJSONobj]
 	//==================================================================
-	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize) {
+	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize, List<String> activeStates) {
 		JSONObject jsonObj = new JSONObject();
 		JSONArray traceID = new JSONArray();
 		JSONArray listTRs = new JSONArray();
@@ -490,7 +528,13 @@ public class CapsuleTracker implements Runnable{
 		JSONArray traceSizes = new JSONArray();
 		traceSizes.add(newTraceSize);
 		traceSizes.add(oldTraceSize);
-		jsonObj.put("traceSizes", traceSizes);		
+		jsonObj.put("traceSizes", traceSizes);	
+		
+		JSONArray stateNameArray = new JSONArray();
+		for (String stateName : activeStates) {
+			stateNameArray.add(stateName);
+		}
+		jsonObj.put("activeStates", stateNameArray);	
 		
 		return jsonObj;
 

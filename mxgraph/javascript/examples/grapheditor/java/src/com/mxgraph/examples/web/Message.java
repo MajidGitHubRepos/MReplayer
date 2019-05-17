@@ -12,8 +12,10 @@ public class Message implements Comparable<Message> {
 	private HashMap<String, String> vatriablesHashMap;
 	private String newTraceSize;
 	private String oldTraceSize;
+	private String greenState;
+	private String grayState;
 	
-	public Message(int priorityEventCounter, String capsuleName, String region, String path, String newTraceSize, String oldTraceSize ) {
+	public Message(int priorityEventCounter, String capsuleName, String region, String path, String newTraceSize, String oldTraceSize, String greenState, String grayState ) {
 		this.priorityEventCounter = priorityEventCounter;
 		this.capsuleName = capsuleName;
 		this.region = region;
@@ -21,9 +23,11 @@ public class Message implements Comparable<Message> {
 		this.vatriablesHashMap = new HashMap<String, String>();
 		this.oldTraceSize = oldTraceSize;
 		this.newTraceSize = newTraceSize;
+		this.greenState = greenState;
+		this.grayState = grayState;
 	}
 	public Message() {
-		this(0,null,null, null,"0","0");
+		this(0,null,null, null,"0","0", null,null);
 	}
 	public int getPriorityEventCounter() {
 		return priorityEventCounter;
@@ -49,7 +53,13 @@ public class Message implements Comparable<Message> {
 	public HashMap<String, String> getVatriablesHashMap() {
 		return vatriablesHashMap;
 	}
-
+	public void setGreenState(String state) {
+		greenState = state;
+	}
+	public void setGrayState(String state) {
+		grayState = state;
+	}
+	
 	@Override
 	public int compareTo(Message msg) {
 		return priorityEventCounter.compareTo(msg.getPriorityEventCounter());
@@ -86,7 +96,7 @@ public class Message implements Comparable<Message> {
 		
 			result = result.substring(0, result.length() - 1);
 		}
-		return result+"],\"traceSizes\":[\""+newTraceSize+"\",\""+oldTraceSize+"\"]}";
+		return result+"],\"traceSizes\":[\""+newTraceSize+"\",\""+oldTraceSize+"\"], \"activeStates\":[\""+greenState+"\", \""+grayState+"\"]}";
 		
 	}
 } 

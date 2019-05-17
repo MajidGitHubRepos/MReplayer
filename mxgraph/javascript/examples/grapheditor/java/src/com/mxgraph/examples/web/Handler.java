@@ -70,7 +70,7 @@ public class Handler extends Thread {
 					JSONObject inMsgJSON = new JSONObject(inMsg);
 					//JSONArray inMsgJSONArr = inMsgJSON.getJSONArray("list");
 
-					Message msg = new Message( -1, null, null,null,"0","0");
+					Message msg = new Message( -1, null, null,null,"0","0", null, null);
 					ModelJsonServer.inMsgQueue.put(msg);
 					inMsgJSON = null;
 					msg = null;
@@ -82,17 +82,23 @@ public class Handler extends Thread {
 					JSONArray inMsgJSONArrID = inMsgJSON.getJSONArray("traceID");
 					JSONArray inMsgJSONArrVar = inMsgJSON.getJSONArray("traceVar");
 					JSONArray inMsgJSONTraceSizes = inMsgJSON.getJSONArray("traceSizes");
+					JSONArray inMsgJSONActiveStates = inMsgJSON.getJSONArray("activeStates");
 
 					//JSONObject inMsgJSONnewTraceSize = inMsgJSON.getJSONObject("newTraceSize");
 					//JSONObject inMsgJSONoldTraceSize = inMsgJSON.getJSONObject("oldTraceSize");
-					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString() + ", inMsgJSONTraceSizes: "+inMsgJSONTraceSizes.toString());
-					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString(), inMsgJSONTraceSizes.get(0).toString(), inMsgJSONTraceSizes.get(1).toString() );
-					//System.out.println("\n>>>>> msg.getNewTraceSize: "+ msg.getNewTraceSize().toString() + ", msg.getOldTraceSize: "+msg.getOldTraceSize().toString());
+					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString() + ", inMsgJSONTraceSizes: "+inMsgJSONTraceSizes.toString()+", activeStates: "+ inMsgJSONActiveStates.toString() );
+					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString(), inMsgJSONTraceSizes.get(0).toString(), inMsgJSONTraceSizes.get(1).toString(), null, null);
+					
+					msg.setGreenState(inMsgJSONActiveStates.get(0).toString());
+					
+					if (inMsgJSONActiveStates.length()>1)
+						msg.setGrayState(inMsgJSONActiveStates.get(1).toString());
+						
+					
 					for (int i=0;i<inMsgJSONArrVar.length();i++) {
 						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());
 						i++;
 						String varValue = inMsgJSONArrVar.get(i).toString();
-						//ModelJsonServer.vatriablesHashMap.put(varName, varValue); apply them when msg is consumed 
 						msg.putToVatriablesHashMap(varName, varValue); 
 					}
 					//showVatriablesHashMap();

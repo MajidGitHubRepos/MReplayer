@@ -1633,13 +1633,20 @@ responseProcess = function(response,editor,graph){
 		
 		var itemName = listChanges.traceID[2];
 		
+		var greenState = listChanges.activeStates[0];
+		var grayState = listChanges.activeStates[1];
+		
 		var jsonVar = JSON.stringify(itemName);
 		console.log("itemName============>"+JSON.stringify(itemName));
-		//console.log("itemName============>"+JSON.stringify(itemName.length));
+		console.log("greenState============>"+greenState);
+		console.log("grayState============>"+grayState);
 		//console.log("itemName============>"+itemName.length);
 		
 		var i =0;
 		var ids = [];
+		
+		var greenStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(greenState).replace(/\"/g, ''));
+		var grayStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(grayState).replace(/\"/g, ''));
 		
 		if (itemName.length == 1){
 			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));
@@ -1692,6 +1699,16 @@ responseProcess = function(response,editor,graph){
 
 				if (cell != null)
 				{
+					if ((i == 0) && editor.lastStyleGreenState != ""){
+						graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyleGreenState[mxConstants.STYLE_FILLCOLOR] , [cell]);
+						graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyleGreenState[mxConstants.STYLE_STROKECOLOR] , [cell]);
+						graph.removeCellOverlays(cell);
+					}
+					if ((i == 1) && editor.lastStyleGrayState != ""){
+						graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, editor.lastStyleGrayState[mxConstants.STYLE_FILLCOLOR] , [cell]);
+						graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, editor.lastStyleGrayState[mxConstants.STYLE_STROKECOLOR] , [cell]);
+						graph.removeCellOverlays(cell);
+					}
 					//graph.setCellStyles(editor.lastStyle);
 					//console.log(cell);
 					// Resets the fillcolor and the overlay
@@ -1700,10 +1717,31 @@ responseProcess = function(response,editor,graph){
 					graph.removeCellOverlays(cell);
 				}
 			}
+			editor.lastStyleGreenState = "";
+			editor.lastStyleGrayState = "";
 			
 			if (editor.lastIDsLength > 0)
 				editor.cleanLastIDs();
 			
+			cell = model.getCell(greenStateID);
+			if (cell != null)
+			{
+				editor.lastStyleGreenState = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'green' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'green' , [cell]);
+				graph.removeCellOverlays(cell);
+				editor.pushToLastIDs(greenStateID);
+			}
+			
+			cell = model.getCell(grayStateID);
+			if (cell != null)
+			{
+				editor.lastStyleGrayState = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'gray' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'gray' , [cell]);
+				graph.removeCellOverlays(cell);
+				editor.pushToLastIDs(grayStateID);
+			}
 			for (i =0; i<ids.length; i++){
 				cell = model.getCell(ids[i]);
 				//console.log("ids[i]: "+ ids[i] +"---------------> cell: " + cell );
@@ -1720,6 +1758,7 @@ responseProcess = function(response,editor,graph){
 				}
 				editor.pushToLastIDs(ids[i]);
 			}
+			
 
 		}
 		finally
