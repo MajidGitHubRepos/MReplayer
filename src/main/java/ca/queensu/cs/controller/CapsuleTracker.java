@@ -97,6 +97,7 @@ public class CapsuleTracker implements Runnable{
     private PriorityBlockingQueue <Event> accessoryEventQ;
     private List<String> listSupplementaryAC;
     private String supplementaryActiveRegion;
+    private Double eventMinCounter;
 
     //private List<String> listTrigger;
 
@@ -104,6 +105,7 @@ public class CapsuleTracker implements Runnable{
 
 	public CapsuleTracker(Semaphore semCapsuleTracker, OutputStream outputFileStream, int[] logicalVectorTime, DataContainer dataContainer) {
 		//this.listTrigger = new ArrayList<String>();
+		this.eventMinCounter = new Double(0);
 		this.supplementaryActiveRegion = "";
 		this.accessoryEventQ = new PriorityBlockingQueue<Event>();
 		this.listSupplementaryAC = new ArrayList<String>();
@@ -183,12 +185,15 @@ public class CapsuleTracker implements Runnable{
 			try {
 				if (((dataContainer.getEventQueue().size() > 0) || (eventQueueTmp.size() > 0))) {
 				semCapsuleTracker.acquire();
-
+				
+				/*
 				if (TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance()))
 						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 				else
 					Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				if ( /*isPerRequirementMet() &&*/ (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) && !TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) {
+				*/
+				
+				if ( /*isPerRequirementMet() &&*/ (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) /*&& !TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())*/) {
 					Event currentEventTmp = new Event();
 					Event currentEvent = new Event();
 					msgConsumedTmpQueue = false;
@@ -197,7 +202,29 @@ public class CapsuleTracker implements Runnable{
 					if (!eventQueueTmp.isEmpty()) {
 						int eventQueueTmpSize = eventQueueTmp.size();
 						for (int j = 0; j < eventQueueTmpSize;  j++) {
+							
+							/*
+							if ((eventMinCounter >  0) && (eventQueueTmpSize > 1)) {
+								PriorityBlockingQueue <Event> tmpEventQ = new PriorityBlockingQueue<Event>();
+								boolean found = false;
+								do {
+									currentEventTmp = eventQueueTmp.take();
+									if (currentEventTmp.getCounter() > eventMinCounter)  {
+										listPaths.clear();
+										break;
+									}else {
+										tmpEventQ.add(currentEventTmp);
+									}
+								}while(true);
+								
+								if (tmpEventQ.size() > 0)
+									eventQueueTmp.addAll(tmpEventQ);
+								
+							}else 
+								currentEventTmp = eventQueueTmp.take();
+							*/
 							currentEventTmp = eventQueueTmp.take();
+							
 							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {calcTraceSizes(currentEventTmp);}
 							else if (isConsumable(currentEventTmp)) {
 								if (currentStatus.contentEquals("TRANISTIONEND")) {
@@ -220,11 +247,14 @@ public class CapsuleTracker implements Runnable{
 											listPaths.clear();
 											listSoFarMachedTR.clear();
 											msgConsumedTmpQueue = true;
+											//eventMinCounter = new Double (0);
 											break;
-										}else { if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());accessoryEventQ.add(currentEventTmp);
+										}else {accessoryEventQ.add(currentEventTmp); listPaths.clear();
+										//if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> listConsumedPaths: " + listConsumedPaths.toString());
-										System.out.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> BAD EVENT: " + currentEventTmp.allDataToString());
+										//System.out.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> BAD EVENT: " + currentEventTmp.allDataToString());
+										//TrackerMaker.showAllMSGlists();
 										//break; 
 										} //req did not meet!
 									}else {}
@@ -239,42 +269,47 @@ public class CapsuleTracker implements Runnable{
 					}
 
 					if(!dataContainer.getEventQueue().isEmpty()) {
-						currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
-					if (currentEvent.getCapsuleInstance().contains("server2") && !currentEvent.getSourceName().isEmpty() &&currentEvent.getSourceName().contains("ToRunAsMaster"))System.err.println(dataContainer.getCapsuleInstance()+", -----[SRV2]--listConsumedPaths---"+listConsumedPaths.toString()+" __[currentEvent]______ : "+currentEvent.allDataToString());
+						boolean eventFound = true;
+						do {
+							currentEvent =  dataContainer.eventQueue.take(); //push it back to the queue if it dose not consume !
+							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {calcTraceSizes(currentEvent);}
+							else if (eventQueueTmp.isEmpty() && isConsumable(currentEvent)) {
 
-						if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEvent)) {calcTraceSizes(currentEvent);}
-						else if (eventQueueTmp.isEmpty() && isConsumable(currentEvent)) {
-							
-							if (currentStatus.contentEquals("TRANISTIONEND")) {
-								if ((currentEvent.getSourceName() != null) && validMatchedPath(PES.mapQnameId.get(currentEvent.getSourceName()))) {
-									listSoFarMachedTR.add(PES.mapQnameId.get(currentEvent.getSourceName()));
+								if (currentStatus.contentEquals("TRANISTIONEND")) {
+									if ((currentEvent.getSourceName() != null) && validMatchedPath(PES.mapQnameId.get(currentEvent.getSourceName()))) {
+										listSoFarMachedTR.add(PES.mapQnameId.get(currentEvent.getSourceName()));
+									}
+									if ((listPaths.size() == 1) && listSoFarMachedTR.toString().replaceAll("\\s","").contains(listPaths.get(0))) {
+										if (isRequirementMet(listPaths.get(0))) {
+											TrackerMaker.listNotMetReq.clear();
+											calcTraceSizes(currentEvent);
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize, makeStates())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											listAllPathTaken.add(listPaths.get(0));
+											addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEvent.getSourceName()));
+											updateLocalHeap(listPaths.get(0),msgSender,false);
+											updateCurrentState();
+											if (!msgTobeConsumed.isEmpty())
+												dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
+											msgTobeConsumed = "";
+											msgSender = "";
+											listPaths.clear();
+											listSoFarMachedTR.clear();
+											msgConsumedQueue = true;
+											//eventMinCounter = new Double (0);
+										}else {eventQueueTmp.add(currentEvent);
+										//if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); 
+										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
+										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> listConsumedPaths: " + listConsumedPaths.toString());
+										//System.out.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> BAD EVENT: " + currentEvent.allDataToString());
+										//eventMinCounter = currentEvent.getCounter();
+										//TrackerMaker.showAllMSGlists();
+										eventFound = false;
+										} //req did not meet!
+									}else {}
 								}
-								if ((listPaths.size() == 1) && listSoFarMachedTR.toString().replaceAll("\\s","").contains(listPaths.get(0))) {
-									if (isRequirementMet(listPaths.get(0))) {
-										TrackerMaker.listNotMetReq.clear();
-										calcTraceSizes(currentEvent);
-										if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize, makeStates())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
-										listAllPathTaken.add(listPaths.get(0));
-										addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEvent.getSourceName()));
-										updateLocalHeap(listPaths.get(0),msgSender,false);
-										updateCurrentState();
-										if (!msgTobeConsumed.isEmpty())
-											dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
-										msgTobeConsumed = "";
-										msgSender = "";
-										listPaths.clear();
-										listSoFarMachedTR.clear();
-										msgConsumedQueue = true;
-									}else {if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); eventQueueTmp.add(currentEvent);
-									//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
-									//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> listConsumedPaths: " + listConsumedPaths.toString());
-									System.out.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> BAD EVENT: " + currentEvent.allDataToString());
-									} //req did not meet!
-								}else {}
-							}
-						}else {eventQueueTmp.add(currentEvent);
+							}else {eventQueueTmp.add(currentEvent); eventFound = false;} //evnet is out of order
+						}while(eventFound);
 						
-						} //evnet is out of order
 					}
 
 
@@ -721,7 +756,7 @@ public class CapsuleTracker implements Runnable{
 			
 			return true;
 		}else {
-			showInfo(null);
+			//showInfo(null);
 			//System.err.println("__________ There are too much path in the listPaths __________ size: " + listPaths.size());
 			//System.exit(1);
 		}
@@ -1316,11 +1351,13 @@ public class CapsuleTracker implements Runnable{
 	//==============================================[isRequirementMet]
 	//==================================================================	
 	public boolean isRequirementMet(String path) throws InterruptedException {
-
+		Thread.currentThread().sleep(50);
+		
 		boolean result = false;
 		msgTobeConsumed = "";
 		List<String> listTrigger = new ArrayList<String>();
 		List<String> listGuards = new ArrayList<String>();
+		List<String> listActionCode = new ArrayList<String>();
 		
 		listTrigger = mapPathTrigger.get(path);
 		listGuards = mapPathGuards.get(path);
@@ -1353,9 +1390,42 @@ public class CapsuleTracker implements Runnable{
 					break;
 			}
 		}
-		
+		/*
 		//GUARD EVALUATION
 		if (result && listGuards != null) {
+			//make a local copy before guard evaluation
+			Map<String, Value> maplocalHeapCopy = new HashMap<String, Value>();
+			maplocalHeapCopy.putAll(maplocalHeap);
+			updateLocalHeap(path,"",true);
+			
+			if (path.contains(",")) {
+				String [] TRs =  path.split("\\,"); 
+				for (String tr : TRs) {
+					String ac = ParserEngine.mapTransitionData.get(tr).getActionCode();
+					if (!ac.isEmpty())
+						interpretActionCode(ac,msgSender, true);
+					List<String> listGuard = ParserEngine.mapTransitionData.get(tr).getGuard();
+					if (!listGuard.isEmpty()) {
+						for (String guard : listGuard) {
+							interpretActionCode(guard,msgSender, true);
+							boolean guardBool = maplocalHeap.get("__GUARD__").asBoolean();
+							if (!guardBool) {
+								System.out.println(dataContainer.getCapsuleInstance() +", path: "+path+", listSoFarMachedTR: "+listSoFarMachedTR.toString() + ", GUARD evaluated false!, "+guard);
+								result = false;
+								break;
+							}
+							maplocalHeap.remove("__GUARD__");
+						}
+						if (!result)
+							break;
+					}		
+				}
+			}else {}//path with one tr does not have Guard!
+			maplocalHeap.clear();
+			maplocalHeap.putAll(maplocalHeapCopy);
+		}
+		*/
+		/*if (result && listGuards != null) {
 			//make a local copy before guard evaluation
 			Map<String, Value> maplocalHeapCopy = new HashMap<String, Value>();
 			maplocalHeapCopy.putAll(maplocalHeap);
@@ -1368,6 +1438,7 @@ public class CapsuleTracker implements Runnable{
 					boolean guard = maplocalHeap.get("__GUARD__").asBoolean();
 					//System.out.println("guard: " + guard);
 					if (!guard) {
+						System.out.println(dataContainer.getCapsuleInstance() +", path: "+path+", listSoFarMachedTR: "+listSoFarMachedTR.toString() + ", GUARD evaluated false!, "+ac);
 						result = false;
 						break;
 					}
@@ -1376,7 +1447,7 @@ public class CapsuleTracker implements Runnable{
 			}
 			maplocalHeap.clear();
 			maplocalHeap.putAll(maplocalHeapCopy);
-		}
+		}*/
 	
 		//if (!result)
 		//	TrackerMaker.showAllMSGlists();
@@ -1418,8 +1489,8 @@ public class CapsuleTracker implements Runnable{
 				result = false;
 			}else if (listPaths.size() == 0) {
 				result = false;
-				System.err.println("__________ No Path Found! __________[EVENT]:" + event.allDataToString());
-				System.exit(1);
+				//System.err.println("__________ No Path Found! __________[EVENT]:" + event.allDataToString());
+				//System.exit(1);
 			}
 		}
 		return result;

@@ -67,6 +67,7 @@ public class Event implements Comparable<Event> {
 		this.eventTarget=eventTarget; 
 		this.vectorTime = vectorTime;
 		this.counter=ByteReader.eventCounter++;
+		//this.counter=new Double(0);
 		if (this.eventSourceName  != null) {
 			this.regionName = extractAllRegions(this.eventSourceName);
 		}else
@@ -130,6 +131,9 @@ public class Event implements Comparable<Event> {
 		return regionName;
 	}
 	
+	public Double getCounter() {
+		return counter;
+	}
 	public String extractAllRegions(String qName) {
 		String allRegions = "";
 		String [] qNameSplit = qName.split("\\::");
