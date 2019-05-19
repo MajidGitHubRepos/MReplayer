@@ -186,12 +186,10 @@ public class CapsuleTracker implements Runnable{
 				if (((dataContainer.getEventQueue().size() > 0) || (eventQueueTmp.size() > 0))) {
 				semCapsuleTracker.acquire();
 				
-				/*
 				if (TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance()))
 						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 				else
 					Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				*/
 				
 				if ( /*isPerRequirementMet() &&*/ (!eventQueueTmp.isEmpty() || !dataContainer.getEventQueue().isEmpty()) /*&& !TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())*/) {
 					Event currentEventTmp = new Event();
@@ -203,26 +201,7 @@ public class CapsuleTracker implements Runnable{
 						int eventQueueTmpSize = eventQueueTmp.size();
 						for (int j = 0; j < eventQueueTmpSize;  j++) {
 							
-							/*
-							if ((eventMinCounter >  0) && (eventQueueTmpSize > 1)) {
-								PriorityBlockingQueue <Event> tmpEventQ = new PriorityBlockingQueue<Event>();
-								boolean found = false;
-								do {
-									currentEventTmp = eventQueueTmp.take();
-									if (currentEventTmp.getCounter() > eventMinCounter)  {
-										listPaths.clear();
-										break;
-									}else {
-										tmpEventQ.add(currentEventTmp);
-									}
-								}while(true);
-								
-								if (tmpEventQ.size() > 0)
-									eventQueueTmp.addAll(tmpEventQ);
-								
-							}else 
-								currentEventTmp = eventQueueTmp.take();
-							*/
+
 							currentEventTmp = eventQueueTmp.take();
 							
 							if (!listConsumedPaths.isEmpty() && isPassedEvent(currentEventTmp)) {calcTraceSizes(currentEventTmp);}
@@ -250,7 +229,7 @@ public class CapsuleTracker implements Runnable{
 											//eventMinCounter = new Double (0);
 											break;
 										}else {accessoryEventQ.add(currentEventTmp); listPaths.clear();
-										//if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());
+										if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance());
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> listConsumedPaths: " + listConsumedPaths.toString());
 										//System.out.println(dataContainer.getCapsuleInstance()+" >>>>>[TMP]>>>> BAD EVENT: " + currentEventTmp.allDataToString());
@@ -297,7 +276,7 @@ public class CapsuleTracker implements Runnable{
 											msgConsumedQueue = true;
 											//eventMinCounter = new Double (0);
 										}else {eventQueueTmp.add(currentEvent);
-										//if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); 
+										if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); 
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> listConsumedPaths: " + listConsumedPaths.toString());
 										//System.out.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> BAD EVENT: " + currentEvent.allDataToString());
