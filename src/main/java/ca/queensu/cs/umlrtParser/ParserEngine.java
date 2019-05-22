@@ -32,7 +32,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.papyrusrt.umlrt.core.utils.ProtocolUtils;
 import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
 import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.RTMessageKind;
-import org.eclipse.papyrusrt.umlrt.uml.UMLRTFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
 
 /*import org.eclipse.papyrusrt.umlrt.profile.UMLRealTime.Capsule;
