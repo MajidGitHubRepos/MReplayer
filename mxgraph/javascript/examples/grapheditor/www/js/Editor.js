@@ -6,13 +6,17 @@
  */
 Editor = function(chromeless, themes, model, graph, editable)
 {
-	var modelAnalysis = {}; //--Majid
+	var modelCapsuleAnalysis = {}; //--Majid
+	var modelConnectorAnalysis = {}; //--Majid
 	var lastIDs = []; //--Majid
+	var lastCell; //--Majid
 	var lastIDsLength = 0;
+	var lastCellsLength = 0;
 	var lastID = 0;
 	var lastStyle; //--Majid
 	var lastStyleGreenState; //--Majid
 	var lastStyleGrayState; //--Majid
+	var lastConnectorCells = []; //--Majid
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
 	this.initStencilRegistry();
@@ -2293,19 +2297,28 @@ PageSetupDialog.getFormats = function()
 	}
 
 	/**
-	 * set hashmap from the InitialModelAnalysis
+	 * set hashmap from the InitialmodelCapsuleAnalysis
 	 */
-	Editor.prototype.setModelAnalysis = function(hashMapModel)
+	Editor.prototype.setModelAnalysis = function(hashMapCapsule, hashMapConnector)
 	{
-		modelAnalysis = hashMapModel;
-		//console.log(modelAnalysis);	
+		modelCapsuleAnalysis = hashMapCapsule;
+		modelConnectorAnalysis = hashMapConnector;
+		//console.log(modelCapsuleAnalysis);	
 	}
 	Editor.prototype.setLastIDs = function(lastIDsFromIndex)
 	{
 		lastIDs = lastIDsFromIndex;
 		lastIDsLength = 0;
 		lastID =0;
-		//console.log(modelAnalysis);	
+		//console.log(modelCapsuleAnalysis);	
+	}
+	
+	Editor.prototype.setLastCells = function(lastCellsFromIndex)
+	{
+		lastConnectorCells = lastCellsFromIndex;
+		lastCellsLength = 0;
+		lastCell =0;
+		//console.log(modelCapsuleAnalysis);	
 	}
 	
 	
@@ -2314,9 +2327,24 @@ PageSetupDialog.getFormats = function()
 		this.lastIDsLength = lastIDs.length;
 	}
 	
+	Editor.prototype.setLastCellsLength = function()
+	{
+		this.lastCellsLength = lastConnectorCells.length;
+	}
+	
 	Editor.prototype.cleanLastIDs = function()
 	{
 		lastIDs = [];
+	}
+	
+	Editor.prototype.pushTolastConnectorCells = function(value)
+	{
+		lastConnectorCells.push(value)
+	}
+	
+	Editor.prototype.popFromlastConnectorCells = function()
+	{
+		this.lastCell = lastConnectorCells.pop()
 	}
 	
 	Editor.prototype.pushToLastIDs = function(value)
@@ -2332,30 +2360,63 @@ PageSetupDialog.getFormats = function()
 		console.log(lastID);	
 	}
 	/**
-	 * set hashmap from the InitialModelAnalysis
+	 * set hashmap from the InitialmodelCapsuleAnalysis
 	 */
 	Editor.prototype.getIDfromHashMap = function(capsuleName,itemName)
 	{
 		console.log("capsuleName:"+capsuleName+", itemName:"+itemName);	
-		console.log(modelAnalysis);	
-		for (var i = 0, keys = Object.keys(modelAnalysis), j = keys.length; i < j; i++) {
-			 var capsuleSplit = keys[i].split(",");
-			 if (capsuleSplit[0].includes(capsuleName)){
-				//console.log(modelAnalysis[keys[i]]);
-				//console.log(modelAnalysis[keys[i]].length);
-				//console.log(modelAnalysis[keys[i]][1]);
-				//console.log(modelAnalysis[keys[i]][1][1]);
-			 	for (var k = 0 ; k<modelAnalysis[keys[i]].length; k++){	
-			 		var itemValue = modelAnalysis[keys[i]][k][0];
-			 		var itemID = modelAnalysis[keys[i]][k][1];
-					//console.log(itemValue);
-					if (itemValue.includes(itemName)){
-						return itemID;
+		//console.log(modelCapsuleAnalysis);	
+		if (capsuleName != ""){
+			for (var i = 0, keys = Object.keys(modelCapsuleAnalysis), j = keys.length; i < j; i++) {
+				 var capsuleSplit = keys[i].split(",");
+				 if (capsuleSplit[0].includes(capsuleName)){
+					//console.log(modelCapsuleAnalysis[keys[i]]);
+					//console.log(modelCapsuleAnalysis[keys[i]].length);
+					//console.log(modelCapsuleAnalysis[keys[i]][1]);
+					//console.log(modelCapsuleAnalysis[keys[i]][1][1]);
+				 	for (var k = 0 ; k<modelCapsuleAnalysis[keys[i]].length; k++){	
+				 		var itemValue = modelCapsuleAnalysis[keys[i]][k][0];
+				 		var itemID = modelCapsuleAnalysis[keys[i]][k][1];
+						//console.log(itemValue);
+						if (itemValue.includes(itemName)){
+							return itemID;
+						}
 					}
-				}
-			 }
+				 }
+			}
+		}else{
+			for (var i = 0, keys = Object.keys(modelCapsuleAnalysis), j = keys.length; i < j; i++) {
+				 var capsuleSplit = keys[i].split(",");
+				 if (itemName.includes(capsuleSplit[0])){
+					 return capsuleSplit[1];
+				 }
+			}
 		}
-			 // console.log('key : ' + keys[i] + ' val : ' + modelAnalysis[keys[i]][1]);
+			 // console.log('key : ' + keys[i] + ' val : ' + modelCapsuleAnalysis[keys[i]][1]);
+		
+	}
+	
+	/**
+	 * set hashmap from the InitialmodelCapsuleAnalysis
+	 */
+	Editor.prototype.getIDConnectorFromHashMap = function(srcCapsuleID,trgCapsuleID)
+	{
+		console.log("srcCapsuleID:"+srcCapsuleID+", trgCapsuleID:"+trgCapsuleID);	
+		for (var i = 0, keys = Object.keys(modelConnectorAnalysis), j = keys.length; i < j; i++) {
+			 var connSplit = keys[i].split(",");
+			 var connID = connSplit[1];
+			 
+			 var _srcCapsuleID = modelConnectorAnalysis[keys[i]][0][0];
+			 var _trgCapsuleID = modelConnectorAnalysis[keys[i]][0][1];
+			 
+			 console.log('connID : ' + connID + ' _srcCapsuleID : ' + _srcCapsuleID + ' _trgCapsuleID : '+ _trgCapsuleID);
+			 
+			 if (_srcCapsuleID.includes(srcCapsuleID) && _trgCapsuleID.includes(trgCapsuleID))
+				 return connID
+		     
+			 if (_srcCapsuleID.includes(trgCapsuleID) && _trgCapsuleID.includes(srcCapsuleID))
+				 return connID
+		}
 		
 	}
 //-------------------------------------------------------------- 	

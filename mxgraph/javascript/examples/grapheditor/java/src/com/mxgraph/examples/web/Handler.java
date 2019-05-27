@@ -9,12 +9,15 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.List;
+
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -83,17 +86,36 @@ public class Handler extends Thread {
 					JSONArray inMsgJSONArrVar = inMsgJSON.getJSONArray("traceVar");
 					JSONArray inMsgJSONTraceSizes = inMsgJSON.getJSONArray("traceSizes");
 					JSONArray inMsgJSONActiveStates = inMsgJSON.getJSONArray("activeStates");
-
+					
+					
 					//JSONObject inMsgJSONnewTraceSize = inMsgJSON.getJSONObject("newTraceSize");
 					//JSONObject inMsgJSONoldTraceSize = inMsgJSON.getJSONObject("oldTraceSize");
-					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString() + ", inMsgJSONTraceSizes: "+inMsgJSONTraceSizes.toString()+", activeStates: "+ inMsgJSONActiveStates.toString() );
 					Message msg = new Message( Integer.parseInt(inMsgJSONArrID.get(0).toString()), inMsgJSONArrID.get(1).toString(), inMsgJSONArrID.get(2).toString(), inMsgJSONArrID.get(3).toString(), inMsgJSONTraceSizes.get(0).toString(), inMsgJSONTraceSizes.get(1).toString(), null, null);
 					
 					msg.setGreenState(inMsgJSONActiveStates.get(0).toString());
 					
 					if (inMsgJSONActiveStates.length()>1)
 						msg.setGrayState(inMsgJSONActiveStates.get(1).toString());
+					
+					// msg: [srcCapName,trgCapName,msgName,data]
+					// msg: [Simulator__client__2,Simulator__environment,QueryConfig,]
+					// msg: [Simulator__environment,Simulator__client__2,ReplyConfig,]
+					// msg: [Simulator__environment,Simulator__server1,ReplyConfig,1:server2]
+					
+					int count = 1;
+					while (true) {
+						if (inMsgJSON.has("msg"+count)) {
+							JSONArray inMsgJSONmsg = inMsgJSON.getJSONArray("msg"+count);
+							msg.listMsgs.add(inMsgJSONmsg.get(0).toString()+","+inMsgJSONmsg.get(1).toString()+","+inMsgJSONmsg.get(2).toString()+","+inMsgJSONmsg.get(3).toString());
+							count++;
+						}else
+							break;
 						
+					}
+					
+					System.out.println("\n>>>>> inMsgJSONArrID: "+ inMsgJSONArrID.toString() + ", inMsgJSONTraceSizes: "+inMsgJSONTraceSizes.toString()+", activeStates: "+ inMsgJSONActiveStates.toString()+", msg: "+ msg.listMsgs.toString());
+
+
 					
 					for (int i=0;i<inMsgJSONArrVar.length();i++) {
 						String varName = inMsgJSONArrID.get(1).toString().concat("::").concat(inMsgJSONArrVar.get(i++).toString());

@@ -5435,6 +5435,15 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Sets the link for the given cell. --Majid
+		 */
+		Graph.prototype.setAttributeValueForCell = function(cell, attributeValue)
+		{				
+			
+			this.model.setValue(cell, attributeValue);
+		};
+		
+		/**
 		 * Overridden to stop moving edge labels between cells.
 		 */
 		Graph.prototype.getDropTarget = function(cells, evt, cell, clone)

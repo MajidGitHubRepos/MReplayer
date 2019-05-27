@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 
+import ca.queensu.cs.compression.Profiling;
 import ca.queensu.cs.graph.viewController;
 import ca.queensu.cs.server.Event;
 import ca.queensu.cs.server.Server;
@@ -97,6 +98,7 @@ public class Controller {
 			while (true) {if (umlrtParser.getUmlrtParsingDone()) break; else System.out.print(""); }
 			pes.makeMapRegionPaths();
 			System.out.println("\n\n<<<<<<<<<<<<<<<[Parsing process has been completed successfully]>>>>>>>>>>>>>>>>>\n\n");
+			Profiling.refineParsing();
 			long t2 = System.currentTimeMillis();
 			 System.out.println("UmlrtParsingTime: "+ (t2-t1));
 			

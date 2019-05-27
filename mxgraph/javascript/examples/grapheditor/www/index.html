@@ -64,6 +64,8 @@
 	<script type="text/javascript">
 		var localModelxml = "";
 		var hashMapCapsulesChildren = {};
+		var hashMapDoneCapsules = {};
+		var hashMapConnectorCapsules = {};
 		var registrationJSON = null;
 		var initialModelAnalysisDone = false;
 		// Extends EditorUi to update I/O action states based on availability of backend
@@ -328,7 +330,10 @@
 				var capsuleName = "";
 				var regionID = "";
 				var listChildrenID = [];
+				var listConnectorID = [];
 				var lastIDs = [];
+				var lastCells = [];
+				
 				//looking for capsules' children !
 				for (var i = 0; i < registrationJSON.listCapsulesInstances.length; i++) {
 					capsuleName = "";
@@ -381,9 +386,29 @@
 
 								try {
 									for (var j = 0; j < nodes.length; j++) {
+										
+										
+										if ((nodes[j].attributes.value == null) && (nodes[j].attributes.source != null) && (nodes[j].attributes.target != null)) {
+											listConnectorID = [];
+											 
+											console.log("id: "+nodes[j].attributes.id.value+", src: " + nodes[j].attributes.source.value +", trg: " + nodes[j].attributes.target.value )
+										 	var connInfo = ["connector",nodes[j].attributes.id.value];
+										 	var srcTrgInfo = {};
+										 
+											var srcID = nodes[j].attributes.source.value;
+										 	var trgID = nodes[j].attributes.target.value;
+										 
+										 	srcTrgInfo = [srcID,trgID];
+										 	listConnectorID.push(srcTrgInfo);
+										 
+										 	if (hashMapConnectorCapsules[connInfo] === undefined )
+										 		hashMapConnectorCapsules[connInfo] = listConnectorID;
+										
+										}
+										
 										if (nodes[j].attributes.value != null) {
 											var value = nodes[j].getAttribute('value').toLowerCase();
-											//console.log(nodes[j])
+											//console.log(nodes)
 											//console.log("value: "+ value)
 
 											if (value.includes(capsuleName)){
@@ -404,6 +429,11 @@
 													}
 												}
 												
+												if ((hashMapCapsulesChildren[capsuleInfo] === undefined) && (hashMapDoneCapsules[capsuleName] === undefined)){
+													hashMapCapsulesChildren[capsuleInfo] = listChildrenID;
+													hashMapDoneCapsules [capsuleName]  = "Done";
+												}
+												
 											}
 											
 												//listChildrenID.push(nodes[j].id);
@@ -417,11 +447,11 @@
 									}
 									//console.log("capsuleInfo: "+capsuleInfo)
 									//console.log("BFR:: hashMapCapsulesChildren[capsuleInfo] : "+hashMapCapsulesChildren[capsuleInfo])
-									if (hashMapCapsulesChildren[capsuleInfo] === undefined )
-										hashMapCapsulesChildren[capsuleInfo] = listChildrenID;
+									
 									//console.log("AFT:: hashMapCapsulesChildren[capsuleInfo] : "+hashMapCapsulesChildren[capsuleInfo])
 
 									console.log(hashMapCapsulesChildren)
+									console.log(hashMapConnectorCapsules)
 							}
 						}
 					}else if (regionID !== "" && localModelxml !== null && localModelxml.length > 0){
@@ -488,8 +518,9 @@
 				}
 				}
 				initialModelAnalysisDone = true;
-				editorUi.editor.setModelAnalysis(hashMapCapsulesChildren);
+				editorUi.editor.setModelAnalysis(hashMapCapsulesChildren,hashMapConnectorCapsules);
 				editorUi.editor.setLastIDs(lastIDs);
+				editorUi.editor.setLastCells(lastCells);
 			}
 			});
 		}

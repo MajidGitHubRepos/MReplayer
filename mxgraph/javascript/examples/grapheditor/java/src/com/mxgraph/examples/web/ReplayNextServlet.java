@@ -92,7 +92,6 @@ public class ReplayNextServlet extends HttpServlet
 				
 				ModelJsonServer.mapTraceSizes.put(String.valueOf(ModelJsonServer.counter++),list);
 				ModelJsonServer.mainStack.push(msg);
-				
 				inMsg = msg.makeJSON();
 				System.out.println("\n[ReplayNextServlet]> inMsg: "+ inMsg);
 				//System.out.println("\n[ModelJsonServer.mainStack]>: "+ ModelJsonServer.mainStack);

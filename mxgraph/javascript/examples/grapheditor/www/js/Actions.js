@@ -1616,13 +1616,17 @@ processLineChart = function(response){
 
 //===============================================================================
 responseProcess = function(response,editor,graph){
-
-	 //console.log(this.responseText);
+	console.log("response in responseProcess: ");
+	console.log(response);
 	var listChanges = JSON.parse(response);
 	var capsuleName = "";
 	var itemName = "";
+	var connID1 = "";var connID2 = "";var connID3 = "";var connID4 = "";
+	var msgName1 = "";var msgName2 = "";var msgName3 = "";var msgName4 = "";
+	var msgData1 = "";var msgData2 = "";var msgData3 = "";var msgData4 = "";
 	//CapsuleInstance
-	//console.log(listChanges);
+	console.log("listChanges:");
+	console.log(listChanges);
 	if (listChanges.traceID != null){
 		if (listChanges.traceID[0].includes('__')){
 			var lastIndex = listChanges.traceID[0].indexOf('__');
@@ -1636,10 +1640,61 @@ responseProcess = function(response,editor,graph){
 		var greenState = listChanges.activeStates[0];
 		var grayState = listChanges.activeStates[1];
 		
+		//================================================[MSGs]==========================================================
+		if (listChanges.msg1 != null){
+			//TODO: only one msg
+			var srcMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg1[0]).replace(/\"/g, ''));
+			var trgMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg1[1]).replace(/\"/g, ''));
+			connID1 = editor.getIDConnectorFromHashMap(srcMsgID, trgMsgID);
+			msgName1 = JSON.stringify(listChanges.msg1[2]).replace(/\"/g, '');
+			
+			if (listChanges.msg1[3] != null)
+				msgData1 = JSON.stringify(listChanges.msg1[3]).replace(/\"/g, '');
+			
+			console.log("connID1 ============>"+connID1);
+		}
+		if (listChanges.msg2 != null){
+			//TODO: only one msg
+			var srcMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg2[0]).replace(/\"/g, ''));
+			var trgMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg2[1]).replace(/\"/g, ''));
+			connID2 = editor.getIDConnectorFromHashMap(srcMsgID, trgMsgID);
+			msgName2 = JSON.stringify(listChanges.msg2[2]).replace(/\"/g, '');
+			
+			if (listChanges.msg2[3] != null)
+				msgData2 = JSON.stringify(listChanges.msg2[3]).replace(/\"/g, '');
+			console.log("connID2 ============>"+connID2);
+
+		}
+		if (listChanges.msg3 != null){
+			//TODO: only one msg
+			var srcMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg3[0]).replace(/\"/g, ''));
+			var trgMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg3[1]).replace(/\"/g, ''));
+			connID3 = editor.getIDConnectorFromHashMap(srcMsgID, trgMsgID);
+			msgName3 = JSON.stringify(listChanges.msg3[2]).replace(/\"/g, '');
+			
+			if (listChanges.msg3[3] != null)
+				msgData3 = JSON.stringify(listChanges.msg3[3]).replace(/\"/g, '');
+			console.log("connID3 ============>"+connID3);
+
+		}
+		if (listChanges.msg4 != null){
+			//TODO: only one msg
+			var srcMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg4[0]).replace(/\"/g, ''));
+			var trgMsgID = editor.getIDfromHashMap("",JSON.stringify(listChanges.msg4[1]).replace(/\"/g, ''));
+			connID4 = editor.getIDConnectorFromHashMap(srcMsgID, trgMsgID);
+			msgName4 = JSON.stringify(listChanges.msg4[2]).replace(/\"/g, '');
+			
+			if (listChanges.msg4[3] != null)
+				msgData4 = JSON.stringify(listChanges.msg4[3]).replace(/\"/g, '');
+
+			console.log("connID4 ============>"+connID4);
+		}
+		//==========================================================================================================
+		
 		var jsonVar = JSON.stringify(itemName);
-		console.log("itemName============>"+JSON.stringify(itemName));
-		console.log("greenState============>"+greenState);
-		console.log("grayState============>"+grayState);
+		//console.log("itemName============>"+JSON.stringify(itemName));
+		//console.log("greenState============>"+greenState);
+		//console.log("grayState============>"+grayState);
 		//console.log("itemName============>"+itemName.length);
 		
 		var i =0;
@@ -1689,8 +1744,18 @@ responseProcess = function(response,editor,graph){
 		{
 
 			var model = graph.getModel();			
-          editor.setLastIDsLength();
-			console.log("----------> editor.getLastIDs: "+ editor.lastIDsLength);
+           editor.setLastIDsLength();
+           editor.setLastCellsLength();
+           
+           for (i =0; i< editor.lastCellsLength; i++){
+				editor.popFromlastConnectorCells();
+				var cell = editor.lastCell;
+				if (cell != null)
+				{
+					graph.setAttributeValueForCell(cell,'');
+				}
+				
+           }
 
 			for (i =0; i< editor.lastIDsLength; i++){
 				editor.popFromLastIDs();
@@ -1742,6 +1807,54 @@ responseProcess = function(response,editor,graph){
 				graph.removeCellOverlays(cell);
 				editor.pushToLastIDs(grayStateID);
 			}
+			
+			//===========================================[Connectors]===================================================
+			cell = model.getCell(connID1);
+			if (cell != null)
+			{
+				editor.lastStyleGrayState = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setAttributeValueForCell(cell,'<b>'+msgName1+'('+msgData1+')<b><br>');
+				editor.pushTolastConnectorCells(cell); 
+				graph.removeCellOverlays(cell);
+				editor.pushToLastIDs(connID1);
+			}
+			cell = model.getCell(connID2);
+			if (cell != null)
+			{
+				editor.lastStyleGrayState = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setAttributeValueForCell(cell,'<b>'+msgName2+'('+msgData2+')<b><br>');
+				editor.pushTolastConnectorCells(cell); 
+				graph.removeCellOverlays(cell);				
+				editor.pushToLastIDs(connID2);
+			}
+			cell = model.getCell(connID3);
+			if (cell != null)
+			{
+				editor.lastStyleGrayState = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setAttributeValueForCell(cell,'<b>'+msgName3+'('+msgData3+')<b><br>');
+				editor.pushTolastConnectorCells(cell); 
+				graph.removeCellOverlays(cell);				
+				editor.pushToLastIDs(connID3);
+			}
+			cell = model.getCell(connID4);
+			if (cell != null)
+			{
+				editor.lastStyleGrayState = graph.getCellStyle(cell);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setAttributeValueForCell(cell,'<b>'+msgName4+'('+msgData4+')<b><br>');
+				editor.pushTolastConnectorCells(cell); 
+				graph.removeCellOverlays(cell);				
+				editor.pushToLastIDs(connID4);
+			}
+			//==============================================================================================
+			
 			for (i =0; i<ids.length; i++){
 				cell = model.getCell(ids[i]);
 				//console.log("ids[i]: "+ ids[i] +"---------------> cell: " + cell );

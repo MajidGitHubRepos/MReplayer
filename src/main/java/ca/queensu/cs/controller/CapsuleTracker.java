@@ -22,6 +22,9 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import javax.json.JsonWriter;
+import javax.swing.ListModel;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.eclipse.microprofile.metrics.Timer;
@@ -29,6 +32,11 @@ import org.eclipse.uml2.uml.State;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.util.StringUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import ca.queensu.cs.antler4AC.ACLexer;
 import ca.queensu.cs.antler4AC.ACParser;
@@ -71,6 +79,7 @@ public class CapsuleTracker implements Runnable{
 	private Map<String,List<String>> mapPathActionCode;
 	private Map<String, Value> maplocalHeap;
     private List<SendMessage> listPortMsg;
+    private List<SendMessage> copyListPortMsg;
     private List<String> listConsumedPaths;
     private List<String> listAllPathTaken;
     private String lastTookPath;
@@ -95,6 +104,7 @@ public class CapsuleTracker implements Runnable{
 		this.maplocalHeap = new HashMap<String, Value>();
 		this.listConsumedPaths = new ArrayList<String>();
 		this.listPortMsg = new ArrayList<SendMessage>();
+		this.copyListPortMsg = new ArrayList<SendMessage>();
 		this.mapPathGuards =  new HashMap<String,List<String>>();
 		this.mapPathTrigger =  new HashMap<String,List<String>>();
 		this.mapPathActionCode =  new HashMap<String,List<String>>();
@@ -181,10 +191,12 @@ public class CapsuleTracker implements Runnable{
 										if (isRequirementMet(listPaths.get(0))) {
 											TrackerMaker.listNotMetReq.clear();
 											calcTraceSizes(currentEventTmp);
-											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap,TrackerMaker.newTraceSize,TrackerMaker.oldTraceSize,makeStates())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											//if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap,TrackerMaker.newTraceSize,TrackerMaker.oldTraceSize,makeStates(),listPortMsg)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEventTmp.getSourceName()));
 											updateLocalHeap(listPaths.get(0),msgSender,false);
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEventTmp.getReginName(),listPaths.get(0),maplocalHeap,TrackerMaker.newTraceSize,TrackerMaker.oldTraceSize,makeStates(),copyListPortMsg)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											copyListPortMsg.clear();
 											updateCurrentState();
 											if (!msgTobeConsumed.isEmpty())
 												dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
@@ -227,10 +239,12 @@ public class CapsuleTracker implements Runnable{
 										if (isRequirementMet(listPaths.get(0))) {
 											TrackerMaker.listNotMetReq.clear();
 											calcTraceSizes(currentEvent);
-											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize, makeStates())&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											//if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize, makeStates(), listPortMsg)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
 											listAllPathTaken.add(listPaths.get(0));
 											addToListConsumedPaths(listPaths.get(0), PES.mapQnameId.get(currentEvent.getSourceName()));
 											updateLocalHeap(listPaths.get(0),msgSender,false);
+											if (!jsonToServer(TrackerMaker.priorityEventCounter,dataContainer.getCapsuleInstance(), currentEvent.getReginName(),listPaths.get(0),maplocalHeap, TrackerMaker.newTraceSize, TrackerMaker.oldTraceSize, makeStates(), copyListPortMsg)&&(Controller.args0 == "view")) System.err.println("===[WEB_SERVER CONNECTION FAILD]===");
+											copyListPortMsg.clear();
 											updateCurrentState();
 											if (!msgTobeConsumed.isEmpty())
 												dataContainer.removeFromListMapSendMessages(msgTobeConsumed);
@@ -449,11 +463,11 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[jsonToServer]
 	//==================================================================
-	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize, List<String> activeStates) throws Exception {
+	public static boolean jsonToServer(int priorityEventCounter, String capsuleInstance, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize, List<String> activeStates, List<SendMessage> listMsgs) throws Exception {
 		if (isPortInUse("localhost",8090)) { //8090 used to send command to the local draw.io server
 			try {
 				
-				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables, newTraceSize, oldTraceSize, activeStates);
+				JSONObject jsonObj = makeJSONobj(priorityEventCounter,capsuleInstance, region, path, allVariables, newTraceSize, oldTraceSize, activeStates, listMsgs);
 				ViewEngine.sendJsonToServer(jsonObj.toJSONString());
 
 			} catch (IOException e) {
@@ -468,7 +482,7 @@ public class CapsuleTracker implements Runnable{
 	//==================================================================	
 	//==============================================[makeJSONobj]
 	//==================================================================
-	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize, List<String> activeStates) {
+	private static JSONObject makeJSONobj(int priorityEventCounter, String capInstName, String region, String path, Map<String, Value> allVariables, long newTraceSize, long oldTraceSize, List<String> activeStates , List<SendMessage> listMsgs) {
 		JSONObject jsonObj = new JSONObject();
 		JSONArray traceID = new JSONArray();
 		JSONArray listTRs = new JSONArray();
@@ -508,7 +522,35 @@ public class CapsuleTracker implements Runnable{
 		for (String stateName : activeStates) {
 			stateNameArray.add(stateName);
 		}
-		jsonObj.put("activeStates", stateNameArray);	
+		jsonObj.put("activeStates", stateNameArray);
+		int counter = 1;
+		System.err.println(capInstName+", ----------> listMsgs: "+listMsgs.toString());
+		for (SendMessage sendMessage : listMsgs) {
+			
+			JSONArray msg = new JSONArray();
+			msg.add(sendMessage.srcCapsuleInstance);
+			msg.add(sendMessage.trgCapsuleInstance);
+			
+			if (!sendMessage.msg.isEmpty())
+				msg.add(sendMessage.msg);
+			else
+				msg.add("");
+			
+			if (sendMessage.data != null)
+				msg.add(sendMessage.data.toString());
+			else
+				msg.add("");
+			
+			jsonObj.put("msg"+counter, msg);
+			counter++;
+		}
+		
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonParser jp = new JsonParser();
+		JsonElement je = jp.parse(jsonObj.toString());
+		String prettyJsonString = gson.toJson(je);
+		
+		System.err.println(prettyJsonString);
 		
 		return jsonObj;
 
@@ -964,7 +1006,7 @@ public class CapsuleTracker implements Runnable{
 	public void sendMessages() throws InterruptedException {
 
 		for (SendMessage sendMessage : listPortMsg) {
-			sendMessage.capsuleInstance = dataContainer.getCapsuleInstance();
+			sendMessage.srcCapsuleInstance = dataContainer.getCapsuleInstance();
 			List<MyConnector> listMyConnectors = new ArrayList <MyConnector>();
 			String trgCapsule = "";
 			if (sendMessage.dest != null) {
@@ -987,9 +1029,11 @@ public class CapsuleTracker implements Runnable{
 						for (MyConnector connector : listMyConnectors) { 
 							if (connector.portCap1.contentEquals(sendMessage.port) && (connector.port1Idx == sendMessage.dest.asInteger())) {
 								trgCapsule = connector.capInstanceName2;
+								sendMessage.trgCapsuleInstance = getCapInstanceName(sendMessage.srcCapsuleInstance, trgCapsule);
 								break;
 							}else if (connector.portCap2.contentEquals(sendMessage.port)&& (connector.port2Idx == sendMessage.dest.asInteger())) {
 								trgCapsule = connector.capInstanceName1;
+								sendMessage.trgCapsuleInstance = getCapInstanceName(sendMessage.srcCapsuleInstance, trgCapsule);
 								break;
 							}
 						}
@@ -1003,11 +1047,13 @@ public class CapsuleTracker implements Runnable{
 
 						listMyConnectors = capConn.getListMyConnector();
 						for (MyConnector connector : listMyConnectors) { 
-							if (connector.portCap1.contentEquals(sendMessage.port) && sendMessage.capsuleInstance.contains(connector.capInstanceName1) && (!sendMessage.capsuleInstance.contains(connector.capInstanceName2))) {
+							if (connector.portCap1.contentEquals(sendMessage.port) && sendMessage.srcCapsuleInstance.contains(connector.capInstanceName1) && (!sendMessage.srcCapsuleInstance.contains(connector.capInstanceName2))) {
 								trgCapsule = connector.capInstanceName2;
+								sendMessage.trgCapsuleInstance = getCapInstanceName(sendMessage.srcCapsuleInstance, trgCapsule);
 								break;
-							}else if (connector.portCap2.contentEquals(sendMessage.port) && sendMessage.capsuleInstance.contains(connector.capInstanceName2) && (!sendMessage.capsuleInstance.contains(connector.capInstanceName1))) {
+							}else if (connector.portCap2.contentEquals(sendMessage.port) && sendMessage.srcCapsuleInstance.contains(connector.capInstanceName2) && (!sendMessage.srcCapsuleInstance.contains(connector.capInstanceName1))) {
 								trgCapsule = connector.capInstanceName1;
+								sendMessage.trgCapsuleInstance = getCapInstanceName(sendMessage.srcCapsuleInstance, trgCapsule);
 								break;
 							}
 						}
@@ -1020,7 +1066,7 @@ public class CapsuleTracker implements Runnable{
 			//Thread.currentThread().sleep(300);
 			if (trgCapsule.isEmpty()){
 				System.err.println("In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> msg: " + sendMessage.msg + ", is sending via " + sendMessage.port +" to "+ trgCapsule);
-				System.err.println(sendMessage.capsuleInstance + "  In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>> msgSender: " +msgSender +", dest: " + sendMessage.dest.asString());
+				System.err.println(sendMessage.srcCapsuleInstance + "  In " + dataContainer.getCapsuleInstance() + ">>>>>>>>>>>>> msgSender: " +msgSender +", dest: " + sendMessage.dest.asString());
 				System.err.println("__________ Target Capsule not Found! __________");
 				System.exit(1);
 			}
@@ -1049,10 +1095,18 @@ public class CapsuleTracker implements Runnable{
 			
 			listMyConnectors = null;
 		}
-
-		
 	}
-	
+	//==================================================================	
+	//==============================================[getCapInstanceName]
+	//==================================================================	
+	public String getCapInstanceName(String srcCapName, String trgCapName) {
+		
+		int idx = srcCapName.indexOf("__");
+		String topCapName = srcCapName.substring(0,idx);
+		
+		return topCapName+"__"+trgCapName;
+			
+	}
 	//==================================================================	
 	//==============================================[interpretActionCode]
 	//==================================================================	
@@ -1089,6 +1143,7 @@ public class CapsuleTracker implements Runnable{
         if (!guardEval) {
 			//System.err.println(">>>>>>>>>>>>> In: "+ dataContainer.getCapsuleInstance() + ", actionCode: "+actionCode+ " , calling sendMessages in [interpretActionCode] because guardEval is  "+ guardEval +", visitor.getListPortMsg():" + visitor.getListPortMsg().toString());
         	listPortMsg = visitor.getListPortMsg();
+        	copyListPortMsg.addAll(listPortMsg);
         	sendMessages();
         }
 		
@@ -1221,7 +1276,7 @@ public class CapsuleTracker implements Runnable{
 				String [] msgSplit = msg.split("\\.");
 				for (Map<String,SendMessage> listItem : dataContainer.listMapSendMessages) {
 					if ((listItem.get(msgSplit[1]) != null)) {
-						msgSender = listItem.get(msgSplit[1]).capsuleInstance;
+						msgSender = listItem.get(msgSplit[1]).srcCapsuleInstance;
 						result = true;
 						msgTobeConsumed = msgSplit[1];
 						break;

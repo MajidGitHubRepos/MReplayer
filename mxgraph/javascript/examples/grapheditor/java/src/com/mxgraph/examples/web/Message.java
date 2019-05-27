@@ -1,7 +1,10 @@
 package com.mxgraph.examples.web;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+
 
 
 public class Message implements Comparable<Message> {
@@ -14,6 +17,7 @@ public class Message implements Comparable<Message> {
 	private String oldTraceSize;
 	private String greenState;
 	private String grayState;
+	public List<String> listMsgs;
 	
 	public Message(int priorityEventCounter, String capsuleName, String region, String path, String newTraceSize, String oldTraceSize, String greenState, String grayState ) {
 		this.priorityEventCounter = priorityEventCounter;
@@ -25,6 +29,7 @@ public class Message implements Comparable<Message> {
 		this.newTraceSize = newTraceSize;
 		this.greenState = greenState;
 		this.grayState = grayState;
+		this.listMsgs = new ArrayList<String>();
 	}
 	public Message() {
 		this(0,null,null, null,"0","0", null,null);
@@ -96,7 +101,25 @@ public class Message implements Comparable<Message> {
 		
 			result = result.substring(0, result.length() - 1);
 		}
-		return result+"],\"traceSizes\":[\""+newTraceSize+"\",\""+oldTraceSize+"\"], \"activeStates\":[\""+greenState+"\", \""+grayState+"\"]}";
+		result =  result+"],\"traceSizes\":[\""+newTraceSize+"\",\""+oldTraceSize+"\"], \"activeStates\":[\""+greenState+"\", \""+grayState+"\"]";
+		
+		counter = 1;
+		
+		for (String msg : listMsgs) {
+			String [] msgSplit = msg.split("\\,"); 
+			String jsonKey = "msg"+counter;
+			System.out.println("\n[ReplayNextServlet]> jsonKey: "+ jsonKey);
+
+			if (msgSplit.length > 3)
+				result =  result+",\""+jsonKey+"\":[\""+msgSplit[0]+"\",\""+msgSplit[1]+"\",\""+msgSplit[2]+"\",\""+msgSplit[3]+"\"]";	
+			else
+				result =  result+",\""+jsonKey+"\":[\""+msgSplit[0]+"\",\""+msgSplit[1]+"\",\""+msgSplit[2]+"\"]";	
+			//System.out.println("\n[ReplayNextServlet]> result: "+ result);
+
+			counter++;
+		}
+		System.out.println("result: "+result+"}");
+		return result+"}";
 		
 	}
 } 

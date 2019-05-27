@@ -37,6 +37,7 @@ public class TransitionData {
 	private String srcId;
 	private String trgId;
 	private String actionCode;
+	private int callsCount;
 	//private List<Vector<String, String>> triggers = new ArrayList<HashMap<String, String>>();
 	//private final SecurityRule securityRule;
 
@@ -82,6 +83,7 @@ public class TransitionData {
 		this.toEntryPoint = false;
 		this.srcId = null;
 		this.trgId = null;
+		this.callsCount = 0;
 		if (transition  != null) {
 			this.id = extractID(1,transition.toString());
 			this.path = extractID(0, transition.getSource().toString())+"-"+this.id+"-"+extractID(2,transition.getTarget().toString());
@@ -190,6 +192,10 @@ public class TransitionData {
 	
 	public String getId() {
 		return id;
+	}
+	
+	public int getCallsCount() {
+		return callsCount;
 	}
 	
 	public String getPath() {
@@ -304,9 +310,13 @@ public class TransitionData {
 	}
 	*/
 	
+	public void setCallsCount(int count) {
+		this.callsCount = count;
+	}
+	
 	public String allDataToString() {
 		return "TransitionData [ ID= "+ id + ", path= "+path+", CapsuleName= "+capsuleName+ ", CapsuleInstanceName= "+capsuleInstanceName+ ", region= "+regionName +", transitonName= " + transitonName +", source= " + source + ", sourceName=" + sourceName +", target=" + target + ", targetName=" + targetName + ", triggers=" + triggers + ", actions=" + actions + ", guards=" + guards
-				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + ", transition= "+ transition+ ", srcID= "+srcId + ", trgID= " + trgId+"]";
+				+ ", period=" + period + ", count=" + count + ", kind=" + kind + ", isInit= "+ isInit + ", transition= "+ transition+ ", srcID= "+srcId + ", trgID= " + trgId+ ", callsCount= "+ callsCount+"]";
 	}
 
 }
