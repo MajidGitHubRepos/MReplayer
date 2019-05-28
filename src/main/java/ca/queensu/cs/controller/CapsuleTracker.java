@@ -253,6 +253,7 @@ public class CapsuleTracker implements Runnable{
 											listPaths.clear();
 											listSoFarMachedTR.clear();
 											msgConsumedQueue = true;
+											break;
 										}else {eventQueueTmp.add(currentEvent);
 										if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); 
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());

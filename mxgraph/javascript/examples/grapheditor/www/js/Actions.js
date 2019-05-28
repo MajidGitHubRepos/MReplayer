@@ -1813,8 +1813,8 @@ responseProcess = function(response,editor,graph){
 			if (cell != null)
 			{
 				editor.lastStyleGrayState = graph.getCellStyle(cell);
-				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'blue' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'blue' , [cell]);
 				graph.setAttributeValueForCell(cell,'<b>'+msgName1+'('+msgData1+')<b><br>');
 				editor.pushTolastConnectorCells(cell); 
 				graph.removeCellOverlays(cell);
@@ -1824,8 +1824,8 @@ responseProcess = function(response,editor,graph){
 			if (cell != null)
 			{
 				editor.lastStyleGrayState = graph.getCellStyle(cell);
-				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'blue' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'blue' , [cell]);
 				graph.setAttributeValueForCell(cell,'<b>'+msgName2+'('+msgData2+')<b><br>');
 				editor.pushTolastConnectorCells(cell); 
 				graph.removeCellOverlays(cell);				
@@ -1835,8 +1835,8 @@ responseProcess = function(response,editor,graph){
 			if (cell != null)
 			{
 				editor.lastStyleGrayState = graph.getCellStyle(cell);
-				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'blue' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'blue' , [cell]);
 				graph.setAttributeValueForCell(cell,'<b>'+msgName3+'('+msgData3+')<b><br>');
 				editor.pushTolastConnectorCells(cell); 
 				graph.removeCellOverlays(cell);				
@@ -1846,8 +1846,8 @@ responseProcess = function(response,editor,graph){
 			if (cell != null)
 			{
 				editor.lastStyleGrayState = graph.getCellStyle(cell);
-				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'red' , [cell]);
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'red' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'blue' , [cell]);
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'blue' , [cell]);
 				graph.setAttributeValueForCell(cell,'<b>'+msgName4+'('+msgData4+')<b><br>');
 				editor.pushTolastConnectorCells(cell); 
 				graph.removeCellOverlays(cell);				
