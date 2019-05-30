@@ -253,7 +253,7 @@ public class CapsuleTracker implements Runnable{
 											listPaths.clear();
 											listSoFarMachedTR.clear();
 											msgConsumedQueue = true;
-											break;
+											//break;
 										}else {eventQueueTmp.add(currentEvent);
 										if (!TrackerMaker.listNotMetReq.contains(dataContainer.getCapsuleInstance())) TrackerMaker.listNotMetReq.add(dataContainer.getCapsuleInstance()); 
 										//System.err.println(dataContainer.getCapsuleInstance()+" >>>>>>>>> TrackerMaker.listNotMetReq: " + TrackerMaker.listNotMetReq.toString());
@@ -525,7 +525,7 @@ public class CapsuleTracker implements Runnable{
 		}
 		jsonObj.put("activeStates", stateNameArray);
 		int counter = 1;
-		System.err.println(capInstName+", ----------> listMsgs: "+listMsgs.toString());
+		//System.err.println(capInstName+", ----------> listMsgs: "+listMsgs.toString());
 		for (SendMessage sendMessage : listMsgs) {
 			
 			JSONArray msg = new JSONArray();
@@ -546,12 +546,12 @@ public class CapsuleTracker implements Runnable{
 			counter++;
 		}
 		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		/*Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		JsonParser jp = new JsonParser();
 		JsonElement je = jp.parse(jsonObj.toString());
 		String prettyJsonString = gson.toJson(je);
 		
-		System.err.println(prettyJsonString);
+		System.err.println(prettyJsonString);*/
 		
 		return jsonObj;
 
