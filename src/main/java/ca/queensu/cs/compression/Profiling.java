@@ -35,8 +35,8 @@ public class Profiling {
 				String capName = ParserEngine.listTransitionData.get(i).capsuleName;
 				String trName = ParserEngine.listTransitionData.get(i).getTransitonName();
 				
-				int count = getCallsCount(capName,trName);
-				
+				//int count = getCallsCount(capName,trName);
+				int count = 0;
 				ParserEngine.listTransitionData.get(i).setCallsCount(count);
 			}
 		}

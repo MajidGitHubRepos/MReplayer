@@ -1704,7 +1704,11 @@ responseProcess = function(response,editor,graph){
 		var greenStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(greenState).replace(/\"/g, ''));
 		var grayStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(grayState).replace(/\"/g, ''));
 		
-		capsuleActiveStateHashMap [getParentIDFromHashMap(greenStateID)] = greenStateID;
+		//capsuleActiveStateHashMap [getParentIDFromHashMap(greenStateID)] = greenStateID;
+		//console.log("itemName============>"+itemName.length);
+		
+		
+		
 		
 		if (itemName.length == 1){
 			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));

@@ -8,6 +8,7 @@ Editor = function(chromeless, themes, model, graph, editable)
 {
 	var modelCapsuleAnalysis = {}; //--Majid
 	var modelConnectorAnalysis = {}; //--Majid
+	var capsuleActiveStateHashMap = {};
 	var lastIDs = []; //--Majid
 	var lastCell; //--Majid
 	var lastIDsLength = 0;
@@ -2310,6 +2311,7 @@ PageSetupDialog.getFormats = function()
 		lastIDs = lastIDsFromIndex;
 		lastIDsLength = 0;
 		lastID =0;
+		capsuleActiveStateHashMap ="test" ;
 		//console.log(modelCapsuleAnalysis);	
 	}
 	
@@ -2353,6 +2355,18 @@ PageSetupDialog.getFormats = function()
 		lastIDs.push(value)
 		console.log(lastIDs);	
 	}
+	
+	Editor.prototype.pushToCapsuleActiveStateHashMap = function(capID, activeStateID)
+	{
+		var capIDstr = "";
+		capID.toString();
+		console.log("capID:" + capID.toString() +" activeStateID: ============>"+activeStateID);
+		var test = {};
+		capsuleActiveStateHashMap [capID] =activeStateID;
+		console.log(capsuleActiveStateHashMap);
+		//capsuleActiveStateHashMap.push(test);
+	}
+	
 	Editor.prototype.popFromLastIDs = function()
 	{
 		//lastIDs = value;
