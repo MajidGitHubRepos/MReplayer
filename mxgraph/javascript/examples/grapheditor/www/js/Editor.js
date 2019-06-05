@@ -2311,7 +2311,8 @@ PageSetupDialog.getFormats = function()
 		lastIDs = lastIDsFromIndex;
 		lastIDsLength = 0;
 		lastID =0;
-		capsuleActiveStateHashMap ="test" ;
+		
+		capsuleActiveStateHashMap = new Map() ;
 		//console.log(modelCapsuleAnalysis);	
 	}
 	
@@ -2359,11 +2360,16 @@ PageSetupDialog.getFormats = function()
 	Editor.prototype.pushToCapsuleActiveStateHashMap = function(capID, activeStateID)
 	{
 		var capIDstr = "";
+		console.log("capID:"+capID+", activeStateID:"+activeStateID);	
 		capID.toString();
-		console.log("capID:" + capID.toString() +" activeStateID: ============>"+activeStateID);
-		var test = {};
-		capsuleActiveStateHashMap [capID] =activeStateID;
+		capsuleActiveStateHashMap.set(capID.replace(/\"/g, ''),activeStateID.replace(/\"/g, ''));
 		console.log(capsuleActiveStateHashMap);
+		//capsuleActiveStateHashMap.push(test);
+	}
+	Editor.prototype.getFromCapsuleActiveStateHashMap = function(capID)
+	{
+		var activeStateID = capsuleActiveStateHashMap.get(capID);
+		return activeStateID;
 		//capsuleActiveStateHashMap.push(test);
 	}
 	
@@ -2438,16 +2444,34 @@ PageSetupDialog.getFormats = function()
 	 * set hashmap from the InitialmodelCapsuleAnalysis
 	 */
 	Editor.prototype.getParentIDFromHashMap = function(greenStateID)
-	{
+	{		
+		console.log(modelCapsuleAnalysis);
 		for (var i = 0, keys = Object.keys(modelCapsuleAnalysis), j = keys.length; i < j; i++) {
 			 var capsuleSplit = keys[i].split(",");
-			 //if (capsuleSplit[0].includes(capsuleName)){
+			 //if (!capsuleSplit[0].includes('.')){
 			 	for (var k = 0 ; k<modelCapsuleAnalysis[keys[i]].length; k++){	
 			 		var itemValue = modelCapsuleAnalysis[keys[i]][k][0];
 			 		var itemID = modelCapsuleAnalysis[keys[i]][k][1];
 					//console.log(itemValue);
-					if (itemID.includes(greenStateID)){
-						return capsuleSplit[1];
+					if (itemID.localeCompare(greenStateID) == 0){
+						if (capsuleSplit[0].includes('.')){
+							var comCapID = capsuleSplit[1];
+							
+							for (var ii = 0, keys = Object.keys(modelCapsuleAnalysis), jj = keys.length; ii < jj; ii++) {
+								 var capsuleSplit1 = keys[ii].split(",");
+								 //if (!capsuleSplit[0].includes('.')){
+								 	for (var kk = 0 ; kk<modelCapsuleAnalysis[keys[ii]].length; kk++){	
+								 		var itemValue1 = modelCapsuleAnalysis[keys[ii]][kk][0];
+								 		var itemID1 = modelCapsuleAnalysis[keys[ii]][kk][1];
+								 		if (itemID1.localeCompare(comCapID) == 0){
+								 			return capsuleSplit1[1];
+								 		}
+								 	}
+							}
+							
+						}
+						else
+							return capsuleSplit[1];
 					}
 				}
 			 //}
@@ -2455,6 +2479,12 @@ PageSetupDialog.getFormats = function()
 		
 	}
 	
+	/**
+	 * set hashmap from the InitialmodelCapsuleAnalysis
+	 */
+	
+	
 //-------------------------------------------------------------- 	
 
 })();
+

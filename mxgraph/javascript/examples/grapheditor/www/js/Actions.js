@@ -1705,8 +1705,15 @@ responseProcess = function(response,editor,graph){
 		var grayStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(grayState).replace(/\"/g, ''));
 		
 		//capsuleActiveStateHashMap [getParentIDFromHashMap(greenStateID)] = greenStateID;
-		//console.log("itemName============>"+itemName.length);
-		
+		var capID = editor.getParentIDFromHashMap(greenStateID);
+
+		var prvGreenStateID = editor.getFromCapsuleActiveStateHashMap(capID);
+		console.log("prvGreenStateID============>"+prvGreenStateID);
+		if(prvGreenStateID !== "undefined")
+		{
+			editor.pushToLastIDs(prvGreenStateID);
+		}
+		editor.pushToCapsuleActiveStateHashMap(capID, greenStateID);
 		
 		
 		
@@ -1790,6 +1797,7 @@ responseProcess = function(response,editor,graph){
 				}
 			}
 			editor.lastStyleGreenState = "";
+			editor.lastStyleGrayState = "";
 			editor.kl = "";
 			
 			if (editor.lastIDsLength > 0)
@@ -1802,7 +1810,7 @@ responseProcess = function(response,editor,graph){
 				graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, 'green' , [cell]);
 				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, 'green' , [cell]);
 				graph.removeCellOverlays(cell);
-				editor.pushToLastIDs(greenStateID);
+				//editor.pushToLastIDs(greenStateID);
 			}
 			
 			cell = model.getCell(grayStateID);
