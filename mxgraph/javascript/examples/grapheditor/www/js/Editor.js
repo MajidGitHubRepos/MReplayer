@@ -2419,6 +2419,28 @@ PageSetupDialog.getFormats = function()
 		}
 		
 	}
+	
+	/**
+	 * set hashmap from the InitialmodelCapsuleAnalysis
+	 */
+	Editor.prototype.getParentIDFromHashMap = function(greenStateID)
+	{
+		for (var i = 0, keys = Object.keys(modelCapsuleAnalysis), j = keys.length; i < j; i++) {
+			 var capsuleSplit = keys[i].split(",");
+			 //if (capsuleSplit[0].includes(capsuleName)){
+			 	for (var k = 0 ; k<modelCapsuleAnalysis[keys[i]].length; k++){	
+			 		var itemValue = modelCapsuleAnalysis[keys[i]][k][0];
+			 		var itemID = modelCapsuleAnalysis[keys[i]][k][1];
+					//console.log(itemValue);
+					if (itemID.includes(greenStateID)){
+						return capsuleSplit[1];
+					}
+				}
+			 //}
+		}
+		
+	}
+	
 //-------------------------------------------------------------- 	
 
 })();

@@ -28,6 +28,7 @@ Actions.prototype.init = function()
 	var lastIDs = [];
 
 	var graph = editor.graph;
+	var capsuleActiveStateHashMap = {};
 	var modelHahMap = {};
 	var variables = {};
 	var isGraphEnabled = function()
@@ -1703,6 +1704,8 @@ responseProcess = function(response,editor,graph){
 		var greenStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(greenState).replace(/\"/g, ''));
 		var grayStateID = editor.getIDfromHashMap(capsuleName,JSON.stringify(grayState).replace(/\"/g, ''));
 		
+		capsuleActiveStateHashMap [getParentIDFromHashMap(greenStateID)] = greenStateID;
+		
 		if (itemName.length == 1){
 			ids[0] = editor.getIDfromHashMap(capsuleName,JSON.stringify(itemName[0].name).replace(/\"/g, ''));
 		}else if (itemName.length == 2){
@@ -1783,7 +1786,7 @@ responseProcess = function(response,editor,graph){
 				}
 			}
 			editor.lastStyleGreenState = "";
-			editor.lastStyleGrayState = "";
+			editor.kl = "";
 			
 			if (editor.lastIDsLength > 0)
 				editor.cleanLastIDs();
