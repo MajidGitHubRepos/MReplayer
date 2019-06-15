@@ -75,7 +75,7 @@ Status:0
 [getVariableData]pingCount,Integer,390
 varString,String,"testStringVariable"
 varBool,Boolean,false;
-Status:0
+Status:0w
 
 -----------------------------------------------------------------------------
 
