@@ -51,19 +51,14 @@ Please note that we assume that [PapyrusRT-distribution](https://github.com/kjah
 The transformations scripts are called by other project to perfrom the required transformation, however it is possible to modify and execute this script in standalone mode. Execute the trasformation script inside the Eclipse IDE, follow the below instruction:
     1. Open ```MDebugger/StateChartDebugInstrument/EOLScripts```, then righ click on the "UMLRTInstrumentv0.1.eol" and select Run as -> Run configuration
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step1.png)
-    
     2. Create a new configuration under EOL program and make sure the source is set to "UMLRTInstrumentv0.1.eol"
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step2.png)
-    
     3. Select a Models tab in the dialog and add two model
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step3.png)
-    
     4. The DebugginAgent model always should have the following configuraion
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step4.png)
-    
     5. Configure the UMLRTModel to the model that you want to be transformed for debugging
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step5.png)
-    
     6. Finally, press the run and see the result in the eclipse console and result model.
 
 ## Step 2 (Run the webserver): 
