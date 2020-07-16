@@ -72,7 +72,7 @@ The transformations scripts are called by other project to perfrom the required 
 6. Finally, press the run and see the result in the eclipse console and result model.
 
 ## Step 3 (Run the Webserver): 
-1. Open ```mxgraph/java```, then righ click on the "build.xml" file and select Run as -> AntBuild (note: make sure "grapheditor" is sent as an argument)
+1. Open ```mxgraph/java```, then righ click on the "build.xml" file and select Run as -> Ant Build
     ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/mxgraph1.png)
 
 2. Make sure "grapheditor" is sent as an argument    
@@ -81,8 +81,34 @@ The transformations scripts are called by other project to perfrom the required 
 3. Open ```http://localhost:8080/javascript/examples/grapheditor/www/index.html``` in your browser to the web interface of MReplayer
     ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/mxgraph3.png)
 
-## Step 4 (Run the Instrumented System): 
+## Step 4 (Run the Instrumented System):
+1. Open the instrumented model in [PapyrusRT-distribution](https://github.com/kjahed/papyrusrt-distribution) and generate the code. 
+    ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/code1.png)
+2. Create a "build" directory in ```~/workspace/[ProjectName]/src/``` and run the following commands:
+    ```
+    $ cd build
+    $ cmake ..
+    $ make
+    ```
+3. Create a configuration file for distribution in json format (e.g., map.json)
+(note: more information can be obtained in [PapyrusRT-distribution](https://github.com/kjahed/papyrusrt-distribution))
+    ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/code2.png)
 
+4. Run the system:
+    - Each capsule is assigned to a process
+    - The top capsule calls the configuration file with ```-c```
+     ```
+     (e.g.,
+    ./Debug__TopMain -i tcp://127.0.0.1:1111 -c map.json
+    ./Debug__TopMain -i tcp://127.0.0.1:2222
+    ./Debug__TopMain -i tcp://127.0.0.1:3333
+    ./Debug__TopMain -i tcp://127.0.0.1:4444
+    ./Debug__TopMain -i tcp://127.0.0.1:5555
+     )
+     ```
+    ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/code4.png)
+    
+    
 First, import the JAR files into the project/libraries. Then add the UML file of the original models in the Experiments into the project/resources. Finally, run the controller at (src/com/controller/Controller.java). It takes a couple of seconds to perform static analysis and extract all run-to-completion (RTC) steps form the UML file.
 
 Now the software is ready to receive traces from clients at TCP port 8001.
