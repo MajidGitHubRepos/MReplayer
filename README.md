@@ -54,7 +54,7 @@ Please note that we assume that [PapyrusRT-distribution](https://github.com/kjah
 ## Step 2 (Run the Model Instrumention): 
 The transformations scripts are called by other project to perfrom the required transformation, however it is possible to modify and execute this script in standalone mode. Execute the trasformation script inside the Eclipse IDE, follow the below instruction:
 
-1. Open ```MDebugger/StateChartDebugInstrument/EOLScripts```, then righ click on the "UMLRTInstrumentv0.1.eol" and select Run as -> Run configuration
+1. Open ```MDebugger/StateChartDebugInstrument/EOLScripts```, then righ click on the "UMLRTInstrumentv0.1.eol" and select Run as -> RunConfiguration
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step1.png)
     
 2. Create a new configuration under EOL program and make sure the source is set to "UMLRTInstrumentv0.1.eol"
@@ -71,7 +71,17 @@ The transformations scripts are called by other project to perfrom the required 
 
 6. Finally, press the run and see the result in the eclipse console and result model.
 
-## Step 2 (Run the webserver): 
+## Step 3 (Run the Webserver): 
+1. Open ```mxgraph/java```, then righ click on the "build.xml" file and select Run as -> AntBuild (note: make sure "grapheditor" is sent as an argument)
+    ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/mxgraph1.png)
+
+2. Make sure "grapheditor" is sent as an argument    
+     ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/mxgraph2.png)
+   
+3. Open ```http://localhost:8080/javascript/examples/grapheditor/www/index.html``` in your browser to the web interface of MReplayer
+    ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/mxgraph3.png)
+
+## Step 4 (Run the Instrumented System): 
 
 First, import the JAR files into the project/libraries. Then add the UML file of the original models in the Experiments into the project/resources. Finally, run the controller at (src/com/controller/Controller.java). It takes a couple of seconds to perform static analysis and extract all run-to-completion (RTC) steps form the UML file.
 
