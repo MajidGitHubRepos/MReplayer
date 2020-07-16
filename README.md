@@ -39,27 +39,37 @@ A detailed description of the MReplayer can be found in our [MODELS 2020](https:
 # Usage
 Please note that we assume that [PapyrusRT-distribution](https://github.com/kjahed/papyrusrt-distribution) and [Eclipse Modeling Framework](https://www.eclipse.org/modeling/emf/) are avaiable on your system.
 ## Step 1 (Run PapyrusRT-distribution and Import the Project):
-    1. Open a terminal and execute  ```/home/papyrus-rt-devtest-latest/Papyrus-RT/eclipse```. Ubuntu users can run the Eclipse from the launcher menu at the left side of the desktop.
-    2. The Eclipse launcher will be shown, use the default workspace (i.e., /home/workspace) and press the Launch.
-    3. You can import the project inside your workspase simply from the ```File``` menue in Eclipse and then select ```import...```, and finally ```Archive File```.
-    4. Once the MReplayer imported successfuly, you can see the source code of MReplayer, as well as MDebugger and mxgraph projects. below is a brief    description of these projects: 
+
+1. Open a terminal and execute  ```/home/papyrus-rt-devtest-latest/Papyrus-RT/eclipse```. Ubuntu users can run the Eclipse from the launcher menu at the left side of the desktop.
+
+2. The Eclipse launcher will be shown, use the default workspace (i.e., /home/workspace) and press the Launch.
+
+3. You can import the project inside your workspase simply from the ```File``` menue in Eclipse and then select ```import...```, and finally ```Archive File```.
+
+4. Once the MReplayer imported successfuly, you can see the source code of MReplayer, as well as MDebugger and mxgraph projects. below is a brief    description of these projects: 
     ```
     MDebugger   --> contains the transfromations' scripts that allows to instument the model.
     mxgraph    --> provides webUI for MReplayer and allows the user to controll the replay and inspect values at any given time.
     ```
 ## Step 2 (Run the Model Instrumention): 
 The transformations scripts are called by other project to perfrom the required transformation, however it is possible to modify and execute this script in standalone mode. Execute the trasformation script inside the Eclipse IDE, follow the below instruction:
-    1. Open ```MDebugger/StateChartDebugInstrument/EOLScripts```, then righ click on the "UMLRTInstrumentv0.1.eol" and select Run as -> Run configuration
+
+1. Open ```MDebugger/StateChartDebugInstrument/EOLScripts```, then righ click on the "UMLRTInstrumentv0.1.eol" and select Run as -> Run configuration
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step1.png)
-    2. Create a new configuration under EOL program and make sure the source is set to "UMLRTInstrumentv0.1.eol"
+    
+2. Create a new configuration under EOL program and make sure the source is set to "UMLRTInstrumentv0.1.eol"
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step2.png)
-    3. Select a Models tab in the dialog and add two model
+    
+3. Select a Models tab in the dialog and add two model
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step3.png)
-    4. The DebugginAgent model always should have the following configuraion
+    
+4. The DebugginAgent model always should have the following configuraion
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step4.png)
-    5. Configure the UMLRTModel to the model that you want to be transformed for debugging
+
+5. Configure the UMLRTModel to the model that you want to be transformed for debugging
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step5.png)
-    6. Finally, press the run and see the result in the eclipse console and result model.
+
+6. Finally, press the run and see the result in the eclipse console and result model.
 
 ## Step 2 (Run the webserver): 
 
