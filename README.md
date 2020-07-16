@@ -16,26 +16,6 @@ A detailed description of the MReplayer can be found in our [MODELS 2020](https:
 [<p style="text-align:center;"><img src="https://i.ibb.co/nbM8rL6/You-Tube-icon.png" width="193" height="130"></p>](https://www.youtube.com/watch?v=Gi5auwV3L5o)
 
 
-## Source code layout
-    .
-    ├──src
-    |   ├── com.controller                # All files for Creating Abstract Interpreter and Synthesizing variable values
-    |   ├── com.antler4AC                 # All files for performing Action Code analysis  
-    |   ├── com.server                    # All files for receiving traces from distributed clients
-    |   ├── com.umlrtParser               # All files for performing structural/behavioral static analysis and creating PES
-    ├── JAR                               # All required JAR files that should be added to the project 
-    ├── Experiments                   
-    │   ├── Original                      # Original Models (including: Replication.zip, ParcelRouter.zip , ...)
-    │   ├── PhysicalTimeStamp             # Models that annotate traces with timestamps (e.g., MDebugger)
-    |   ├── VectorTime                    # Models that annotate traces with Vector-Time
-    │   └── TimeStampFree                 # Models that use no timestamp
-    └── MDebugger                     
-    │   ├── DebuggerModel                 # The Debugging Agent which is developed using UML-RT  
-    |   ├── Model_instrumentation         # All the developed script for the model transformation 
-    |   ├── RealTimeLibs                  # All lib that should be added into the RTS directory
-    │   └── MetaModels                    # All required metamodels for executing the transformation
-
-
 # Usage
 Please note that we assume that [PapyrusRT-distribution](https://github.com/kjahed/papyrusrt-distribution) and [Eclipse Modeling Framework](https://www.eclipse.org/modeling/emf/) are avaiable on your system.
 ## Step 1 (Run PapyrusRT-distribution and Import the Project):
@@ -69,7 +49,7 @@ The transformations scripts are called by other project to perfrom the required 
 5. Configure the UMLRTModel to the model that you want to be transformed for debugging
     ![alt text](https://github.com/moji1/MDebugger/blob/master/StateChartDebugInstrument/Screenshots/Step5.png)
 
-6. Finally, press the run and see the result in the eclipse console and result model.
+6. Finally, press the run and see the result in the eclipse console and result model. Now the software is ready to receive traces from clients at TCP port 8001.
 
 ## Step 3 (Run the Webserver): 
 1. Open ```mxgraph/java```, then righ click on the "build.xml" file and select Run as -> Ant Build
@@ -106,15 +86,26 @@ The transformations scripts are called by other project to perfrom the required 
     ./Debug__TopMain -i tcp://127.0.0.1:5555
      )
      ```
-    ![alt text](https://github.com/MajidGitHubRepos/MReplayer/blob/master/src/main/resources/Screenshots/code4.png)
+
+## Source code layout
+    .
+    ├──src
+    |   ├── com.controller                # All files for Creating Abstract Interpreter and Synthesizing variable values
+    |   ├── com.antler4AC                 # All files for performing Action Code analysis  
+    |   ├── com.server                    # All files for receiving traces from distributed clients
+    |   ├── com.umlrtParser               # All files for performing structural/behavioral static analysis and creating PES
+    ├── JAR                               # All required JAR files that should be added to the project 
+    ├── Experiments                   
+    │   ├── Original                      # Original Models (including: Replication.zip, ParcelRouter.zip , ...)
+    │   ├── PhysicalTimeStamp             # Models that annotate traces with timestamps (e.g., MDebugger)
+    |   ├── VectorTime                    # Models that annotate traces with Vector-Time
+    │   └── TimeStampFree                 # Models that use no timestamp
+    └── MDebugger                     
+    │   ├── DebuggerModel                 # The Debugging Agent which is developed using UML-RT  
+    |   ├── Model_instrumentation         # All the developed script for the model transformation 
+    |   ├── RealTimeLibs                  # All lib that should be added into the RTS directory
+    │   └── MetaModels                    # All required metamodels for executing the transformation
     
-    
-First, import the JAR files into the project/libraries. Then add the UML file of the original models in the Experiments into the project/resources. Finally, run the controller at (src/com/controller/Controller.java). It takes a couple of seconds to perform static analysis and extract all run-to-completion (RTC) steps form the UML file.
-
-Now the software is ready to receive traces from clients at TCP port 8001.
-
-
-In order to provide distributed clients from the given models, just follow the instruction at [Distribution for UML-RT](https://github.com/kjahed/papyrusrt-distribution).
 
 ## Background
 
